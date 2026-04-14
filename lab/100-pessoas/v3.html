@@ -1,26 +1,4150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>100 Pessoas — Version 3</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ========================================
+       V3 — Interactive Clinical Dashboard
+       ======================================== */
+
+    /* ---- Dark mode variables ---- */
+    :root {
+      --v3-bg-card: #ffffff;
+      --v3-bg-hover: #f8fafc;
+      --v3-bg-surface: #f1f5f9;
+      --v3-border-subtle: #f3f4f6;
+      --v3-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --v3-shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --v3-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    body.dark-mode {
+      --color-text: #e2e8f0;
+      --color-text-light: #94a3b8;
+      --color-bg: #0f172a;
+      --color-bg-alt: #1e293b;
+      --color-border: #334155;
+      --v3-bg-card: #1e293b;
+      --v3-bg-hover: #334155;
+      --v3-bg-surface: #0f172a;
+      --v3-border-subtle: #334155;
+      --v3-shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --v3-shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --v3-shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    body.dark-mode .nav {
+      background: rgba(15, 23, 42, 0.95);
+    }
+    body.dark-mode .data-table tbody tr:hover {
+      background: var(--v3-bg-hover);
+    }
+    body.dark-mode .donut-center {
+      background: var(--v3-bg-card);
+    }
+    body.dark-mode .calendar-item.done {
+      background: #052e16; border-color: #166534;
+    }
+    body.dark-mode .calendar-item.upcoming {
+      background: #172554; border-color: #1e40af;
+    }
+    body.dark-mode .calendar-item.overdue {
+      background: #450a0a; border-color: #991b1b;
+    }
+    body.dark-mode .alert-card.alert-urgent {
+      background: #450a0a; border-left-color: #dc2626; color: #fca5a5;
+    }
+    body.dark-mode .alert-card.alert-warn {
+      background: #451a03; border-left-color: #d97706; color: #fcd34d;
+    }
+    body.dark-mode .alert-card.alert-info {
+      background: #172554; border-left-color: #2563eb; color: #93c5fd;
+    }
+    body.dark-mode .badge-green { background: #052e16; color: #4ade80; }
+    body.dark-mode .badge-amber { background: #451a03; color: #fbbf24; }
+    body.dark-mode .badge-red { background: #450a0a; color: #f87171; }
+    body.dark-mode .badge-blue { background: #172554; color: #60a5fa; }
+    body.dark-mode .badge-gray { background: #1e293b; color: #94a3b8; }
+    body.dark-mode .badge-purple { background: #2e1065; color: #a78bfa; }
+    body.dark-mode .med-status-ok { background: #052e16; color: #4ade80; }
+    body.dark-mode .med-status-warn { background: #451a03; color: #fbbf24; }
+    body.dark-mode .med-status-critical { background: #450a0a; color: #f87171; }
+    body.dark-mode .emergency-banner-body { background: #450a0a; }
+    body.dark-mode .emergency-num { background: #1e293b; border-color: #991b1b; }
+    body.dark-mode .emergency-instructions { color: #fca5a5; }
+    body.dark-mode .emergency-instructions strong { color: #f87171; }
+    body.dark-mode .protocol-card-header.p-red { background: #450a0a; color: #f87171; }
+    body.dark-mode .protocol-card-header.p-amber { background: #451a03; color: #fbbf24; }
+    body.dark-mode .protocol-card-header.p-blue { background: #172554; color: #60a5fa; }
+    body.dark-mode .protocol-card-header.p-green { background: #052e16; color: #4ade80; }
+    body.dark-mode .pricing-hero {
+      background: linear-gradient(135deg, #1e293b 0%, #172554 50%, #052e16 100%);
+    }
+    body.dark-mode .info-row { border-bottom-color: #334155; }
+    body.dark-mode .capacity-bar,
+    body.dark-mode .med-stock-bar { background: #334155; }
+    body.dark-mode .interaction-warn { background: #451a03; border-color: #92400e; }
+    body.dark-mode .note-card { background: var(--v3-bg-card); }
+    body.dark-mode .vital-chart-area { background: var(--v3-bg-card); }
+    body.dark-mode .vaccine-done { background: #052e16; border-color: #166534; }
+    body.dark-mode .vaccine-pending { background: #451a03; border-color: #92400e; }
+    body.dark-mode .vaccine-overdue { background: #450a0a; border-color: #991b1b; }
+    body.dark-mode .timeline-view .tl-month-header { background: var(--v3-bg-hover); }
+
+    /* Reset lab-page defaults */
+    .lab-page {
+      min-height: auto;
+      display: block;
+      padding: 0;
+    }
+    .lab-page-inner {
+      max-width: var(--max-width);
+    }
+
+    /* ---- Dark mode toggle ---- */
+    .dark-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .dark-toggle:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+    .dark-toggle-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* ---- Dashboard header ---- */
+    .dash-header {
+      padding: var(--space-lg) 0 var(--space-md);
+      margin-bottom: 0;
+    }
+    .dash-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .dash-header h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .dash-header p {
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+      max-width: 560px;
+    }
+    .dash-header-right {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .dash-date {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    /* ---- Key metrics row ---- */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      margin: var(--space-md) 0;
+    }
+    .metric-card {
+      background: var(--v3-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.1rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .metric-card.mc-blue::before { background: var(--color-accent); }
+    .metric-card.mc-green::before { background: #16a34a; }
+    .metric-card.mc-amber::before { background: #d97706; }
+    .metric-card.mc-red::before { background: #dc2626; }
+    .metric-card.mc-purple::before { background: #7c3aed; }
+    .metric-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-light);
+      margin-bottom: 0.4rem;
+    }
+    .metric-value {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    .metric-value.blue { color: var(--color-accent); }
+    .metric-value.green { color: #16a34a; }
+    .metric-value.amber { color: #d97706; }
+    .metric-value.red { color: #dc2626; }
+    .metric-sub {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      margin-top: 0.2rem;
+    }
+
+    /* ---- Capacity bar ---- */
+    .capacity-bar-wrap {
+      margin-bottom: var(--space-md);
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--v3-bg-card);
+    }
+    .capacity-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .capacity-bar-header span {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+    }
+    .capacity-bar-header strong {
+      font-size: 0.85rem;
+    }
+    .capacity-bar {
+      height: 8px;
+      background: var(--v3-bg-surface);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .capacity-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--color-accent), #3b82f6);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ---- Tab navigation ---- */
+    .dash-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: var(--space-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .dash-tabs::-webkit-scrollbar { display: none; }
+    .dash-tab {
+      padding: 0.7rem 1.15rem;
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font-body);
+      transition: color 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    .dash-tab:hover { color: var(--color-text); }
+    .dash-tab.active {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+      font-weight: 600;
+    }
+    .dash-tab .tab-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      background: #dc2626;
+      color: #fff;
+      padding: 0.05rem 0.35rem;
+      border-radius: 8px;
+      margin-left: 0.35rem;
+      vertical-align: super;
+    }
+
+    /* ---- Sections ---- */
+    .dash-section {
+      display: none;
+      padding-bottom: var(--space-lg);
+      animation: fadeIn 0.25s ease;
+    }
+    .dash-section.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ---- Search & filters ---- */
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      font-family: var(--font-body);
+      font-size: 0.825rem;
+      padding: 0.45rem 0.75rem 0.45rem 2rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--v3-bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='6' cy='6' r='5'/%3E%3Cline x1='13' y1='13' x2='9.5' y2='9.5'/%3E%3C/svg%3E") no-repeat 0.65rem center;
+      color: var(--color-text);
+      width: 200px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .filter-btn {
+      font-family: var(--font-body);
+      font-size: 0.775rem;
+      font-weight: 500;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--v3-bg-card);
+      color: var(--color-text-light);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+    .filter-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+
+    /* ---- Table ---- */
+    .table-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .data-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      padding: 0.7rem 1rem;
+      border-bottom: 2px solid var(--color-border);
+      background: var(--color-bg-alt);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .data-table th:hover { color: var(--color-text); }
+    .data-table th.sorted-asc::after { content: ' \2191'; color: var(--color-accent); }
+    .data-table th.sorted-desc::after { content: ' \2193'; color: var(--color-accent); }
+    .data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+    .data-table tbody tr {
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+    .data-table tbody tr:hover { background: var(--v3-bg-hover); }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table .name-cell {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .data-table tbody tr.hidden-row { display: none; }
+
+    /* ---- Badges ---- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.675rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .badge-green { background: #f0fdf4; color: #16a34a; }
+    .badge-amber { background: #fffbeb; color: #d97706; }
+    .badge-red { background: #fef2f2; color: #dc2626; }
+    .badge-blue { background: #eff6ff; color: #2563eb; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .badge-purple { background: #f5f3ff; color: #7c3aed; }
+
+    /* Dot indicator */
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      flex-shrink: 0;
+    }
+    .dot-green { background: #16a34a; }
+    .dot-amber { background: #d97706; }
+    .dot-red { background: #dc2626; }
+
+    /* Priority indicator */
+    .priority-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .priority-bar {
+      width: 3px;
+      height: 18px;
+      border-radius: 2px;
+    }
+    .priority-bar.p-green { background: #16a34a; }
+    .priority-bar.p-amber { background: #d97706; }
+    .priority-bar.p-red { background: #dc2626; }
+
+    /* ---- Alert strip ---- */
+    .alert-strip {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+    .alert-card {
+      flex: 0 0 auto;
+      min-width: 240px;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      border-left: 3px solid;
+    }
+    .alert-card.alert-urgent {
+      background: #fef2f2;
+      border-left-color: #dc2626;
+      color: #991b1b;
+    }
+    .alert-card.alert-warn {
+      background: #fffbeb;
+      border-left-color: #d97706;
+      color: #92400e;
+    }
+    .alert-card.alert-info {
+      background: #eff6ff;
+      border-left-color: #2563eb;
+      color: #1e40af;
+    }
+    .alert-card strong {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ---- Detail grid ---- */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .detail-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      background: var(--v3-bg-card);
+    }
+    .detail-card h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.75rem;
+    }
+    .detail-card p, .detail-card li {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--color-text);
+    }
+    .detail-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .detail-card ul li {
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--v3-border-subtle);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .detail-card ul li:last-child { border-bottom: none; }
+    .detail-card-full { grid-column: 1 / -1; }
+
+    /* ---- Patient record panel ---- */
+    .patient-panel {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .patient-panel-header {
+      background: var(--color-bg-alt);
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .patient-panel-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .patient-panel-header .patient-meta {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .patient-panel-body { padding: 1.25rem; }
+    .patient-select {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .patient-select-btn {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--v3-bg-card);
+      color: var(--color-text-light);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .patient-select-btn:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+    .patient-select-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+
+    /* ---- Info rows ---- */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--v3-border-subtle);
+      font-size: 0.85rem;
+      gap: 1rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label {
+      color: var(--color-text-light);
+      font-weight: 500;
+    }
+    .info-row .value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* ---- CSS-only bar chart ---- */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      height: 120px;
+      padding-top: 0.5rem;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .bar {
+      width: 100%;
+      max-width: 40px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-height: 4px;
+    }
+    .bar.bar-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+    .bar.bar-green { background: linear-gradient(180deg, #4ade80, #16a34a); }
+    .bar.bar-amber { background: linear-gradient(180deg, #fbbf24, #d97706); }
+    .bar.bar-red { background: linear-gradient(180deg, #f87171, #dc2626); }
+    .bar-label {
+      font-size: 0.65rem;
+      color: var(--color-text-light);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .bar-value {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    /* ---- Donut chart (CSS-only) ---- */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .donut {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .donut-center {
+      position: absolute;
+      inset: 16px;
+      background: var(--v3-bg-card);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .donut-legend {
+      font-size: 0.8rem;
+      line-height: 2;
+    }
+    .donut-legend-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      margin-right: 0.4rem;
+    }
+
+    /* ---- Exam calendar ---- */
+    .exam-calendar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .calendar-item {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.75rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .calendar-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--v3-shadow-sm);
+    }
+    .calendar-item .month {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-bottom: 0.2rem;
+      color: var(--color-text);
+    }
+    .calendar-item .exam-name {
+      color: var(--color-text-light);
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+    .calendar-item.done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .calendar-item.upcoming {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .calendar-item.overdue {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* ---- Medication card layout ---- */
+    .med-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .med-card {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+      background: var(--v3-bg-card);
+      position: relative;
+      transition: box-shadow 0.15s;
+    }
+    .med-card:hover { box-shadow: var(--v3-shadow-sm); }
+    .med-card-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .med-card-patient {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.6rem;
+    }
+    .med-card-detail {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0;
+    }
+    .med-card-status {
+      position: absolute;
+      top: 0; right: 0;
+      padding: 0.4rem 0.65rem;
+      border-radius: 0 8px 0 8px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .med-status-ok { background: #f0fdf4; color: #16a34a; }
+    .med-status-warn { background: #fffbeb; color: #d97706; }
+    .med-status-critical { background: #fef2f2; color: #dc2626; }
+    .med-stock-bar {
+      height: 4px;
+      background: var(--v3-bg-surface);
+      border-radius: 2px;
+      margin-top: 0.6rem;
+      overflow: hidden;
+    }
+    .med-stock-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+    .med-stock-fill.stock-ok { background: #16a34a; }
+    .med-stock-fill.stock-warn { background: #d97706; }
+    .med-stock-fill.stock-critical { background: #dc2626; }
+
+    /* ---- Emergency section ---- */
+    .emergency-banner {
+      border: 2px solid #dc2626;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .emergency-banner-header {
+      background: #dc2626;
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .emergency-banner-body {
+      background: #fef2f2;
+      padding: 1.25rem;
+    }
+    .emergency-numbers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .emergency-num {
+      text-align: center;
+      padding: 0.85rem;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      background: var(--v3-bg-card);
+    }
+    .emergency-num .num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #dc2626;
+      line-height: 1;
+    }
+    .emergency-num .num-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #991b1b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 0.3rem;
+    }
+    .emergency-instructions {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #991b1b;
+    }
+    .emergency-instructions strong { color: #7f1d1d; }
+
+    /* Protocol cards */
+    .protocol-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .protocol-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--v3-bg-card);
+    }
+    .protocol-card-header {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .protocol-card-header.p-red { background: #fef2f2; color: #dc2626; }
+    .protocol-card-header.p-amber { background: #fffbeb; color: #92400e; }
+    .protocol-card-header.p-blue { background: #eff6ff; color: #1e40af; }
+    .protocol-card-header.p-green { background: #f0fdf4; color: #166534; }
+    .protocol-card-body { padding: 1rem; }
+    .protocol-card-body ol {
+      padding-left: 1.25rem;
+      font-size: 0.825rem;
+      line-height: 1.8;
+      color: var(--color-text);
+    }
+
+    /* ---- Pricing section ---- */
+    .pricing-hero {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f0fdf4 100%);
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .pricing-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -20%;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%);
+    }
+    .pricing-price {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+    .pricing-label {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin-top: 0.25rem;
+    }
+    .pricing-divider {
+      width: 40px;
+      height: 2px;
+      background: var(--color-accent);
+      margin: 1rem auto;
+      border-radius: 1px;
+    }
+    .pricing-note {
+      font-size: 0.825rem;
+      color: var(--color-text-light);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ---- Timeline ---- */
+    .timeline {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 4px; bottom: 4px;
+      width: 2px;
+      background: var(--color-border);
+    }
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1rem;
+      padding-left: 0.5rem;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--color-border);
+      border: 2px solid var(--v3-bg-card);
+    }
+    .timeline-item.tl-green::before { background: #16a34a; }
+    .timeline-item.tl-amber::before { background: #d97706; }
+    .timeline-item.tl-red::before { background: #dc2626; }
+    .timeline-item.tl-blue::before { background: #2563eb; }
+    .timeline-date {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .timeline-text {
+      font-size: 0.825rem;
+      line-height: 1.5;
+      color: var(--color-text);
+      margin-top: 0.1rem;
+    }
+
+    /* ========================================
+       V3 NEW FEATURES
+       ======================================== */
+
+    /* ---- Patient Detail Modal ---- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      animation: modalFadeIn 0.2s ease;
+    }
+    .modal-overlay.visible { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: var(--v3-bg-card);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: var(--v3-shadow-lg);
+      animation: modalSlideIn 0.25s ease;
+      position: relative;
+    }
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .modal-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      background: var(--v3-bg-card);
+      color: var(--color-text-light);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .modal-close:hover {
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+    .modal-body {
+      padding: 1.5rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .modal-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+    }
+    .modal-tab {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.775rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      font-family: var(--font-body);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .modal-tab:hover { color: var(--color-text); }
+    .modal-tab.active {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+      font-weight: 600;
+    }
+    .modal-section { display: none; }
+    .modal-section.active { display: block; }
+    .modal-actions {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+    .btn-primary {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: none;
+      background: var(--color-accent);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--color-accent-hover); }
+    .btn-secondary {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      background: var(--v3-bg-card);
+      color: var(--color-text);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-secondary:hover { background: var(--color-bg-alt); }
+
+    /* ---- Medication Interaction Warnings ---- */
+    .interaction-warn {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+    .interaction-warn-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+    .interaction-warn strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #92400e;
+      margin-bottom: 0.15rem;
+    }
+    .interaction-warn p {
+      color: #78350f;
+      margin: 0;
+    }
+    .interaction-warn.severity-high {
+      background: #fef2f2;
+      border-color: #fca5a5;
+    }
+    .interaction-warn.severity-high strong { color: #991b1b; }
+    .interaction-warn.severity-high p { color: #7f1d1d; }
+
+    /* ---- Consultation Notes ---- */
+    .note-card {
+      background: var(--v3-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      transition: box-shadow 0.15s;
+    }
+    .note-card:hover { box-shadow: var(--v3-shadow-sm); }
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      gap: 0.5rem;
+    }
+    .note-date {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+    }
+    .note-type {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .note-body {
+      font-size: 0.825rem;
+      line-height: 1.6;
+      color: var(--color-text);
+    }
+    .note-body p { margin-bottom: 0.4rem; }
+    .note-body p:last-child { margin-bottom: 0; }
+    .note-soap-label {
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: inline-block;
+      margin-right: 0.3rem;
+    }
+
+    /* ---- Visual Timeline / Calendar View ---- */
+    .timeline-view {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .timeline-view .tl-month-header {
+      padding: 0.6rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--color-bg-alt);
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-light);
+    }
+    .timeline-view .tl-event {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--v3-border-subtle);
+      font-size: 0.825rem;
+      transition: background 0.1s;
+    }
+    .timeline-view .tl-event:last-child { border-bottom: none; }
+    .timeline-view .tl-event:hover { background: var(--v3-bg-hover); }
+    .tl-event-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .tl-event-dot.dot-done { background: #16a34a; }
+    .tl-event-dot.dot-overdue { background: #dc2626; }
+    .tl-event-dot.dot-upcoming { background: #2563eb; }
+    .tl-event-dot.dot-scheduled { background: #d97706; }
+    .tl-event-date {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      width: 50px;
+      flex-shrink: 0;
+    }
+    .tl-event-name { flex: 1; font-weight: 500; }
+    .tl-event-patient {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+    }
+
+    /* ---- Vaccination Tracking ---- */
+    .vaccine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .vaccine-card {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .vaccine-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--v3-shadow-sm);
+    }
+    .vaccine-card.vaccine-done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .vaccine-card.vaccine-pending {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .vaccine-card.vaccine-overdue {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+    .vaccine-name {
+      font-size: 0.825rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .vaccine-detail {
+      font-size: 0.7rem;
+      color: var(--color-text-light);
+      line-height: 1.5;
+    }
+    .vaccine-status-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      margin-top: 0.35rem;
+    }
+
+    /* ---- BMI Calculator / Vital Signs ---- */
+    .bmi-calc {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      background: var(--v3-bg-card);
+    }
+    .bmi-calc h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 1rem;
+    }
+    .bmi-form {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .bmi-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .bmi-field label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .bmi-field input {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      padding: 0.45rem 0.65rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--v3-bg-card);
+      color: var(--color-text);
+      width: 100px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .bmi-field input:focus {
+      border-color: var(--color-accent);
+    }
+    .bmi-result {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      background: var(--v3-bg-surface);
+      font-size: 0.85rem;
+    }
+    .bmi-result-value {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .bmi-result-label {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+    }
+    .bmi-result-class {
+      font-weight: 600;
+      font-size: 0.825rem;
+    }
+
+    /* ---- Vitals Trend Chart (SVG) ---- */
+    .vital-chart-area {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: var(--v3-bg-card);
+      margin-bottom: 1.25rem;
+    }
+    .vital-chart-area h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.75rem;
+    }
+    .vital-chart-select {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .vital-chart-btn {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: var(--v3-bg-card);
+      color: var(--color-text-light);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .vital-chart-btn:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+    .vital-chart-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+    .vital-svg-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .vital-svg-wrap svg {
+      width: 100%;
+      height: 180px;
+    }
+    .vital-svg-wrap svg text {
+      font-family: var(--font-body);
+    }
+
+    /* ---- Print styles ---- */
+    .print-btn {
+      font-family: var(--font-body);
+      font-size: 0.775rem;
+      font-weight: 500;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--v3-bg-card);
+      color: var(--color-text-light);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .print-btn:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+
+    @media print {
+      .nav, .dash-tabs, .filter-bar, .patient-select,
+      .print-btn, .dark-toggle, .modal-overlay,
+      .dash-date, .alert-strip, .btn-primary, .btn-secondary,
+      .modal-close, .bmi-form button { display: none !important; }
+
+      body, body.dark-mode {
+        --color-text: #1a1a1a;
+        --color-text-light: #555;
+        --color-bg: #ffffff;
+        --color-bg-alt: #f8f8f8;
+        --color-border: #e5e5e5;
+        --v3-bg-card: #ffffff;
+        background: #fff;
+        color: #1a1a1a;
+        font-size: 11pt;
+      }
+      .dash-section { display: block !important; page-break-inside: avoid; }
+      .metric-card, .detail-card, .med-card, .protocol-card {
+        break-inside: avoid;
+        box-shadow: none !important;
+      }
+      .lab-page-inner { max-width: 100%; }
+      .container { padding: 0 0.5rem; }
+      .capacity-bar-wrap, .patient-panel, .table-wrap,
+      .detail-grid, .bmi-calc, .vital-chart-area {
+        break-inside: avoid;
+      }
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 900px) {
+      .metrics-row { grid-template-columns: repeat(3, 1fr); }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-card-full { grid-column: 1; }
+      .exam-calendar { grid-template-columns: repeat(2, 1fr); }
+      .protocol-grid { grid-template-columns: 1fr; }
+      .emergency-numbers { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
+      .dash-header h1 { font-size: 1.35rem; }
+      .exam-calendar { grid-template-columns: 1fr 1fr; }
+      .donut-wrap { flex-direction: column; align-items: flex-start; }
+      .search-input { width: 100%; }
+      .filter-bar { flex-direction: column; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .patient-panel-header { flex-direction: column; align-items: flex-start; }
+      .dash-header-top { flex-direction: column; }
+      .emergency-numbers { grid-template-columns: 1fr; }
+      .bar-chart { height: 90px; }
+      .modal-content { margin: 0.5rem; }
+      .modal-body { max-height: 80vh; }
+      .vaccine-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../100-pessoas.html">&larr; Back</a>
+        <a href="../100-pessoas.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
+
   <main class="lab-page">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>100 Pessoas — Version 3</h1>
-    </div>
+
+      <!-- =============================== -->
+      <!-- HEADER                          -->
+      <!-- =============================== -->
+      <div class="dash-header">
+        <div class="dash-header-top">
+          <div>
+            <span class="lab-tag">V3 — Dashboard Clinico</span>
+            <h1>100 Pessoas</h1>
+            <p>Gestao de pacientes para medicina por assinatura. Ate 100 pacientes com acompanhamento longitudinal.</p>
+          </div>
+          <div class="dash-header-right">
+            <button class="dark-toggle" onclick="toggleDarkMode()">
+              <span class="dark-toggle-icon" id="darkIcon">&#9790;</span>
+              <span id="darkLabel">Escuro</span>
+            </button>
+            <button class="print-btn" onclick="window.print()">&#9113; Imprimir</button>
+            <span class="dash-date">14 de abril de 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- KEY METRICS                     -->
+      <!-- =============================== -->
+      <div class="metrics-row">
+        <div class="metric-card mc-blue">
+          <div class="metric-label">Pacientes ativos</div>
+          <div class="metric-value blue">6</div>
+          <div class="metric-sub">de 100 vagas</div>
+        </div>
+        <div class="metric-card mc-green">
+          <div class="metric-label">Consultas — Abril</div>
+          <div class="metric-value green">4</div>
+          <div class="metric-sub">2 realizadas, 2 pendentes</div>
+        </div>
+        <div class="metric-card mc-amber">
+          <div class="metric-label">Exames pendentes</div>
+          <div class="metric-value amber">3</div>
+          <div class="metric-sub">necessitam agendamento</div>
+        </div>
+        <div class="metric-card mc-red">
+          <div class="metric-label">Alertas ativos</div>
+          <div class="metric-value red">5</div>
+          <div class="metric-sub">2 urgentes, 3 atencao</div>
+        </div>
+        <div class="metric-card mc-purple">
+          <div class="metric-label">Custo med. mensal</div>
+          <div class="metric-value" style="color: #7c3aed;">R$ 123</div>
+          <div class="metric-sub">8 medicacoes ativas</div>
+        </div>
+      </div>
+
+      <!-- Capacity bar -->
+      <div class="capacity-bar-wrap">
+        <div class="capacity-bar-header">
+          <span>Capacidade da pratica</span>
+          <strong>6 / 100 pacientes (6%)</strong>
+        </div>
+        <div class="capacity-bar">
+          <div class="capacity-fill" style="width: 6%;"></div>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- ALERT STRIP                     -->
+      <!-- =============================== -->
+      <div class="alert-strip">
+        <div class="alert-card alert-urgent">
+          <strong>Urgente</strong>
+          Vo Istelina — consulta vencida desde 05/04. Reagendar imediatamente.
+        </div>
+        <div class="alert-card alert-urgent">
+          <strong>Urgente</strong>
+          Vo Antonio — consulta vencida desde 05/04. Reagendar imediatamente.
+        </div>
+        <div class="alert-card alert-warn">
+          <strong>Estoque critico</strong>
+          Enalapril (Pai) — estoque para ~10 dias. Providenciar reposicao.
+        </div>
+        <div class="alert-card alert-warn">
+          <strong>Exame pendente</strong>
+          Pai — hemograma e funcao renal a agendar.
+        </div>
+        <div class="alert-card alert-info">
+          <strong>Lembrete</strong>
+          Meta 2026: 20 pacientes. 14 vagas a preencher.
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- TAB NAVIGATION                  -->
+      <!-- =============================== -->
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="pacientes">Pacientes</button>
+        <button class="dash-tab" data-tab="ficha">Ficha Clinica</button>
+        <button class="dash-tab" data-tab="sinais">Sinais Vitais</button>
+        <button class="dash-tab" data-tab="notas">Consultas</button>
+        <button class="dash-tab" data-tab="medicacoes">Medicacoes</button>
+        <button class="dash-tab" data-tab="exames">Exames</button>
+        <button class="dash-tab" data-tab="vacinas">Vacinas</button>
+        <button class="dash-tab" data-tab="suporte">Emergencia <span class="tab-badge">2</span></button>
+        <button class="dash-tab" data-tab="plano">Plano</button>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 1: LISTA DE PACIENTES                   -->
+      <!-- ============================================ -->
+      <div class="dash-section active" id="pacientes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Lista de Pacientes</h2>
+            <span style="font-size: 0.825rem; color: var(--color-text-light);">6 cadastrados &middot; 94 vagas disponiveis &middot; Clique para ver detalhes</span>
+          </div>
+          <div class="filter-bar">
+            <input type="text" class="search-input" id="patientSearch" placeholder="Buscar paciente...">
+            <button class="filter-btn active" data-filter="todos" onclick="filterPatients('todos', this)">Todos</button>
+            <button class="filter-btn" data-filter="urgente" onclick="filterPatients('urgente', this)">Urgente</button>
+            <button class="filter-btn" data-filter="atencao" onclick="filterPatients('atencao', this)">Atencao</button>
+            <button class="filter-btn" data-filter="rotina" onclick="filterPatients('rotina', this)">Rotina</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="patientTable">
+            <thead>
+              <tr>
+                <th data-sort="num" style="width: 40px;">#</th>
+                <th data-sort="name">Nome</th>
+                <th data-sort="age">Idade</th>
+                <th>Status</th>
+                <th data-sort="last">Ultima consulta</th>
+                <th data-sort="next">Proxima visita</th>
+                <th data-sort="priority">Prioridade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-priority="rotina" data-patient="hermano" onclick="openPatientModal('hermano')">
+                <td>1</td>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td data-val="32">32</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260310">10/03/2026</td>
+                <td data-val="20260610">10/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-green"></span>Rotina</span></td>
+              </tr>
+              <tr data-priority="atencao" data-patient="pai" onclick="openPatientModal('pai')">
+                <td>2</td>
+                <td class="name-cell">Pai</td>
+                <td data-val="63">63</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260222">22/02/2026</td>
+                <td data-val="20260522">22/05/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-amber"></span>Atencao</span></td>
+              </tr>
+              <tr data-priority="rotina" data-patient="mae" onclick="openPatientModal('mae')">
+                <td>3</td>
+                <td class="name-cell">Mae</td>
+                <td data-val="60">60</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260315">15/03/2026</td>
+                <td data-val="20260615">15/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-green"></span>Rotina</span></td>
+              </tr>
+              <tr data-priority="urgente" data-patient="istelina" onclick="openPatientModal('istelina')">
+                <td>4</td>
+                <td class="name-cell">Vo Istelina</td>
+                <td data-val="84">84</td>
+                <td><span class="status-dot dot-red"></span><span class="badge badge-red">Vencido</span></td>
+                <td data-val="20260105">05/01/2026</td>
+                <td data-val="20260405">05/04/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-red"></span>Urgente</span></td>
+              </tr>
+              <tr data-priority="urgente" data-patient="antonio" onclick="openPatientModal('antonio')">
+                <td>5</td>
+                <td class="name-cell">Vo Antonio</td>
+                <td data-val="87">87</td>
+                <td><span class="status-dot dot-red"></span><span class="badge badge-red">Vencido</span></td>
+                <td data-val="20260105">05/01/2026</td>
+                <td data-val="20260405">05/04/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-red"></span>Urgente</span></td>
+              </tr>
+              <tr data-priority="atencao" data-patient="marly" onclick="openPatientModal('marly')">
+                <td>6</td>
+                <td class="name-cell">Dona Marly</td>
+                <td data-val="72">72</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260320">20/03/2026</td>
+                <td data-val="20260620">20/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-amber"></span>Atencao</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quick visual summaries -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Distribuicao por prioridade</h4>
+            <div class="donut-wrap">
+              <div class="donut" style="background: conic-gradient(#dc2626 0deg 120deg, #d97706 120deg 240deg, #16a34a 240deg 360deg);">
+                <div class="donut-center">6</div>
+              </div>
+              <div class="donut-legend">
+                <div><span class="donut-legend-dot" style="background: #dc2626;"></span>Urgente — 2</div>
+                <div><span class="donut-legend-dot" style="background: #d97706;"></span>Atencao — 2</div>
+                <div><span class="donut-legend-dot" style="background: #16a34a;"></span>Rotina — 2</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Proximas consultas</h4>
+            <div class="timeline">
+              <div class="timeline-item tl-red">
+                <div class="timeline-date">05/04 — Vencida</div>
+                <div class="timeline-text">Vo Istelina (reagendar)</div>
+              </div>
+              <div class="timeline-item tl-red">
+                <div class="timeline-date">05/04 — Vencida</div>
+                <div class="timeline-text">Vo Antonio (reagendar)</div>
+              </div>
+              <div class="timeline-item tl-amber">
+                <div class="timeline-date">22/05/2026</div>
+                <div class="timeline-text">Pai</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">10/06/2026</div>
+                <div class="timeline-text">Eu (Hermano)</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">15/06/2026</div>
+                <div class="timeline-text">Mae</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">20/06/2026</div>
+                <div class="timeline-text">Dona Marly</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Faixa etaria dos pacientes</h4>
+            <div class="bar-chart">
+              <div class="bar-col">
+                <div class="bar-value">1</div>
+                <div class="bar bar-blue" style="height: 17%;"></div>
+                <div class="bar-label">30-39</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">0</div>
+                <div class="bar bar-blue" style="height: 3%;"></div>
+                <div class="bar-label">40-49</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">0</div>
+                <div class="bar bar-blue" style="height: 3%;"></div>
+                <div class="bar-label">50-59</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">2</div>
+                <div class="bar bar-blue" style="height: 34%;"></div>
+                <div class="bar-label">60-69</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">1</div>
+                <div class="bar bar-amber" style="height: 17%;"></div>
+                <div class="bar-label">70-79</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">2</div>
+                <div class="bar bar-red" style="height: 34%;"></div>
+                <div class="bar-label">80+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 2: FICHA DO PACIENTE                    -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="ficha">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Ficha Clinica</h2>
+            <p class="section-subtitle" style="margin-bottom:0;">Selecione um paciente para visualizar a ficha completa.</p>
+          </div>
+          <button class="print-btn" onclick="window.print()">&#9113; Imprimir ficha</button>
+        </div>
+
+        <div class="patient-select">
+          <button class="patient-select-btn active" onclick="showPatient('istelina', this)">Vo Istelina</button>
+          <button class="patient-select-btn" onclick="showPatient('pai', this)">Pai</button>
+          <button class="patient-select-btn" onclick="showPatient('hermano', this)">Eu (Hermano)</button>
+          <button class="patient-select-btn" onclick="showPatient('mae', this)">Mae</button>
+          <button class="patient-select-btn" onclick="showPatient('antonio', this)">Vo Antonio</button>
+          <button class="patient-select-btn" onclick="showPatient('marly', this)">Dona Marly</button>
+        </div>
+
+        <!-- Vo Istelina -->
+        <div class="patient-record" id="record-istelina">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-red"></span>
+                Vo Istelina
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-red">Consulta vencida</span>
+                <span class="badge badge-purple">84 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Nome completo</span>
+                    <span class="value">Istelina da Silva</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">84 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Data de nascimento</span>
+                    <span class="value">12/08/1941</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Tipo sanguineo</span>
+                    <span class="value">A+</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value" style="color: #dc2626; font-weight: 700;">Dipirona</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Peso / Altura</span>
+                    <span class="value">68 kg / 1,58 m</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">IMC</span>
+                    <span class="value" style="color: #d97706;">27,2 (sobrepeso)</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-red">HAS</span> Hipertensao arterial sistemica</li>
+                    <li><span class="badge badge-amber">DM2</span> Diabetes mellitus tipo 2</li>
+                    <li><span class="badge badge-gray">OA</span> Osteoartrose de joelhos</li>
+                    <li><span class="badge badge-blue">Hipo</span> Hipotireoidismo</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <ul>
+                    <li><strong>Losartana 50mg</strong> — 1x/dia (manha)</li>
+                    <li><strong>Metformina 850mg</strong> — 2x/dia</li>
+                    <li><strong>Levotiroxina 50mcg</strong> — 1x/dia (jejum)</li>
+                    <li><strong>Paracetamol 750mg</strong> — se necessario</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 05/01/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-red">PA</span> 140/85 mmHg (acima do alvo)</li>
+                    <li><span class="badge badge-amber">Glic</span> Glicemia jejum: 132 mg/dL</li>
+                    <li><span class="badge badge-amber">HbA1c</span> 7.2%</li>
+                    <li><span class="badge badge-green">TSH</span> 3.1 mUI/L (normal)</li>
+                    <li>Queixa: dor em joelho D</li>
+                  </ul>
+                </div>
+                <div class="detail-card detail-card-full">
+                  <h4>Calendario de exames</h4>
+                  <div class="exam-calendar">
+                    <div class="calendar-item done">
+                      <div class="month">Jan 2026</div>
+                      <div class="exam-name">Hemograma, Glicemia, HbA1c, TSH</div>
+                    </div>
+                    <div class="calendar-item overdue">
+                      <div class="month">Abr 2026</div>
+                      <div class="exam-name">Funcao renal, Eletrolitos, ECG</div>
+                    </div>
+                    <div class="calendar-item upcoming">
+                      <div class="month">Jul 2026</div>
+                      <div class="exam-name">Hemograma, Glicemia, HbA1c</div>
+                    </div>
+                    <div class="calendar-item upcoming">
+                      <div class="month">Out 2026</div>
+                      <div class="exam-name">Check-up completo anual</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pai -->
+        <div class="patient-record" id="record-pai" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-amber"></span>
+                Pai
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-amber">Exame pendente</span>
+                <span class="badge badge-purple">63 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">63 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Tipo sanguineo</span>
+                    <span class="value">O+</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value" style="color: #dc2626; font-weight: 700;">Penicilina</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Peso / Altura</span>
+                    <span class="value">82 kg / 1,74 m</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">IMC</span>
+                    <span class="value" style="color: #d97706;">27,1 (sobrepeso)</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-red">HAS</span> Hipertensao arterial</li>
+                    <li><span class="badge badge-amber">Dislip</span> Dislipidemia</li>
+                    <li><span class="badge badge-amber">Pre-DM</span> Pre-diabetes (glicemia alterada)</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <ul>
+                    <li><strong>Enalapril 10mg</strong> — 2x/dia</li>
+                    <li><strong>Sinvastatina 20mg</strong> — 1x/dia (noite)</li>
+                    <li><strong>AAS 100mg</strong> — 1x/dia</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 22/02/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-amber">PA</span> 135/80 mmHg</li>
+                    <li><span class="badge badge-amber">CT</span> Colesterol total: 210 mg/dL</li>
+                    <li><span class="badge badge-red">LDL</span> 140 mg/dL (acima do alvo)</li>
+                    <li><span class="badge badge-amber">Glic</span> Glicemia jejum: 108 mg/dL</li>
+                    <li>Conduta: solicitar hemograma + funcao renal</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hermano -->
+        <div class="patient-record" id="record-hermano" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-green"></span>
+                Eu (Hermano)
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-green">Em dia</span>
+                <span class="badge badge-purple">32 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">32 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value">Nenhuma conhecida</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Peso / Altura</span>
+                    <span class="value">75 kg / 1,78 m</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">IMC</span>
+                    <span class="value" style="color: #16a34a;">23,7 (normal)</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <p style="color: var(--color-text-light);">Nenhum problema cronico registrado. Acompanhamento preventivo.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <p style="color: var(--color-text-light);">Nenhuma medicacao continua.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 10/03/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-green">PA</span> 120/75 mmHg (normal)</li>
+                    <li><span class="badge badge-green">Glic</span> Glicemia jejum: 88 mg/dL</li>
+                    <li>Check-up preventivo completo. Sem alteracoes.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mae -->
+        <div class="patient-record" id="record-mae" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-green"></span>
+                Mae
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-green">Em dia</span>
+                <span class="badge badge-purple">60 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">60 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value">Nenhuma conhecida</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Peso / Altura</span>
+                    <span class="value">65 kg / 1,60 m</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">IMC</span>
+                    <span class="value" style="color: #d97706;">25,4 (sobrepeso)</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <p style="color: var(--color-text-light);">Acompanhamento preventivo. Sem condicoes cronicas ativas.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <p style="color: var(--color-text-light);">Nenhuma medicacao continua.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 15/03/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-green">PA</span> 125/78 mmHg (normal)</li>
+                    <li><span class="badge badge-green">Glic</span> Glicemia jejum: 92 mg/dL</li>
+                    <li>Exames preventivos em dia. Mamografia agendada.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vo Antonio -->
+        <div class="patient-record" id="record-antonio" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-red"></span>
+                Vo Antonio
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-red">Consulta vencida</span>
+                <span class="badge badge-purple">87 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">87 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value">Nenhuma conhecida</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Peso / Altura</span>
+                    <span class="value">70 kg / 1,68 m</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">IMC</span>
+                    <span class="value" style="color: #16a34a;">24,8 (normal)</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-amber">Risco</span> Risco de queda elevado</li>
+                    <li>Avaliacao geriatrica necessaria</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <p style="color: var(--color-text-light);">Informacoes a atualizar na proxima consulta.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 05/01/2026</h4>
+                  <ul>
+                    <li>Exames basicos realizados</li>
+                    <li>Pendente: ECG, PSA, hemograma</li>
+                    <li>Reagendar consulta com urgencia</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dona Marly -->
+        <div class="patient-record" id="record-marly" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-green"></span>
+                Dona Marly
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-amber">Atencao</span>
+                <span class="badge badge-purple">72 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">72 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value" style="color: #dc2626; font-weight: 700;">Sulfa</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Peso / Altura</span>
+                    <span class="value">62 kg / 1,55 m</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">IMC</span>
+                    <span class="value" style="color: #d97706;">25,8 (sobrepeso)</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-red">HAS</span> Hipertensao arterial</li>
+                    <li><span class="badge badge-gray">DRGE</span> Doenca do refluxo gastroesofagico</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <ul>
+                    <li><strong>Anlodipino 5mg</strong> — 1x/dia</li>
+                    <li><strong>Omeprazol 20mg</strong> — 1x/dia (jejum)</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 20/03/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-green">PA</span> 130/80 mmHg (aceitavel)</li>
+                    <li>Boa adesao ao tratamento</li>
+                    <li>Proxima consulta: 20/06/2026</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 3: SINAIS VITAIS & IMC                  -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="sinais">
+        <h2 class="section-title">Sinais Vitais e Tendencias</h2>
+        <p class="section-subtitle">Acompanhamento longitudinal de sinais vitais. Selecione o paciente e o parametro.</p>
+
+        <!-- BMI Calculator -->
+        <div class="bmi-calc">
+          <h4>Calculadora de IMC</h4>
+          <div class="bmi-form">
+            <div class="bmi-field">
+              <label for="bmiWeight">Peso (kg)</label>
+              <input type="number" id="bmiWeight" placeholder="70" step="0.1" min="20" max="300">
+            </div>
+            <div class="bmi-field">
+              <label for="bmiHeight">Altura (m)</label>
+              <input type="number" id="bmiHeight" placeholder="1.70" step="0.01" min="0.5" max="2.5">
+            </div>
+            <button class="btn-primary" onclick="calcBMI()">Calcular</button>
+          </div>
+          <div class="bmi-result" id="bmiResult" style="display: none;">
+            <div>
+              <div class="bmi-result-value" id="bmiValue">--</div>
+              <div class="bmi-result-label">IMC</div>
+            </div>
+            <div>
+              <div class="bmi-result-class" id="bmiClass">--</div>
+              <div class="bmi-result-label" id="bmiRange">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vital Signs Trend Charts -->
+        <div class="vital-chart-area">
+          <h4>Tendencia de Pressao Arterial — Vo Istelina</h4>
+          <div class="vital-chart-select">
+            <button class="vital-chart-btn active" onclick="showVitalChart('pa-istelina', this)">PA Istelina</button>
+            <button class="vital-chart-btn" onclick="showVitalChart('pa-pai', this)">PA Pai</button>
+            <button class="vital-chart-btn" onclick="showVitalChart('glic-istelina', this)">Glicemia Istelina</button>
+            <button class="vital-chart-btn" onclick="showVitalChart('peso-istelina', this)">Peso Istelina</button>
+          </div>
+          <div class="vital-svg-wrap" id="vitalChartContainer">
+            <!-- SVG chart rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Vital signs table -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Ultimos sinais vitais — Vo Istelina</h4>
+            <div class="info-row">
+              <span class="label">Pressao arterial</span>
+              <span class="value" style="color: #dc2626;">140/85 mmHg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Frequencia cardiaca</span>
+              <span class="value">76 bpm</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Glicemia jejum</span>
+              <span class="value" style="color: #d97706;">132 mg/dL</span>
+            </div>
+            <div class="info-row">
+              <span class="label">HbA1c</span>
+              <span class="value" style="color: #d97706;">7.2%</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Peso</span>
+              <span class="value">68 kg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">IMC</span>
+              <span class="value" style="color: #d97706;">27.2 (sobrepeso)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">SpO2</span>
+              <span class="value" style="color: #16a34a;">97%</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Temperatura</span>
+              <span class="value">36.4 C</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Ultimos sinais vitais — Pai</h4>
+            <div class="info-row">
+              <span class="label">Pressao arterial</span>
+              <span class="value" style="color: #d97706;">135/80 mmHg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Frequencia cardiaca</span>
+              <span class="value">72 bpm</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Glicemia jejum</span>
+              <span class="value" style="color: #d97706;">108 mg/dL</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Colesterol total</span>
+              <span class="value" style="color: #d97706;">210 mg/dL</span>
+            </div>
+            <div class="info-row">
+              <span class="label">LDL</span>
+              <span class="value" style="color: #dc2626;">140 mg/dL</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Peso</span>
+              <span class="value">82 kg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">IMC</span>
+              <span class="value" style="color: #d97706;">27.1 (sobrepeso)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">SpO2</span>
+              <span class="value" style="color: #16a34a;">98%</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Ultimos sinais vitais — Eu (Hermano)</h4>
+            <div class="info-row">
+              <span class="label">Pressao arterial</span>
+              <span class="value" style="color: #16a34a;">120/75 mmHg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Frequencia cardiaca</span>
+              <span class="value">68 bpm</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Glicemia jejum</span>
+              <span class="value" style="color: #16a34a;">88 mg/dL</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Peso</span>
+              <span class="value">75 kg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">IMC</span>
+              <span class="value" style="color: #16a34a;">23.7 (normal)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">SpO2</span>
+              <span class="value" style="color: #16a34a;">99%</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Ultimos sinais vitais — Dona Marly</h4>
+            <div class="info-row">
+              <span class="label">Pressao arterial</span>
+              <span class="value" style="color: #16a34a;">130/80 mmHg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Frequencia cardiaca</span>
+              <span class="value">74 bpm</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Glicemia jejum</span>
+              <span class="value" style="color: #16a34a;">95 mg/dL</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Peso</span>
+              <span class="value">62 kg</span>
+            </div>
+            <div class="info-row">
+              <span class="label">IMC</span>
+              <span class="value" style="color: #d97706;">25.8 (sobrepeso)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">SpO2</span>
+              <span class="value" style="color: #16a34a;">97%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 4: NOTAS DE CONSULTA                    -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="notas">
+        <h2 class="section-title">Notas de Consulta</h2>
+        <p class="section-subtitle">Historico de consultas com anotacoes em formato SOAP (Subjetivo, Objetivo, Avaliacao, Plano).</p>
+
+        <div class="patient-select">
+          <button class="patient-select-btn active" onclick="showNotes('istelina', this)">Vo Istelina</button>
+          <button class="patient-select-btn" onclick="showNotes('pai', this)">Pai</button>
+          <button class="patient-select-btn" onclick="showNotes('hermano', this)">Eu (Hermano)</button>
+          <button class="patient-select-btn" onclick="showNotes('mae', this)">Mae</button>
+          <button class="patient-select-btn" onclick="showNotes('marly', this)">Dona Marly</button>
+        </div>
+
+        <!-- Istelina notes -->
+        <div class="notes-container" id="notes-istelina">
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">05/01/2026 — Consulta de rotina</span>
+              <span class="note-type badge badge-red">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Paciente refere dor em joelho direito, piora ao subir escadas. Nega dor toracica. Refere boa adesao medicamentosa. Ocasionalmente esquece a Metformina da tarde.</p>
+              <p><span class="note-soap-label">O:</span> PA 140/85 mmHg (acima do alvo). FC 76 bpm. Peso 68 kg. Glicemia jejum 132 mg/dL. HbA1c 7.2%. TSH 3.1 mUI/L. Joelho D com crepitacao, sem derrame articular.</p>
+              <p><span class="note-soap-label">A:</span> HAS com controle subotimo. DM2 com HbA1c acima da meta (alvo < 7%). Hipotireoidismo controlado. Osteoartrose de joelhos estavel.</p>
+              <p><span class="note-soap-label">P:</span> Manter Losartana 50mg 1x/dia. Reforcar importancia da Metformina 2x/dia. Solicitar funcao renal, eletrolitos, ECG em abril. Paracetamol para dor. Orientar exercicios de baixo impacto. Retorno em 3 meses.</p>
+            </div>
+          </div>
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">15/10/2025 — Consulta de rotina</span>
+              <span class="note-type badge badge-blue">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Nega queixas novas. Refere boa tolerancia as medicacoes. Dorme bem. Apetite preservado.</p>
+              <p><span class="note-soap-label">O:</span> PA 138/82 mmHg. FC 74 bpm. Peso 67.5 kg. Glicemia jejum 128 mg/dL. HbA1c 7.0%. Exame fisico sem alteracoes significativas.</p>
+              <p><span class="note-soap-label">A:</span> HAS controlada (limiar aceitavel). DM2 no alvo. Hipotireoidismo compensado.</p>
+              <p><span class="note-soap-label">P:</span> Manter medicacoes. Reforcar dieta hipossodica. Proximo retorno: jan/2026. Hemograma, glicemia, HbA1c, TSH para proximo retorno.</p>
+            </div>
+          </div>
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">10/07/2025 — Consulta de retorno</span>
+              <span class="note-type badge badge-green">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Queixa de episodio de tontura ao levantar rapidamente. Hipoglicemia nao referida. Boa disposicao geral.</p>
+              <p><span class="note-soap-label">O:</span> PA 145/88 mmHg. FC 78 bpm. Peso 68.2 kg. Ortostatismo positivo (queda 15 mmHg sistolica). Glicemia capilar 118 mg/dL.</p>
+              <p><span class="note-soap-label">A:</span> Hipotensao ortostatica leve. HAS com picos. DM2 estavel.</p>
+              <p><span class="note-soap-label">P:</span> Orientar levantar-se lentamente. Manter Losartana. Aumentar ingesta hidrica. Monitorar PA domiciliar. Retorno em 3 meses.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pai notes -->
+        <div class="notes-container" id="notes-pai" style="display: none;">
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">22/02/2026 — Consulta de rotina</span>
+              <span class="note-type badge badge-amber">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Refere boa adesao medicamentosa. Nega dor toracica, dispneia ou claudicacao. Queixa de ganho de peso recente (~2 kg em 3 meses).</p>
+              <p><span class="note-soap-label">O:</span> PA 135/80 mmHg. FC 72 bpm. Peso 82 kg (aumento de 2 kg). Colesterol total 210 mg/dL. LDL 140 mg/dL (acima do alvo). Glicemia jejum 108 mg/dL.</p>
+              <p><span class="note-soap-label">A:</span> HAS controlada com Enalapril. Dislipidemia com LDL fora do alvo apesar de Sinvastatina. Pre-diabetes com glicemia limiar. Ganho ponderal progressivo.</p>
+              <p><span class="note-soap-label">P:</span> Solicitar hemograma e funcao renal. Avaliar troca de Sinvastatina por Atorvastatina se LDL persistir elevado. Reforcar dieta e atividade fisica. Retorno em 3 meses com exames.</p>
+            </div>
+          </div>
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">20/11/2025 — Consulta de retorno</span>
+              <span class="note-type badge badge-blue">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Paciente assintomatico. Refere ter iniciado caminhadas 3x/semana. Boa disposicao.</p>
+              <p><span class="note-soap-label">O:</span> PA 130/78 mmHg. FC 70 bpm. Peso 80 kg. Exames laboratoriais dentro do esperado.</p>
+              <p><span class="note-soap-label">A:</span> Melhora do controle pressao com atividade fisica. Manter conduta.</p>
+              <p><span class="note-soap-label">P:</span> Manter medicacoes. Incentivar manutencao dos exercicios. Perfil lipidico em 3 meses. Retorno: fev/2026.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hermano notes -->
+        <div class="notes-container" id="notes-hermano" style="display: none;">
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">10/03/2026 — Check-up preventivo</span>
+              <span class="note-type badge badge-green">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Sem queixas. Pratica atividade fisica regular. Alimentacao equilibrada. Sono adequado (~7h/noite).</p>
+              <p><span class="note-soap-label">O:</span> PA 120/75 mmHg. FC 68 bpm. Peso 75 kg. IMC 23.7. Glicemia jejum 88 mg/dL. Perfil lipidico normal. Hemograma normal. Funcao renal e hepatica normais.</p>
+              <p><span class="note-soap-label">A:</span> Paciente saudavel, sem fatores de risco identificados. Exames preventivos completos e dentro da normalidade.</p>
+              <p><span class="note-soap-label">P:</span> Manter estilo de vida saudavel. Proximo check-up: set/2026. Nenhuma medicacao necessaria.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mae notes -->
+        <div class="notes-container" id="notes-mae" style="display: none;">
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">15/03/2026 — Consulta de rotina</span>
+              <span class="note-type badge badge-green">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Sem queixas relevantes. Refere leve ansiedade situacional, sem prejuizo funcional. Boa disposicao geral.</p>
+              <p><span class="note-soap-label">O:</span> PA 125/78 mmHg. FC 72 bpm. Peso 65 kg. Glicemia jejum 92 mg/dL. Exames laboratoriais normais. Mamografia agendada para mai/2026.</p>
+              <p><span class="note-soap-label">A:</span> Saude geral boa. Rastreamentos em dia. Leve sobrepeso.</p>
+              <p><span class="note-soap-label">P:</span> Orientar atividade fisica regular. Agendar mamografia. Retorno em 3 meses. Orientar dieta para controle de peso.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Marly notes -->
+        <div class="notes-container" id="notes-marly" style="display: none;">
+          <div class="note-card">
+            <div class="note-header">
+              <span class="note-date">20/03/2026 — Consulta de rotina</span>
+              <span class="note-type badge badge-amber">Presencial</span>
+            </div>
+            <div class="note-body">
+              <p><span class="note-soap-label">S:</span> Refere melhora dos sintomas de refluxo com Omeprazol. Nega dor toracica ou dispneia. Boa adesao medicamentosa.</p>
+              <p><span class="note-soap-label">O:</span> PA 130/80 mmHg (aceitavel). FC 74 bpm. Peso 62 kg. Exame fisico sem alteracoes. Alergia a Sulfa documentada.</p>
+              <p><span class="note-soap-label">A:</span> HAS controlada com Anlodipino. DRGE em remissao com Omeprazol. Boa adesao terapeutica.</p>
+              <p><span class="note-soap-label">P:</span> Manter Anlodipino 5mg e Omeprazol 20mg. Avaliar possibilidade de reducao do Omeprazol em 6 meses. Retorno em 3 meses (jun/2026).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 5: CONTROLE DE MEDICACOES               -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="medicacoes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Controle de Medicacoes</h2>
+            <span style="font-size: 0.825rem; color: var(--color-text-light);">Estoque, validades, interacoes e custo medio mensal</span>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active" data-medfilter="todos" onclick="filterMeds('todos', this)">Todos</button>
+            <button class="filter-btn" data-medfilter="alerta" onclick="filterMeds('alerta', this)">Com alerta</button>
+          </div>
+        </div>
+
+        <!-- Medication Interaction Warnings -->
+        <div class="interaction-warn severity-high">
+          <span class="interaction-warn-icon">&#9888;</span>
+          <div>
+            <strong>Interacao — AAS + Enalapril (Pai)</strong>
+            <p>O uso concomitante de AAS com inibidores da ECA (Enalapril) pode reduzir o efeito anti-hipertensivo do Enalapril. Monitorar pressao arterial regularmente. Considerar AAS em dose baixa (100mg) e avaliar risco-beneficio.</p>
+          </div>
+        </div>
+        <div class="interaction-warn">
+          <span class="interaction-warn-icon">&#9888;</span>
+          <div>
+            <strong>Atencao — Levotiroxina + Metformina (Vo Istelina)</strong>
+            <p>Metformina pode alterar os niveis de TSH em pacientes com hipotireoidismo. Recomenda-se monitorar TSH a cada 6 meses. Manter Levotiroxina em jejum, 30-60min antes de qualquer outra medicacao.</p>
+          </div>
+        </div>
+        <div class="interaction-warn">
+          <span class="interaction-warn-icon">&#9888;</span>
+          <div>
+            <strong>Atencao — Omeprazol uso prolongado (Dona Marly)</strong>
+            <p>Uso prolongado de IBP (> 1 ano) pode aumentar risco de deficiencia de vitamina B12, magnesio e fraturas osteoporoticas. Avaliar reducao de dose ou descontinuacao periodica. Dosar B12 e magnesio anualmente.</p>
+          </div>
+        </div>
+
+        <!-- Card layout for medications -->
+        <div class="med-cards" id="medCards">
+          <div class="med-card" data-medstatus="critical">
+            <div class="med-card-status med-status-critical">Estoque baixo</div>
+            <div class="med-card-name">Enalapril 10mg</div>
+            <div class="med-card-patient">Pai — 2x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span style="font-weight: 600; color: #dc2626;">20 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>05/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 15,80</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-critical" style="width: 22%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="warn">
+            <div class="med-card-status med-status-warn">Repor em breve</div>
+            <div class="med-card-name">Metformina 850mg</div>
+            <div class="med-card-patient">Vo Istelina — 2x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span style="font-weight: 600; color: #d97706;">30 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>06/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 18,50</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-warn" style="width: 50%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="warn">
+            <div class="med-card-status med-status-warn">Repor em breve</div>
+            <div class="med-card-name">Omeprazol 20mg</div>
+            <div class="med-card-patient">Dona Marly — 1x/dia (jejum)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span style="font-weight: 600; color: #d97706;">28 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>04/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 11,90</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-warn" style="width: 47%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Losartana 50mg</div>
+            <div class="med-card-patient">Vo Istelina — 1x/dia (manha)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>45 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>08/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 12,90</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 75%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Levotiroxina 50mcg</div>
+            <div class="med-card-patient">Vo Istelina — 1x/dia (jejum)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>60 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>12/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 22,00</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Sinvastatina 20mg</div>
+            <div class="med-card-patient">Pai — 1x/dia (noite)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>50 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>09/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 19,90</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 83%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">AAS 100mg</div>
+            <div class="med-card-patient">Pai — 1x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>90 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>11/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 8,50</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Anlodipino 5mg</div>
+            <div class="med-card-patient">Dona Marly — 1x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>40 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>07/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 14,20</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 67%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost summary -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Resumo de custos mensais</h4>
+            <div class="info-row">
+              <span class="label">Vo Istelina (3 medicacoes)</span>
+              <span class="value">R$ 53,40</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Pai (3 medicacoes)</span>
+              <span class="value">R$ 44,20</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Dona Marly (2 medicacoes)</span>
+              <span class="value">R$ 26,10</span>
+            </div>
+            <div class="info-row" style="border-top: 2px solid var(--color-border); margin-top: 0.5rem; padding-top: 0.75rem;">
+              <span class="label"><strong>Total mensal</strong></span>
+              <span class="value" style="color: var(--color-accent);"><strong>R$ 123,70</strong></span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Custo por paciente</h4>
+            <div class="bar-chart" style="height: 100px;">
+              <div class="bar-col">
+                <div class="bar-value">R$53</div>
+                <div class="bar bar-blue" style="height: 100%;"></div>
+                <div class="bar-label">Istelina</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">R$44</div>
+                <div class="bar bar-blue" style="height: 82%;"></div>
+                <div class="bar-label">Pai</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">R$26</div>
+                <div class="bar bar-blue" style="height: 49%;"></div>
+                <div class="bar-label">Marly</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">R$0</div>
+                <div class="bar bar-green" style="height: 3%;"></div>
+                <div class="bar-label">Outros</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 6: CONTROLE DE EXAMES                   -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="exames">
+        <h2 class="section-title">Controle de Exames</h2>
+        <p class="section-subtitle">Rastreamento por idade e condicoes. Linha do tempo e calendario de triagem.</p>
+
+        <!-- Visual Timeline -->
+        <div class="timeline-view">
+          <div class="tl-month-header">Janeiro 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">05/01</span>
+            <span class="tl-event-name">Hemograma, Glicemia, HbA1c, TSH</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">05/01</span>
+            <span class="tl-event-name">Hemograma basico</span>
+            <span class="tl-event-patient">Vo Antonio</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-month-header">Fevereiro 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">22/02</span>
+            <span class="tl-event-name">Perfil lipidico, Glicemia jejum</span>
+            <span class="tl-event-patient">Pai</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-month-header">Marco 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">10/03</span>
+            <span class="tl-event-name">Check-up completo (laboratorio + fisico)</span>
+            <span class="tl-event-patient">Hermano</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">15/03</span>
+            <span class="tl-event-name">Hemograma, Glicemia, Perfil lipidico</span>
+            <span class="tl-event-patient">Mae</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">20/03</span>
+            <span class="tl-event-name">Hemograma, PA, Avaliacao clinica</span>
+            <span class="tl-event-patient">D. Marly</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-month-header" style="color: #dc2626;">Abril 2026 (atual)</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-overdue"></span>
+            <span class="tl-event-date">05/04</span>
+            <span class="tl-event-name">Funcao renal, Eletrolitos, ECG</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-red">Vencido</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-overdue"></span>
+            <span class="tl-event-date">05/04</span>
+            <span class="tl-event-name">ECG, PSA, Hemograma</span>
+            <span class="tl-event-patient">Vo Antonio</span>
+            <span class="badge badge-red">Vencido</span>
+          </div>
+          <div class="tl-month-header">Maio 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-scheduled"></span>
+            <span class="tl-event-date">22/05</span>
+            <span class="tl-event-name">Hemograma, Funcao renal</span>
+            <span class="tl-event-patient">Pai</span>
+            <span class="badge badge-amber">Agendado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Mai</span>
+            <span class="tl-event-name">Mamografia</span>
+            <span class="tl-event-patient">Mae</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+          <div class="tl-month-header">Julho 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Jul</span>
+            <span class="tl-event-name">Hemograma, Glicemia, HbA1c</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+          <div class="tl-month-header">Setembro 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Set</span>
+            <span class="tl-event-name">Check-up anual</span>
+            <span class="tl-event-patient">Hermano</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Set</span>
+            <span class="tl-event-name">Check-up semestral</span>
+            <span class="tl-event-patient">Mae, D. Marly</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+          <div class="tl-month-header">Outubro 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Out</span>
+            <span class="tl-event-name">Check-up completo anual</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+        </div>
+
+        <!-- Status per patient -->
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Status de exames por paciente</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Ultimo check-up</th>
+                <th>Exames em dia</th>
+                <th>Pendentes</th>
+                <th>Proximo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td>10/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td>
+                <td style="color: var(--color-text-light);">—</td>
+                <td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Pai</td>
+                <td>22/02/2026</td>
+                <td><span class="badge badge-amber">Parcial</span></td>
+                <td>Hemograma, Funcao renal</td>
+                <td>Mai 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Mae</td>
+                <td>15/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td>
+                <td style="color: var(--color-text-light);">—</td>
+                <td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Istelina</td>
+                <td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td>
+                <td><strong>Funcao renal, Eletrolitos, ECG</strong></td>
+                <td style="color: #dc2626; font-weight: 600;">Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Antonio</td>
+                <td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td>
+                <td><strong>ECG, PSA, Hemograma</strong></td>
+                <td style="color: #dc2626; font-weight: 600;">Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Dona Marly</td>
+                <td>20/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td>
+                <td style="color: var(--color-text-light);">—</td>
+                <td>Set 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Exames basicos iniciais (todos os pacientes)</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exame</th>
+                <th>Descricao</th>
+                <th>Frequencia padrao</th>
+                <th>Indicacao</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Hemograma completo</td>
+                <td>Avaliacao global das celulas sanguineas</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Glicemia de jejum</td>
+                <td>Rastreio de diabetes</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Perfil lipidico</td>
+                <td>Colesterol total, HDL, LDL, triglicerideos</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Funcao renal</td>
+                <td>Creatinina, ureia, TFG</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Funcao hepatica</td>
+                <td>TGO, TGP, GGT</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">TSH</td>
+                <td>Rastreio de tireoide</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">ECG</td>
+                <td>Eletrocardiograma de repouso</td>
+                <td>Anual (> 40 anos) / bianual</td>
+                <td><span class="badge badge-amber">> 40 anos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Urina tipo 1 (EAS)</td>
+                <td>Rastreio renal e urinario</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vitamina D (25-OH)</td>
+                <td>Rastreio de deficiencia</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Rastreamento por idade e condicao</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exame de rastreio</th>
+                <th>Populacao-alvo</th>
+                <th>Frequencia</th>
+                <th>Pacientes aplicaveis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Mamografia</td>
+                <td>Mulheres > 40 anos</td>
+                <td>Anual ou bianual</td>
+                <td>Mae, Vo Istelina, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Colonoscopia</td>
+                <td>Todos > 45 anos</td>
+                <td>A cada 10 anos (se normal)</td>
+                <td>Pai, Mae, Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">PSA</td>
+                <td>Homens > 50 anos</td>
+                <td>Anual (discutir com paciente)</td>
+                <td>Pai, Vo Antonio</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Densitometria ossea</td>
+                <td>Mulheres > 65 anos / Homens > 70</td>
+                <td>A cada 2 anos</td>
+                <td>Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">HbA1c</td>
+                <td>Diabeticos / pre-diabeticos</td>
+                <td>Trimestral ou semestral</td>
+                <td>Vo Istelina, Pai</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Fundo de olho</td>
+                <td>Diabeticos</td>
+                <td>Anual</td>
+                <td>Vo Istelina</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Ecocardiograma</td>
+                <td>Hipertensos / cardiopatias</td>
+                <td>Anual ou bianual</td>
+                <td>Pai, Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 7: VACINACAO                            -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="vacinas">
+        <h2 class="section-title">Controle de Vacinacao</h2>
+        <p class="section-subtitle">Calendario vacinal por paciente, baseado em idade e condicoes de saude.</p>
+
+        <div class="patient-select">
+          <button class="patient-select-btn active" onclick="showVaccines('istelina', this)">Vo Istelina</button>
+          <button class="patient-select-btn" onclick="showVaccines('pai', this)">Pai</button>
+          <button class="patient-select-btn" onclick="showVaccines('hermano', this)">Eu (Hermano)</button>
+          <button class="patient-select-btn" onclick="showVaccines('mae', this)">Mae</button>
+          <button class="patient-select-btn" onclick="showVaccines('antonio', this)">Vo Antonio</button>
+          <button class="patient-select-btn" onclick="showVaccines('marly', this)">Dona Marly</button>
+        </div>
+
+        <!-- Istelina vaccines -->
+        <div class="vaccine-container" id="vaccines-istelina">
+          <div class="vaccine-grid">
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Influenza (Gripe)</div>
+              <div class="vaccine-detail">Aplicada: 15/03/2026<br>Proxima dose: Mar 2027</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">COVID-19 (Bivalente)</div>
+              <div class="vaccine-detail">Aplicada: 10/11/2025<br>Proxima dose: Nov 2026</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Pneumococica 23-valente</div>
+              <div class="vaccine-detail">Aplicada: 20/06/2024<br>Proxima dose: Jun 2029</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Herpes Zoster (Shingrix)</div>
+              <div class="vaccine-detail">Indicada: > 50 anos<br>Status: Nao iniciada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">dT (Dupla adulto)</div>
+              <div class="vaccine-detail">Aplicada: 05/08/2023<br>Proxima dose: Ago 2033</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Hepatite B</div>
+              <div class="vaccine-detail">Esquema incompleto<br>Necessita reforco</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pai vaccines -->
+        <div class="vaccine-container" id="vaccines-pai" style="display: none;">
+          <div class="vaccine-grid">
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Influenza (Gripe)</div>
+              <div class="vaccine-detail">Aplicada: 20/03/2026<br>Proxima dose: Mar 2027</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">COVID-19 (Bivalente)</div>
+              <div class="vaccine-detail">Aplicada: 15/10/2025<br>Proxima dose: Out 2026</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Pneumococica 23-valente</div>
+              <div class="vaccine-detail">Indicada: > 60 anos com comorbidades<br>Status: Nao aplicada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Herpes Zoster (Shingrix)</div>
+              <div class="vaccine-detail">Indicada: > 50 anos<br>Status: Nao iniciada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">dT (Dupla adulto)</div>
+              <div class="vaccine-detail">Aplicada: 12/04/2022<br>Proxima dose: Abr 2032</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Hepatite B</div>
+              <div class="vaccine-detail">Esquema completo (3 doses)<br>Sem necessidade de reforco</div>
+              <div class="vaccine-status-badge badge-green">Completa</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hermano vaccines -->
+        <div class="vaccine-container" id="vaccines-hermano" style="display: none;">
+          <div class="vaccine-grid">
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Influenza (Gripe)</div>
+              <div class="vaccine-detail">Aplicada: 01/04/2026<br>Proxima dose: Abr 2027</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">COVID-19 (Bivalente)</div>
+              <div class="vaccine-detail">Aplicada: 20/09/2025<br>Proxima dose: Set 2026</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">dT (Dupla adulto)</div>
+              <div class="vaccine-detail">Aplicada: 15/01/2024<br>Proxima dose: Jan 2034</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Hepatite B</div>
+              <div class="vaccine-detail">Esquema completo (3 doses)<br>Anti-HBs > 10 mUI/mL</div>
+              <div class="vaccine-status-badge badge-green">Completa</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Febre Amarela</div>
+              <div class="vaccine-detail">Aplicada: 10/06/2020<br>Dose unica (vitalicia)</div>
+              <div class="vaccine-status-badge badge-green">Completa</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Triplice Viral (SCR)</div>
+              <div class="vaccine-detail">2 doses completas<br>Esquema finalizado</div>
+              <div class="vaccine-status-badge badge-green">Completa</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mae vaccines -->
+        <div class="vaccine-container" id="vaccines-mae" style="display: none;">
+          <div class="vaccine-grid">
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Influenza (Gripe)</div>
+              <div class="vaccine-detail">Aplicada: 18/03/2026<br>Proxima dose: Mar 2027</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">COVID-19 (Bivalente)</div>
+              <div class="vaccine-detail">Aplicada: 05/10/2025<br>Proxima dose: Out 2026</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">dT (Dupla adulto)</div>
+              <div class="vaccine-detail">Aplicada: 22/05/2023<br>Proxima dose: Mai 2033</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Herpes Zoster (Shingrix)</div>
+              <div class="vaccine-detail">Indicada: > 50 anos<br>Status: Nao iniciada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Hepatite B</div>
+              <div class="vaccine-detail">Esquema completo (3 doses)</div>
+              <div class="vaccine-status-badge badge-green">Completa</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Antonio vaccines -->
+        <div class="vaccine-container" id="vaccines-antonio" style="display: none;">
+          <div class="vaccine-grid">
+            <div class="vaccine-card vaccine-overdue">
+              <div class="vaccine-name">Influenza (Gripe)</div>
+              <div class="vaccine-detail">Ultima: Mar 2025<br>Vencida — necessita nova dose</div>
+              <div class="vaccine-status-badge badge-red">Atrasada</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">COVID-19 (Bivalente)</div>
+              <div class="vaccine-detail">Aplicada: 12/11/2025<br>Proxima dose: Nov 2026</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Pneumococica 23-valente</div>
+              <div class="vaccine-detail">Indicada: > 60 anos<br>Status: Nao aplicada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+            <div class="vaccine-card vaccine-overdue">
+              <div class="vaccine-name">dT (Dupla adulto)</div>
+              <div class="vaccine-detail">Ultima dose: 2013<br>Atrasada > 10 anos</div>
+              <div class="vaccine-status-badge badge-red">Atrasada</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Herpes Zoster (Shingrix)</div>
+              <div class="vaccine-detail">Indicada: > 50 anos<br>Status: Nao iniciada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Marly vaccines -->
+        <div class="vaccine-container" id="vaccines-marly" style="display: none;">
+          <div class="vaccine-grid">
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Influenza (Gripe)</div>
+              <div class="vaccine-detail">Aplicada: 22/03/2026<br>Proxima dose: Mar 2027</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">COVID-19 (Bivalente)</div>
+              <div class="vaccine-detail">Aplicada: 18/10/2025<br>Proxima dose: Out 2026</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">Pneumococica 23-valente</div>
+              <div class="vaccine-detail">Aplicada: 15/09/2024<br>Proxima dose: Set 2029</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+            <div class="vaccine-card vaccine-pending">
+              <div class="vaccine-name">Herpes Zoster (Shingrix)</div>
+              <div class="vaccine-detail">Indicada: > 50 anos<br>Status: Nao iniciada</div>
+              <div class="vaccine-status-badge badge-amber">Pendente</div>
+            </div>
+            <div class="vaccine-card vaccine-done">
+              <div class="vaccine-name">dT (Dupla adulto)</div>
+              <div class="vaccine-detail">Aplicada: 10/02/2021<br>Proxima dose: Fev 2031</div>
+              <div class="vaccine-status-badge badge-green">Em dia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 8: EMERGENCIA / SUPORTE                 -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="suporte">
+        <h2 class="section-title">Mapeamento do Suporte de Saude</h2>
+        <p class="section-subtitle">Contatos de emergencia, protocolos e rede de apoio por paciente.</p>
+
+        <!-- Emergency banner -->
+        <div class="emergency-banner">
+          <div class="emergency-banner-header">
+            Protocolo de emergencia geral
+          </div>
+          <div class="emergency-banner-body">
+            <div class="emergency-numbers">
+              <div class="emergency-num">
+                <div class="num">192</div>
+                <div class="num-label">SAMU</div>
+              </div>
+              <div class="emergency-num">
+                <div class="num">193</div>
+                <div class="num-label">Bombeiros</div>
+              </div>
+              <div class="emergency-num">
+                <div class="num">190</div>
+                <div class="num-label">Emergencia</div>
+              </div>
+            </div>
+            <div class="emergency-instructions">
+              <strong>Em caso de dor toracica, falta de ar severa, AVC (fala arrastada, fraqueza de um lado) ou perda de consciencia:</strong> ligar 192 imediatamente e encaminhar para a emergencia mais proxima.
+            </div>
+          </div>
+        </div>
+
+        <!-- Patient support network -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Vo Istelina — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Pai (filho)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Cuidador</span>
+              <span class="value">Neta Maria</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Sao Lucas</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">SUS + particular</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value" style="color: #dc2626; font-weight: 700;">Dipirona</span>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #92400e; background: #fffbeb; padding: 0.5rem 0.75rem; border-radius: 6px; line-height: 1.5;"><strong>Se hipoglicemia:</strong> oferecer suco de laranja ou sache de glicose. Se desmaio, SAMU 192.</p>
+          </div>
+          <div class="detail-card">
+            <h4>Vo Antonio — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Pai (filho)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Sao Lucas</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">SUS</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value">Nenhuma conhecida</span>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #92400e; background: #fffbeb; padding: 0.5rem 0.75rem; border-radius: 6px; line-height: 1.5;"><strong>Risco de queda:</strong> ambiente adaptado, tapetes removidos, barras no banheiro.</p>
+          </div>
+          <div class="detail-card">
+            <h4>Pai — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Mae (esposa)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Santa Casa</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">Unimed</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value" style="color: #dc2626; font-weight: 700;">Penicilina</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Dona Marly — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Filha Ana</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Santa Casa</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">Unimed</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value" style="color: #dc2626; font-weight: 700;">Sulfa</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency protocols -->
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Protocolos de emergencia</h3>
+        <div class="protocol-grid">
+          <div class="protocol-card">
+            <div class="protocol-card-header p-red">
+              Dor no peito
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Sentar o paciente, afrouxar roupas</li>
+                <li>Se usar AAS, mastigar 1 comprimido</li>
+                <li>Ligar SAMU 192</li>
+                <li>Nao dar agua ou comida</li>
+              </ol>
+            </div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-amber">
+              Hipoglicemia (tremor, suor frio, confusao)
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Oferecer 15g de carboidrato rapido (suco, mel)</li>
+                <li>Aguardar 15 minutos, medir novamente</li>
+                <li>Se inconsciente: SAMU 192, nao dar via oral</li>
+                <li>Posicao lateral de seguranca</li>
+              </ol>
+            </div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-blue">
+              Queda com suspeita de fratura
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Nao mover o paciente</li>
+                <li>Imobilizar o membro</li>
+                <li>Aplicar gelo (protegido com pano)</li>
+                <li>Encaminhar para emergencia</li>
+              </ol>
+            </div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-red">
+              Crise hipertensiva (PA > 180/110)
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Repouso absoluto</li>
+                <li>Verificar se tomou medicacao</li>
+                <li>Com sintomas (cefaleia, visao turva): SAMU 192</li>
+                <li>Assintomatico: medicar e reavaliar em 30 min</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 9: PLANO E VALORES                      -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="plano">
+        <h2 class="section-title">Plano e Valores</h2>
+        <p class="section-subtitle">Estrutura de precos da pratica 100 Pessoas.</p>
+
+        <div class="pricing-hero">
+          <div class="pricing-price">R$ 500</div>
+          <div class="pricing-label">Consulta inicial — Avaliacao completa</div>
+          <div class="pricing-divider"></div>
+          <div class="pricing-note">Inclui anamnese detalhada, exame fisico, plano de cuidado personalizado e solicitacao de exames iniciais.</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>O que inclui a consulta inicial</h4>
+            <ul>
+              <li>Anamnese completa (historico pessoal e familiar)</li>
+              <li>Exame fisico detalhado</li>
+              <li>Revisao de medicacoes em uso</li>
+              <li>Solicitacao de exames laboratoriais basicos</li>
+              <li>ECG (se indicado)</li>
+              <li>Plano de cuidado individualizado</li>
+              <li>Calendario de exames personalizado</li>
+              <li>Mapeamento de rede de suporte</li>
+            </ul>
+          </div>
+          <div class="detail-card">
+            <h4>Modelo de acompanhamento</h4>
+            <ul>
+              <li><strong>Consultas de retorno:</strong> a cada 3-6 meses (conforme necessidade)</li>
+              <li><strong>Contato via mensagem:</strong> disponivel para duvidas rapidas</li>
+              <li><strong>Gestao de medicacoes:</strong> controle de estoque e renovacao de receitas</li>
+              <li><strong>Coordenacao de cuidado:</strong> encaminhamentos e comunicacao com especialistas</li>
+              <li><strong>Limite:</strong> ate 100 pacientes para garantir qualidade</li>
+            </ul>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Capacidade e metas</h4>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.825rem; margin-bottom: 0.35rem;">
+                <span>6 de 100 pacientes</span>
+                <span style="font-weight: 600;">6%</span>
+              </div>
+              <div style="background: var(--v3-bg-surface); border-radius: 6px; height: 10px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, var(--color-accent), #3b82f6); height: 100%; width: 6%; border-radius: 6px; transition: width 0.3s;"></div>
+              </div>
+            </div>
+            <div class="detail-grid" style="margin-bottom: 0;">
+              <div>
+                <div class="info-row">
+                  <span class="label">Vagas disponiveis</span>
+                  <span class="value" style="color: #16a34a;">94</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Meta para 2026</span>
+                  <span class="value">20 pacientes</span>
+                </div>
+              </div>
+              <div>
+                <div class="info-row">
+                  <span class="label">Receita potencial (20 pac.)</span>
+                  <span class="value" style="color: var(--color-accent);">R$ 10.000</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Progresso da meta</span>
+                  <span class="value">6 / 20 (30%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.container -->
   </main>
+
+  <!-- ============================================ -->
+  <!-- PATIENT DETAIL MODAL                        -->
+  <!-- ============================================ -->
+  <div class="modal-overlay" id="patientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalPatientName">
+          <span class="status-dot" id="modalDot"></span>
+          <span id="modalName">Paciente</span>
+        </h2>
+        <button class="modal-close" onclick="closePatientModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="modal-tab active" onclick="switchModalTab('m-resumo', this)">Resumo</button>
+          <button class="modal-tab" onclick="switchModalTab('m-vitais', this)">Sinais Vitais</button>
+          <button class="modal-tab" onclick="switchModalTab('m-meds', this)">Medicacoes</button>
+          <button class="modal-tab" onclick="switchModalTab('m-notas', this)">Notas</button>
+          <button class="modal-tab" onclick="switchModalTab('m-vacinas', this)">Vacinas</button>
+        </div>
+        <div class="modal-section active" id="m-resumo"></div>
+        <div class="modal-section" id="m-vitais"></div>
+        <div class="modal-section" id="m-meds"></div>
+        <div class="modal-section" id="m-notas"></div>
+        <div class="modal-section" id="m-vacinas"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closePatientModal()">Fechar</button>
+        <button class="btn-primary" onclick="printPatientSummary()">Imprimir resumo</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>100 Pessoas — MedStack Lab</p>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================
+    // Patient Data Store
+    // =============================================
+    const PATIENTS = {
+      hermano: {
+        name: 'Eu (Hermano)', age: 32, dot: 'dot-green', status: 'Em dia',
+        statusClass: 'badge-green', birth: '15/05/1993', blood: '—', allergies: 'Nenhuma conhecida',
+        weight: 75, height: 1.78,
+        conditions: [],
+        meds: [],
+        lastVisit: '10/03/2026',
+        vitals: { pa: '120/75', fc: '68', glic: '88', spo2: '99%', temp: '36.2' },
+        notes: [
+          { date: '10/03/2026', type: 'Check-up', typeClass: 'badge-green',
+            soap: { s: 'Sem queixas. Pratica atividade fisica regular. Sono adequado.', o: 'PA 120/75 mmHg. FC 68 bpm. Peso 75 kg. IMC 23.7. Todos exames normais.', a: 'Paciente saudavel, sem fatores de risco.', p: 'Manter estilo de vida. Proximo check-up: set/2026.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'dT (em dia)', 'Hepatite B (completa)', 'Febre Amarela (completa)', 'Triplice Viral (completa)']
+      },
+      pai: {
+        name: 'Pai', age: 63, dot: 'dot-amber', status: 'Exame pendente',
+        statusClass: 'badge-amber', birth: '—', blood: 'O+', allergies: 'Penicilina',
+        weight: 82, height: 1.74,
+        conditions: ['HAS', 'Dislipidemia', 'Pre-diabetes'],
+        meds: ['Enalapril 10mg 2x/dia', 'Sinvastatina 20mg 1x/dia (noite)', 'AAS 100mg 1x/dia'],
+        lastVisit: '22/02/2026',
+        vitals: { pa: '135/80', fc: '72', glic: '108', ct: '210', ldl: '140', spo2: '98%', temp: '36.3' },
+        notes: [
+          { date: '22/02/2026', type: 'Rotina', typeClass: 'badge-amber',
+            soap: { s: 'Boa adesao. Ganho de peso recente (~2 kg em 3 meses).', o: 'PA 135/80 mmHg. Peso 82 kg. CT 210, LDL 140, Glic 108.', a: 'HAS controlada. LDL fora do alvo. Pre-diabetes limiar.', p: 'Hemograma + funcao renal. Avaliar troca de estatina. Reforcar dieta.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'Pneumococica (pendente)', 'Herpes Zoster (pendente)', 'dT (em dia)', 'Hepatite B (completa)']
+      },
+      mae: {
+        name: 'Mae', age: 60, dot: 'dot-green', status: 'Em dia',
+        statusClass: 'badge-green', birth: '—', blood: '—', allergies: 'Nenhuma conhecida',
+        weight: 65, height: 1.60,
+        conditions: [],
+        meds: [],
+        lastVisit: '15/03/2026',
+        vitals: { pa: '125/78', fc: '72', glic: '92', spo2: '98%', temp: '36.3' },
+        notes: [
+          { date: '15/03/2026', type: 'Rotina', typeClass: 'badge-green',
+            soap: { s: 'Sem queixas relevantes. Leve ansiedade situacional.', o: 'PA 125/78 mmHg. Peso 65 kg. Glicemia 92. Exames normais.', a: 'Saude geral boa. Leve sobrepeso.', p: 'Atividade fisica. Mamografia agendada. Retorno 3 meses.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'dT (em dia)', 'Herpes Zoster (pendente)', 'Hepatite B (completa)']
+      },
+      istelina: {
+        name: 'Vo Istelina', age: 84, dot: 'dot-red', status: 'Consulta vencida',
+        statusClass: 'badge-red', birth: '12/08/1941', blood: 'A+', allergies: 'Dipirona',
+        weight: 68, height: 1.58,
+        conditions: ['HAS', 'DM2', 'Osteoartrose', 'Hipotireoidismo'],
+        meds: ['Losartana 50mg 1x/dia', 'Metformina 850mg 2x/dia', 'Levotiroxina 50mcg jejum', 'Paracetamol 750mg SN'],
+        lastVisit: '05/01/2026',
+        vitals: { pa: '140/85', fc: '76', glic: '132', hba1c: '7.2%', tsh: '3.1', spo2: '97%', temp: '36.4' },
+        notes: [
+          { date: '05/01/2026', type: 'Rotina', typeClass: 'badge-red',
+            soap: { s: 'Dor joelho D, piora ao subir escadas. Boa adesao. Esquece Metformina da tarde.', o: 'PA 140/85. Peso 68 kg. Glic 132. HbA1c 7.2%. TSH 3.1. Joelho D com crepitacao.', a: 'HAS subotimo. DM2 acima da meta. Hipo controlado. OA estavel.', p: 'Manter Losartana. Reforcar Metformina. Exames abr. Paracetamol. Retorno 3m.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'Pneumococica (em dia)', 'Herpes Zoster (pendente)', 'dT (em dia)', 'Hepatite B (pendente)']
+      },
+      antonio: {
+        name: 'Vo Antonio', age: 87, dot: 'dot-red', status: 'Consulta vencida',
+        statusClass: 'badge-red', birth: '—', blood: '—', allergies: 'Nenhuma conhecida',
+        weight: 70, height: 1.68,
+        conditions: ['Risco de queda elevado'],
+        meds: ['A atualizar na proxima consulta'],
+        lastVisit: '05/01/2026',
+        vitals: { pa: '—', fc: '—', glic: '—', spo2: '—', temp: '—' },
+        notes: [
+          { date: '05/01/2026', type: 'Avaliacao', typeClass: 'badge-red',
+            soap: { s: 'Paciente trazido pelo filho. Dificuldade de deambulacao.', o: 'Exames basicos realizados. Pendente: ECG, PSA, hemograma.', a: 'Risco de queda elevado. Necessita avaliacao geriatrica completa.', p: 'Reagendar com urgencia. Solicitar ECG, PSA, hemograma.' }}
+        ],
+        vaccines: ['Influenza (atrasada)', 'COVID-19 (em dia)', 'Pneumococica (pendente)', 'dT (atrasada)', 'Herpes Zoster (pendente)']
+      },
+      marly: {
+        name: 'Dona Marly', age: 72, dot: 'dot-green', status: 'Atencao',
+        statusClass: 'badge-amber', birth: '—', blood: '—', allergies: 'Sulfa',
+        weight: 62, height: 1.55,
+        conditions: ['HAS', 'DRGE'],
+        meds: ['Anlodipino 5mg 1x/dia', 'Omeprazol 20mg jejum'],
+        lastVisit: '20/03/2026',
+        vitals: { pa: '130/80', fc: '74', glic: '95', spo2: '97%', temp: '36.5' },
+        notes: [
+          { date: '20/03/2026', type: 'Rotina', typeClass: 'badge-amber',
+            soap: { s: 'Melhora de refluxo com Omeprazol. Boa adesao.', o: 'PA 130/80. Peso 62 kg. Exame sem alteracoes.', a: 'HAS controlada. DRGE em remissao. Boa adesao.', p: 'Manter medicacoes. Avaliar reducao Omeprazol em 6m. Retorno jun/2026.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'Pneumococica (em dia)', 'Herpes Zoster (pendente)', 'dT (em dia)']
+      }
+    };
+
+    // =============================================
+    // Tab switching
+    // =============================================
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // =============================================
+    // Patient search
+    // =============================================
+    document.getElementById('patientSearch').addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#patientTable tbody tr');
+      rows.forEach(row => {
+        const name = row.querySelector('.name-cell').textContent.toLowerCase();
+        row.classList.toggle('hidden-row', query !== '' && !name.includes(query));
+      });
+    });
+
+    // =============================================
+    // Patient priority filter
+    // =============================================
+    function filterPatients(filter, btn) {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#patientTable tbody tr').forEach(row => {
+        row.classList.toggle('hidden-row', filter !== 'todos' && row.dataset.priority !== filter);
+      });
+      document.getElementById('patientSearch').value = '';
+    }
+
+    // =============================================
+    // Table sorting
+    // =============================================
+    document.querySelectorAll('#patientTable th[data-sort]').forEach(th => {
+      th.addEventListener('click', function() {
+        const table = document.getElementById('patientTable');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const sortKey = this.dataset.sort;
+        const isAsc = this.classList.contains('sorted-asc');
+        table.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+        this.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+        const direction = isAsc ? -1 : 1;
+        rows.sort((a, b) => {
+          let aVal, bVal;
+          switch (sortKey) {
+            case 'num': return (parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent)) * direction;
+            case 'name': return a.cells[1].textContent.trim().toLowerCase().localeCompare(b.cells[1].textContent.trim().toLowerCase()) * direction;
+            case 'age': return (parseInt(a.cells[2].dataset.val) - parseInt(b.cells[2].dataset.val)) * direction;
+            case 'last': return (parseInt(a.cells[4].dataset.val) - parseInt(b.cells[4].dataset.val)) * direction;
+            case 'next': return (parseInt(a.cells[5].dataset.val) - parseInt(b.cells[5].dataset.val)) * direction;
+            case 'priority':
+              const p = { urgente: 0, atencao: 1, rotina: 2 };
+              return ((p[a.dataset.priority] || 99) - (p[b.dataset.priority] || 99)) * direction;
+            default: return 0;
+          }
+        });
+        rows.forEach(row => tbody.appendChild(row));
+      });
+    });
+
+    // =============================================
+    // Patient record switcher (Ficha tab)
+    // =============================================
+    function showPatient(id, btn) {
+      document.querySelectorAll('.patient-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.patient-record').forEach(r => r.style.display = 'none');
+      const record = document.getElementById('record-' + id);
+      if (record) record.style.display = 'block';
+    }
+
+    // =============================================
+    // Consultation Notes switcher
+    // =============================================
+    function showNotes(id, btn) {
+      btn.parentElement.querySelectorAll('.patient-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.notes-container').forEach(c => c.style.display = 'none');
+      const container = document.getElementById('notes-' + id);
+      if (container) container.style.display = 'block';
+    }
+
+    // =============================================
+    // Vaccine switcher
+    // =============================================
+    function showVaccines(id, btn) {
+      btn.parentElement.querySelectorAll('.patient-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.vaccine-container').forEach(c => c.style.display = 'none');
+      const container = document.getElementById('vaccines-' + id);
+      if (container) container.style.display = 'block';
+    }
+
+    // =============================================
+    // Medication filter
+    // =============================================
+    function filterMeds(filter, btn) {
+      document.querySelectorAll('[data-medfilter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.med-card').forEach(card => {
+        if (filter === 'todos') {
+          card.style.display = '';
+        } else {
+          const status = card.dataset.medstatus;
+          card.style.display = (status === 'critical' || status === 'warn') ? '' : 'none';
+        }
+      });
+    }
+
+    // =============================================
+    // Dark mode toggle
+    // =============================================
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('darkIcon').innerHTML = isDark ? '&#9788;' : '&#9790;';
+      document.getElementById('darkLabel').textContent = isDark ? 'Claro' : 'Escuro';
+      localStorage.setItem('v3-dark-mode', isDark ? '1' : '0');
+    }
+    // Restore dark mode preference
+    if (localStorage.getItem('v3-dark-mode') === '1') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkIcon').innerHTML = '&#9788;';
+      document.getElementById('darkLabel').textContent = 'Claro';
+    }
+
+    // =============================================
+    // BMI Calculator
+    // =============================================
+    function calcBMI() {
+      const w = parseFloat(document.getElementById('bmiWeight').value);
+      const h = parseFloat(document.getElementById('bmiHeight').value);
+      if (!w || !h || h <= 0) return;
+      const bmi = w / (h * h);
+      const bmiRounded = bmi.toFixed(1);
+      document.getElementById('bmiValue').textContent = bmiRounded;
+
+      let cls, range, color;
+      if (bmi < 18.5) { cls = 'Abaixo do peso'; range = '< 18.5'; color = '#2563eb'; }
+      else if (bmi < 25) { cls = 'Peso normal'; range = '18.5 - 24.9'; color = '#16a34a'; }
+      else if (bmi < 30) { cls = 'Sobrepeso'; range = '25.0 - 29.9'; color = '#d97706'; }
+      else if (bmi < 35) { cls = 'Obesidade grau I'; range = '30.0 - 34.9'; color = '#dc2626'; }
+      else if (bmi < 40) { cls = 'Obesidade grau II'; range = '35.0 - 39.9'; color = '#dc2626'; }
+      else { cls = 'Obesidade grau III'; range = '>= 40.0'; color = '#991b1b'; }
+
+      document.getElementById('bmiClass').textContent = cls;
+      document.getElementById('bmiClass').style.color = color;
+      document.getElementById('bmiRange').textContent = 'Faixa: ' + range;
+      document.getElementById('bmiValue').style.color = color;
+      document.getElementById('bmiResult').style.display = 'flex';
+    }
+
+    // =============================================
+    // Vital Signs Trend Charts (SVG)
+    // =============================================
+    const VITAL_DATA = {
+      'pa-istelina': {
+        title: 'Pressao Arterial — Vo Istelina',
+        unit: 'mmHg',
+        series: [
+          { label: 'Sistolica', color: '#dc2626', points: [
+            { date: 'Jul/25', val: 145 }, { date: 'Out/25', val: 138 }, { date: 'Jan/26', val: 140 }
+          ]},
+          { label: 'Diastolica', color: '#2563eb', points: [
+            { date: 'Jul/25', val: 88 }, { date: 'Out/25', val: 82 }, { date: 'Jan/26', val: 85 }
+          ]}
+        ],
+        target: { label: 'Alvo sistolica', val: 130, color: '#16a34a' },
+        yMin: 60, yMax: 160
+      },
+      'pa-pai': {
+        title: 'Pressao Arterial — Pai',
+        unit: 'mmHg',
+        series: [
+          { label: 'Sistolica', color: '#dc2626', points: [
+            { date: 'Mai/25', val: 142 }, { date: 'Ago/25', val: 138 }, { date: 'Nov/25', val: 130 }, { date: 'Fev/26', val: 135 }
+          ]},
+          { label: 'Diastolica', color: '#2563eb', points: [
+            { date: 'Mai/25', val: 90 }, { date: 'Ago/25', val: 85 }, { date: 'Nov/25', val: 78 }, { date: 'Fev/26', val: 80 }
+          ]}
+        ],
+        target: { label: 'Alvo sistolica', val: 130, color: '#16a34a' },
+        yMin: 60, yMax: 160
+      },
+      'glic-istelina': {
+        title: 'Glicemia de Jejum — Vo Istelina',
+        unit: 'mg/dL',
+        series: [
+          { label: 'Glicemia', color: '#d97706', points: [
+            { date: 'Jul/25', val: 140 }, { date: 'Out/25', val: 128 }, { date: 'Jan/26', val: 132 }
+          ]}
+        ],
+        target: { label: 'Alvo', val: 100, color: '#16a34a' },
+        yMin: 60, yMax: 180
+      },
+      'peso-istelina': {
+        title: 'Peso Corporal — Vo Istelina',
+        unit: 'kg',
+        series: [
+          { label: 'Peso', color: '#7c3aed', points: [
+            { date: 'Jan/25', val: 69.5 }, { date: 'Abr/25', val: 69.0 }, { date: 'Jul/25', val: 68.2 }, { date: 'Out/25', val: 67.5 }, { date: 'Jan/26', val: 68.0 }
+          ]}
+        ],
+        target: null,
+        yMin: 60, yMax: 75
+      }
+    };
+
+    function renderVitalChart(key) {
+      const data = VITAL_DATA[key];
+      if (!data) return;
+
+      // Update title
+      const titleEl = document.querySelector('.vital-chart-area h4');
+      if (titleEl) titleEl.textContent = 'Tendencia: ' + data.title;
+
+      const container = document.getElementById('vitalChartContainer');
+      const W = 600, H = 180, padL = 50, padR = 20, padT = 20, padB = 35;
+      const chartW = W - padL - padR;
+      const chartH = H - padT - padB;
+
+      // Find all dates across series
+      const allDates = [];
+      data.series.forEach(s => s.points.forEach(p => {
+        if (!allDates.includes(p.date)) allDates.push(p.date);
+      }));
+
+      const yMin = data.yMin, yMax = data.yMax;
+      const yScale = v => padT + chartH - ((v - yMin) / (yMax - yMin)) * chartH;
+      const xScale = i => padL + (i / (allDates.length - 1)) * chartW;
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+      // Grid lines
+      const gridSteps = 5;
+      for (let i = 0; i <= gridSteps; i++) {
+        const yVal = yMin + (yMax - yMin) * (i / gridSteps);
+        const y = yScale(yVal);
+        svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--color-border)" stroke-width="0.5" stroke-dasharray="4,3"/>`;
+        svg += `<text x="${padL - 6}" y="${y + 3}" text-anchor="end" font-size="9" fill="var(--color-text-light)">${Math.round(yVal)}</text>`;
+      }
+
+      // Target line
+      if (data.target) {
+        const ty = yScale(data.target.val);
+        svg += `<line x1="${padL}" y1="${ty}" x2="${W - padR}" y2="${ty}" stroke="${data.target.color}" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>`;
+        svg += `<text x="${W - padR + 2}" y="${ty + 3}" font-size="8" fill="${data.target.color}">${data.target.label}</text>`;
+      }
+
+      // X-axis labels
+      allDates.forEach((d, i) => {
+        const x = xScale(i);
+        svg += `<text x="${x}" y="${H - 5}" text-anchor="middle" font-size="9" fill="var(--color-text-light)">${d}</text>`;
+      });
+
+      // Series
+      data.series.forEach(s => {
+        // Build path
+        let pathD = '';
+        s.points.forEach((p, i) => {
+          const idx = allDates.indexOf(p.date);
+          const x = xScale(idx);
+          const y = yScale(p.val);
+          pathD += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+        });
+        svg += `<path d="${pathD}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+        // Points and values
+        s.points.forEach((p, i) => {
+          const idx = allDates.indexOf(p.date);
+          const x = xScale(idx);
+          const y = yScale(p.val);
+          svg += `<circle cx="${x}" cy="${y}" r="4" fill="${s.color}" stroke="var(--v3-bg-card)" stroke-width="2"/>`;
+          svg += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-size="9" font-weight="600" fill="${s.color}">${typeof p.val === 'number' && p.val % 1 !== 0 ? p.val.toFixed(1) : p.val}</text>`;
+        });
+      });
+
+      // Legend
+      let legendX = padL;
+      data.series.forEach(s => {
+        svg += `<rect x="${legendX}" y="${H - 16}" width="8" height="8" rx="2" fill="${s.color}"/>`;
+        svg += `<text x="${legendX + 12}" y="${H - 9}" font-size="8" fill="var(--color-text-light)">${s.label}</text>`;
+        legendX += s.label.length * 5 + 25;
+      });
+
+      svg += '</svg>';
+      container.innerHTML = svg;
+    }
+
+    function showVitalChart(key, btn) {
+      document.querySelectorAll('.vital-chart-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderVitalChart(key);
+    }
+
+    // Initialize default chart
+    window.addEventListener('DOMContentLoaded', () => renderVitalChart('pa-istelina'));
+
+    // =============================================
+    // Patient Detail Modal
+    // =============================================
+    function openPatientModal(id) {
+      const p = PATIENTS[id];
+      if (!p) return;
+
+      document.getElementById('modalDot').className = 'status-dot ' + p.dot;
+      document.getElementById('modalName').textContent = p.name;
+
+      const bmi = (p.weight / (p.height * p.height)).toFixed(1);
+      let bmiLabel = 'Normal';
+      if (bmi < 18.5) bmiLabel = 'Abaixo do peso';
+      else if (bmi >= 25 && bmi < 30) bmiLabel = 'Sobrepeso';
+      else if (bmi >= 30) bmiLabel = 'Obeso';
+
+      // Resumo tab
+      document.getElementById('m-resumo').innerHTML = `
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Dados pessoais</h4>
+            <div class="info-row"><span class="label">Idade</span><span class="value">${p.age} anos</span></div>
+            ${p.birth !== '—' ? `<div class="info-row"><span class="label">Nascimento</span><span class="value">${p.birth}</span></div>` : ''}
+            ${p.blood !== '—' ? `<div class="info-row"><span class="label">Tipo sanguineo</span><span class="value">${p.blood}</span></div>` : ''}
+            <div class="info-row"><span class="label">Alergias</span><span class="value" ${p.allergies !== 'Nenhuma conhecida' ? 'style="color:#dc2626;font-weight:700"' : ''}>${p.allergies}</span></div>
+            <div class="info-row"><span class="label">Peso / Altura</span><span class="value">${p.weight} kg / ${p.height.toFixed(2)} m</span></div>
+            <div class="info-row"><span class="label">IMC</span><span class="value">${bmi} (${bmiLabel})</span></div>
+          </div>
+          <div class="detail-card">
+            <h4>Problemas de saude</h4>
+            ${p.conditions.length > 0
+              ? '<ul>' + p.conditions.map(c => '<li><span class="badge badge-amber">' + c + '</span></li>').join('') + '</ul>'
+              : '<p style="color:var(--color-text-light)">Nenhum problema cronico registrado.</p>'}
+          </div>
+        </div>
+        <div class="detail-card" style="margin-bottom:0.75rem">
+          <h4>Status</h4>
+          <div class="info-row"><span class="label">Status atual</span><span class="value"><span class="badge ${p.statusClass}">${p.status}</span></span></div>
+          <div class="info-row"><span class="label">Ultima consulta</span><span class="value">${p.lastVisit}</span></div>
+        </div>
+      `;
+
+      // Vitais tab
+      const vEntries = Object.entries(p.vitals).filter(([,v]) => v !== '—');
+      const vitalLabels = { pa: 'PA', fc: 'FC', glic: 'Glicemia', hba1c: 'HbA1c', tsh: 'TSH', ct: 'CT', ldl: 'LDL', spo2: 'SpO2', temp: 'Temp' };
+      document.getElementById('m-vitais').innerHTML = `
+        <div class="detail-card">
+          <h4>Sinais vitais — ${p.lastVisit}</h4>
+          ${vEntries.map(([k, v]) => `<div class="info-row"><span class="label">${vitalLabels[k] || k}</span><span class="value">${v}</span></div>`).join('')}
+          ${vEntries.length === 0 ? '<p style="color:var(--color-text-light)">Sem dados registrados.</p>' : ''}
+        </div>
+      `;
+
+      // Meds tab
+      document.getElementById('m-meds').innerHTML = `
+        <div class="detail-card">
+          <h4>Medicacoes em uso</h4>
+          ${p.meds.length > 0
+            ? '<ul>' + p.meds.map(m => '<li><strong>' + m + '</strong></li>').join('') + '</ul>'
+            : '<p style="color:var(--color-text-light)">Nenhuma medicacao continua.</p>'}
+        </div>
+      `;
+
+      // Notas tab
+      document.getElementById('m-notas').innerHTML = p.notes.map(n => `
+        <div class="note-card">
+          <div class="note-header">
+            <span class="note-date">${n.date} — ${n.type}</span>
+            <span class="note-type badge ${n.typeClass}">Presencial</span>
+          </div>
+          <div class="note-body">
+            <p><span class="note-soap-label">S:</span> ${n.soap.s}</p>
+            <p><span class="note-soap-label">O:</span> ${n.soap.o}</p>
+            <p><span class="note-soap-label">A:</span> ${n.soap.a}</p>
+            <p><span class="note-soap-label">P:</span> ${n.soap.p}</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Vacinas tab
+      document.getElementById('m-vacinas').innerHTML = `
+        <div class="detail-card">
+          <h4>Vacinas — ${p.name}</h4>
+          <ul>${p.vaccines.map(v => {
+            let cls = 'badge-gray';
+            if (v.includes('em dia') || v.includes('completa')) cls = 'badge-green';
+            else if (v.includes('pendente')) cls = 'badge-amber';
+            else if (v.includes('atrasada')) cls = 'badge-red';
+            const parts = v.split('(');
+            return `<li><strong>${parts[0].trim()}</strong> <span class="badge ${cls}">${parts[1] ? parts[1].replace(')', '') : ''}</span></li>`;
+          }).join('')}</ul>
+        </div>
+      `;
+
+      // Reset to first tab
+      document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+      document.querySelectorAll('.modal-section').forEach((s, i) => s.classList.toggle('active', i === 0));
+
+      document.getElementById('patientModal').classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePatientModal() {
+      document.getElementById('patientModal').classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    function switchModalTab(id, btn) {
+      document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.modal-section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    function printPatientSummary() {
+      closePatientModal();
+      setTimeout(() => window.print(), 200);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('patientModal').addEventListener('click', function(e) {
+      if (e.target === this) closePatientModal();
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closePatientModal();
+    });
+
+    // =============================================
+    // Animate capacity bar on load
+    // =============================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const fill = document.querySelector('.capacity-fill');
+      if (fill) {
+        fill.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fill.style.width = '6%';
+          });
+        });
+      }
+    });
+  </script>
 </body>
 </html>

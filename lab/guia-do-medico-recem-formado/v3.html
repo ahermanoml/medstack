@@ -1,26 +1,2459 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guia do Médico Recém-Formado — Version 3</title>
+  <title>Guia do Medico Recem-Formado — Version 3</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ===== Dark mode variables ===== */
+    :root {
+      --dm-bg: #0f1117;
+      --dm-bg-alt: #1a1d27;
+      --dm-text: #e4e4e7;
+      --dm-text-light: #9ca3af;
+      --dm-border: #2a2d3a;
+      --dm-accent: #60a5fa;
+      --dm-accent-hover: #93bbfd;
+    }
+
+    html.dark {
+      color-scheme: dark;
+    }
+
+    html.dark body {
+      background: var(--dm-bg);
+      color: var(--dm-text);
+    }
+
+    html.dark .nav {
+      background: rgba(15, 17, 23, 0.95);
+      border-bottom-color: var(--dm-border);
+    }
+
+    html.dark .nav-name { color: var(--dm-text); }
+    html.dark .nav-name:hover { color: var(--dm-text); }
+    html.dark .nav-links a { color: var(--dm-text-light); }
+    html.dark .nav-links a:hover { color: var(--dm-text); background: var(--dm-bg-alt); }
+
+    html.dark a { color: var(--dm-accent); }
+    html.dark a:hover { color: var(--dm-accent-hover); }
+
+    /* ===== Page-specific overrides ===== */
+    .lab-page {
+      min-height: auto;
+      align-items: flex-start;
+      padding-top: var(--space-lg);
+      padding-bottom: var(--space-xl);
+    }
+
+    .lab-page-inner {
+      max-width: var(--max-width);
+    }
+
+    /* Hero header area */
+    .page-header {
+      margin-bottom: var(--space-lg);
+    }
+
+    .page-header h1 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .page-intro {
+      color: var(--color-text-light);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: var(--space-md);
+      max-width: 680px;
+    }
+    html.dark .page-intro { color: var(--dm-text-light); }
+
+    /* Dark mode toggle */
+    .dark-toggle {
+      background: none;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      cursor: pointer;
+      color: var(--color-text-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+
+    .dark-toggle:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    .dark-toggle:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .dark-toggle svg { width: 16px; height: 16px; }
+    .dark-toggle .icon-sun { display: none; }
+    .dark-toggle .icon-moon { display: block; }
+    html.dark .dark-toggle .icon-sun { display: block; }
+    html.dark .dark-toggle .icon-moon { display: none; }
+    html.dark .dark-toggle {
+      border-color: var(--dm-border);
+      color: var(--dm-text-light);
+    }
+    html.dark .dark-toggle:hover {
+      border-color: var(--dm-accent);
+      color: var(--dm-accent);
+    }
+
+    /* ===== Search bar ===== */
+    .search-wrapper {
+      position: relative;
+      max-width: 480px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-light);
+      pointer-events: none;
+      width: 18px;
+      height: 18px;
+    }
+    html.dark .search-icon { color: var(--dm-text-light); }
+
+    .search-input {
+      width: 100%;
+      padding: 0.7rem 2.8rem 0.7rem 2.6rem;
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-input::placeholder { color: #999; }
+    html.dark .search-input::placeholder { color: #666; }
+
+    .search-input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    html.dark .search-input:focus {
+      border-color: var(--dm-accent);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+
+    html.dark .search-input {
+      background: var(--dm-bg-alt);
+      border-color: var(--dm-border);
+      color: var(--dm-text);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--color-text-light);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      line-height: 1;
+      display: none;
+    }
+
+    .search-clear:hover {
+      color: var(--color-text);
+      background: var(--color-bg-alt);
+    }
+
+    .search-clear:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    html.dark .search-clear { color: var(--dm-text-light); }
+    html.dark .search-clear:hover { color: var(--dm-text); background: var(--dm-bg-alt); }
+
+    .search-clear.visible { display: block; }
+
+    .search-no-results {
+      display: none;
+      padding: var(--space-lg) 0;
+      text-align: center;
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+    }
+    html.dark .search-no-results { color: var(--dm-text-light); }
+
+    .search-no-results.visible { display: block; }
+
+    .search-no-results span {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .search-count {
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+      margin-top: -1.5rem;
+      margin-bottom: var(--space-md);
+      display: none;
+    }
+    .search-count.visible { display: block; }
+    html.dark .search-count { color: var(--dm-text-light); }
+
+    /* ===== Highlights strip ===== */
+    .highlights {
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+    }
+    html.dark .highlights { border-bottom-color: var(--dm-border); }
+
+    .highlights-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    html.dark .highlights-label { color: var(--dm-accent); }
+
+    .highlights-label svg { width: 14px; height: 14px; }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 540px) {
+      .highlights-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 900px) {
+      .highlights-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .highlight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 1rem 1.15rem;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: linear-gradient(135deg, #fafbff 0%, var(--color-bg) 100%);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      color: inherit;
+    }
+
+    .highlight-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+      color: inherit;
+    }
+
+    .highlight-card:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    html.dark .highlight-card {
+      border-color: var(--dm-border);
+      background: linear-gradient(135deg, var(--dm-bg-alt) 0%, var(--dm-bg) 100%);
+      color: var(--dm-text);
+    }
+    html.dark .highlight-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      color: var(--dm-text);
+    }
+
+    .highlight-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .highlight-icon.blue { background: #eff6ff; color: #2563eb; }
+    .highlight-icon.green { background: #ecfdf5; color: #059669; }
+    .highlight-icon.purple { background: #f5f3ff; color: #7c3aed; }
+    .highlight-icon.orange { background: #fff7ed; color: #ea580c; }
+
+    html.dark .highlight-icon.blue { background: #1e3a5f; color: #60a5fa; }
+    html.dark .highlight-icon.green { background: #1a3a2a; color: #34d399; }
+    html.dark .highlight-icon.purple { background: #2d1f5e; color: #a78bfa; }
+    html.dark .highlight-icon.orange { background: #3d2510; color: #fb923c; }
+
+    .highlight-text h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .highlight-text h4 a { color: var(--color-text); transition: color 0.2s ease; }
+    .highlight-text h4 a:hover { color: var(--color-accent); }
+    html.dark .highlight-text h4,
+    html.dark .highlight-text h4 a { color: var(--dm-text); }
+
+    .highlight-text p {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      line-height: 1.45;
+    }
+    html.dark .highlight-text p { color: var(--dm-text-light); }
+
+    /* ===== Sticky section nav ===== */
+    .section-nav {
+      position: sticky;
+      top: var(--nav-height);
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border);
+      margin: 0 calc(-1 * var(--space-md));
+      padding: 0 var(--space-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    html.dark .section-nav {
+      background: rgba(15, 17, 23, 0.95);
+      border-bottom-color: var(--dm-border);
+    }
+
+    .section-nav::-webkit-scrollbar { display: none; }
+
+    .section-nav-inner {
+      display: flex;
+      gap: 0.25rem;
+      min-width: max-content;
+      padding: 0.5rem 0;
+    }
+
+    .section-nav a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .section-nav a:hover {
+      color: var(--color-text);
+      background: var(--color-bg-alt);
+    }
+
+    .section-nav a:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .section-nav a.active {
+      color: var(--color-accent);
+      background: #eff6ff;
+      border-color: rgba(37, 99, 235, 0.15);
+    }
+
+    html.dark .section-nav a { color: var(--dm-text-light); }
+    html.dark .section-nav a:hover { color: var(--dm-text); background: var(--dm-bg-alt); }
+    html.dark .section-nav a.active {
+      color: var(--dm-accent);
+      background: #1e3a5f;
+      border-color: rgba(96, 165, 250, 0.2);
+    }
+
+    /* ===== Sections ===== */
+    .guide-section {
+      margin-bottom: var(--space-xl);
+      scroll-margin-top: calc(var(--nav-height) + 56px);
+    }
+
+    .guide-section:last-child { margin-bottom: 0; }
+
+    .guide-section.search-hidden { display: none; }
+
+    /* Scroll reveal animation */
+    .guide-section {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .guide-section.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      background: #eff6ff;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    html.dark .section-number { color: var(--dm-accent); background: #1e3a5f; }
+
+    .guide-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      margin-bottom: var(--space-md);
+      max-width: 680px;
+    }
+    html.dark .section-desc { color: var(--dm-text-light); }
+
+    /* ===== Resource cards grid ===== */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 540px) {
+      .resources-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 900px) {
+      .resources-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .resource-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: var(--color-bg);
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .resource-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      transform: translateY(-2px);
+    }
+
+    .resource-card:focus-within {
+      border-color: var(--color-accent);
+    }
+
+    html.dark .resource-card {
+      border-color: var(--dm-border);
+      background: var(--dm-bg-alt);
+    }
+    html.dark .resource-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    html.dark .resource-card:focus-within {
+      border-color: var(--dm-accent);
+    }
+
+    .resource-card.search-hidden { display: none; }
+
+    .resource-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .resource-card-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .resource-card-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .resource-card-type svg { width: 12px; height: 12px; }
+
+    .type-site { color: #2563eb; background: #eff6ff; }
+    .type-app { color: #7c3aed; background: #f5f3ff; }
+    .type-curso { color: #059669; background: #ecfdf5; }
+    .type-cert { color: #d97706; background: #fffbeb; }
+    .type-grupo { color: #dc2626; background: #fef2f2; }
+    .type-ferramenta { color: #0891b2; background: #ecfeff; }
+    .type-livro { color: #be185d; background: #fdf2f8; }
+    .type-gov { color: #4338ca; background: #eef2ff; }
+    .type-comunidade { color: #ea580c; background: #fff7ed; }
+    .type-podcast { color: #7c3aed; background: #f5f3ff; }
+
+    html.dark .type-site { color: #60a5fa; background: #1e3a5f; }
+    html.dark .type-app { color: #a78bfa; background: #2d1f5e; }
+    html.dark .type-curso { color: #34d399; background: #1a3a2a; }
+    html.dark .type-cert { color: #fbbf24; background: #3d2f10; }
+    html.dark .type-grupo { color: #f87171; background: #3d1f1f; }
+    html.dark .type-ferramenta { color: #22d3ee; background: #1a3340; }
+    html.dark .type-livro { color: #f472b6; background: #3d1f33; }
+    html.dark .type-gov { color: #818cf8; background: #252550; }
+    html.dark .type-comunidade { color: #fb923c; background: #3d2510; }
+    html.dark .type-podcast { color: #a78bfa; background: #2d1f5e; }
+
+    .resource-card-price {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+    }
+
+    .price-free { color: #059669; background: #ecfdf5; }
+    .price-paid { color: #d97706; background: #fffbeb; }
+    .price-freemium { color: #7c3aed; background: #f5f3ff; }
+
+    html.dark .price-free { color: #34d399; background: #1a3a2a; }
+    html.dark .price-paid { color: #fbbf24; background: #3d2f10; }
+    html.dark .price-freemium { color: #a78bfa; background: #2d1f5e; }
+
+    .resource-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .resource-card h3 a {
+      color: var(--color-text);
+      transition: color 0.2s ease;
+    }
+
+    .resource-card h3 a:hover { color: var(--color-accent); }
+    html.dark .resource-card h3 a { color: var(--dm-text); }
+    html.dark .resource-card h3 a:hover { color: var(--dm-accent); }
+    html.dark .resource-card h3 a:focus-visible {
+      outline: 2px solid var(--dm-accent);
+      outline-offset: 2px;
+    }
+
+    .resource-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+    html.dark .resource-card p { color: var(--dm-text-light); }
+
+    .resource-card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .feature-tag {
+      font-size: 0.68rem;
+      color: var(--color-text-light);
+      background: var(--color-bg-alt);
+      padding: 0.12rem 0.4rem;
+      border-radius: 3px;
+      border: 1px solid var(--color-border);
+    }
+    html.dark .feature-tag {
+      color: var(--dm-text-light);
+      background: var(--dm-bg);
+      border-color: var(--dm-border);
+    }
+
+    .resource-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--color-border);
+    }
+    html.dark .resource-card-footer { border-top-color: var(--dm-border); }
+
+    .resource-card .resource-url {
+      display: inline-block;
+      font-size: 0.78rem;
+      color: var(--color-accent);
+      word-break: break-all;
+    }
+    html.dark .resource-card .resource-url { color: var(--dm-accent); }
+
+    .resource-card .resource-arrow {
+      flex-shrink: 0;
+      color: var(--color-text-light);
+      transition: transform 0.2s ease, color 0.2s ease;
+      width: 16px;
+      height: 16px;
+    }
+    html.dark .resource-card .resource-arrow { color: var(--dm-text-light); }
+
+    .resource-card:hover .resource-arrow {
+      transform: translateX(2px);
+      color: var(--color-accent);
+    }
+    html.dark .resource-card:hover .resource-arrow { color: var(--dm-accent); }
+
+    /* ===== Subsection headings ===== */
+    .subsection { margin-bottom: var(--space-md); }
+    .subsection:last-child { margin-bottom: 0; }
+
+    .subsection h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    html.dark .subsection h3 { color: var(--dm-text); }
+
+    .subsection h3 svg {
+      width: 18px;
+      height: 18px;
+      color: var(--color-text-light);
+    }
+    html.dark .subsection h3 svg { color: var(--dm-text-light); }
+
+    /* ===== Section divider ===== */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: var(--space-xl) 0;
+    }
+    html.dark .section-divider { border-top-color: var(--dm-border); }
+
+    .section-content {
+      padding-top: var(--space-md);
+    }
+
+    /* ===== Footer note ===== */
+    .guide-footer {
+      margin-top: var(--space-xl);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-light);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    html.dark .guide-footer {
+      border-top-color: var(--dm-border);
+      color: var(--dm-text-light);
+    }
+
+    .guide-footer p { max-width: 680px; }
+
+    .footer-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+    }
+    html.dark .footer-stats { color: var(--dm-text-light); }
+
+    .footer-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .footer-stats strong {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    html.dark .footer-stats strong { color: var(--dm-text); }
+
+    /* ===== Back to top ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s ease, border-color 0.2s ease;
+      pointer-events: none;
+      cursor: pointer;
+      z-index: 40;
+    }
+
+    .back-to-top:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+
+    .back-to-top:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    html.dark .back-to-top {
+      background: var(--dm-bg-alt);
+      border-color: var(--dm-border);
+      color: var(--dm-text-light);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    html.dark .back-to-top:hover {
+      color: var(--dm-accent);
+      border-color: var(--dm-accent);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ===== Skip link ===== */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 0;
+      background: var(--color-accent);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      z-index: 200;
+      font-size: 0.9rem;
+      border-radius: 0 0 8px 0;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus {
+      top: 0;
+      color: #fff;
+    }
+
+    /* ===== Responsive adjustments ===== */
+    @media (max-width: 539px) {
+      .section-nav {
+        margin: 0 calc(-1 * var(--space-md));
+        padding: 0 var(--space-md);
+      }
+
+      .highlight-card { padding: 0.85rem 1rem; }
+      .guide-section h2 { font-size: 1.3rem; }
+      .highlights-grid { gap: 0.6rem; }
+    }
+
+    /* ===== Focus visible global ===== */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    html.dark a:focus-visible,
+    html.dark button:focus-visible,
+    html.dark input:focus-visible {
+      outline-color: var(--dm-accent);
+    }
+
+    /* SVG icon reusable shorthand */
+    .ico { display: inline-block; vertical-align: middle; }
+  </style>
 </head>
 <body>
-  <nav class="nav">
+  <!-- Skip to content for accessibility -->
+  <a href="#main-content" class="skip-link">Pular para o conteudo</a>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
+        <button class="dark-toggle" id="darkToggle" aria-label="Alternar modo escuro" title="Alternar modo escuro">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
         <a href="../guia-do-medico-recem-formado.html">&larr; Back</a>
       </div>
     </div>
   </nav>
-  <main class="lab-page">
+
+  <main class="lab-page" id="main-content" role="main">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Guia do Médico Recém-Formado — Version 3</h1>
+
+      <!-- Header -->
+      <div class="page-header">
+        <span class="lab-tag">Version 3</span>
+        <h1>Guia do Medico Recem-Formado</h1>
+        <p class="page-intro">
+          Tudo que voce precisa saber ao sair da faculdade de medicina: como conseguir trabalho,
+          como se preparar para a residencia, quais certificacoes tirar, quais ferramentas
+          usar no dia a dia do plantao e do postinho, e onde encontrar comunidade.
+        </p>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrapper" role="search" aria-label="Buscar recursos">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="search-input" placeholder="Buscar recursos (ex: Whitebook, ACLS, plantao...)" id="searchInput" autocomplete="off" aria-label="Campo de busca de recursos" role="searchbox">
+        <button class="search-clear" id="searchClear" aria-label="Limpar busca">&times;</button>
+      </div>
+      <div class="search-count" id="searchCount" aria-live="polite" role="status"></div>
+
+      <!-- Highlights / Destaques -->
+      <div class="highlights" id="highlights" aria-label="Destaques">
+        <div class="highlights-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          Destaques para Quem Esta Comecando
+        </div>
+        <div class="highlights-grid">
+          <a href="#stack-plantao" class="highlight-card">
+            <div class="highlight-icon blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Whitebook</h4>
+              <p>App #1 dos medicos no Brasil. Condutas, prescricoes e CID no plantao.</p>
+            </div>
+          </a>
+          <a href="#certificacoes" class="highlight-card">
+            <div class="highlight-icon green">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>ACLS + ATLS</h4>
+              <p>Certificacoes essenciais para quem vai trabalhar em pronto-socorro.</p>
+            </div>
+          </a>
+          <a href="#residencia" class="highlight-card">
+            <div class="highlight-icon purple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Preparatorios para Residencia</h4>
+              <p>Compare os maiores cursos e escolha o que encaixa no seu perfil.</p>
+            </div>
+          </a>
+          <a href="#comunidades" class="highlight-card">
+            <div class="highlight-icon orange">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Comunidades</h4>
+              <p>Grupos no Telegram, WhatsApp, Reddit e forums para trocar experiencia.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sticky section nav -->
+      <div class="section-nav" id="sectionNav" role="navigation" aria-label="Navegacao por secoes">
+        <div class="section-nav-inner">
+          <a href="#trabalho" data-section="trabalho">Conseguir Trabalho</a>
+          <a href="#residencia" data-section="residencia">Estudar para Residencia</a>
+          <a href="#certificacoes" data-section="certificacoes">Cursos e Certificacoes</a>
+          <a href="#stack-plantao" data-section="stack-plantao">Stack Plantao</a>
+          <a href="#stack-postinho" data-section="stack-postinho">Stack Postinho</a>
+          <a href="#referencias" data-section="referencias">Referencias e Livros</a>
+          <a href="#comunidades" data-section="comunidades">Comunidades</a>
+        </div>
+      </div>
+
+      <!-- No results state -->
+      <div class="search-no-results" id="noResults" role="status">
+        <span aria-hidden="true">&#128269;</span>
+        Nenhum recurso encontrado. Tente outra busca.
+      </div>
+
+      <div class="section-content">
+
+        <!-- ============================================================ -->
+        <!-- Section 1: Como Conseguir Trabalho -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="trabalho" data-searchable aria-labelledby="trabalho-heading">
+          <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 id="trabalho-heading">Como Conseguir Trabalho</h2>
+          </div>
+          <p class="section-desc">
+            Recem-formado e precisando de plantao? Estes sao os principais canais para
+            encontrar vagas como medico generalista, plantonista ou para concursos publicos.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              Plataformas de Vagas
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-site">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Site
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">MedicoNoInterior</a></h3>
+                <p>Vagas medicas no interior do Brasil. Ideal para quem quer comecar rapido, aceita cidades menores e busca remuneracao competitiva fora dos grandes centros. Muitas vagas com salario acima da media.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Interior</span>
+                  <span class="feature-tag">Salarios altos</span>
+                  <span class="feature-tag">Vagas rapidas</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">mediconointerior.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-site">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Site
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">EmpregaMed</a></h3>
+                <p>Plataforma abrangente de vagas medicas em todo o Brasil. Filtre por tipo de contrato (CLT, PJ, plantao), especialidade e localizacao. Uma das maiores bases de vagas medicas do pais.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">CLT / PJ / Plantao</span>
+                  <span class="feature-tag">Filtros avancados</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">empregamed.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-site">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Site
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">PCI Concursos (Medico)</a></h3>
+                <p>Concursos publicos para medicos atualizados diariamente. Estabilidade, beneficios e bons salarios em hospitais municipais, estaduais e UBS por todo o Brasil.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Concursos publicos</span>
+                  <span class="feature-tag">Estabilidade</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">pciconcursos.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">Plantao Ja</a></h3>
+                <p>Aplicativo para encontrar plantoes disponiveis na sua regiao com agilidade. Cadastre seu perfil e receba notificacoes de novas vagas em tempo real. Foco em plantoes 12h e 24h.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Push notifications</span>
+                  <span class="feature-tag">Plantoes 12h/24h</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">plantaoja.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-site">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Site
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.linkedin.com/jobs/search/?keywords=m%C3%A9dico" target="_blank" rel="noopener noreferrer">LinkedIn Vagas Medicas</a></h3>
+                <p>Filtro de vagas para medicos no LinkedIn. Crescente em vagas hospitalares privadas, cooperativas e cargos de gestao em saude. Mantenha seu perfil atualizado.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Networking</span>
+                  <span class="feature-tag">Setor privado</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">linkedin.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-site">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Site
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://trabalhasusbrasil.com.br" target="_blank" rel="noopener noreferrer">Trabalha SUS Brasil</a></h3>
+                <p>Plataforma focada em vagas no SUS. Filtra por municipio, especialidade e tipo de contrato. Boa opcao para quem quer atuar na rede publica e programas como Mais Medicos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">SUS</span>
+                  <span class="feature-tag">Mais Medicos</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://trabalhasusbrasil.com.br" target="_blank" rel="noopener noreferrer">trabalhasusbrasil.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 2: Estudar para Residencia -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="residencia" data-searchable aria-labelledby="residencia-heading">
+          <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 id="residencia-heading">Estudar para Residencia</h2>
+          </div>
+          <p class="section-desc">
+            Os principais cursos preparatorios para as provas de residencia medica no Brasil.
+            Cada um tem seu estilo -- escolha o que melhor se adapta ao seu ritmo de estudo,
+            orcamento e instituicao-alvo.
+          </p>
+
+          <div class="resources-grid">
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">Medcurso</a></h3>
+              <p>O preparatorio mais tradicional do Brasil. Apostilas densas e extensivas com cobertura completa de Clinica Medica, Cirurgia, Pediatria, GO e Preventiva. Referencia para provas do Rio de Janeiro (ENARE, UERJ, UFF).</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Apostilas extensivas</span>
+                <span class="feature-tag">Foco RJ</span>
+                <span class="feature-tag">~R$6.000/ano</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">medcurso.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">Estrategia Med</a></h3>
+              <p>Videoaulas organizadas e banco de questoes robusto. Formato acessivel e didatico, bom para quem prefere assistir a ler. Plataforma com metricas de desempenho e plano de estudo adaptativo.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Videoaulas</span>
+                <span class="feature-tag">Plano adaptativo</span>
+                <span class="feature-tag">~R$4.000/ano</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">estrategiamed.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">Medway</a></h3>
+              <p>Focado nas provas de SP (USP, Unifesp, Santa Casa). Excelente banco de questoes comentadas, simulados periodicos e analises estatisticas. Material gratuito no blog e YouTube.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Foco SP</span>
+                <span class="feature-tag">Banco de questoes</span>
+                <span class="feature-tag">Conteudo gratis no blog</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">medway.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">Medcof</a></h3>
+              <p>Forte em Clinica Medica e Cirurgia. Professores reconhecidos como referencia nacional. Material direto ao ponto, sem enrolacao. Bom para quem ja tem base e quer revisar com profundidade.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Clinica + Cirurgia</span>
+                <span class="feature-tag">Direto ao ponto</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">medcof.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">Medcel</a></h3>
+              <p>Preparatorio completo com videoaulas, apostilas e banco de questoes. Boa opcao custo-beneficio. Oferece planos anuais e semestrais acessiveis. Bom para quem esta com orcamento limitado.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Custo-beneficio</span>
+                <span class="feature-tag">Planos flexiveis</span>
+                <span class="feature-tag">~R$3.000/ano</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">medcel.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">Hardwork Medicina</a></h3>
+              <p>Metodologia baseada em questoes e revisao ativa com repeticao espacada. Popular entre quem busca estudo pratico e de alto rendimento. Comunidade engajada de alunos e boa taxa de aprovacao.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Repeticao espacada</span>
+                <span class="feature-tag">Comunidade ativa</span>
+                <span class="feature-tag">Alto rendimento</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">hardworkmedicina.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-curso">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                  Curso
+                </span>
+                <span class="resource-card-price price-paid">Pago</span>
+              </div>
+              <h3><a href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">MEDsimple</a></h3>
+              <p>Abordagem simplificada e objetiva. Bom para revisao de ultima hora ou para quem quer consolidar conceitos-chave. Resumos, mapas mentais e flashcards.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Resumos</span>
+                <span class="feature-tag">Mapas mentais</span>
+                <span class="feature-tag">Flashcards</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">medsimple.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-ferramenta">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                  Ferramenta
+                </span>
+                <span class="resource-card-price price-free">Gratis</span>
+              </div>
+              <h3><a href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">Anki (Flashcards)</a></h3>
+              <p>Ferramenta de repeticao espacada open source. Excelente complemento a qualquer preparatorio. Existem decks prontos de residencia medica compartilhados pela comunidade. Funciona offline no celular.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Open source</span>
+                <span class="feature-tag">Repeticao espacada</span>
+                <span class="feature-tag">Decks prontos</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">apps.ankiweb.net</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 3: Cursos e Certificacoes -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="certificacoes" data-searchable aria-labelledby="cert-heading">
+          <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 id="cert-heading">Cursos e Certificacoes</h2>
+          </div>
+          <p class="section-desc">
+            Certificacoes essenciais para quem vai trabalhar em pronto-socorro, emergencia ou atencao primaria.
+            Valorizam o curriculo, sao pre-requisito em muitos hospitais e preparam para situacoes reais de risco.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              Certificacoes de Emergencia
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-cert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    Certificacao
+                  </span>
+                  <span class="resource-card-price price-paid">~R$2.500</span>
+                </div>
+                <h3><a href="https://internacional.cardiol.br/acls/" target="_blank" rel="noopener noreferrer">ACLS</a></h3>
+                <p>Advanced Cardiovascular Life Support (AHA). Protocolo de parada cardiorrespiratoria, arritmias e emergencias cardiovasculares. Obrigatorio na maioria dos PS e UTIs. Validade de 2 anos. Curso de 2 dias com prova pratica.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AHA</span>
+                  <span class="feature-tag">2 dias</span>
+                  <span class="feature-tag">Validade 2 anos</span>
+                  <span class="feature-tag">Obrigatorio PS/UTI</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://internacional.cardiol.br" target="_blank" rel="noopener noreferrer">SBC - Soc. Brasileira de Cardiologia</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-cert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    Certificacao
+                  </span>
+                  <span class="resource-card-price price-paid">~R$4.000</span>
+                </div>
+                <h3><a href="https://www.sbait.org.br/atls.php" target="_blank" rel="noopener noreferrer">ATLS</a></h3>
+                <p>Advanced Trauma Life Support (ACS). Padrao-ouro para atendimento ao politraumatizado. Abordagem ABCDE, avaliacao primaria e secundaria. Exigido por hospitais de trauma. Validade de 4 anos. Curso intensivo de 2-3 dias.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">ACS</span>
+                  <span class="feature-tag">2-3 dias</span>
+                  <span class="feature-tag">Validade 4 anos</span>
+                  <span class="feature-tag">Trauma</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.sbait.org.br" target="_blank" rel="noopener noreferrer">SBAIT</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-cert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    Certificacao
+                  </span>
+                  <span class="resource-card-price price-paid">~R$2.000</span>
+                </div>
+                <h3><a href="https://internacional.cardiol.br/cursos/" target="_blank" rel="noopener noreferrer">PALS</a></h3>
+                <p>Pediatric Advanced Life Support (AHA). Protocolos de emergencia pediatrica: PCR, choque, arritmias e insuficiencia respiratoria em criancas. Essencial para PS pediatrico. Validade de 2 anos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AHA</span>
+                  <span class="feature-tag">Pediatria</span>
+                  <span class="feature-tag">Validade 2 anos</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-cert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    Certificacao
+                  </span>
+                  <span class="resource-card-price price-paid">~R$800</span>
+                </div>
+                <h3><a href="https://internacional.cardiol.br/cursos/" target="_blank" rel="noopener noreferrer">BLS</a></h3>
+                <p>Basic Life Support (AHA). Suporte Basico de Vida: compressoes, ventilacao, DEA e engasgo. Pre-requisito para ACLS. Curso mais curto (1 dia) e acessivel. Melhor primeiro passo para quem esta comecando.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AHA</span>
+                  <span class="feature-tag">1 dia</span>
+                  <span class="feature-tag">Pre-requisito ACLS</span>
+                  <span class="feature-tag">Primeiro passo</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-cert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    Certificacao
+                  </span>
+                  <span class="resource-card-price price-paid">~R$3.000</span>
+                </div>
+                <h3><a href="https://www.amib.org.br/cursos/" target="_blank" rel="noopener noreferrer">FCCS (AMIB)</a></h3>
+                <p>Fundamental Critical Care Support. Curso da AMIB/SCCM para manejo basico do paciente critico: ventilacao mecanica, drogas vasoativas, sedacao, choque. Diferencial para plantao em UTI.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AMIB/SCCM</span>
+                  <span class="feature-tag">Terapia intensiva</span>
+                  <span class="feature-tag">2 dias</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.amib.org.br" target="_blank" rel="noopener noreferrer">amib.org.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="subsection" style="margin-top: 1.5rem;">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              Cursos Praticos para o PS
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-curso">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                    Curso
+                  </span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                </div>
+                <h3><a href="https://www.mediconapratica.com.br" target="_blank" rel="noopener noreferrer">Medico Na Pratica</a></h3>
+                <p>Curso pratico para recem-formados que vao encarar o pronto-socorro pela primeira vez. Condutas objetivas e protocolizadas para os 50 casos mais comuns da emergencia. Inclui simulacoes.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Recem-formados</span>
+                  <span class="feature-tag">50 casos</span>
+                  <span class="feature-tag">Simulacoes</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.mediconapratica.com.br" target="_blank" rel="noopener noreferrer">mediconapratica.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-curso">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                    Curso
+                  </span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                </div>
+                <h3><a href="https://www.pszerado.com.br" target="_blank" rel="noopener noreferrer">PS Zerado</a></h3>
+                <p>Preparacao intensiva para o pronto-socorro. Foca nos diagnosticos e condutas mais frequentes da emergencia com linguagem pratica. Aulas curtas e diretas, formato ideal para o dia a dia corrido.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Aulas curtas</span>
+                  <span class="feature-tag">Emergencia</span>
+                  <span class="feature-tag">Pratico</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.pszerado.com.br" target="_blank" rel="noopener noreferrer">pszerado.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-curso">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                    Curso
+                  </span>
+                  <span class="resource-card-price price-freemium">Freemium</span>
+                </div>
+                <h3><a href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">Sanar Med (Yellowbook)</a></h3>
+                <p>A Sanar oferece o Yellowbook (fluxogramas de conduta) e cursos de emergencia. Conteudo visual e esquematizado, bom para consulta rapida. Blog e podcasts gratuitos complementam o curso pago.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Fluxogramas</span>
+                  <span class="feature-tag">Blog gratis</span>
+                  <span class="feature-tag">Podcast</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">sanarmed.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 4: Stack Plantao -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="stack-plantao" data-searchable aria-labelledby="plantao-heading">
+          <div class="section-header">
+            <span class="section-number">04</span>
+            <h2 id="plantao-heading">Stack Plantao</h2>
+          </div>
+          <p class="section-desc">
+            Ferramentas que todo plantonista usa no dia a dia. Apps de consulta rapida, calculadoras
+            medicas e referencias de condutas para ter no celular durante o plantao.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              Apps Essenciais
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-freemium">Freemium</span>
+                </div>
+                <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook</a></h3>
+                <p>O app mais usado por medicos no Brasil. Condutas baseadas em evidencias, prescricoes prontas, bulario completo, CID-10/CID-11 e calculadoras clinicas, tudo offline. Versao gratis limitada; plano completo ~R$70/mes.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Offline</span>
+                  <span class="feature-tag">Prescricoes prontas</span>
+                  <span class="feature-tag">CID-10/11</span>
+                  <span class="feature-tag">~R$70/mes</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-freemium">Freemium</span>
+                </div>
+                <h3><a href="https://www.wemeds.com.br" target="_blank" rel="noopener noreferrer">WeMeds</a></h3>
+                <p>Prescricoes prontas e personalizaveis para o PS. Modelos validados por especialistas, com doses ajustadas por peso e funcao renal. Agiliza a prescricao e reduz erros. Versao gratis com recursos basicos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Prescricoes por peso</span>
+                  <span class="feature-tag">Ajuste renal</span>
+                  <span class="feature-tag">Versao gratis</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.wemeds.com.br" target="_blank" rel="noopener noreferrer">wemeds.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">Medscape</a></h3>
+                <p>Referencia internacional gratuita. Drug interaction checker, doses, protocolos e noticias medicas. Em ingles, mas com a base de dados mais completa do mundo. Cadastro gratuito com email medico.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Drug checker</span>
+                  <span class="feature-tag">Em ingles</span>
+                  <span class="feature-tag">100% gratis</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">medscape.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.epocrates.com" target="_blank" rel="noopener noreferrer">Epocrates</a></h3>
+                <p>App americano gratuito de referencia farmacologica. Muito util para verificar interacoes medicamentosas, doses e contraindicacoes. Complemento ao Medscape para consultas rapidas de drogas.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Interacoes</span>
+                  <span class="feature-tag">Em ingles</span>
+                  <span class="feature-tag">Offline</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.epocrates.com" target="_blank" rel="noopener noreferrer">epocrates.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="subsection" style="margin-top: 1.5rem;">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              Ferramentas e Referencia Rapida
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-ferramenta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Ferramenta
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">MDCalc</a></h3>
+                <p>Calculadoras de scores clinicos validados: CURB-65, Wells, Glasgow, CHA2DS2-VASc, MELD, clearance de creatinina e centenas de outros. Indispensavel na emergencia. App e site funcionam offline.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">600+ scores</span>
+                  <span class="feature-tag">Offline</span>
+                  <span class="feature-tag">Validados</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">mdcalc.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-ferramenta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Ferramenta
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://litfl.com/ecg-library/" target="_blank" rel="noopener noreferrer">Life in the Fast Lane (ECG)</a></h3>
+                <p>Biblioteca de ECGs com exemplos reais e interpretacoes detalhadas. Referencia rapida e gratuita para aprender e revisar eletrocardiogramas durante o plantao. Em ingles, mas muito visual.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">ECG library</span>
+                  <span class="feature-tag">Casos reais</span>
+                  <span class="feature-tag">Em ingles</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://litfl.com" target="_blank" rel="noopener noreferrer">litfl.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-ferramenta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Ferramenta
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://consultas.anvisa.gov.br/#/bulario/" target="_blank" rel="noopener noreferrer">Bulario Eletronico (ANVISA)</a></h3>
+                <p>Consulta de bulas de medicamentos registrados na ANVISA. Informacoes sobre indicacoes, posologia, contraindicacoes e interacoes medicamentosas. Fonte oficial do governo brasileiro.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Oficial ANVISA</span>
+                  <span class="feature-tag">Bulas completas</span>
+                  <span class="feature-tag">Em portugues</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://consultas.anvisa.gov.br/#/bulario/" target="_blank" rel="noopener noreferrer">consultas.anvisa.gov.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-site">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Site
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://medpreco.com" target="_blank" rel="noopener noreferrer">MedPreco</a></h3>
+                <p>Comparador de precos de medicamentos no Brasil. Util para orientar o paciente sobre genericos e opcoes mais acessiveis, melhorando a adesao ao tratamento prescrito.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Precos</span>
+                  <span class="feature-tag">Genericos</span>
+                  <span class="feature-tag">Em portugues</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://medpreco.com" target="_blank" rel="noopener noreferrer">medpreco.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 5: Stack Postinho -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="stack-postinho" data-searchable aria-labelledby="postinho-heading">
+          <div class="section-header">
+            <span class="section-number">05</span>
+            <h2 id="postinho-heading">Stack Postinho</h2>
+          </div>
+          <p class="section-desc">
+            Ferramentas e referencias para quem trabalha na Atencao Primaria (UBS/ESF).
+            Protocolos do Ministerio da Saude, cadernos de atencao basica e apps que facilitam
+            o manejo ambulatorial do dia a dia.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Protocolos e Cadernos
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-gov">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"></path></svg>
+                    Gov
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.gov.br/saude/pt-br/composicao/saps/linha-de-cuidado" target="_blank" rel="noopener noreferrer">Linhas de Cuidado (MS)</a></h3>
+                <p>Linhas de cuidado do Ministerio da Saude para Atencao Primaria. Protocolos de hipertensao, diabetes, saude mental, pre-natal e mais. Referencia oficial para condutas na UBS.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Oficial MS</span>
+                  <span class="feature-tag">HAS / DM</span>
+                  <span class="feature-tag">Pre-natal</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.gov.br/saude" target="_blank" rel="noopener noreferrer">gov.br/saude</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-gov">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"></path></svg>
+                    Gov
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.gov.br/saude/pt-br/acesso-a-informacao/acoes-e-programas/programa-nacional-de-imunizacoes-vacinacao" target="_blank" rel="noopener noreferrer">Calendario Vacinal (PNI)</a></h3>
+                <p>Calendario Nacional de Vacinacao do PNI atualizado. Esquemas por faixa etaria (crianca, adolescente, adulto, idoso, gestante) e indicacoes para situacoes especiais.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">PNI</span>
+                  <span class="feature-tag">Todas as faixas etarias</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.gov.br/saude" target="_blank" rel="noopener noreferrer">gov.br/saude</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-gov">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"></path></svg>
+                    Gov
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://bvsms.saude.gov.br/bvs/publicacoes/cab_rastreamento.pdf" target="_blank" rel="noopener noreferrer">Rastreamento (Caderno AB)</a></h3>
+                <p>Protocolos de rastreamento do Ministerio da Saude: cancer de mama, colo de utero, colorretal, diabetes, hipertensao e mais. Saber quando pedir exames preventivos na APS.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Rastreamento</span>
+                  <span class="feature-tag">Cancer</span>
+                  <span class="feature-tag">Caderno AB</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://bvsms.saude.gov.br" target="_blank" rel="noopener noreferrer">bvsms.saude.gov.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-gov">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"></path></svg>
+                    Gov
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.gov.br/saude/pt-br/composicao/sctie/daf/rename" target="_blank" rel="noopener noreferrer">RENAME</a></h3>
+                <p>Relacao Nacional de Medicamentos Essenciais. Lista completa de medicamentos disponiveis no SUS. Essencial para prescrever dentro da farmacia basica e da farmacia popular.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Oficial MS</span>
+                  <span class="feature-tag">Farmacia basica</span>
+                  <span class="feature-tag">Farmacia popular</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.gov.br/saude" target="_blank" rel="noopener noreferrer">gov.br/saude</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="subsection" style="margin-top: 1.5rem;">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              Apps para a APS
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-freemium">Freemium</span>
+                </div>
+                <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook (APS)</a></h3>
+                <p>Secao especifica de condutas ambulatoriais. Prescricoes para manejo de cronicos (HAS, DM, hipotireoidismo), pre-natal, puericultura e saude mental na APS. Mesmo app, foco diferente.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Cronicos</span>
+                  <span class="feature-tag">Pre-natal</span>
+                  <span class="feature-tag">Saude mental</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-app">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    App
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://aps.bvs.br" target="_blank" rel="noopener noreferrer">Portal APS (BVS)</a></h3>
+                <p>Biblioteca Virtual em Saude da Atencao Primaria. Acesso gratuito a protocolos, cadernos de atencao basica, notas tecnicas e evidencias para decisao clinica no SUS.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">BVS</span>
+                  <span class="feature-tag">Protocolos SUS</span>
+                  <span class="feature-tag">Evidencias</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://aps.bvs.br" target="_blank" rel="noopener noreferrer">aps.bvs.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-ferramenta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Ferramenta
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://sisab.saude.gov.br" target="_blank" rel="noopener noreferrer">e-SUS / SISAB</a></h3>
+                <p>Sistema de informacao da Atencao Basica. Registro de atendimentos, producao e indicadores. Conheca o e-SUS PEC (prontuario eletronico) e o app e-SUS Territorio para ACS.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Prontuario</span>
+                  <span class="feature-tag">Indicadores</span>
+                  <span class="feature-tag">e-SUS PEC</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://sisab.saude.gov.br" target="_blank" rel="noopener noreferrer">sisab.saude.gov.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-ferramenta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Ferramenta
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">Telessaude UFMG</a></h3>
+                <p>Servico de teleconsultoria para medicos da APS. Duvidas clinicas respondidas por especialistas em ate 72h. Gratuito para profissionais cadastrados no CNES. Excelente para cidades sem especialistas.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Teleconsultoria</span>
+                  <span class="feature-tag">Especialistas</span>
+                  <span class="feature-tag">72h resposta</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">telessaude.hc.ufmg.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 6: Referencias e Livros -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="referencias" data-searchable aria-labelledby="ref-heading">
+          <div class="section-header">
+            <span class="section-number">06</span>
+            <h2 id="ref-heading">Referencias e Livros</h2>
+          </div>
+          <p class="section-desc">
+            Livros e referencias que todo medico recem-formado deveria ter por perto.
+            Desde guias de conduta rapida ate tratados para aprofundamento.
+          </p>
+
+          <div class="resources-grid">
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-livro">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                  Livro
+                </span>
+                <span class="resource-card-price price-paid">~R$120</span>
+              </div>
+              <h3><a href="https://www.sanarmed.com/yellowbook" target="_blank" rel="noopener noreferrer">Yellowbook - Fluxos e Condutas</a></h3>
+              <p>Guia pratico de condutas em emergencia e ambulatorio da Sanar. Fluxogramas visuais e objetivos. Formato de bolso, ideal para consulta rapida no plantao. Atualizado anualmente.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Fluxogramas</span>
+                <span class="feature-tag">Formato bolso</span>
+                <span class="feature-tag">Atualizado anual</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">sanarmed.com</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-livro">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                  Livro
+                </span>
+                <span class="resource-card-price price-paid">~R$350</span>
+              </div>
+              <h3><a href="https://www.grupoa.com.br" target="_blank" rel="noopener noreferrer">Medicina de Emergencia (USP)</a></h3>
+              <p>Tratado de referencia do HC-FMUSP organizado por Irineu Tadeu Velasco. Abordagem completa das principais emergencias clinicas e cirurgicas. Referencia para provas de residencia e condutas baseadas em evidencias.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">HC-FMUSP</span>
+                <span class="feature-tag">Referencia para provas</span>
+                <span class="feature-tag">Evidencias</span>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-livro">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                  Livro
+                </span>
+                <span class="resource-card-price price-paid">~R$400</span>
+              </div>
+              <h3><a href="https://www.grupoa.com.br" target="_blank" rel="noopener noreferrer">Tratado de MFC (Gusso & Lopes)</a></h3>
+              <p>Tratado de Medicina de Familia e Comunidade de Gusso, Lopes e Dias. Referencia completa para APS: abordagem centrada na pessoa, MCCP, saude mental, manejo de cronicos e atencao domiciliar.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">MFC</span>
+                <span class="feature-tag">MCCP</span>
+                <span class="feature-tag">Referencia APS</span>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-livro">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                  Livro
+                </span>
+                <span class="resource-card-price price-paid">~R$250</span>
+              </div>
+              <h3><a href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">Blackbook - Clinica Medica</a></h3>
+              <p>Guia de bolso de clinica medica com condutas objetivas. Formato similar ao Yellowbook, mas com foco em diagnostico diferencial e manejo ambulatorial. Classico entre residentes.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Bolso</span>
+                <span class="feature-tag">Diagnostico diferencial</span>
+                <span class="feature-tag">Classico</span>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-site">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  Site
+                </span>
+                <span class="resource-card-price price-paid">Institucional</span>
+              </div>
+              <h3><a href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">UpToDate</a></h3>
+              <p>Base de dados de medicina baseada em evidencias mais respeitada do mundo. Artigos de revisao atualizados por especialistas. Muitos hospitais e universidades oferecem acesso institucional gratuito.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Evidencias</span>
+                <span class="feature-tag">Acesso institucional</span>
+                <span class="feature-tag">Em ingles</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">uptodate.com</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-site">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  Site
+                </span>
+                <span class="resource-card-price price-free">Gratis via CAPES</span>
+              </div>
+              <h3><a href="https://www.dynamed.com" target="_blank" rel="noopener noreferrer">DynaMed</a></h3>
+              <p>Alternativa ao UpToDate com acesso gratuito pelo Portal de Periodicos CAPES (via instituicao). Resumos objetivos, recomendacoes graduadas e atualizacoes frequentes. Otimo custo-beneficio.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Gratis via CAPES</span>
+                <span class="feature-tag">Evidencias</span>
+                <span class="feature-tag">Em ingles</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.dynamed.com" target="_blank" rel="noopener noreferrer">dynamed.com</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-site">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  Site
+                </span>
+                <span class="resource-card-price price-free">Gratis</span>
+              </div>
+              <h3><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">PubMed</a></h3>
+              <p>Base de dados bibliografica da National Library of Medicine. Acesso gratuito a milhoes de artigos cientificos. Essencial para buscar evidencias e se manter atualizado na pratica clinica.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Artigos cientificos</span>
+                <span class="feature-tag">NLM/NIH</span>
+                <span class="feature-tag">Em ingles</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">pubmed.ncbi.nlm.nih.gov</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable>
+              <div class="resource-card-top">
+                <span class="resource-card-type type-site">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  Site
+                </span>
+                <span class="resource-card-price price-free">Gratis</span>
+              </div>
+              <h3><a href="https://www.cochranelibrary.com" target="_blank" rel="noopener noreferrer">Cochrane Library</a></h3>
+              <p>Revisoes sistematicas de alta qualidade. Padrao-ouro da medicina baseada em evidencias. Acesso gratuito para muitos paises. Ideal para duvidas clinicas sobre eficacia de tratamentos.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Revisoes sistematicas</span>
+                <span class="feature-tag">MBE</span>
+                <span class="feature-tag">Em ingles</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.cochranelibrary.com" target="_blank" rel="noopener noreferrer">cochranelibrary.com</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 7: Comunidades -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="comunidades" data-searchable aria-labelledby="comunidades-heading">
+          <div class="section-header">
+            <span class="section-number">07</span>
+            <h2 id="comunidades-heading">Comunidades</h2>
+          </div>
+          <p class="section-desc">
+            Nao enfrente a jornada sozinho. Grupos de Telegram, WhatsApp, forums e comunidades
+            online onde medicos recem-formados trocam experiencias, tiram duvidas e compartilham
+            oportunidades.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              Grupos e Forums
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-comunidade">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comunidade
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.reddit.com/r/medicina/" target="_blank" rel="noopener noreferrer">r/medicina (Reddit)</a></h3>
+                <p>Subreddit brasileiro de medicina com discussoes sobre residencia, plantao, carreira e casos clinicos. Comunidade ativa com medicos de diversas especialidades. Anonimato permite discussoes francas.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Reddit</span>
+                  <span class="feature-tag">Anonimo</span>
+                  <span class="feature-tag">Discussoes francas</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.reddit.com/r/medicina/" target="_blank" rel="noopener noreferrer">reddit.com/r/medicina</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-comunidade">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comunidade
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="#" target="_blank" rel="noopener noreferrer">Grupos de Plantao (WhatsApp/Telegram)</a></h3>
+                <p>Grupos regionais onde hospitais e cooperativas postam vagas de plantao em tempo real. Peca indicacao a colegas da sua turma ou residentes da regiao onde quer atuar. A maioria e por convite.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Vagas em tempo real</span>
+                  <span class="feature-tag">Regionais</span>
+                  <span class="feature-tag">Por convite</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-comunidade">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comunidade
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://t.me/s/medicinabr" target="_blank" rel="noopener noreferrer">Canais Telegram - Medicina BR</a></h3>
+                <p>Diversos canais e grupos de Telegram voltados para medicos brasileiros. Dicas de estudo, compartilhamento de materiais, noticias de editais de residencia e discussoes de casos clinicos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Telegram</span>
+                  <span class="feature-tag">Materiais</span>
+                  <span class="feature-tag">Editais</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-comunidade">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comunidade
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.instagram.com/explore/tags/medicinabrasil/" target="_blank" rel="noopener noreferrer">Instagram Medico</a></h3>
+                <p>Comunidade ativa de medicos no Instagram. Perfis educativos com resumos visuais, dicas de residencia e relatos de experiencia. Bom para acompanhar tendencias e networking informal.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Instagram</span>
+                  <span class="feature-tag">Visual</span>
+                  <span class="feature-tag">Networking</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-podcast">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    Podcast
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.youtube.com/@medabordo" target="_blank" rel="noopener noreferrer">Med a Bordo (YouTube)</a></h3>
+                <p>Canal no YouTube com discussoes sobre carreira medica, mercado de trabalho, plantao e vida de recem-formado. Linguagem acessivel e experiencias reais de medicos em diferentes fases da carreira.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">YouTube</span>
+                  <span class="feature-tag">Carreira</span>
+                  <span class="feature-tag">Mercado</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable>
+                <div class="resource-card-top">
+                  <span class="resource-card-type type-comunidade">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Comunidade
+                  </span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                </div>
+                <h3><a href="https://www.medway.com.br/blog/" target="_blank" rel="noopener noreferrer">Blog Medway</a></h3>
+                <p>Blog com artigos sobre residencia medica, comparativos de provas, analise de editais e dicas de estudo. Conteudo gratuito e atualizado frequentemente. Comunidade ativa nos comentarios.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Blog</span>
+                  <span class="feature-tag">Editais</span>
+                  <span class="feature-tag">Dicas de estudo</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.medway.com.br/blog/" target="_blank" rel="noopener noreferrer">medway.com.br/blog</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </div><!-- .section-content -->
+
+      <!-- Footer note -->
+      <div class="guide-footer">
+        <div class="footer-stats">
+          <span><strong>50+</strong> recursos curados</span>
+          <span><strong>7</strong> categorias</span>
+          <span><strong>10</strong> tipos de recurso</span>
+        </div>
+        <p>
+          Este guia e uma curadoria de recursos uteis para medicos recem-formados no Brasil.
+          Links externos levam a sites de terceiros e foram verificados na data de publicacao.
+          Precos sao aproximados e podem variar. Alguns links podem usar URLs de placeholder (#)
+          ate serem confirmados. Sugestoes de novos recursos sao bem-vindas.
+        </p>
+      </div>
+
     </div>
   </main>
+
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <script>
+    // === Dark mode toggle ===
+    (function() {
+      var toggle = document.getElementById('darkToggle');
+      var html = document.documentElement;
+
+      // Check stored preference or system preference
+      var stored = localStorage.getItem('medstack-dark-mode');
+      if (stored === 'true' || (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+      }
+
+      toggle.addEventListener('click', function() {
+        html.classList.toggle('dark');
+        localStorage.setItem('medstack-dark-mode', html.classList.contains('dark'));
+      });
+    })();
+
+    // === Smooth scroll for anchor links ===
+    (function() {
+      document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Update URL without scroll jump
+            history.pushState(null, '', this.getAttribute('href'));
+          }
+        });
+      });
+    })();
+
+    // === Scroll reveal animation for sections ===
+    (function() {
+      var sections = document.querySelectorAll('.guide-section');
+
+      // IntersectionObserver for scroll reveal
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.05, rootMargin: '0px 0px -60px 0px' });
+
+        sections.forEach(function(section) {
+          observer.observe(section);
+        });
+      } else {
+        // Fallback: reveal all immediately
+        sections.forEach(function(s) { s.classList.add('revealed'); });
+      }
+    })();
+
+    // === Sticky section nav: active state based on scroll ===
+    (function() {
+      var sections = document.querySelectorAll('.guide-section');
+      var navLinks = document.querySelectorAll('.section-nav a');
+      var sectionNav = document.getElementById('sectionNav');
+
+      function updateActiveNav() {
+        var scrollY = window.scrollY;
+        var offset = 140;
+
+        var current = '';
+        sections.forEach(function(section) {
+          if (section.classList.contains('search-hidden')) return;
+          var top = section.offsetTop - offset;
+          if (scrollY >= top) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(function(link) {
+          var isActive = link.getAttribute('data-section') === current;
+          link.classList.toggle('active', isActive);
+          link.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+      }
+
+      function scrollNavToActive() {
+        var active = sectionNav.querySelector('.active');
+        if (active) {
+          active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+
+      window.addEventListener('scroll', function() {
+        updateActiveNav();
+        scrollNavToActive();
+      }, { passive: true });
+
+      updateActiveNav();
+    })();
+
+    // === Back to top button ===
+    (function() {
+      var btn = document.getElementById('backToTop');
+      window.addEventListener('scroll', function() {
+        btn.classList.toggle('visible', window.scrollY > 600);
+      }, { passive: true });
+
+      btn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+
+    // === Search / Filter with keyboard navigation ===
+    (function() {
+      var input = document.getElementById('searchInput');
+      var clearBtn = document.getElementById('searchClear');
+      var noResults = document.getElementById('noResults');
+      var searchCount = document.getElementById('searchCount');
+      var highlights = document.getElementById('highlights');
+      var sectionNav = document.getElementById('sectionNav');
+      var cards = document.querySelectorAll('.resource-card[data-searchable]');
+      var sections = document.querySelectorAll('.guide-section[data-searchable]');
+      var dividers = document.querySelectorAll('.section-divider');
+
+      function normalize(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      }
+
+      function doSearch() {
+        var query = normalize(input.value.trim());
+        clearBtn.classList.toggle('visible', query.length > 0);
+
+        if (!query) {
+          cards.forEach(function(c) { c.classList.remove('search-hidden'); });
+          sections.forEach(function(s) {
+            s.classList.remove('search-hidden');
+            // Re-trigger reveal
+            if (!s.classList.contains('revealed')) s.classList.add('revealed');
+          });
+          dividers.forEach(function(d) { d.style.display = ''; });
+          highlights.style.display = '';
+          sectionNav.style.display = '';
+          noResults.classList.remove('visible');
+          searchCount.classList.remove('visible');
+          searchCount.textContent = '';
+          return;
+        }
+
+        highlights.style.display = 'none';
+
+        var visibleSections = new Set();
+
+        cards.forEach(function(card) {
+          var text = normalize(card.textContent);
+          var match = text.indexOf(query) !== -1;
+          card.classList.toggle('search-hidden', !match);
+          if (match) {
+            var section = card.closest('.guide-section');
+            if (section) visibleSections.add(section.id);
+          }
+        });
+
+        sections.forEach(function(section) {
+          var isVisible = visibleSections.has(section.id);
+          section.classList.toggle('search-hidden', !isVisible);
+          if (isVisible && !section.classList.contains('revealed')) {
+            section.classList.add('revealed');
+          }
+        });
+
+        dividers.forEach(function(d) { d.style.display = 'none'; });
+
+        var totalVisible = document.querySelectorAll('.resource-card[data-searchable]:not(.search-hidden)').length;
+        noResults.classList.toggle('visible', totalVisible === 0);
+        sectionNav.style.display = totalVisible === 0 ? 'none' : '';
+
+        // Show result count
+        if (totalVisible > 0) {
+          searchCount.textContent = totalVisible + ' recurso' + (totalVisible !== 1 ? 's' : '') + ' encontrado' + (totalVisible !== 1 ? 's' : '');
+          searchCount.classList.add('visible');
+        } else {
+          searchCount.classList.remove('visible');
+          searchCount.textContent = '';
+        }
+      }
+
+      // Debounce for performance
+      var debounceTimer;
+      input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(doSearch, 150);
+      });
+
+      clearBtn.addEventListener('click', function() {
+        input.value = '';
+        doSearch();
+        input.focus();
+      });
+
+      // Keyboard shortcuts
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          input.value = '';
+          doSearch();
+          input.blur();
+        }
+        // Arrow down moves focus to first visible card link
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          var firstCard = document.querySelector('.resource-card[data-searchable]:not(.search-hidden) h3 a');
+          if (firstCard) firstCard.focus();
+        }
+      });
+
+      // Global keyboard shortcut: / to focus search
+      document.addEventListener('keydown', function(e) {
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          input.focus();
+          input.select();
+        }
+      });
+
+      // Navigate between card links with arrow keys
+      document.addEventListener('keydown', function(e) {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        var active = document.activeElement;
+        if (!active || !active.closest('.resource-card')) return;
+
+        e.preventDefault();
+        var allLinks = Array.from(document.querySelectorAll('.resource-card[data-searchable]:not(.search-hidden) h3 a'));
+        var idx = allLinks.indexOf(active);
+        if (idx === -1) return;
+
+        var next;
+        if (e.key === 'ArrowDown') {
+          next = allLinks[idx + 1] || allLinks[0];
+        } else {
+          next = allLinks[idx - 1] || allLinks[allLinks.length - 1];
+        }
+        if (next) next.focus();
+      });
+    })();
+  </script>
 </body>
 </html>
