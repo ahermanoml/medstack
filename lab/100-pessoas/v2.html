@@ -1,26 +1,2432 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>100 Pessoas — Version 2</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ========================================
+       V2 — Redesigned Dashboard
+       ======================================== */
+
+    /* Reset lab-page defaults */
+    .lab-page {
+      min-height: auto;
+      display: block;
+      padding: 0;
+    }
+    .lab-page-inner {
+      max-width: var(--max-width);
+    }
+
+    /* ---- Dashboard header ---- */
+    .dash-header {
+      padding: var(--space-lg) 0 var(--space-md);
+      margin-bottom: 0;
+    }
+    .dash-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .dash-header h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .dash-header p {
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+      max-width: 560px;
+    }
+    .dash-date {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    /* ---- Key metrics row ---- */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      margin: var(--space-md) 0;
+    }
+    .metric-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.1rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    .metric-card.mc-blue::before { background: var(--color-accent); }
+    .metric-card.mc-green::before { background: #16a34a; }
+    .metric-card.mc-amber::before { background: #d97706; }
+    .metric-card.mc-red::before { background: #dc2626; }
+    .metric-card.mc-purple::before { background: #7c3aed; }
+    .metric-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-light);
+      margin-bottom: 0.4rem;
+    }
+    .metric-value {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    .metric-value.blue { color: var(--color-accent); }
+    .metric-value.green { color: #16a34a; }
+    .metric-value.amber { color: #d97706; }
+    .metric-value.red { color: #dc2626; }
+    .metric-sub {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      margin-top: 0.2rem;
+    }
+
+    /* ---- Capacity bar ---- */
+    .capacity-bar-wrap {
+      margin-bottom: var(--space-md);
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--color-bg);
+    }
+    .capacity-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .capacity-bar-header span {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+    }
+    .capacity-bar-header strong {
+      font-size: 0.85rem;
+    }
+    .capacity-bar {
+      height: 8px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .capacity-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--color-accent), #3b82f6);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ---- Tab navigation ---- */
+    .dash-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: var(--space-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .dash-tabs::-webkit-scrollbar { display: none; }
+    .dash-tab {
+      padding: 0.7rem 1.15rem;
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font-body);
+      transition: color 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    .dash-tab:hover {
+      color: var(--color-text);
+    }
+    .dash-tab.active {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+      font-weight: 600;
+    }
+    .dash-tab .tab-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      background: #dc2626;
+      color: #fff;
+      padding: 0.05rem 0.35rem;
+      border-radius: 8px;
+      margin-left: 0.35rem;
+      vertical-align: super;
+    }
+
+    /* ---- Sections ---- */
+    .dash-section {
+      display: none;
+      padding-bottom: var(--space-lg);
+      animation: fadeIn 0.25s ease;
+    }
+    .dash-section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ---- Search & filters ---- */
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      font-family: var(--font-body);
+      font-size: 0.825rem;
+      padding: 0.45rem 0.75rem 0.45rem 2rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='6' cy='6' r='5'/%3E%3Cline x1='13' y1='13' x2='9.5' y2='9.5'/%3E%3C/svg%3E") no-repeat 0.65rem center;
+      width: 200px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .filter-btn {
+      font-family: var(--font-body);
+      font-size: 0.775rem;
+      font-weight: 500;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      color: var(--color-text-light);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+    .filter-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+
+    /* ---- Table ---- */
+    .table-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .data-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      padding: 0.7rem 1rem;
+      border-bottom: 2px solid var(--color-border);
+      background: var(--color-bg-alt);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .data-table th:hover {
+      color: var(--color-text);
+    }
+    .data-table th.sorted-asc::after {
+      content: ' \2191';
+      color: var(--color-accent);
+    }
+    .data-table th.sorted-desc::after {
+      content: ' \2193';
+      color: var(--color-accent);
+    }
+    .data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+    .data-table tbody tr {
+      transition: background 0.1s;
+    }
+    .data-table tbody tr:hover {
+      background: #f8fafc;
+    }
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .data-table .name-cell {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .data-table tbody tr.hidden-row {
+      display: none;
+    }
+
+    /* ---- Badges ---- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.675rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .badge-green { background: #f0fdf4; color: #16a34a; }
+    .badge-amber { background: #fffbeb; color: #d97706; }
+    .badge-red { background: #fef2f2; color: #dc2626; }
+    .badge-blue { background: #eff6ff; color: #2563eb; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .badge-purple { background: #f5f3ff; color: #7c3aed; }
+
+    /* Dot indicator */
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      flex-shrink: 0;
+    }
+    .dot-green { background: #16a34a; }
+    .dot-amber { background: #d97706; }
+    .dot-red { background: #dc2626; }
+
+    /* Priority indicator */
+    .priority-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .priority-bar {
+      width: 3px;
+      height: 18px;
+      border-radius: 2px;
+    }
+    .priority-bar.p-green { background: #16a34a; }
+    .priority-bar.p-amber { background: #d97706; }
+    .priority-bar.p-red { background: #dc2626; }
+
+    /* ---- Alert strip ---- */
+    .alert-strip {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+    .alert-card {
+      flex: 0 0 auto;
+      min-width: 240px;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      border-left: 3px solid;
+    }
+    .alert-card.alert-urgent {
+      background: #fef2f2;
+      border-left-color: #dc2626;
+      color: #991b1b;
+    }
+    .alert-card.alert-warn {
+      background: #fffbeb;
+      border-left-color: #d97706;
+      color: #92400e;
+    }
+    .alert-card.alert-info {
+      background: #eff6ff;
+      border-left-color: #2563eb;
+      color: #1e40af;
+    }
+    .alert-card strong {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ---- Detail grid ---- */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .detail-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      background: var(--color-bg);
+    }
+    .detail-card h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.75rem;
+    }
+    .detail-card p, .detail-card li {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--color-text);
+    }
+    .detail-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .detail-card ul li {
+      padding: 0.35rem 0;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .detail-card ul li:last-child {
+      border-bottom: none;
+    }
+    .detail-card-full {
+      grid-column: 1 / -1;
+    }
+    .detail-card-third {
+      grid-column: span 1;
+    }
+
+    /* ---- Patient record panel ---- */
+    .patient-panel {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .patient-panel-header {
+      background: var(--color-bg-alt);
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .patient-panel-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .patient-panel-header .patient-meta {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .patient-panel-body {
+      padding: 1.25rem;
+    }
+    .patient-select {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .patient-select-btn {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      color: var(--color-text-light);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .patient-select-btn:hover {
+      border-color: #bbb;
+      color: var(--color-text);
+    }
+    .patient-select-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+
+    /* ---- Info rows ---- */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.85rem;
+      gap: 1rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label {
+      color: var(--color-text-light);
+      font-weight: 500;
+    }
+    .info-row .value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* ---- CSS-only bar chart ---- */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      height: 120px;
+      padding-top: 0.5rem;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .bar {
+      width: 100%;
+      max-width: 40px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-height: 4px;
+    }
+    .bar.bar-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+    .bar.bar-green { background: linear-gradient(180deg, #4ade80, #16a34a); }
+    .bar.bar-amber { background: linear-gradient(180deg, #fbbf24, #d97706); }
+    .bar.bar-red { background: linear-gradient(180deg, #f87171, #dc2626); }
+    .bar-label {
+      font-size: 0.65rem;
+      color: var(--color-text-light);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .bar-value {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    /* ---- Donut chart (CSS-only) ---- */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .donut {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .donut-center {
+      position: absolute;
+      inset: 16px;
+      background: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .donut-legend {
+      font-size: 0.8rem;
+      line-height: 2;
+    }
+    .donut-legend-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      margin-right: 0.4rem;
+    }
+
+    /* ---- Exam calendar ---- */
+    .exam-calendar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .calendar-item {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.75rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .calendar-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    .calendar-item .month {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-bottom: 0.2rem;
+      color: var(--color-text);
+    }
+    .calendar-item .exam-name {
+      color: var(--color-text-light);
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+    .calendar-item.done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .calendar-item.upcoming {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .calendar-item.overdue {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* ---- Medication card layout ---- */
+    .med-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .med-card {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+      background: var(--color-bg);
+      position: relative;
+      transition: box-shadow 0.15s;
+    }
+    .med-card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    .med-card-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .med-card-patient {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.6rem;
+    }
+    .med-card-detail {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0;
+    }
+    .med-card-status {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 0.4rem 0.65rem;
+      border-radius: 0 8px 0 8px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .med-status-ok { background: #f0fdf4; color: #16a34a; }
+    .med-status-warn { background: #fffbeb; color: #d97706; }
+    .med-status-critical { background: #fef2f2; color: #dc2626; }
+    .med-stock-bar {
+      height: 4px;
+      background: #f1f5f9;
+      border-radius: 2px;
+      margin-top: 0.6rem;
+      overflow: hidden;
+    }
+    .med-stock-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+    .med-stock-fill.stock-ok { background: #16a34a; }
+    .med-stock-fill.stock-warn { background: #d97706; }
+    .med-stock-fill.stock-critical { background: #dc2626; }
+
+    /* ---- Emergency section ---- */
+    .emergency-banner {
+      border: 2px solid #dc2626;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .emergency-banner-header {
+      background: #dc2626;
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .emergency-banner-body {
+      background: #fef2f2;
+      padding: 1.25rem;
+    }
+    .emergency-numbers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .emergency-num {
+      text-align: center;
+      padding: 0.85rem;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .emergency-num .num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #dc2626;
+      line-height: 1;
+    }
+    .emergency-num .num-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #991b1b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 0.3rem;
+    }
+    .emergency-instructions {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #991b1b;
+    }
+    .emergency-instructions strong {
+      color: #7f1d1d;
+    }
+
+    /* Protocol cards */
+    .protocol-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .protocol-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    .protocol-card-header {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .protocol-card-header.p-red { background: #fef2f2; color: #dc2626; }
+    .protocol-card-header.p-amber { background: #fffbeb; color: #92400e; }
+    .protocol-card-header.p-blue { background: #eff6ff; color: #1e40af; }
+    .protocol-card-header.p-green { background: #f0fdf4; color: #166534; }
+    .protocol-card-body {
+      padding: 1rem;
+    }
+    .protocol-card-body ol {
+      padding-left: 1.25rem;
+      font-size: 0.825rem;
+      line-height: 1.8;
+      color: var(--color-text);
+    }
+
+    /* ---- Pricing section ---- */
+    .pricing-hero {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f0fdf4 100%);
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .pricing-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%);
+    }
+    .pricing-price {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+    .pricing-label {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin-top: 0.25rem;
+    }
+    .pricing-divider {
+      width: 40px;
+      height: 2px;
+      background: var(--color-accent);
+      margin: 1rem auto;
+      border-radius: 1px;
+    }
+    .pricing-note {
+      font-size: 0.825rem;
+      color: var(--color-text-light);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ---- Timeline ---- */
+    .timeline {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--color-border);
+    }
+    .timeline-item {
+      position: relative;
+      padding-bottom: 1rem;
+      padding-left: 0.5rem;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-border);
+      border: 2px solid var(--color-bg);
+    }
+    .timeline-item.tl-green::before { background: #16a34a; }
+    .timeline-item.tl-amber::before { background: #d97706; }
+    .timeline-item.tl-red::before { background: #dc2626; }
+    .timeline-item.tl-blue::before { background: #2563eb; }
+    .timeline-date {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .timeline-text {
+      font-size: 0.825rem;
+      line-height: 1.5;
+      color: var(--color-text);
+      margin-top: 0.1rem;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 900px) {
+      .metrics-row { grid-template-columns: repeat(3, 1fr); }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-card-full { grid-column: 1; }
+      .exam-calendar { grid-template-columns: repeat(2, 1fr); }
+      .protocol-grid { grid-template-columns: 1fr; }
+      .emergency-numbers { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
+      .dash-header h1 { font-size: 1.35rem; }
+      .exam-calendar { grid-template-columns: 1fr 1fr; }
+      .donut-wrap { flex-direction: column; align-items: flex-start; }
+      .search-input { width: 100%; }
+      .filter-bar { flex-direction: column; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .patient-panel-header { flex-direction: column; align-items: flex-start; }
+      .dash-header-top { flex-direction: column; }
+      .emergency-numbers { grid-template-columns: 1fr; }
+      .bar-chart { height: 90px; }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../100-pessoas.html">&larr; Back</a>
+        <a href="../100-pessoas.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
+
   <main class="lab-page">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>100 Pessoas — Version 2</h1>
-    </div>
+
+      <!-- =============================== -->
+      <!-- HEADER                          -->
+      <!-- =============================== -->
+      <div class="dash-header">
+        <div class="dash-header-top">
+          <div>
+            <span class="lab-tag">V2 — Dashboard</span>
+            <h1>100 Pessoas</h1>
+            <p>Gestao de pacientes para medicina por assinatura. Ate 100 pacientes com acompanhamento longitudinal.</p>
+          </div>
+          <span class="dash-date">14 de abril de 2026</span>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- KEY METRICS                     -->
+      <!-- =============================== -->
+      <div class="metrics-row">
+        <div class="metric-card mc-blue">
+          <div class="metric-label">Pacientes ativos</div>
+          <div class="metric-value blue">6</div>
+          <div class="metric-sub">de 100 vagas</div>
+        </div>
+        <div class="metric-card mc-green">
+          <div class="metric-label">Consultas — Abril</div>
+          <div class="metric-value green">4</div>
+          <div class="metric-sub">2 realizadas, 2 pendentes</div>
+        </div>
+        <div class="metric-card mc-amber">
+          <div class="metric-label">Exames pendentes</div>
+          <div class="metric-value amber">3</div>
+          <div class="metric-sub">necessitam agendamento</div>
+        </div>
+        <div class="metric-card mc-red">
+          <div class="metric-label">Alertas ativos</div>
+          <div class="metric-value red">5</div>
+          <div class="metric-sub">2 urgentes, 3 atencao</div>
+        </div>
+        <div class="metric-card mc-purple">
+          <div class="metric-label">Custo med. mensal</div>
+          <div class="metric-value" style="color: #7c3aed;">R$ 123</div>
+          <div class="metric-sub">8 medicacoes ativas</div>
+        </div>
+      </div>
+
+      <!-- Capacity bar -->
+      <div class="capacity-bar-wrap">
+        <div class="capacity-bar-header">
+          <span>Capacidade da pratica</span>
+          <strong>6 / 100 pacientes (6%)</strong>
+        </div>
+        <div class="capacity-bar">
+          <div class="capacity-fill" style="width: 6%;"></div>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- ALERT STRIP                     -->
+      <!-- =============================== -->
+      <div class="alert-strip">
+        <div class="alert-card alert-urgent">
+          <strong>Urgente</strong>
+          Vo Istelina — consulta vencida desde 05/04. Reagendar imediatamente.
+        </div>
+        <div class="alert-card alert-urgent">
+          <strong>Urgente</strong>
+          Vo Antonio — consulta vencida desde 05/04. Reagendar imediatamente.
+        </div>
+        <div class="alert-card alert-warn">
+          <strong>Estoque critico</strong>
+          Enalapril (Pai) — estoque para ~10 dias. Providenciar reposicao.
+        </div>
+        <div class="alert-card alert-warn">
+          <strong>Exame pendente</strong>
+          Pai — hemograma e funcao renal a agendar.
+        </div>
+        <div class="alert-card alert-info">
+          <strong>Lembrete</strong>
+          Meta 2026: 20 pacientes. 14 vagas a preencher.
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- TAB NAVIGATION                  -->
+      <!-- =============================== -->
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="pacientes">Pacientes</button>
+        <button class="dash-tab" data-tab="ficha">Ficha Clinica</button>
+        <button class="dash-tab" data-tab="medicacoes">Medicacoes</button>
+        <button class="dash-tab" data-tab="exames">Exames</button>
+        <button class="dash-tab" data-tab="suporte">Emergencia <span class="tab-badge">2</span></button>
+        <button class="dash-tab" data-tab="plano">Plano</button>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 1: LISTA DE PACIENTES                   -->
+      <!-- ============================================ -->
+      <div class="dash-section active" id="pacientes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Lista de Pacientes</h2>
+            <span style="font-size: 0.825rem; color: var(--color-text-light);">6 cadastrados &middot; 94 vagas disponiveis</span>
+          </div>
+          <div class="filter-bar">
+            <input type="text" class="search-input" id="patientSearch" placeholder="Buscar paciente...">
+            <button class="filter-btn active" data-filter="todos" onclick="filterPatients('todos', this)">Todos</button>
+            <button class="filter-btn" data-filter="urgente" onclick="filterPatients('urgente', this)">Urgente</button>
+            <button class="filter-btn" data-filter="atencao" onclick="filterPatients('atencao', this)">Atencao</button>
+            <button class="filter-btn" data-filter="rotina" onclick="filterPatients('rotina', this)">Rotina</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="patientTable">
+            <thead>
+              <tr>
+                <th data-sort="num" style="width: 40px;">#</th>
+                <th data-sort="name">Nome</th>
+                <th data-sort="age">Idade</th>
+                <th>Status</th>
+                <th data-sort="last">Ultima consulta</th>
+                <th data-sort="next">Proxima visita</th>
+                <th data-sort="priority">Prioridade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-priority="rotina">
+                <td>1</td>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td data-val="32">32</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260310">10/03/2026</td>
+                <td data-val="20260610">10/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-green"></span>Rotina</span></td>
+              </tr>
+              <tr data-priority="atencao">
+                <td>2</td>
+                <td class="name-cell">Pai</td>
+                <td data-val="63">63</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260222">22/02/2026</td>
+                <td data-val="20260522">22/05/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-amber"></span>Atencao</span></td>
+              </tr>
+              <tr data-priority="rotina">
+                <td>3</td>
+                <td class="name-cell">Mae</td>
+                <td data-val="60">60</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260315">15/03/2026</td>
+                <td data-val="20260615">15/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-green"></span>Rotina</span></td>
+              </tr>
+              <tr data-priority="urgente">
+                <td>4</td>
+                <td class="name-cell">Vo Istelina</td>
+                <td data-val="84">84</td>
+                <td><span class="status-dot dot-red"></span><span class="badge badge-red">Vencido</span></td>
+                <td data-val="20260105">05/01/2026</td>
+                <td data-val="20260405">05/04/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-red"></span>Urgente</span></td>
+              </tr>
+              <tr data-priority="urgente">
+                <td>5</td>
+                <td class="name-cell">Vo Antonio</td>
+                <td data-val="87">87</td>
+                <td><span class="status-dot dot-red"></span><span class="badge badge-red">Vencido</span></td>
+                <td data-val="20260105">05/01/2026</td>
+                <td data-val="20260405">05/04/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-red"></span>Urgente</span></td>
+              </tr>
+              <tr data-priority="atencao">
+                <td>6</td>
+                <td class="name-cell">Dona Marly</td>
+                <td data-val="72">72</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260320">20/03/2026</td>
+                <td data-val="20260620">20/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-amber"></span>Atencao</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quick visual summaries -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Distribuicao por prioridade</h4>
+            <div class="donut-wrap">
+              <!-- conic-gradient donut: 2 urgente (33%), 2 atencao (33%), 2 rotina (33%) -->
+              <div class="donut" style="background: conic-gradient(#dc2626 0deg 120deg, #d97706 120deg 240deg, #16a34a 240deg 360deg);">
+                <div class="donut-center">6</div>
+              </div>
+              <div class="donut-legend">
+                <div><span class="donut-legend-dot" style="background: #dc2626;"></span>Urgente — 2</div>
+                <div><span class="donut-legend-dot" style="background: #d97706;"></span>Atencao — 2</div>
+                <div><span class="donut-legend-dot" style="background: #16a34a;"></span>Rotina — 2</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Proximas consultas</h4>
+            <div class="timeline">
+              <div class="timeline-item tl-red">
+                <div class="timeline-date">05/04 — Vencida</div>
+                <div class="timeline-text">Vo Istelina (reagendar)</div>
+              </div>
+              <div class="timeline-item tl-red">
+                <div class="timeline-date">05/04 — Vencida</div>
+                <div class="timeline-text">Vo Antonio (reagendar)</div>
+              </div>
+              <div class="timeline-item tl-amber">
+                <div class="timeline-date">22/05/2026</div>
+                <div class="timeline-text">Pai</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">10/06/2026</div>
+                <div class="timeline-text">Eu (Hermano)</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">15/06/2026</div>
+                <div class="timeline-text">Mae</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">20/06/2026</div>
+                <div class="timeline-text">Dona Marly</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Faixa etaria dos pacientes</h4>
+            <div class="bar-chart">
+              <div class="bar-col">
+                <div class="bar-value">1</div>
+                <div class="bar bar-blue" style="height: 17%;"></div>
+                <div class="bar-label">30-39</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">0</div>
+                <div class="bar bar-blue" style="height: 3%;"></div>
+                <div class="bar-label">40-49</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">0</div>
+                <div class="bar bar-blue" style="height: 3%;"></div>
+                <div class="bar-label">50-59</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">2</div>
+                <div class="bar bar-blue" style="height: 34%;"></div>
+                <div class="bar-label">60-69</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">1</div>
+                <div class="bar bar-amber" style="height: 17%;"></div>
+                <div class="bar-label">70-79</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">2</div>
+                <div class="bar bar-red" style="height: 34%;"></div>
+                <div class="bar-label">80+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 2: FICHA DO PACIENTE                    -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="ficha">
+        <h2 class="section-title">Ficha Clinica</h2>
+        <p class="section-subtitle">Selecione um paciente para visualizar a ficha completa.</p>
+
+        <div class="patient-select">
+          <button class="patient-select-btn active" onclick="showPatient('istelina', this)">Vo Istelina</button>
+          <button class="patient-select-btn" onclick="showPatient('pai', this)">Pai</button>
+          <button class="patient-select-btn" onclick="showPatient('hermano', this)">Eu (Hermano)</button>
+          <button class="patient-select-btn" onclick="showPatient('mae', this)">Mae</button>
+          <button class="patient-select-btn" onclick="showPatient('antonio', this)">Vo Antonio</button>
+          <button class="patient-select-btn" onclick="showPatient('marly', this)">Dona Marly</button>
+        </div>
+
+        <!-- Vo Istelina -->
+        <div class="patient-record" id="record-istelina">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-red"></span>
+                Vo Istelina
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-red">Consulta vencida</span>
+                <span class="badge badge-purple">84 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Nome completo</span>
+                    <span class="value">Istelina da Silva</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">84 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Data de nascimento</span>
+                    <span class="value">12/08/1941</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Tipo sanguineo</span>
+                    <span class="value">A+</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value" style="color: #dc2626; font-weight: 700;">Dipirona</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-red">HAS</span> Hipertensao arterial sistemica</li>
+                    <li><span class="badge badge-amber">DM2</span> Diabetes mellitus tipo 2</li>
+                    <li><span class="badge badge-gray">OA</span> Osteoartrose de joelhos</li>
+                    <li><span class="badge badge-blue">Hipo</span> Hipotireoidismo</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <ul>
+                    <li><strong>Losartana 50mg</strong> — 1x/dia (manha)</li>
+                    <li><strong>Metformina 850mg</strong> — 2x/dia</li>
+                    <li><strong>Levotiroxina 50mcg</strong> — 1x/dia (jejum)</li>
+                    <li><strong>Paracetamol 750mg</strong> — se necessario</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 05/01/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-red">PA</span> 140/85 mmHg (acima do alvo)</li>
+                    <li><span class="badge badge-amber">Glic</span> Glicemia jejum: 132 mg/dL</li>
+                    <li><span class="badge badge-amber">HbA1c</span> 7.2%</li>
+                    <li><span class="badge badge-green">TSH</span> 3.1 mUI/L (normal)</li>
+                    <li>Queixa: dor em joelho D</li>
+                  </ul>
+                </div>
+                <div class="detail-card detail-card-full">
+                  <h4>Calendario de exames</h4>
+                  <div class="exam-calendar">
+                    <div class="calendar-item done">
+                      <div class="month">Jan 2026</div>
+                      <div class="exam-name">Hemograma, Glicemia, HbA1c, TSH</div>
+                    </div>
+                    <div class="calendar-item overdue">
+                      <div class="month">Abr 2026</div>
+                      <div class="exam-name">Funcao renal, Eletrolitos, ECG</div>
+                    </div>
+                    <div class="calendar-item upcoming">
+                      <div class="month">Jul 2026</div>
+                      <div class="exam-name">Hemograma, Glicemia, HbA1c</div>
+                    </div>
+                    <div class="calendar-item upcoming">
+                      <div class="month">Out 2026</div>
+                      <div class="exam-name">Check-up completo anual</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pai -->
+        <div class="patient-record" id="record-pai" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-amber"></span>
+                Pai
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-amber">Exame pendente</span>
+                <span class="badge badge-purple">63 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">63 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Tipo sanguineo</span>
+                    <span class="value">O+</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value" style="color: #dc2626; font-weight: 700;">Penicilina</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-red">HAS</span> Hipertensao arterial</li>
+                    <li><span class="badge badge-amber">Dislip</span> Dislipidemia</li>
+                    <li><span class="badge badge-amber">Pre-DM</span> Pre-diabetes (glicemia alterada)</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <ul>
+                    <li><strong>Enalapril 10mg</strong> — 2x/dia</li>
+                    <li><strong>Sinvastatina 20mg</strong> — 1x/dia (noite)</li>
+                    <li><strong>AAS 100mg</strong> — 1x/dia</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 22/02/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-amber">PA</span> 135/80 mmHg</li>
+                    <li><span class="badge badge-amber">CT</span> Colesterol total: 210 mg/dL</li>
+                    <li><span class="badge badge-red">LDL</span> 140 mg/dL (acima do alvo)</li>
+                    <li><span class="badge badge-amber">Glic</span> Glicemia jejum: 108 mg/dL</li>
+                    <li>Conduta: solicitar hemograma + funcao renal</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hermano -->
+        <div class="patient-record" id="record-hermano" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-green"></span>
+                Eu (Hermano)
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-green">Em dia</span>
+                <span class="badge badge-purple">32 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">32 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value">Nenhuma conhecida</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <p style="color: var(--color-text-light);">Nenhum problema cronico registrado. Acompanhamento preventivo.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <p style="color: var(--color-text-light);">Nenhuma medicacao continua.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 10/03/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-green">PA</span> 120/75 mmHg (normal)</li>
+                    <li><span class="badge badge-green">Glic</span> Glicemia jejum: 88 mg/dL</li>
+                    <li>Check-up preventivo completo. Sem alteracoes.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mae -->
+        <div class="patient-record" id="record-mae" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-green"></span>
+                Mae
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-green">Em dia</span>
+                <span class="badge badge-purple">60 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">60 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value">Nenhuma conhecida</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <p style="color: var(--color-text-light);">Acompanhamento preventivo. Sem condicoes cronicas ativas.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <p style="color: var(--color-text-light);">Nenhuma medicacao continua.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 15/03/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-green">PA</span> 125/78 mmHg (normal)</li>
+                    <li><span class="badge badge-green">Glic</span> Glicemia jejum: 92 mg/dL</li>
+                    <li>Exames preventivos em dia. Mamografia agendada.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vo Antonio -->
+        <div class="patient-record" id="record-antonio" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-red"></span>
+                Vo Antonio
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-red">Consulta vencida</span>
+                <span class="badge badge-purple">87 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">87 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value">Nenhuma conhecida</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-amber">Risco</span> Risco de queda elevado</li>
+                    <li>Avaliacao geriatrica necessaria</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <p style="color: var(--color-text-light);">Informacoes a atualizar na proxima consulta.</p>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 05/01/2026</h4>
+                  <ul>
+                    <li>Exames basicos realizados</li>
+                    <li>Pendente: ECG, PSA, hemograma</li>
+                    <li>Reagendar consulta com urgencia</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dona Marly -->
+        <div class="patient-record" id="record-marly" style="display: none;">
+          <div class="patient-panel">
+            <div class="patient-panel-header">
+              <h3>
+                <span class="status-dot dot-green"></span>
+                Dona Marly
+              </h3>
+              <div class="patient-meta">
+                <span class="badge badge-amber">Atencao</span>
+                <span class="badge badge-purple">72 anos</span>
+              </div>
+            </div>
+            <div class="patient-panel-body">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Dados pessoais</h4>
+                  <div class="info-row">
+                    <span class="label">Idade</span>
+                    <span class="value">72 anos</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Alergias</span>
+                    <span class="value" style="color: #dc2626; font-weight: 700;">Sulfa</span>
+                  </div>
+                </div>
+                <div class="detail-card">
+                  <h4>Problemas de saude</h4>
+                  <ul>
+                    <li><span class="badge badge-red">HAS</span> Hipertensao arterial</li>
+                    <li><span class="badge badge-gray">DRGE</span> Doenca do refluxo gastroesofagico</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Medicacoes em uso</h4>
+                  <ul>
+                    <li><strong>Anlodipino 5mg</strong> — 1x/dia</li>
+                    <li><strong>Omeprazol 20mg</strong> — 1x/dia (jejum)</li>
+                  </ul>
+                </div>
+                <div class="detail-card">
+                  <h4>Ultima consulta — 20/03/2026</h4>
+                  <ul>
+                    <li><span class="badge badge-green">PA</span> 130/80 mmHg (aceitavel)</li>
+                    <li>Boa adesao ao tratamento</li>
+                    <li>Proxima consulta: 20/06/2026</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 3: CONTROLE DE MEDICACOES               -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="medicacoes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Controle de Medicacoes</h2>
+            <span style="font-size: 0.825rem; color: var(--color-text-light);">Estoque, validades e custo medio mensal</span>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active" data-medfilter="todos" onclick="filterMeds('todos', this)">Todos</button>
+            <button class="filter-btn" data-medfilter="alerta" onclick="filterMeds('alerta', this)">Com alerta</button>
+          </div>
+        </div>
+
+        <!-- Card layout for medications -->
+        <div class="med-cards" id="medCards">
+          <div class="med-card" data-medstatus="critical">
+            <div class="med-card-status med-status-critical">Estoque baixo</div>
+            <div class="med-card-name">Enalapril 10mg</div>
+            <div class="med-card-patient">Pai — 2x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span style="font-weight: 600; color: #dc2626;">20 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>05/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 15,80</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-critical" style="width: 22%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="warn">
+            <div class="med-card-status med-status-warn">Repor em breve</div>
+            <div class="med-card-name">Metformina 850mg</div>
+            <div class="med-card-patient">Vo Istelina — 2x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span style="font-weight: 600; color: #d97706;">30 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>06/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 18,50</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-warn" style="width: 50%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="warn">
+            <div class="med-card-status med-status-warn">Repor em breve</div>
+            <div class="med-card-name">Omeprazol 20mg</div>
+            <div class="med-card-patient">Dona Marly — 1x/dia (jejum)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span style="font-weight: 600; color: #d97706;">28 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>04/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 11,90</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-warn" style="width: 47%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Losartana 50mg</div>
+            <div class="med-card-patient">Vo Istelina — 1x/dia (manha)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>45 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>08/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 12,90</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 75%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Levotiroxina 50mcg</div>
+            <div class="med-card-patient">Vo Istelina — 1x/dia (jejum)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>60 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>12/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 22,00</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Sinvastatina 20mg</div>
+            <div class="med-card-patient">Pai — 1x/dia (noite)</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>50 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>09/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 19,90</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 83%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">AAS 100mg</div>
+            <div class="med-card-patient">Pai — 1x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>90 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>11/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 8,50</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Anlodipino 5mg</div>
+            <div class="med-card-patient">Dona Marly — 1x/dia</div>
+            <div class="med-card-detail">
+              <span>Estoque</span>
+              <span>40 comp.</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Validade</span>
+              <span>07/2027</span>
+            </div>
+            <div class="med-card-detail">
+              <span>Custo/mes</span>
+              <span>R$ 14,20</span>
+            </div>
+            <div class="med-stock-bar">
+              <div class="med-stock-fill stock-ok" style="width: 67%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost summary -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Resumo de custos mensais</h4>
+            <div class="info-row">
+              <span class="label">Vo Istelina (3 medicacoes)</span>
+              <span class="value">R$ 53,40</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Pai (3 medicacoes)</span>
+              <span class="value">R$ 44,20</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Dona Marly (2 medicacoes)</span>
+              <span class="value">R$ 26,10</span>
+            </div>
+            <div class="info-row" style="border-top: 2px solid var(--color-border); margin-top: 0.5rem; padding-top: 0.75rem;">
+              <span class="label"><strong>Total mensal</strong></span>
+              <span class="value" style="color: var(--color-accent);"><strong>R$ 123,70</strong></span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Custo por paciente</h4>
+            <div class="bar-chart" style="height: 100px;">
+              <div class="bar-col">
+                <div class="bar-value">R$53</div>
+                <div class="bar bar-blue" style="height: 100%;"></div>
+                <div class="bar-label">Istelina</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">R$44</div>
+                <div class="bar bar-blue" style="height: 82%;"></div>
+                <div class="bar-label">Pai</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">R$26</div>
+                <div class="bar bar-blue" style="height: 49%;"></div>
+                <div class="bar-label">Marly</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-value">R$0</div>
+                <div class="bar bar-green" style="height: 3%;"></div>
+                <div class="bar-label">Outros</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 4: CONTROLE DE EXAMES                   -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="exames">
+        <h2 class="section-title">Controle de Exames</h2>
+        <p class="section-subtitle">Rastreamento por idade e condicoes. Exames basicos e calendario de triagem.</p>
+
+        <!-- Status per patient - highlighted -->
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Status de exames por paciente</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Ultimo check-up</th>
+                <th>Exames em dia</th>
+                <th>Pendentes</th>
+                <th>Proximo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td>10/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td>
+                <td style="color: var(--color-text-light);">—</td>
+                <td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Pai</td>
+                <td>22/02/2026</td>
+                <td><span class="badge badge-amber">Parcial</span></td>
+                <td>Hemograma, Funcao renal</td>
+                <td>Mai 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Mae</td>
+                <td>15/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td>
+                <td style="color: var(--color-text-light);">—</td>
+                <td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Istelina</td>
+                <td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td>
+                <td><strong>Funcao renal, Eletrolitos, ECG</strong></td>
+                <td style="color: #dc2626; font-weight: 600;">Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Antonio</td>
+                <td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td>
+                <td><strong>ECG, PSA, Hemograma</strong></td>
+                <td style="color: #dc2626; font-weight: 600;">Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Dona Marly</td>
+                <td>20/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td>
+                <td style="color: var(--color-text-light);">—</td>
+                <td>Set 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Exames basicos iniciais (todos os pacientes)</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exame</th>
+                <th>Descricao</th>
+                <th>Frequencia padrao</th>
+                <th>Indicacao</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Hemograma completo</td>
+                <td>Avaliacao global das celulas sanguineas</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Glicemia de jejum</td>
+                <td>Rastreio de diabetes</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Perfil lipidico</td>
+                <td>Colesterol total, HDL, LDL, triglicerideos</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Funcao renal</td>
+                <td>Creatinina, ureia, TFG</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Funcao hepatica</td>
+                <td>TGO, TGP, GGT</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">TSH</td>
+                <td>Rastreio de tireoide</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">ECG</td>
+                <td>Eletrocardiograma de repouso</td>
+                <td>Anual (> 40 anos) / bianual</td>
+                <td><span class="badge badge-amber">> 40 anos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Urina tipo 1 (EAS)</td>
+                <td>Rastreio renal e urinario</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vitamina D (25-OH)</td>
+                <td>Rastreio de deficiencia</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Rastreamento por idade e condicao</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exame de rastreio</th>
+                <th>Populacao-alvo</th>
+                <th>Frequencia</th>
+                <th>Pacientes aplicaveis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Mamografia</td>
+                <td>Mulheres > 40 anos</td>
+                <td>Anual ou bianual</td>
+                <td>Mae, Vo Istelina, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Colonoscopia</td>
+                <td>Todos > 45 anos</td>
+                <td>A cada 10 anos (se normal)</td>
+                <td>Pai, Mae, Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">PSA</td>
+                <td>Homens > 50 anos</td>
+                <td>Anual (discutir com paciente)</td>
+                <td>Pai, Vo Antonio</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Densitometria ossea</td>
+                <td>Mulheres > 65 anos / Homens > 70</td>
+                <td>A cada 2 anos</td>
+                <td>Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">HbA1c</td>
+                <td>Diabeticos / pre-diabeticos</td>
+                <td>Trimestral ou semestral</td>
+                <td>Vo Istelina, Pai</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Fundo de olho</td>
+                <td>Diabeticos</td>
+                <td>Anual</td>
+                <td>Vo Istelina</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Ecocardiograma</td>
+                <td>Hipertensos / cardiopatias</td>
+                <td>Anual ou bianual</td>
+                <td>Pai, Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 5: EMERGENCIA / SUPORTE                 -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="suporte">
+        <h2 class="section-title">Mapeamento do Suporte de Saude</h2>
+        <p class="section-subtitle">Contatos de emergencia, protocolos e rede de apoio por paciente.</p>
+
+        <!-- Emergency banner -->
+        <div class="emergency-banner">
+          <div class="emergency-banner-header">
+            Protocolo de emergencia geral
+          </div>
+          <div class="emergency-banner-body">
+            <div class="emergency-numbers">
+              <div class="emergency-num">
+                <div class="num">192</div>
+                <div class="num-label">SAMU</div>
+              </div>
+              <div class="emergency-num">
+                <div class="num">193</div>
+                <div class="num-label">Bombeiros</div>
+              </div>
+              <div class="emergency-num">
+                <div class="num">190</div>
+                <div class="num-label">Emergencia</div>
+              </div>
+            </div>
+            <div class="emergency-instructions">
+              <strong>Em caso de dor toracica, falta de ar severa, AVC (fala arrastada, fraqueza de um lado) ou perda de consciencia:</strong> ligar 192 imediatamente e encaminhar para a emergencia mais proxima.
+            </div>
+          </div>
+        </div>
+
+        <!-- Patient support network -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Vo Istelina — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Pai (filho)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Cuidador</span>
+              <span class="value">Neta Maria</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Sao Lucas</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">SUS + particular</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value" style="color: #dc2626; font-weight: 700;">Dipirona</span>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #92400e; background: #fffbeb; padding: 0.5rem 0.75rem; border-radius: 6px; line-height: 1.5;"><strong>Se hipoglicemia:</strong> oferecer suco de laranja ou sache de glicose. Se desmaio, SAMU 192.</p>
+          </div>
+          <div class="detail-card">
+            <h4>Vo Antonio — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Pai (filho)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Sao Lucas</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">SUS</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value">Nenhuma conhecida</span>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #92400e; background: #fffbeb; padding: 0.5rem 0.75rem; border-radius: 6px; line-height: 1.5;"><strong>Risco de queda:</strong> ambiente adaptado, tapetes removidos, barras no banheiro.</p>
+          </div>
+          <div class="detail-card">
+            <h4>Pai — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Mae (esposa)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Santa Casa</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">Unimed</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value" style="color: #dc2626; font-weight: 700;">Penicilina</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Dona Marly — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Filha Ana</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Santa Casa</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">Unimed</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value" style="color: #dc2626; font-weight: 700;">Sulfa</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency protocols -->
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Protocolos de emergencia</h3>
+        <div class="protocol-grid">
+          <div class="protocol-card">
+            <div class="protocol-card-header p-red">
+              Dor no peito
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Sentar o paciente, afrouxar roupas</li>
+                <li>Se usar AAS, mastigar 1 comprimido</li>
+                <li>Ligar SAMU 192</li>
+                <li>Nao dar agua ou comida</li>
+              </ol>
+            </div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-amber">
+              Hipoglicemia (tremor, suor frio, confusao)
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Oferecer 15g de carboidrato rapido (suco, mel)</li>
+                <li>Aguardar 15 minutos, medir novamente</li>
+                <li>Se inconsciente: SAMU 192, nao dar via oral</li>
+                <li>Posicao lateral de seguranca</li>
+              </ol>
+            </div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-blue">
+              Queda com suspeita de fratura
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Nao mover o paciente</li>
+                <li>Imobilizar o membro</li>
+                <li>Aplicar gelo (protegido com pano)</li>
+                <li>Encaminhar para emergencia</li>
+              </ol>
+            </div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-red">
+              Crise hipertensiva (PA > 180/110)
+            </div>
+            <div class="protocol-card-body">
+              <ol>
+                <li>Repouso absoluto</li>
+                <li>Verificar se tomou medicacao</li>
+                <li>Com sintomas (cefaleia, visao turva): SAMU 192</li>
+                <li>Assintomatico: medicar e reavaliar em 30 min</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB 6: PLANO E VALORES                      -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="plano">
+        <h2 class="section-title">Plano e Valores</h2>
+        <p class="section-subtitle">Estrutura de precos da pratica 100 Pessoas.</p>
+
+        <div class="pricing-hero">
+          <div class="pricing-price">R$ 500</div>
+          <div class="pricing-label">Consulta inicial — Avaliacao completa</div>
+          <div class="pricing-divider"></div>
+          <div class="pricing-note">Inclui anamnese detalhada, exame fisico, plano de cuidado personalizado e solicitacao de exames iniciais.</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>O que inclui a consulta inicial</h4>
+            <ul>
+              <li>Anamnese completa (historico pessoal e familiar)</li>
+              <li>Exame fisico detalhado</li>
+              <li>Revisao de medicacoes em uso</li>
+              <li>Solicitacao de exames laboratoriais basicos</li>
+              <li>ECG (se indicado)</li>
+              <li>Plano de cuidado individualizado</li>
+              <li>Calendario de exames personalizado</li>
+              <li>Mapeamento de rede de suporte</li>
+            </ul>
+          </div>
+          <div class="detail-card">
+            <h4>Modelo de acompanhamento</h4>
+            <ul>
+              <li><strong>Consultas de retorno:</strong> a cada 3-6 meses (conforme necessidade)</li>
+              <li><strong>Contato via mensagem:</strong> disponivel para duvidas rapidas</li>
+              <li><strong>Gestao de medicacoes:</strong> controle de estoque e renovacao de receitas</li>
+              <li><strong>Coordenacao de cuidado:</strong> encaminhamentos e comunicacao com especialistas</li>
+              <li><strong>Limite:</strong> ate 100 pacientes para garantir qualidade</li>
+            </ul>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Capacidade e metas</h4>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.825rem; margin-bottom: 0.35rem;">
+                <span>6 de 100 pacientes</span>
+                <span style="font-weight: 600;">6%</span>
+              </div>
+              <div style="background: #f1f5f9; border-radius: 6px; height: 10px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, var(--color-accent), #3b82f6); height: 100%; width: 6%; border-radius: 6px; transition: width 0.3s;"></div>
+              </div>
+            </div>
+            <div class="detail-grid" style="margin-bottom: 0;">
+              <div>
+                <div class="info-row">
+                  <span class="label">Vagas disponiveis</span>
+                  <span class="value" style="color: #16a34a;">94</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Meta para 2026</span>
+                  <span class="value">20 pacientes</span>
+                </div>
+              </div>
+              <div>
+                <div class="info-row">
+                  <span class="label">Receita potencial (20 pac.)</span>
+                  <span class="value" style="color: var(--color-accent);">R$ 10.000</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Progresso da meta</span>
+                  <span class="value">6 / 20 (30%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.container -->
   </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>100 Pessoas — MedStack Lab</p>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================
+    // Tab switching
+    // =============================================
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // =============================================
+    // Patient search
+    // =============================================
+    document.getElementById('patientSearch').addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#patientTable tbody tr');
+      rows.forEach(row => {
+        const name = row.querySelector('.name-cell').textContent.toLowerCase();
+        if (query === '' || name.includes(query)) {
+          row.classList.remove('hidden-row');
+        } else {
+          row.classList.add('hidden-row');
+        }
+      });
+    });
+
+    // =============================================
+    // Patient priority filter
+    // =============================================
+    function filterPatients(filter, btn) {
+      // Update active button
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const rows = document.querySelectorAll('#patientTable tbody tr');
+      rows.forEach(row => {
+        if (filter === 'todos' || row.dataset.priority === filter) {
+          row.classList.remove('hidden-row');
+        } else {
+          row.classList.add('hidden-row');
+        }
+      });
+
+      // Clear search when filtering
+      document.getElementById('patientSearch').value = '';
+    }
+
+    // =============================================
+    // Table sorting
+    // =============================================
+    document.querySelectorAll('#patientTable th[data-sort]').forEach(th => {
+      th.addEventListener('click', function() {
+        const table = document.getElementById('patientTable');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const sortKey = this.dataset.sort;
+        const isAsc = this.classList.contains('sorted-asc');
+
+        // Clear all sort classes
+        table.querySelectorAll('th').forEach(h => {
+          h.classList.remove('sorted-asc', 'sorted-desc');
+        });
+
+        // Set new sort direction
+        this.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+        const direction = isAsc ? -1 : 1;
+
+        rows.sort((a, b) => {
+          let aVal, bVal;
+          switch (sortKey) {
+            case 'num':
+              aVal = parseInt(a.cells[0].textContent);
+              bVal = parseInt(b.cells[0].textContent);
+              return (aVal - bVal) * direction;
+            case 'name':
+              aVal = a.cells[1].textContent.trim().toLowerCase();
+              bVal = b.cells[1].textContent.trim().toLowerCase();
+              return aVal.localeCompare(bVal) * direction;
+            case 'age':
+              aVal = parseInt(a.cells[2].dataset.val);
+              bVal = parseInt(b.cells[2].dataset.val);
+              return (aVal - bVal) * direction;
+            case 'last':
+              aVal = parseInt(a.cells[4].dataset.val);
+              bVal = parseInt(b.cells[4].dataset.val);
+              return (aVal - bVal) * direction;
+            case 'next':
+              aVal = parseInt(a.cells[5].dataset.val);
+              bVal = parseInt(b.cells[5].dataset.val);
+              return (aVal - bVal) * direction;
+            case 'priority':
+              const pOrder = { 'urgente': 0, 'atencao': 1, 'rotina': 2 };
+              aVal = pOrder[a.dataset.priority] || 99;
+              bVal = pOrder[b.dataset.priority] || 99;
+              return (aVal - bVal) * direction;
+            default:
+              return 0;
+          }
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+      });
+    });
+
+    // =============================================
+    // Patient record switcher
+    // =============================================
+    function showPatient(id, btn) {
+      document.querySelectorAll('.patient-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.patient-record').forEach(r => r.style.display = 'none');
+      const record = document.getElementById('record-' + id);
+      if (record) record.style.display = 'block';
+    }
+
+    // =============================================
+    // Medication filter
+    // =============================================
+    function filterMeds(filter, btn) {
+      document.querySelectorAll('[data-medfilter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.med-card').forEach(card => {
+        if (filter === 'todos') {
+          card.style.display = '';
+        } else {
+          const status = card.dataset.medstatus;
+          card.style.display = (status === 'critical' || status === 'warn') ? '' : 'none';
+        }
+      });
+    }
+
+    // =============================================
+    // Animate capacity bar on load
+    // =============================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const fill = document.querySelector('.capacity-fill');
+      if (fill) {
+        fill.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fill.style.width = '6%';
+          });
+        });
+      }
+    });
+  </script>
 </body>
 </html>
