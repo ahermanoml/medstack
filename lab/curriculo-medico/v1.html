@@ -1,25 +1,419 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Currículo Médico — Version 1</title>
+  <title>Currículo Médico — Antônio Hermano</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* CV Layout */
+    .cv {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-md);
+    }
+
+    /* CV Header */
+    .cv-header {
+      text-align: center;
+      padding-bottom: var(--space-md);
+      border-bottom: 2px solid var(--color-text);
+      margin-bottom: var(--space-lg);
+    }
+
+    .cv-name {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text);
+      margin-bottom: 0.35rem;
+    }
+
+    .cv-title {
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: var(--color-text-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .cv-contact {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cv-contact a {
+      color: var(--color-text-light);
+    }
+
+    .cv-contact a:hover {
+      color: var(--color-text);
+    }
+
+    /* CV Sections */
+    .cv-section {
+      margin-bottom: var(--space-lg);
+    }
+
+    .cv-section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text);
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 1rem;
+    }
+
+    /* CV Entry (for education, experience) */
+    .cv-entry {
+      margin-bottom: 1.25rem;
+    }
+
+    .cv-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .cv-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .cv-entry-role {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .cv-entry-date {
+      font-size: 0.875rem;
+      color: var(--color-text-light);
+      white-space: nowrap;
+    }
+
+    .cv-entry-org {
+      font-size: 0.95rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.35rem;
+    }
+
+    .cv-entry-details {
+      font-size: 0.925rem;
+      color: var(--color-text-light);
+      line-height: 1.65;
+    }
+
+    .cv-entry-details ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .cv-entry-details li {
+      position: relative;
+      padding-left: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .cv-entry-details li::before {
+      content: "\2022";
+      position: absolute;
+      left: 0;
+      color: var(--color-text-light);
+    }
+
+    /* City list */
+    .city-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0;
+      list-style: none;
+      padding: 0;
+      margin-top: 0.35rem;
+    }
+
+    .city-list li {
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    .city-list li::before {
+      display: none;
+    }
+
+    .city-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+      color: var(--color-text);
+      margin-right: 0.35rem;
+    }
+
+    /* Certifications grid */
+    .cert-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .cert-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .cert-item:last-child {
+      border-bottom: none;
+    }
+
+    .cert-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--color-text);
+    }
+
+    .cert-full {
+      font-size: 0.875rem;
+      color: var(--color-text-light);
+    }
+
+    .cert-status {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .cert-status.pending {
+      color: #92400e;
+      background: #fef3c7;
+    }
+
+    .cert-status.complete {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    /* Area of practice highlight */
+    .practice-area {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .practice-area-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-light);
+      margin-bottom: 0.35rem;
+    }
+
+    .practice-area-value {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .practice-area-desc {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin-top: 0.35rem;
+      line-height: 1.6;
+    }
+
+    /* Print styles */
+    @media print {
+      .nav {
+        display: none;
+      }
+
+      body {
+        font-size: 11pt;
+        color: #000;
+        background: #fff;
+      }
+
+      .cv {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .cv-header {
+        border-bottom-color: #000;
+      }
+
+      .cv-section-title {
+        border-bottom-color: #ccc;
+      }
+
+      .cv-contact a {
+        color: #000;
+        text-decoration: none;
+      }
+
+      .city-tag {
+        border-color: #ccc;
+        background: #f5f5f5;
+      }
+
+      .practice-area {
+        border-color: #ccc;
+        background: #f9f9f9;
+      }
+
+      .cert-status.pending {
+        background: #f5f5f5;
+        color: #555;
+      }
+
+      .cert-status.complete {
+        background: #f0f0f0;
+        color: #333;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .cv-name {
+        font-size: 1.5rem;
+      }
+
+      .cv-contact {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .cv-entry-header {
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../curriculo-medico.html">&larr; Back</a>
+        <a href="../curriculo-medico.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
-  <main class="lab-page">
-    <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Currículo Médico — Version 1</h1>
+
+  <main>
+    <div class="cv">
+
+      <!-- Header -->
+      <header class="cv-header">
+        <h1 class="cv-name">Antônio Hermano Mascarenhas da Luz</h1>
+        <p class="cv-title">Médico Generalista</p>
+        <div class="cv-contact">
+          <span>mascarenhasluz@gmail.com</span>
+          <span>CRM — SP / MG</span>
+        </div>
+      </header>
+
+      <!-- Área de Atuação -->
+      <section class="cv-section">
+        <h2 class="cv-section-title">Área de Atuação</h2>
+        <div class="practice-area">
+          <div class="practice-area-label">Foco principal</div>
+          <div class="practice-area-value">Medicina de Emergência — Pronto Socorro</div>
+          <p class="practice-area-desc">
+            Atendimento em unidades de urgência e emergência, com experiência em classificação de risco,
+            estabilização de pacientes críticos e manejo de quadros agudos clínicos e traumáticos.
+          </p>
+        </div>
+      </section>
+
+      <!-- Formação Acadêmica -->
+      <section class="cv-section">
+        <h2 class="cv-section-title">Formação Acadêmica</h2>
+        <div class="cv-entry">
+          <div class="cv-entry-header">
+            <span class="cv-entry-role">Bacharel em Medicina</span>
+          </div>
+          <div class="cv-entry-org">Universidade Federal de Uberlândia (UFU)</div>
+          <div class="cv-entry-details">
+            <ul>
+              <li>Formação generalista com ênfase em prática clínica e atendimento de emergência</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experiência Profissional -->
+      <section class="cv-section">
+        <h2 class="cv-section-title">Experiência Profissional</h2>
+        <div class="cv-entry">
+          <div class="cv-entry-header">
+            <span class="cv-entry-role">Médico Plantonista — Pronto Atendimento</span>
+          </div>
+          <div class="cv-entry-org">Unidades de Pronto Atendimento (UPAs) e Prontos-Socorros</div>
+          <div class="cv-entry-details">
+            <ul>
+              <li>Atendimento de urgência e emergência em regime de plantão</li>
+              <li>Classificação de risco, estabilização inicial e condução de casos clínicos e traumáticos</li>
+              <li>Realização de procedimentos de emergência: intubação orotraqueal, acesso venoso central, drenagem torácica, suturas e imobilizações</li>
+              <li>Atuação em múltiplas cidades e unidades de saúde</li>
+            </ul>
+            <div class="city-list" role="list" aria-label="Cidades de atuação">
+              <span class="city-tag">Osasco — SP</span>
+              <span class="city-tag">Guarulhos — SP</span>
+              <span class="city-tag">São Paulo — SP</span>
+              <span class="city-tag">Araguari — MG</span>
+              <span class="city-tag">Uberlândia — MG</span>
+              <span class="city-tag">Tupaciguara — MG</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cursos e Certificações -->
+      <section class="cv-section">
+        <h2 class="cv-section-title">Cursos e Certificações</h2>
+        <div class="cert-grid">
+          <div class="cert-item">
+            <div>
+              <span class="cert-name">ACLS</span>
+              <span class="cert-full">— Advanced Cardiovascular Life Support</span>
+            </div>
+            <span class="cert-status pending">Em andamento</span>
+          </div>
+          <div class="cert-item">
+            <div>
+              <span class="cert-name">ATLS</span>
+              <span class="cert-full">— Advanced Trauma Life Support</span>
+            </div>
+            <span class="cert-status pending">Em andamento</span>
+          </div>
+          <div class="cert-item">
+            <div>
+              <span class="cert-name">PALS</span>
+              <span class="cert-full">— Pediatric Advanced Life Support</span>
+            </div>
+            <span class="cert-status pending">Em andamento</span>
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 </body>

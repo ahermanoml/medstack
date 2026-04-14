@@ -1,26 +1,1205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>100 Pessoas — Version 1</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* Override lab-page defaults for dashboard layout */
+    .lab-page {
+      min-height: auto;
+      display: block;
+      padding: 0;
+    }
+    .lab-page-inner {
+      max-width: var(--max-width);
+    }
+
+    /* Dashboard header */
+    .dash-header {
+      padding: var(--space-lg) 0 var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-md);
+    }
+    .dash-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .dash-header p {
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: var(--space-md);
+    }
+    .stat-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .stat-value.accent { color: var(--color-accent); }
+    .stat-value.green { color: #16a34a; }
+    .stat-value.amber { color: #d97706; }
+    .stat-sub {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      margin-top: 0.15rem;
+    }
+
+    /* Section tabs / navigation */
+    .dash-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: var(--space-md);
+      overflow-x: auto;
+    }
+    .dash-tab {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font-body);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .dash-tab:hover {
+      color: var(--color-text);
+    }
+    .dash-tab.active {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+      font-weight: 600;
+    }
+
+    /* Sections */
+    .dash-section {
+      display: none;
+      padding-bottom: var(--space-lg);
+    }
+    .dash-section.active {
+      display: block;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--color-text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .data-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid var(--color-border);
+      background: var(--color-bg-alt);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .data-table tbody tr {
+      transition: background 0.1s;
+    }
+    .data-table tbody tr:hover {
+      background: var(--color-bg-alt);
+    }
+    .data-table .name-cell {
+      font-weight: 600;
+    }
+    .table-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .badge-green { background: #f0fdf4; color: #16a34a; }
+    .badge-amber { background: #fffbeb; color: #d97706; }
+    .badge-red { background: #fef2f2; color: #dc2626; }
+    .badge-blue { background: #eff6ff; color: #2563eb; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+
+    /* Detail cards */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .detail-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: var(--color-bg);
+    }
+    .detail-card h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.75rem;
+    }
+    .detail-card p, .detail-card li {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--color-text);
+    }
+    .detail-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .detail-card ul li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .detail-card ul li:last-child {
+      border-bottom: none;
+    }
+    .detail-card-full {
+      grid-column: 1 / -1;
+    }
+
+    /* Patient record panel */
+    .patient-panel {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .patient-panel-header {
+      background: var(--color-bg-alt);
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .patient-panel-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .patient-panel-body {
+      padding: 1.5rem;
+    }
+
+    /* Inline list items */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 0.9rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label {
+      color: var(--color-text-light);
+      font-weight: 500;
+    }
+    .info-row .value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* Emergency card */
+    .emergency-card {
+      border: 2px solid #dc2626;
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: #fef2f2;
+      margin-bottom: 1.25rem;
+    }
+    .emergency-card h4 {
+      color: #dc2626;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+    .emergency-card p, .emergency-card li {
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+    .emergency-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .emergency-card ul li {
+      padding: 0.35rem 0;
+    }
+
+    /* Pricing callout */
+    .pricing-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .pricing-box .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .pricing-box .price-label {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      margin-top: 0.25rem;
+    }
+    .pricing-box .price-note {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+
+    /* Calendar grid */
+    .exam-calendar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .calendar-item {
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+    .calendar-item .month {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+      color: var(--color-text);
+    }
+    .calendar-item .exam-name {
+      color: var(--color-text-light);
+      font-size: 0.75rem;
+    }
+    .calendar-item.done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .calendar-item.upcoming {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .calendar-item.overdue {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .detail-grid { grid-template-columns: 1fr; }
+      .exam-calendar { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .dash-header h1 { font-size: 1.35rem; }
+      .exam-calendar { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../100-pessoas.html">&larr; Back</a>
+        <a href="../100-pessoas.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
+
   <main class="lab-page">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>100 Pessoas — Version 1</h1>
-    </div>
+
+      <!-- Header -->
+      <div class="dash-header">
+        <span class="lab-tag">V1 — Prototipo</span>
+        <h1>100 Pessoas</h1>
+        <p>Plataforma de gestao de pacientes para medicina por assinatura. Ate 100 pacientes com acompanhamento longitudinal.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Pacientes ativos</div>
+          <div class="stat-value accent">6</div>
+          <div class="stat-sub">de 100 vagas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Consultas este mes</div>
+          <div class="stat-value">4</div>
+          <div class="stat-sub">Abril 2026</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Exames pendentes</div>
+          <div class="stat-value amber">3</div>
+          <div class="stat-sub">necessitam agendamento</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Consulta inicial</div>
+          <div class="stat-value green">R$ 500</div>
+          <div class="stat-sub">primeira avaliacao</div>
+        </div>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="pacientes">Lista de Pacientes</button>
+        <button class="dash-tab" data-tab="ficha">Ficha do Paciente</button>
+        <button class="dash-tab" data-tab="medicacoes">Controle de Medicacoes</button>
+        <button class="dash-tab" data-tab="exames">Controle de Exames</button>
+        <button class="dash-tab" data-tab="suporte">Suporte de Saude</button>
+        <button class="dash-tab" data-tab="plano">Plano e Valores</button>
+      </div>
+
+      <!-- ======================= -->
+      <!-- TAB 1: Lista de Pacientes -->
+      <!-- ======================= -->
+      <div class="dash-section active" id="pacientes">
+        <h2 class="section-title">Lista de Pacientes</h2>
+        <p class="section-subtitle">6 pacientes cadastrados. Vagas disponiveis: 94.</p>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Status</th>
+                <th>Ultima consulta</th>
+                <th>Proxima visita</th>
+                <th>Prioridade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td>32</td>
+                <td><span class="badge badge-green">Ativo</span></td>
+                <td>10/03/2026</td>
+                <td>10/06/2026</td>
+                <td><span class="badge badge-green">Rotina</span></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td class="name-cell">Pai</td>
+                <td>63</td>
+                <td><span class="badge badge-green">Ativo</span></td>
+                <td>22/02/2026</td>
+                <td>22/05/2026</td>
+                <td><span class="badge badge-amber">Atencao</span></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td class="name-cell">Mae</td>
+                <td>60</td>
+                <td><span class="badge badge-green">Ativo</span></td>
+                <td>15/03/2026</td>
+                <td>15/06/2026</td>
+                <td><span class="badge badge-green">Rotina</span></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td class="name-cell">Vo Istelina</td>
+                <td>84</td>
+                <td><span class="badge badge-green">Ativo</span></td>
+                <td>05/01/2026</td>
+                <td>05/04/2026</td>
+                <td><span class="badge badge-red">Urgente</span></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td class="name-cell">Vo Antonio</td>
+                <td>87</td>
+                <td><span class="badge badge-green">Ativo</span></td>
+                <td>05/01/2026</td>
+                <td>05/04/2026</td>
+                <td><span class="badge badge-red">Urgente</span></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td class="name-cell">Dona Marly</td>
+                <td>72</td>
+                <td><span class="badge badge-green">Ativo</span></td>
+                <td>20/03/2026</td>
+                <td>20/06/2026</td>
+                <td><span class="badge badge-amber">Atencao</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Alertas</h4>
+            <ul>
+              <li><span class="badge badge-red">Urgente</span> Vo Istelina — consulta vencida (05/04)</li>
+              <li><span class="badge badge-red">Urgente</span> Vo Antonio — consulta vencida (05/04)</li>
+              <li><span class="badge badge-amber">Pendente</span> Pai — hemograma a agendar</li>
+            </ul>
+          </div>
+          <div class="detail-card">
+            <h4>Proximas consultas</h4>
+            <ul>
+              <li><strong>05/04</strong> — Vo Istelina (reagendar)</li>
+              <li><strong>05/04</strong> — Vo Antonio (reagendar)</li>
+              <li><strong>22/05</strong> — Pai</li>
+              <li><strong>10/06</strong> — Eu (Hermano)</li>
+              <li><strong>15/06</strong> — Mae</li>
+              <li><strong>20/06</strong> — Dona Marly</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================= -->
+      <!-- TAB 2: Ficha do Paciente -->
+      <!-- ======================= -->
+      <div class="dash-section" id="ficha">
+        <h2 class="section-title">Ficha do Paciente</h2>
+        <p class="section-subtitle">Modelo de ficha clinica — exemplo: Vo Istelina</p>
+
+        <div class="patient-panel">
+          <div class="patient-panel-header">
+            <h3>Vo Istelina</h3>
+            <span class="badge badge-red">Consulta vencida</span>
+          </div>
+          <div class="patient-panel-body">
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h4>Dados pessoais</h4>
+                <div class="info-row">
+                  <span class="label">Nome completo</span>
+                  <span class="value">Istelina da Silva</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Idade</span>
+                  <span class="value">84 anos</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Data de nascimento</span>
+                  <span class="value">12/08/1941</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Tipo sanguineo</span>
+                  <span class="value">A+</span>
+                </div>
+              </div>
+              <div class="detail-card">
+                <h4>Problemas de saude</h4>
+                <ul>
+                  <li>Hipertensao arterial sistemica</li>
+                  <li>Diabetes mellitus tipo 2</li>
+                  <li>Osteoartrose de joelhos</li>
+                  <li>Hipotireoidismo</li>
+                </ul>
+              </div>
+              <div class="detail-card">
+                <h4>Medicacoes em uso</h4>
+                <ul>
+                  <li><strong>Losartana 50mg</strong> — 1x/dia (manha)</li>
+                  <li><strong>Metformina 850mg</strong> — 2x/dia</li>
+                  <li><strong>Levotiroxina 50mcg</strong> — 1x/dia (jejum)</li>
+                  <li><strong>Paracetamol 750mg</strong> — se necessario</li>
+                </ul>
+              </div>
+              <div class="detail-card">
+                <h4>Ultima consulta — 05/01/2026</h4>
+                <ul>
+                  <li>PA: 140/85 mmHg (acima do alvo)</li>
+                  <li>Glicemia jejum: 132 mg/dL</li>
+                  <li>HbA1c: 7.2%</li>
+                  <li>TSH: 3.1 mUI/L (normal)</li>
+                  <li>Queixa: dor em joelho D</li>
+                </ul>
+              </div>
+              <div class="detail-card detail-card-full">
+                <h4>Calendario de exames</h4>
+                <div class="exam-calendar">
+                  <div class="calendar-item done">
+                    <div class="month">Jan 2026</div>
+                    <div class="exam-name">Hemograma, Glicemia, HbA1c, TSH</div>
+                  </div>
+                  <div class="calendar-item overdue">
+                    <div class="month">Abr 2026</div>
+                    <div class="exam-name">Funcao renal, Eletrolitos, ECG</div>
+                  </div>
+                  <div class="calendar-item upcoming">
+                    <div class="month">Jul 2026</div>
+                    <div class="exam-name">Hemograma, Glicemia, HbA1c</div>
+                  </div>
+                  <div class="calendar-item upcoming">
+                    <div class="month">Out 2026</div>
+                    <div class="exam-name">Check-up completo anual</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second example: Pai -->
+        <div class="patient-panel">
+          <div class="patient-panel-header">
+            <h3>Pai</h3>
+            <span class="badge badge-amber">Exame pendente</span>
+          </div>
+          <div class="patient-panel-body">
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h4>Dados pessoais</h4>
+                <div class="info-row">
+                  <span class="label">Idade</span>
+                  <span class="value">63 anos</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Tipo sanguineo</span>
+                  <span class="value">O+</span>
+                </div>
+              </div>
+              <div class="detail-card">
+                <h4>Problemas de saude</h4>
+                <ul>
+                  <li>Hipertensao arterial</li>
+                  <li>Dislipidemia</li>
+                  <li>Pre-diabetes (glicemia de jejum alterada)</li>
+                </ul>
+              </div>
+              <div class="detail-card">
+                <h4>Medicacoes em uso</h4>
+                <ul>
+                  <li><strong>Enalapril 10mg</strong> — 2x/dia</li>
+                  <li><strong>Sinvastatina 20mg</strong> — 1x/dia (noite)</li>
+                  <li><strong>AAS 100mg</strong> — 1x/dia</li>
+                </ul>
+              </div>
+              <div class="detail-card">
+                <h4>Ultima consulta — 22/02/2026</h4>
+                <ul>
+                  <li>PA: 135/80 mmHg</li>
+                  <li>Colesterol total: 210 mg/dL</li>
+                  <li>LDL: 140 mg/dL (acima do alvo)</li>
+                  <li>Glicemia jejum: 108 mg/dL</li>
+                  <li>Conduta: solicitar hemograma + funcao renal</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================ -->
+      <!-- TAB 3: Controle de Medicacoes -->
+      <!-- ================================ -->
+      <div class="dash-section" id="medicacoes">
+        <h2 class="section-title">Controle de Medicacoes</h2>
+        <p class="section-subtitle">Estoque, validades e custo medio mensal dos pacientes acompanhados.</p>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Medicacao</th>
+                <th>Paciente</th>
+                <th>Dosagem</th>
+                <th>Estoque atual</th>
+                <th>Validade</th>
+                <th>Custo/mes</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Losartana 50mg</td>
+                <td>Vo Istelina</td>
+                <td>1x/dia</td>
+                <td>45 comp.</td>
+                <td>08/2027</td>
+                <td>R$ 12,90</td>
+                <td><span class="badge badge-green">OK</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Metformina 850mg</td>
+                <td>Vo Istelina</td>
+                <td>2x/dia</td>
+                <td>30 comp.</td>
+                <td>06/2027</td>
+                <td>R$ 18,50</td>
+                <td><span class="badge badge-amber">Repor em breve</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Levotiroxina 50mcg</td>
+                <td>Vo Istelina</td>
+                <td>1x/dia (jejum)</td>
+                <td>60 comp.</td>
+                <td>12/2027</td>
+                <td>R$ 22,00</td>
+                <td><span class="badge badge-green">OK</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Enalapril 10mg</td>
+                <td>Pai</td>
+                <td>2x/dia</td>
+                <td>20 comp.</td>
+                <td>05/2027</td>
+                <td>R$ 15,80</td>
+                <td><span class="badge badge-red">Estoque baixo</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Sinvastatina 20mg</td>
+                <td>Pai</td>
+                <td>1x/dia (noite)</td>
+                <td>50 comp.</td>
+                <td>09/2027</td>
+                <td>R$ 19,90</td>
+                <td><span class="badge badge-green">OK</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">AAS 100mg</td>
+                <td>Pai</td>
+                <td>1x/dia</td>
+                <td>90 comp.</td>
+                <td>11/2027</td>
+                <td>R$ 8,50</td>
+                <td><span class="badge badge-green">OK</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Anlodipino 5mg</td>
+                <td>Dona Marly</td>
+                <td>1x/dia</td>
+                <td>40 comp.</td>
+                <td>07/2027</td>
+                <td>R$ 14,20</td>
+                <td><span class="badge badge-green">OK</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Omeprazol 20mg</td>
+                <td>Dona Marly</td>
+                <td>1x/dia (jejum)</td>
+                <td>28 comp.</td>
+                <td>04/2027</td>
+                <td>R$ 11,90</td>
+                <td><span class="badge badge-amber">Repor em breve</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Resumo de custos mensais</h4>
+            <div class="info-row">
+              <span class="label">Vo Istelina (3 medicacoes)</span>
+              <span class="value">R$ 53,40</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Pai (3 medicacoes)</span>
+              <span class="value">R$ 44,20</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Dona Marly (2 medicacoes)</span>
+              <span class="value">R$ 26,10</span>
+            </div>
+            <div class="info-row" style="border-top: 2px solid var(--color-border); margin-top: 0.5rem; padding-top: 0.75rem;">
+              <span class="label"><strong>Total mensal</strong></span>
+              <span class="value" style="color: var(--color-accent);"><strong>R$ 123,70</strong></span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Alertas de medicacao</h4>
+            <ul>
+              <li><span class="badge badge-red">Critico</span> Enalapril (Pai) — estoque para ~10 dias</li>
+              <li><span class="badge badge-amber">Alerta</span> Metformina (Vo Istelina) — repor em 15 dias</li>
+              <li><span class="badge badge-amber">Alerta</span> Omeprazol (Dona Marly) — repor em 28 dias</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================== -->
+      <!-- TAB 4: Controle de Exames -->
+      <!-- ========================== -->
+      <div class="dash-section" id="exames">
+        <h2 class="section-title">Controle de Exames</h2>
+        <p class="section-subtitle">Rastreamento por idade e condicoes. Exames basicos e calendario de triagem.</p>
+
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Exames basicos iniciais (todos os pacientes)</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exame</th>
+                <th>Descricao</th>
+                <th>Frequencia padrao</th>
+                <th>Indicacao</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Hemograma completo</td>
+                <td>Avaliacao global das celulas sanguineas</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Glicemia de jejum</td>
+                <td>Rastreio de diabetes</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Perfil lipidico</td>
+                <td>Colesterol total, HDL, LDL, triglicerideos</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Funcao renal</td>
+                <td>Creatinina, ureia, TFG</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Funcao hepatica</td>
+                <td>TGO, TGP, GGT</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">TSH</td>
+                <td>Rastreio de tireoide</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">ECG</td>
+                <td>Eletrocardiograma de repouso</td>
+                <td>Anual (> 40 anos) / bianual</td>
+                <td><span class="badge badge-amber">> 40 anos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Urina tipo 1 (EAS)</td>
+                <td>Rastreio renal e urinario</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vitamina D (25-OH)</td>
+                <td>Rastreio de deficiencia</td>
+                <td>Anual</td>
+                <td><span class="badge badge-blue">Todos</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Rastreamento por idade e condicao</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exame de rastreio</th>
+                <th>Populacao-alvo</th>
+                <th>Frequencia</th>
+                <th>Pacientes aplicaveis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Mamografia</td>
+                <td>Mulheres > 40 anos</td>
+                <td>Anual ou bianual</td>
+                <td>Mae, Vo Istelina, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Colonoscopia</td>
+                <td>Todos > 45 anos</td>
+                <td>A cada 10 anos (se normal)</td>
+                <td>Pai, Mae, Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">PSA</td>
+                <td>Homens > 50 anos</td>
+                <td>Anual (discutir com paciente)</td>
+                <td>Pai, Vo Antonio</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Densitometria ossea</td>
+                <td>Mulheres > 65 anos / Homens > 70</td>
+                <td>A cada 2 anos</td>
+                <td>Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+              <tr>
+                <td class="name-cell">HbA1c</td>
+                <td>Diabeticos / pre-diabeticos</td>
+                <td>Trimestral ou semestral</td>
+                <td>Vo Istelina, Pai</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Fundo de olho</td>
+                <td>Diabeticos</td>
+                <td>Anual</td>
+                <td>Vo Istelina</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Ecocardiograma</td>
+                <td>Hipertensos / cardiopatias</td>
+                <td>Anual ou bianual</td>
+                <td>Pai, Vo Istelina, Vo Antonio, Dona Marly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Status de exames por paciente</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Ultimo check-up</th>
+                <th>Exames em dia</th>
+                <th>Pendentes</th>
+                <th>Proximo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td>10/03/2026</td>
+                <td><span class="badge badge-green">Todos</span></td>
+                <td>—</td>
+                <td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Pai</td>
+                <td>22/02/2026</td>
+                <td><span class="badge badge-amber">Parcial</span></td>
+                <td>Hemograma, Funcao renal</td>
+                <td>Mai 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Mae</td>
+                <td>15/03/2026</td>
+                <td><span class="badge badge-green">Todos</span></td>
+                <td>—</td>
+                <td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Istelina</td>
+                <td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td>
+                <td>Funcao renal, Eletrolitos, ECG</td>
+                <td>Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Antonio</td>
+                <td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td>
+                <td>ECG, PSA, Hemograma</td>
+                <td>Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Dona Marly</td>
+                <td>20/03/2026</td>
+                <td><span class="badge badge-green">Todos</span></td>
+                <td>—</td>
+                <td>Set 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================================= -->
+      <!-- TAB 5: Suporte de Saude -->
+      <!-- ================================= -->
+      <div class="dash-section" id="suporte">
+        <h2 class="section-title">Mapeamento do Suporte de Saude</h2>
+        <p class="section-subtitle">Contatos de emergencia, protocolos e rede de apoio por paciente.</p>
+
+        <div class="emergency-card">
+          <h4>Protocolo de emergencia geral</h4>
+          <ul>
+            <li><strong>SAMU:</strong> 192</li>
+            <li><strong>Bombeiros:</strong> 193</li>
+            <li><strong>Emergencia geral:</strong> 190</li>
+          </ul>
+          <p style="margin-top: 0.75rem;"><strong>Em caso de dor toracica, falta de ar severa, AVC (fala arrastada, fraqueza de um lado) ou perda de consciencia:</strong> ligar 192 imediatamente e encaminhar para a emergencia mais proxima.</p>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Vo Istelina — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Pai (filho)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Cuidador</span>
+              <span class="value">Neta Maria</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Sao Lucas</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">SUS + particular</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value">Dipirona</span>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--color-text-light);"><strong>Se hipoglicemia:</strong> oferecer suco de laranja ou sachê de glicose. Se desmaio, SAMU 192.</p>
+          </div>
+          <div class="detail-card">
+            <h4>Vo Antonio — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Pai (filho)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Sao Lucas</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">SUS</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value">Nenhuma conhecida</span>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--color-text-light);"><strong>Risco de queda:</strong> ambiente adaptado, tapetes removidos, barras no banheiro.</p>
+          </div>
+          <div class="detail-card">
+            <h4>Pai — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Mae (esposa)</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Santa Casa</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">Unimed</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value">Penicilina</span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Dona Marly — Rede de suporte</h4>
+            <div class="info-row">
+              <span class="label">Contato principal</span>
+              <span class="value">Filha Ana</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Hospital de referencia</span>
+              <span class="value">Hospital Santa Casa</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Plano de saude</span>
+              <span class="value">Unimed</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Alergias</span>
+              <span class="value">Sulfa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-card detail-card-full" style="margin-bottom: 1.5rem;">
+          <h4>O que fazer em cada situacao</h4>
+          <div class="detail-grid" style="margin-bottom: 0;">
+            <div style="font-size: 0.9rem; line-height: 1.7;">
+              <p><strong>Dor no peito:</strong></p>
+              <p>1. Sentar o paciente, afrouxar roupas<br>
+              2. Se usar AAS, mastigar 1 comprimido<br>
+              3. Ligar SAMU 192<br>
+              4. Nao dar agua ou comida</p>
+            </div>
+            <div style="font-size: 0.9rem; line-height: 1.7;">
+              <p><strong>Hipoglicemia (tremor, suor frio, confusao):</strong></p>
+              <p>1. Oferecer 15g de carboidrato rapido (suco, mel)<br>
+              2. Aguardar 15 minutos, medir novamente<br>
+              3. Se inconsciente: SAMU 192, nao dar nada via oral<br>
+              4. Posicao lateral de seguranca</p>
+            </div>
+            <div style="font-size: 0.9rem; line-height: 1.7;">
+              <p><strong>Queda com suspeita de fratura:</strong></p>
+              <p>1. Nao mover o paciente<br>
+              2. Imobilizar o membro<br>
+              3. Aplicar gelo (protegido com pano)<br>
+              4. Encaminhar para emergencia</p>
+            </div>
+            <div style="font-size: 0.9rem; line-height: 1.7;">
+              <p><strong>Crise hipertensiva (PA > 180/110):</strong></p>
+              <p>1. Repouso absoluto<br>
+              2. Verificar se tomou medicacao<br>
+              3. Se com sintomas (cefaleia intensa, visao turva): SAMU 192<br>
+              4. Se assintomatico: medicar e reavaliar em 30 min</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== -->
+      <!-- TAB 6: Plano e Valores -->
+      <!-- ======================== -->
+      <div class="dash-section" id="plano">
+        <h2 class="section-title">Plano e Valores</h2>
+        <p class="section-subtitle">Estrutura de precos da pratica 100 Pessoas.</p>
+
+        <div class="pricing-box">
+          <div class="price">R$ 500</div>
+          <div class="price-label">Consulta inicial — Avaliacao completa</div>
+          <div class="price-note">Inclui anamnese detalhada, exame fisico, plano de cuidado personalizado e solicitacao de exames iniciais.</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>O que inclui a consulta inicial</h4>
+            <ul>
+              <li>Anamnese completa (historico pessoal e familiar)</li>
+              <li>Exame fisico detalhado</li>
+              <li>Revisao de medicacoes em uso</li>
+              <li>Solicitacao de exames laboratoriais basicos</li>
+              <li>ECG (se indicado)</li>
+              <li>Plano de cuidado individualizado</li>
+              <li>Calendario de exames personalizado</li>
+              <li>Mapeamento de rede de suporte</li>
+            </ul>
+          </div>
+          <div class="detail-card">
+            <h4>Modelo de acompanhamento</h4>
+            <ul>
+              <li><strong>Consultas de retorno:</strong> a cada 3-6 meses (conforme necessidade)</li>
+              <li><strong>Contato via mensagem:</strong> disponivel para duvidas rapidas</li>
+              <li><strong>Gestao de medicacoes:</strong> controle de estoque e renovacao de receitas</li>
+              <li><strong>Coordenacao de cuidado:</strong> encaminhamentos e comunicacao com especialistas</li>
+              <li><strong>Limite:</strong> ate 100 pacientes para garantir qualidade</li>
+            </ul>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Capacidade atual</h4>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
+                <span>6 de 100 pacientes</span>
+                <span style="font-weight: 600;">6%</span>
+              </div>
+              <div style="background: var(--color-border); border-radius: 6px; height: 10px; overflow: hidden;">
+                <div style="background: var(--color-accent); height: 100%; width: 6%; border-radius: 6px; transition: width 0.3s;"></div>
+              </div>
+            </div>
+            <div class="info-row">
+              <span class="label">Vagas disponiveis</span>
+              <span class="value" style="color: #16a34a;">94</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Meta para 2026</span>
+              <span class="value">20 pacientes</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Receita potencial (20 pacientes)</span>
+              <span class="value" style="color: var(--color-accent);">R$ 10.000 (consultas iniciais)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.container -->
   </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>100 Pessoas — MedStack Lab</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Deactivate all tabs and sections
+        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+        // Activate clicked tab and corresponding section
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>

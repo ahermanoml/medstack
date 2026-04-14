@@ -1,11 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guia do Médico Recém-Formado — Version 1</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* Page-specific overrides */
+    .lab-page {
+      min-height: auto;
+      align-items: flex-start;
+      padding-top: var(--space-lg);
+      padding-bottom: var(--space-xl);
+    }
+
+    .lab-page-inner {
+      max-width: var(--max-width);
+    }
+
+    .page-intro {
+      color: var(--color-text-light);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+      max-width: 680px;
+    }
+
+    /* Table of contents */
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .toc a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      background: var(--color-bg-alt);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      transition: all 0.2s ease;
+    }
+
+    .toc a:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      background: #eff6ff;
+    }
+
+    /* Sections */
+    .guide-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .guide-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      background: #eff6ff;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .guide-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      margin-bottom: var(--space-md);
+      max-width: 680px;
+    }
+
+    /* Resource cards grid */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 540px) {
+      .resources-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .resources-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    .resource-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: var(--color-bg);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .resource-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      transform: translateY(-2px);
+    }
+
+    .resource-card-type {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-bottom: 0.65rem;
+      width: fit-content;
+    }
+
+    .type-site { color: #2563eb; background: #eff6ff; }
+    .type-app { color: #7c3aed; background: #f5f3ff; }
+    .type-curso { color: #059669; background: #ecfdf5; }
+    .type-cert { color: #d97706; background: #fffbeb; }
+    .type-grupo { color: #dc2626; background: #fef2f2; }
+    .type-ferramenta { color: #0891b2; background: #ecfeff; }
+
+    .resource-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .resource-card h3 a {
+      color: var(--color-text);
+      transition: color 0.2s ease;
+    }
+
+    .resource-card h3 a:hover {
+      color: var(--color-accent);
+    }
+
+    .resource-card p {
+      font-size: 0.875rem;
+      color: var(--color-text-light);
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+
+    .resource-card .resource-url {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: var(--color-accent);
+      margin-top: 0.75rem;
+      word-break: break-all;
+    }
+
+    /* Subsection headings */
+    .subsection {
+      margin-bottom: var(--space-md);
+    }
+
+    .subsection:last-child {
+      margin-bottom: 0;
+    }
+
+    .subsection h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--color-text);
+    }
+
+    /* Divider */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: var(--space-xl) 0;
+    }
+
+    /* Footer note */
+    .guide-footer {
+      margin-top: var(--space-xl);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-light);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
@@ -18,8 +222,305 @@
   </nav>
   <main class="lab-page">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Guia do Médico Recém-Formado — Version 1</h1>
+      <span class="lab-tag">Version 1</span>
+      <h1>Guia do Médico Recém-Formado</h1>
+      <p class="page-intro">
+        Tudo que você precisa saber ao sair da faculdade de medicina: como conseguir trabalho,
+        como se preparar para a residência, quais certificações tirar, e quais ferramentas
+        usar no dia a dia do plantão e do postinho.
+      </p>
+
+      <!-- Table of contents -->
+      <div class="toc">
+        <a href="#trabalho">Conseguir Trabalho</a>
+        <a href="#residencia">Estudar para Residência</a>
+        <a href="#certificacoes">Cursos e Certificações</a>
+        <a href="#stack-plantao">Stack Plantão</a>
+        <a href="#stack-postinho">Stack Postinho</a>
+      </div>
+
+      <!-- Section 1: Como Conseguir Trabalho -->
+      <section class="guide-section" id="trabalho">
+        <div class="section-header">
+          <span class="section-number">01</span>
+          <h2>Como Conseguir Trabalho</h2>
+        </div>
+        <p class="section-desc">
+          Recém-formado e precisando de plantão? Estes são os principais canais para
+          encontrar vagas como médico generalista, plantonista ou para concursos públicos.
+        </p>
+
+        <div class="subsection">
+          <h3>Plataformas de Vagas</h3>
+          <div class="resources-grid">
+
+            <div class="resource-card">
+              <span class="resource-card-type type-site">Site</span>
+              <h3><a href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">MédicoNoInterior</a></h3>
+              <p>Vagas médicas no interior do Brasil. Boa opção para quem quer começar rápido e está aberto a cidades menores.</p>
+              <a class="resource-url" href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">mediconointerior.com</a>
+            </div>
+
+            <div class="resource-card">
+              <span class="resource-card-type type-site">Site</span>
+              <h3><a href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">EmpregaMed</a></h3>
+              <p>Plataforma de vagas médicas em todo o Brasil. Plantões, consultas e vagas CLT para diversas especialidades.</p>
+              <a class="resource-url" href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">empregamed.com.br</a>
+            </div>
+
+            <div class="resource-card">
+              <span class="resource-card-type type-site">Site</span>
+              <h3><a href="#" target="_blank" rel="noopener noreferrer">Concursos Médicos</a></h3>
+              <p>Fique de olho em concursos públicos para médicos. Estabilidade, benefícios e bons salários em hospitais e UBS.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 1.5rem;">
+          <h3>Grupos de Plantão</h3>
+          <div class="resources-grid">
+
+            <div class="resource-card">
+              <span class="resource-card-type type-grupo">Grupo</span>
+              <h3><a href="#" target="_blank" rel="noopener noreferrer">Grupos de Plantão (WhatsApp/Telegram)</a></h3>
+              <p>Grupos regionais onde hospitais e clínicas postam vagas de plantão diretamente. Pergunte a colegas da sua cidade ou região.</p>
+            </div>
+
+            <div class="resource-card">
+              <span class="resource-card-type type-site">Site</span>
+              <h3><a href="#" target="_blank" rel="noopener noreferrer">Plantão Já</a></h3>
+              <p>Aplicativo e site para encontrar plantões médicos disponíveis na sua região de forma rápida.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Section 2: Estudar para Residência -->
+      <section class="guide-section" id="residencia">
+        <div class="section-header">
+          <span class="section-number">02</span>
+          <h2>Estudar para Residência</h2>
+        </div>
+        <p class="section-desc">
+          Os principais cursos preparatórios para as provas de residência médica no Brasil.
+          Cada um tem seu estilo -- escolha o que melhor se adapta ao seu ritmo de estudo.
+        </p>
+
+        <div class="resources-grid">
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">Medcurso</a></h3>
+            <p>O preparatório mais tradicional do Brasil. Apostilas densas e extensivas com cobertura completa do conteúdo.</p>
+            <a class="resource-url" href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">medcurso.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">Estratégia Med</a></h3>
+            <p>Videoaulas organizadas e banco de questões robusto. Formato acessível para quem prefere assistir a ler.</p>
+            <a class="resource-url" href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">estrategiamed.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">Medcof</a></h3>
+            <p>Forte em clínica médica e cirurgia. Professores conhecidos e material direto ao ponto.</p>
+            <a class="resource-url" href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">medcof.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">Medway</a></h3>
+            <p>Focado em São Paulo (USP, Unifesp, Santa Casa). Excelente banco de questões comentadas e simulados.</p>
+            <a class="resource-url" href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">medway.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">Medcel</a></h3>
+            <p>Preparatório completo com videoaulas, apostilas e questões. Boa opção custo-benefício.</p>
+            <a class="resource-url" href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">medcel.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">Hardwork</a></h3>
+            <p>Metodologia baseada em questões e revisão ativa. Popular entre quem busca estudo mais prático.</p>
+            <a class="resource-url" href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">hardworkmedicina.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-curso">Curso</span>
+            <h3><a href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">MEDsimple</a></h3>
+            <p>Abordagem simplificada e direta. Bom para quem quer revisar conteúdo de forma objetiva.</p>
+            <a class="resource-url" href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">medsimple.com.br</a>
+          </div>
+
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Section 3: Cursos e Certificações -->
+      <section class="guide-section" id="certificacoes">
+        <div class="section-header">
+          <span class="section-number">03</span>
+          <h2>Cursos e Certificações</h2>
+        </div>
+        <p class="section-desc">
+          Certificações essenciais para quem vai trabalhar em pronto-socorro, emergência ou atenção primária.
+          Valorizam o currículo e preparam para situações reais.
+        </p>
+
+        <div class="subsection">
+          <h3>Certificações de Emergência</h3>
+          <div class="resources-grid">
+
+            <div class="resource-card">
+              <span class="resource-card-type type-cert">Certificação</span>
+              <h3><a href="#" target="_blank" rel="noopener noreferrer">ACLS</a></h3>
+              <p>Advanced Cardiovascular Life Support. Essencial para quem trabalha em emergência. Protocolo de parada cardíaca e arritmias.</p>
+            </div>
+
+            <div class="resource-card">
+              <span class="resource-card-type type-cert">Certificação</span>
+              <h3><a href="#" target="_blank" rel="noopener noreferrer">ATLS</a></h3>
+              <p>Advanced Trauma Life Support. O padrão-ouro para atendimento ao politraumatizado. Fundamental para o PS.</p>
+            </div>
+
+            <div class="resource-card">
+              <span class="resource-card-type type-cert">Certificação</span>
+              <h3><a href="#" target="_blank" rel="noopener noreferrer">PALS</a></h3>
+              <p>Pediatric Advanced Life Support. Protocolos de emergência pediátrica. Importante para quem atende crianças no PS.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 1.5rem;">
+          <h3>Cursos Práticos</h3>
+          <div class="resources-grid">
+
+            <div class="resource-card">
+              <span class="resource-card-type type-curso">Curso</span>
+              <h3><a href="https://www.mediconapratica.com.br" target="_blank" rel="noopener noreferrer">Médico Na Prática</a></h3>
+              <p>Curso prático para recém-formados que vão encarar o pronto-socorro. Condutas objetivas para os casos mais comuns.</p>
+              <a class="resource-url" href="https://www.mediconapratica.com.br" target="_blank" rel="noopener noreferrer">mediconapratica.com.br</a>
+            </div>
+
+            <div class="resource-card">
+              <span class="resource-card-type type-curso">Curso</span>
+              <h3><a href="https://www.pszerado.com.br" target="_blank" rel="noopener noreferrer">PS Zerado</a></h3>
+              <p>Preparação intensiva para o pronto-socorro. Foca nos diagnósticos e condutas mais frequentes da emergência.</p>
+              <a class="resource-url" href="https://www.pszerado.com.br" target="_blank" rel="noopener noreferrer">pszerado.com.br</a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Section 4: Stack Plantão -->
+      <section class="guide-section" id="stack-plantao">
+        <div class="section-header">
+          <span class="section-number">04</span>
+          <h2>Stack Plantão</h2>
+        </div>
+        <p class="section-desc">
+          Ferramentas que todo plantonista usa no dia a dia. Apps de consulta rápida, calculadoras
+          médicas e referências de condutas para ter no celular durante o plantão.
+        </p>
+
+        <div class="resources-grid">
+
+          <div class="resource-card">
+            <span class="resource-card-type type-app">App</span>
+            <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook</a></h3>
+            <p>O app mais usado por médicos no Brasil. Condutas, prescrições, bulário e CID na palma da mão. Essencial no plantão.</p>
+            <a class="resource-url" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-app">App</span>
+            <h3><a href="https://www.wemeds.com.br" target="_blank" rel="noopener noreferrer">WeMeds</a></h3>
+            <p>Prescrições prontas e personalizáveis. Agiliza a prescrição no PS com modelos validados por especialistas.</p>
+            <a class="resource-url" href="https://www.wemeds.com.br" target="_blank" rel="noopener noreferrer">wemeds.com.br</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-ferramenta">Ferramenta</span>
+            <h3><a href="#" target="_blank" rel="noopener noreferrer">ECG em 10min</a></h3>
+            <p>Referência rápida para interpretação de eletrocardiograma. Ideal para consulta rápida durante o plantão.</p>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-site">Site</span>
+            <h3><a href="https://medpreco.com" target="_blank" rel="noopener noreferrer">MedPreço</a></h3>
+            <p>Comparador de preços de medicamentos. Útil para orientar o paciente sobre opções mais acessíveis.</p>
+            <a class="resource-url" href="https://medpreco.com" target="_blank" rel="noopener noreferrer">medpreco.com</a>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-ferramenta">Ferramenta</span>
+            <h3><a href="#" target="_blank" rel="noopener noreferrer">Calculadora Médica</a></h3>
+            <p>Calculadoras de scores clínicos (CURB-65, Wells, Glasgow, clearance de creatinina, etc). Indispensável na emergência.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Section 5: Stack Postinho -->
+      <section class="guide-section" id="stack-postinho">
+        <div class="section-header">
+          <span class="section-number">05</span>
+          <h2>Stack Postinho</h2>
+        </div>
+        <p class="section-desc">
+          Ferramentas e referências para quem trabalha na Atenção Primária (UBS/ESF).
+          Vacinas, rastreamento e condutas ambulatoriais para o dia a dia do postinho.
+        </p>
+
+        <div class="resources-grid">
+
+          <div class="resource-card">
+            <span class="resource-card-type type-ferramenta">Ferramenta</span>
+            <h3><a href="#" target="_blank" rel="noopener noreferrer">Calendário de Vacinas</a></h3>
+            <p>Calendário vacinal do PNI (Programa Nacional de Imunizações) atualizado. Esquemas por faixa etária e situações especiais.</p>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-ferramenta">Ferramenta</span>
+            <h3><a href="#" target="_blank" rel="noopener noreferrer">Rastreamento</a></h3>
+            <p>Protocolos de rastreamento do Ministério da Saúde: câncer de mama, colo de útero, colorretal, diabetes, hipertensão e mais.</p>
+          </div>
+
+          <div class="resource-card">
+            <span class="resource-card-type type-app">App</span>
+            <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook</a></h3>
+            <p>Também útil na APS. Tem seções específicas de condutas ambulatoriais, prescrições e acompanhamento de crônicos.</p>
+            <a class="resource-url" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Footer note -->
+      <div class="guide-footer">
+        <p>
+          Este guia é uma curadoria de recursos úteis para médicos recém-formados no Brasil.
+          Links externos levam a sites de terceiros. Nem todos os links foram verificados --
+          alguns podem usar URLs de placeholder (#) até serem confirmados.
+        </p>
+      </div>
+
     </div>
   </main>
 </body>
