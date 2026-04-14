@@ -1,26 +1,3025 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>100 Pessoas — Version 4</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ========================================
+       V4 — Clinical Workflow & Data Management
+       ======================================== */
+
+    :root {
+      --v4-bg-card: #ffffff;
+      --v4-bg-hover: #f8fafc;
+      --v4-bg-surface: #f1f5f9;
+      --v4-border-subtle: #f3f4f6;
+      --v4-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --v4-shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --v4-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --v4-radius: 10px;
+      --v4-transition: 0.15s ease;
+    }
+
+    /* ---- Dark mode ---- */
+    body.dark-mode {
+      --color-text: #e2e8f0;
+      --color-text-light: #94a3b8;
+      --color-bg: #0f172a;
+      --color-bg-alt: #1e293b;
+      --color-border: #334155;
+      --v4-bg-card: #1e293b;
+      --v4-bg-hover: #334155;
+      --v4-bg-surface: #0f172a;
+      --v4-border-subtle: #334155;
+      --v4-shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --v4-shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --v4-shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    body.dark-mode .nav { background: rgba(15, 23, 42, 0.95); }
+    body.dark-mode .data-table tbody tr:hover { background: var(--v4-bg-hover); }
+    body.dark-mode .donut-center { background: var(--v4-bg-card); }
+    body.dark-mode .calendar-item.done { background: #052e16; border-color: #166534; }
+    body.dark-mode .calendar-item.upcoming { background: #172554; border-color: #1e40af; }
+    body.dark-mode .calendar-item.overdue { background: #450a0a; border-color: #991b1b; }
+    body.dark-mode .alert-card.alert-urgent { background: #450a0a; border-left-color: #dc2626; color: #fca5a5; }
+    body.dark-mode .alert-card.alert-warn { background: #451a03; border-left-color: #d97706; color: #fcd34d; }
+    body.dark-mode .alert-card.alert-info { background: #172554; border-left-color: #2563eb; color: #93c5fd; }
+    body.dark-mode .badge-green { background: #052e16; color: #4ade80; }
+    body.dark-mode .badge-amber { background: #451a03; color: #fbbf24; }
+    body.dark-mode .badge-red { background: #450a0a; color: #f87171; }
+    body.dark-mode .badge-blue { background: #172554; color: #60a5fa; }
+    body.dark-mode .badge-gray { background: #1e293b; color: #94a3b8; }
+    body.dark-mode .badge-purple { background: #2e1065; color: #a78bfa; }
+    body.dark-mode .med-status-ok { background: #052e16; color: #4ade80; }
+    body.dark-mode .med-status-warn { background: #451a03; color: #fbbf24; }
+    body.dark-mode .med-status-critical { background: #450a0a; color: #f87171; }
+    body.dark-mode .emergency-banner-body { background: #450a0a; }
+    body.dark-mode .emergency-num { background: #1e293b; border-color: #991b1b; }
+    body.dark-mode .emergency-instructions { color: #fca5a5; }
+    body.dark-mode .emergency-instructions strong { color: #f87171; }
+    body.dark-mode .protocol-card-header.p-red { background: #450a0a; color: #f87171; }
+    body.dark-mode .protocol-card-header.p-amber { background: #451a03; color: #fbbf24; }
+    body.dark-mode .protocol-card-header.p-blue { background: #172554; color: #60a5fa; }
+    body.dark-mode .protocol-card-header.p-green { background: #052e16; color: #4ade80; }
+    body.dark-mode .pricing-hero { background: linear-gradient(135deg, #1e293b 0%, #172554 50%, #052e16 100%); }
+    body.dark-mode .info-row { border-bottom-color: #334155; }
+    body.dark-mode .capacity-bar, body.dark-mode .med-stock-bar { background: #334155; }
+    body.dark-mode .interaction-warn { background: #451a03; border-color: #92400e; }
+    body.dark-mode .note-card { background: var(--v4-bg-card); }
+    body.dark-mode .vital-chart-area { background: var(--v4-bg-card); }
+    body.dark-mode .vaccine-done { background: #052e16; border-color: #166534; }
+    body.dark-mode .vaccine-pending { background: #451a03; border-color: #92400e; }
+    body.dark-mode .vaccine-overdue { background: #450a0a; border-color: #991b1b; }
+    body.dark-mode .timeline-view .tl-month-header { background: var(--v4-bg-hover); }
+    body.dark-mode .notif-item { background: var(--v4-bg-card); }
+    body.dark-mode .notif-item:hover { background: var(--v4-bg-hover); }
+    body.dark-mode .wizard-step-num.active { background: var(--color-accent); }
+    body.dark-mode .wizard-step-num.done { background: #16a34a; }
+    body.dark-mode .risk-gauge-fill { opacity: 0.85; }
+    body.dark-mode .calc-card { background: var(--v4-bg-card); }
+    body.dark-mode .rx-preview { background: var(--v4-bg-surface); border-color: var(--color-border); }
+    body.dark-mode .view-toggle-btn.active { background: var(--color-accent); color: #fff; }
+    body.dark-mode .week-day-card { background: var(--v4-bg-card); }
+    body.dark-mode .week-day-card.today { border-color: var(--color-accent); }
+    body.dark-mode .export-option { background: var(--v4-bg-card); }
+    body.dark-mode .export-option:hover { background: var(--v4-bg-hover); }
+
+    /* Reset lab-page defaults */
+    .lab-page { min-height: auto; display: block; padding: 0; }
+    .lab-page-inner { max-width: var(--max-width); }
+
+    /* ---- Dark mode toggle ---- */
+    .dark-toggle {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.8rem; color: var(--color-text-light);
+      background: var(--color-bg-alt); border: 1px solid var(--color-border);
+      padding: 0.35rem 0.7rem; border-radius: 6px; cursor: pointer;
+      font-family: var(--font-body); transition: all var(--v4-transition); white-space: nowrap;
+    }
+    .dark-toggle:hover { border-color: #bbb; color: var(--color-text); }
+    .dark-toggle-icon { font-size: 1rem; line-height: 1; }
+
+    /* ---- Dashboard header ---- */
+    .dash-header { padding: var(--space-lg) 0 var(--space-md); margin-bottom: 0; }
+    .dash-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+    .dash-header h1 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .dash-header p { color: var(--color-text-light); font-size: 0.95rem; max-width: 560px; }
+    .dash-header-right { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .dash-date {
+      font-size: 0.8rem; color: var(--color-text-light); background: var(--color-bg-alt);
+      border: 1px solid var(--color-border); padding: 0.4rem 0.85rem;
+      border-radius: 6px; white-space: nowrap; font-weight: 500;
+    }
+
+    /* ---- Persistence indicator ---- */
+    .persist-badge {
+      font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; padding: 0.2rem 0.5rem; border-radius: 4px;
+      background: #f0fdf4; color: #16a34a; display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    body.dark-mode .persist-badge { background: #052e16; color: #4ade80; }
+
+    /* ---- View toggle (week/month) ---- */
+    .view-toggle { display: inline-flex; border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; }
+    .view-toggle-btn {
+      font-family: var(--font-body); font-size: 0.725rem; font-weight: 500;
+      padding: 0.35rem 0.7rem; border: none; background: var(--v4-bg-card);
+      color: var(--color-text-light); cursor: pointer; transition: all var(--v4-transition);
+    }
+    .view-toggle-btn:not(:last-child) { border-right: 1px solid var(--color-border); }
+    .view-toggle-btn.active { background: var(--color-accent); color: #fff; }
+    .view-toggle-btn:hover:not(.active) { background: var(--v4-bg-hover); color: var(--color-text); }
+
+    /* ---- Key metrics row ---- */
+    .metrics-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin: var(--space-md) 0; }
+    .metric-card {
+      background: var(--v4-bg-card); border: 1px solid var(--color-border);
+      border-radius: var(--v4-radius); padding: 1.1rem 1rem; position: relative; overflow: hidden;
+    }
+    .metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .metric-card.mc-blue::before { background: var(--color-accent); }
+    .metric-card.mc-green::before { background: #16a34a; }
+    .metric-card.mc-amber::before { background: #d97706; }
+    .metric-card.mc-red::before { background: #dc2626; }
+    .metric-card.mc-purple::before { background: #7c3aed; }
+    .metric-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-light); margin-bottom: 0.4rem; }
+    .metric-value { font-size: 1.65rem; font-weight: 700; line-height: 1.15; }
+    .metric-value.blue { color: var(--color-accent); }
+    .metric-value.green { color: #16a34a; }
+    .metric-value.amber { color: #d97706; }
+    .metric-value.red { color: #dc2626; }
+    .metric-sub { font-size: 0.75rem; color: var(--color-text-light); margin-top: 0.2rem; }
+
+    /* ---- Capacity bar ---- */
+    .capacity-bar-wrap {
+      margin-bottom: var(--space-md); padding: 1rem 1.25rem;
+      border: 1px solid var(--color-border); border-radius: var(--v4-radius); background: var(--v4-bg-card);
+    }
+    .capacity-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .capacity-bar-header span { font-size: 0.8rem; color: var(--color-text-light); }
+    .capacity-bar-header strong { font-size: 0.85rem; }
+    .capacity-bar { height: 8px; background: var(--v4-bg-surface); border-radius: 4px; overflow: hidden; }
+    .capacity-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--color-accent), #3b82f6); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* ---- Tab navigation ---- */
+    .dash-tabs {
+      display: flex; gap: 0; border-bottom: 2px solid var(--color-border);
+      margin-bottom: var(--space-md); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .dash-tabs::-webkit-scrollbar { display: none; }
+    .dash-tab {
+      padding: 0.7rem 1.15rem; font-size: 0.825rem; font-weight: 500;
+      color: var(--color-text-light); cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; white-space: nowrap; background: none;
+      border-top: none; border-left: none; border-right: none;
+      font-family: var(--font-body); transition: color var(--v4-transition), border-color var(--v4-transition); position: relative;
+    }
+    .dash-tab:hover { color: var(--color-text); }
+    .dash-tab.active { color: var(--color-accent); border-bottom-color: var(--color-accent); font-weight: 600; }
+    .dash-tab .tab-badge {
+      font-size: 0.6rem; font-weight: 700; background: #dc2626; color: #fff;
+      padding: 0.05rem 0.35rem; border-radius: 8px; margin-left: 0.35rem; vertical-align: super;
+    }
+    .dash-tab .tab-badge-blue {
+      font-size: 0.6rem; font-weight: 700; background: var(--color-accent); color: #fff;
+      padding: 0.05rem 0.35rem; border-radius: 8px; margin-left: 0.35rem; vertical-align: super;
+    }
+
+    /* ---- Sections ---- */
+    .dash-section { display: none; padding-bottom: var(--space-lg); animation: fadeIn 0.25s ease; }
+    .dash-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem;
+    }
+    .section-title { font-size: 1.2rem; font-weight: 700; }
+    .section-subtitle { font-size: 0.9rem; color: var(--color-text-light); margin-bottom: 1.25rem; }
+
+    /* ---- Search & filters ---- */
+    .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .search-input {
+      font-family: var(--font-body); font-size: 0.825rem;
+      padding: 0.45rem 0.75rem 0.45rem 2rem;
+      border: 1px solid var(--color-border); border-radius: 6px;
+      background: var(--v4-bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='6' cy='6' r='5'/%3E%3Cline x1='13' y1='13' x2='9.5' y2='9.5'/%3E%3C/svg%3E") no-repeat 0.65rem center;
+      color: var(--color-text); width: 200px; transition: border-color var(--v4-transition), box-shadow var(--v4-transition); outline: none;
+    }
+    .search-input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .filter-btn {
+      font-family: var(--font-body); font-size: 0.775rem; font-weight: 500;
+      padding: 0.45rem 0.75rem; border: 1px solid var(--color-border); border-radius: 6px;
+      background: var(--v4-bg-card); color: var(--color-text-light); cursor: pointer; transition: all var(--v4-transition);
+    }
+    .filter-btn:hover { border-color: #bbb; color: var(--color-text); }
+    .filter-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+
+    /* ---- Table ---- */
+    .table-wrap { border: 1px solid var(--color-border); border-radius: var(--v4-radius); overflow: hidden; margin-bottom: 1.25rem; overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table th {
+      text-align: left; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--color-text-light); padding: 0.7rem 1rem;
+      border-bottom: 2px solid var(--color-border); background: var(--color-bg-alt);
+      white-space: nowrap; cursor: pointer; user-select: none; transition: color var(--v4-transition);
+    }
+    .data-table th:hover { color: var(--color-text); }
+    .data-table th.sorted-asc::after { content: ' \2191'; color: var(--color-accent); }
+    .data-table th.sorted-desc::after { content: ' \2193'; color: var(--color-accent); }
+    .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+    .data-table tbody tr { transition: background 0.1s; cursor: pointer; }
+    .data-table tbody tr:hover { background: var(--v4-bg-hover); }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table .name-cell { font-weight: 600; color: var(--color-text); }
+    .data-table tbody tr.hidden-row { display: none; }
+
+    /* ---- Badges ---- */
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.675rem; font-weight: 600; padding: 0.2rem 0.55rem;
+      border-radius: 4px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap;
+    }
+    .badge-green { background: #f0fdf4; color: #16a34a; }
+    .badge-amber { background: #fffbeb; color: #d97706; }
+    .badge-red { background: #fef2f2; color: #dc2626; }
+    .badge-blue { background: #eff6ff; color: #2563eb; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .badge-purple { background: #f5f3ff; color: #7c3aed; }
+
+    .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 0.4rem; flex-shrink: 0; }
+    .dot-green { background: #16a34a; }
+    .dot-amber { background: #d97706; }
+    .dot-red { background: #dc2626; }
+
+    .priority-indicator { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 500; }
+    .priority-bar { width: 3px; height: 18px; border-radius: 2px; }
+    .priority-bar.p-green { background: #16a34a; }
+    .priority-bar.p-amber { background: #d97706; }
+    .priority-bar.p-red { background: #dc2626; }
+
+    /* ---- Alert strip ---- */
+    .alert-strip { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: 0.25rem; }
+    .alert-card {
+      flex: 0 0 auto; min-width: 240px; border-radius: 8px;
+      padding: 0.85rem 1rem; font-size: 0.8rem; line-height: 1.5; border-left: 3px solid;
+    }
+    .alert-card.alert-urgent { background: #fef2f2; border-left-color: #dc2626; color: #991b1b; }
+    .alert-card.alert-warn { background: #fffbeb; border-left-color: #d97706; color: #92400e; }
+    .alert-card.alert-info { background: #eff6ff; border-left-color: #2563eb; color: #1e40af; }
+    .alert-card strong { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.2rem; }
+
+    /* ---- Detail grid ---- */
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+    .detail-card {
+      border: 1px solid var(--color-border); border-radius: var(--v4-radius);
+      padding: 1.15rem; background: var(--v4-bg-card);
+    }
+    .detail-card h4 {
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--color-text-light); margin-bottom: 0.75rem;
+    }
+    .detail-card p, .detail-card li { font-size: 0.85rem; line-height: 1.6; color: var(--color-text); }
+    .detail-card ul { list-style: none; padding: 0; }
+    .detail-card ul li {
+      padding: 0.35rem 0; border-bottom: 1px solid var(--v4-border-subtle);
+      display: flex; align-items: flex-start; gap: 0.5rem;
+    }
+    .detail-card ul li:last-child { border-bottom: none; }
+    .detail-card-full { grid-column: 1 / -1; }
+
+    /* ---- Patient record panel ---- */
+    .patient-panel { border: 1px solid var(--color-border); border-radius: var(--v4-radius); overflow: hidden; margin-bottom: 1.25rem; }
+    .patient-panel-header {
+      background: var(--color-bg-alt); padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .patient-panel-header h3 { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+    .patient-panel-header .patient-meta { display: flex; gap: 0.5rem; align-items: center; }
+    .patient-panel-body { padding: 1.25rem; }
+    .patient-select { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .patient-select-btn {
+      font-family: var(--font-body); font-size: 0.8rem; font-weight: 500;
+      padding: 0.45rem 0.85rem; border: 1px solid var(--color-border); border-radius: 6px;
+      background: var(--v4-bg-card); color: var(--color-text-light); cursor: pointer; transition: all var(--v4-transition);
+    }
+    .patient-select-btn:hover { border-color: #bbb; color: var(--color-text); }
+    .patient-select-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+
+    /* ---- Info rows ---- */
+    .info-row {
+      display: flex; justify-content: space-between; padding: 0.45rem 0;
+      border-bottom: 1px solid var(--v4-border-subtle); font-size: 0.85rem; gap: 1rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label { color: var(--color-text-light); font-weight: 500; }
+    .info-row .value { font-weight: 600; text-align: right; }
+
+    /* ---- Bar chart ---- */
+    .bar-chart { display: flex; align-items: flex-end; gap: 0.5rem; height: 120px; padding-top: 0.5rem; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; height: 100%; justify-content: flex-end; }
+    .bar { width: 100%; max-width: 40px; border-radius: 4px 4px 0 0; transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 4px; }
+    .bar.bar-blue { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+    .bar.bar-green { background: linear-gradient(180deg, #4ade80, #16a34a); }
+    .bar.bar-amber { background: linear-gradient(180deg, #fbbf24, #d97706); }
+    .bar.bar-red { background: linear-gradient(180deg, #f87171, #dc2626); }
+    .bar-label { font-size: 0.65rem; color: var(--color-text-light); text-align: center; white-space: nowrap; }
+    .bar-value { font-size: 0.7rem; font-weight: 600; color: var(--color-text); }
+
+    /* ---- Donut chart ---- */
+    .donut-wrap { display: flex; align-items: center; gap: 1.5rem; }
+    .donut { width: 90px; height: 90px; border-radius: 50%; position: relative; flex-shrink: 0; }
+    .donut-center {
+      position: absolute; inset: 16px; background: var(--v4-bg-card); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700;
+    }
+    .donut-legend { font-size: 0.8rem; line-height: 2; }
+    .donut-legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 0.4rem; }
+
+    /* ---- Exam calendar ---- */
+    .exam-calendar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-bottom: 1.25rem; }
+    .calendar-item {
+      border: 1px solid var(--color-border); border-radius: 8px; padding: 0.75rem;
+      text-align: center; font-size: 0.75rem; transition: transform var(--v4-transition), box-shadow var(--v4-transition);
+    }
+    .calendar-item:hover { transform: translateY(-2px); box-shadow: var(--v4-shadow-sm); }
+    .calendar-item .month { font-weight: 700; font-size: 0.8rem; margin-bottom: 0.2rem; color: var(--color-text); }
+    .calendar-item .exam-name { color: var(--color-text-light); font-size: 0.7rem; line-height: 1.4; }
+    .calendar-item.done { background: #f0fdf4; border-color: #bbf7d0; }
+    .calendar-item.upcoming { background: #eff6ff; border-color: #bfdbfe; }
+    .calendar-item.overdue { background: #fef2f2; border-color: #fecaca; }
+
+    /* ---- Medication cards ---- */
+    .med-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem; }
+    .med-card {
+      border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem;
+      background: var(--v4-bg-card); position: relative; transition: box-shadow var(--v4-transition);
+    }
+    .med-card:hover { box-shadow: var(--v4-shadow-sm); }
+    .med-card-name { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .med-card-patient { font-size: 0.75rem; color: var(--color-text-light); margin-bottom: 0.6rem; }
+    .med-card-detail { font-size: 0.75rem; color: var(--color-text-light); display: flex; justify-content: space-between; padding: 0.2rem 0; }
+    .med-card-status {
+      position: absolute; top: 0; right: 0; padding: 0.4rem 0.65rem;
+      border-radius: 0 8px 0 8px; font-size: 0.6rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .med-status-ok { background: #f0fdf4; color: #16a34a; }
+    .med-status-warn { background: #fffbeb; color: #d97706; }
+    .med-status-critical { background: #fef2f2; color: #dc2626; }
+    .med-stock-bar { height: 4px; background: var(--v4-bg-surface); border-radius: 2px; margin-top: 0.6rem; overflow: hidden; }
+    .med-stock-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+    .med-stock-fill.stock-ok { background: #16a34a; }
+    .med-stock-fill.stock-warn { background: #d97706; }
+    .med-stock-fill.stock-critical { background: #dc2626; }
+
+    /* ---- Emergency section ---- */
+    .emergency-banner { border: 2px solid #dc2626; border-radius: var(--v4-radius); overflow: hidden; margin-bottom: 1.25rem; }
+    .emergency-banner-header {
+      background: #dc2626; color: #fff; padding: 0.75rem 1.25rem;
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .emergency-banner-body { background: #fef2f2; padding: 1.25rem; }
+    .emergency-numbers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
+    .emergency-num { text-align: center; padding: 0.85rem; border: 1px solid #fecaca; border-radius: 8px; background: var(--v4-bg-card); }
+    .emergency-num .num { font-size: 1.75rem; font-weight: 800; color: #dc2626; line-height: 1; }
+    .emergency-num .num-label { font-size: 0.7rem; font-weight: 600; color: #991b1b; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.3rem; }
+    .emergency-instructions { font-size: 0.85rem; line-height: 1.6; color: #991b1b; }
+    .emergency-instructions strong { color: #7f1d1d; }
+
+    /* Protocol cards */
+    .protocol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .protocol-card { border: 1px solid var(--color-border); border-radius: var(--v4-radius); overflow: hidden; background: var(--v4-bg-card); }
+    .protocol-card-header {
+      padding: 0.75rem 1rem; font-size: 0.8rem; font-weight: 700;
+      border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: 0.5rem;
+    }
+    .protocol-card-header.p-red { background: #fef2f2; color: #dc2626; }
+    .protocol-card-header.p-amber { background: #fffbeb; color: #92400e; }
+    .protocol-card-header.p-blue { background: #eff6ff; color: #1e40af; }
+    .protocol-card-header.p-green { background: #f0fdf4; color: #166534; }
+    .protocol-card-body { padding: 1rem; }
+    .protocol-card-body ol { padding-left: 1.25rem; font-size: 0.825rem; line-height: 1.8; color: var(--color-text); }
+
+    /* ---- Pricing section ---- */
+    .pricing-hero {
+      text-align: center; padding: 2.5rem 1.5rem;
+      border: 1px solid var(--color-border); border-radius: 12px;
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f0fdf4 100%);
+      margin-bottom: 1.25rem; position: relative; overflow: hidden;
+    }
+    .pricing-hero::before {
+      content: ''; position: absolute; top: -50%; right: -20%;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%);
+    }
+    .pricing-price { font-size: 3rem; font-weight: 800; color: var(--color-text); letter-spacing: -0.02em; }
+    .pricing-label { font-size: 0.9rem; color: var(--color-text-light); margin-top: 0.25rem; }
+    .pricing-divider { width: 40px; height: 2px; background: var(--color-accent); margin: 1rem auto; border-radius: 1px; }
+    .pricing-note { font-size: 0.825rem; color: var(--color-text-light); max-width: 420px; margin: 0 auto; line-height: 1.6; }
+
+    /* ---- Timeline ---- */
+    .timeline { position: relative; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .timeline::before { content: ''; position: absolute; left: 4px; top: 4px; bottom: 4px; width: 2px; background: var(--color-border); }
+    .timeline-item { position: relative; padding-bottom: 1rem; padding-left: 0.5rem; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -1.5rem; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--color-border); border: 2px solid var(--v4-bg-card);
+    }
+    .timeline-item.tl-green::before { background: #16a34a; }
+    .timeline-item.tl-amber::before { background: #d97706; }
+    .timeline-item.tl-red::before { background: #dc2626; }
+    .timeline-item.tl-blue::before { background: #2563eb; }
+    .timeline-date { font-size: 0.7rem; font-weight: 600; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.04em; }
+    .timeline-text { font-size: 0.825rem; line-height: 1.5; color: var(--color-text); margin-top: 0.1rem; }
+
+    /* ---- Timeline view ---- */
+    .timeline-view { border: 1px solid var(--color-border); border-radius: var(--v4-radius); overflow: hidden; margin-bottom: 1.25rem; }
+    .timeline-view .tl-month-header {
+      padding: 0.6rem 1rem; font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      background: var(--color-bg-alt); border-bottom: 1px solid var(--color-border); color: var(--color-text-light);
+    }
+    .timeline-view .tl-event {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--v4-border-subtle); font-size: 0.825rem; transition: background 0.1s;
+    }
+    .timeline-view .tl-event:last-child { border-bottom: none; }
+    .timeline-view .tl-event:hover { background: var(--v4-bg-hover); }
+    .tl-event-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .tl-event-dot.dot-done { background: #16a34a; }
+    .tl-event-dot.dot-overdue { background: #dc2626; }
+    .tl-event-dot.dot-upcoming { background: #2563eb; }
+    .tl-event-dot.dot-scheduled { background: #d97706; }
+    .tl-event-date { font-size: 0.75rem; font-weight: 600; color: var(--color-text-light); width: 50px; flex-shrink: 0; }
+    .tl-event-name { flex: 1; font-weight: 500; }
+    .tl-event-patient { font-size: 0.75rem; color: var(--color-text-light); }
+
+    /* ---- Vaccination cards ---- */
+    .vaccine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.6rem; margin-bottom: 1.25rem; }
+    .vaccine-card { border: 1px solid var(--color-border); border-radius: 8px; padding: 0.85rem; transition: transform var(--v4-transition), box-shadow var(--v4-transition); }
+    .vaccine-card:hover { transform: translateY(-1px); box-shadow: var(--v4-shadow-sm); }
+    .vaccine-card.vaccine-done { background: #f0fdf4; border-color: #bbf7d0; }
+    .vaccine-card.vaccine-pending { background: #fffbeb; border-color: #fde68a; }
+    .vaccine-card.vaccine-overdue { background: #fef2f2; border-color: #fecaca; }
+    .vaccine-name { font-size: 0.825rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .vaccine-detail { font-size: 0.7rem; color: var(--color-text-light); line-height: 1.5; }
+    .vaccine-status-badge { display: inline-block; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.1rem 0.4rem; border-radius: 3px; margin-top: 0.35rem; }
+
+    /* ---- Consultation Notes ---- */
+    .note-card {
+      background: var(--v4-bg-card); border: 1px solid var(--color-border);
+      border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; transition: box-shadow var(--v4-transition);
+    }
+    .note-card:hover { box-shadow: var(--v4-shadow-sm); }
+    .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; gap: 0.5rem; }
+    .note-date { font-size: 0.75rem; font-weight: 600; color: var(--color-text-light); }
+    .note-type { font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.45rem; border-radius: 4px; text-transform: uppercase; }
+    .note-body { font-size: 0.825rem; line-height: 1.6; color: var(--color-text); }
+    .note-body p { margin-bottom: 0.4rem; }
+    .note-body p:last-child { margin-bottom: 0; }
+    .note-soap-label { font-weight: 700; font-size: 0.7rem; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.04em; display: inline-block; margin-right: 0.3rem; }
+
+    /* ---- BMI Calculator ---- */
+    .bmi-calc {
+      border: 1px solid var(--color-border); border-radius: var(--v4-radius);
+      padding: 1.25rem; margin-bottom: 1.25rem; background: var(--v4-bg-card);
+    }
+    .bmi-calc h4 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-light); margin-bottom: 1rem; }
+    .bmi-form { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem; }
+    .bmi-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .bmi-field label { font-size: 0.7rem; font-weight: 600; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.03em; }
+    .bmi-field input, .form-input {
+      font-family: var(--font-body); font-size: 0.85rem; padding: 0.45rem 0.65rem;
+      border: 1px solid var(--color-border); border-radius: 6px;
+      background: var(--v4-bg-card); color: var(--color-text); outline: none; transition: border-color var(--v4-transition);
+    }
+    .bmi-field input:focus, .form-input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .bmi-result { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; border-radius: 8px; background: var(--v4-bg-surface); font-size: 0.85rem; }
+    .bmi-result-value { font-size: 1.65rem; font-weight: 700; line-height: 1; }
+    .bmi-result-label { font-size: 0.75rem; color: var(--color-text-light); }
+    .bmi-result-class { font-weight: 600; font-size: 0.825rem; }
+
+    /* ---- Vitals Trend Chart ---- */
+    .vital-chart-area { border: 1px solid var(--color-border); border-radius: var(--v4-radius); padding: 1.25rem; background: var(--v4-bg-card); margin-bottom: 1.25rem; }
+    .vital-chart-area h4 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-light); margin-bottom: 0.75rem; }
+    .vital-chart-select { display: flex; gap: 0.35rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .vital-chart-btn {
+      font-family: var(--font-body); font-size: 0.7rem; font-weight: 500;
+      padding: 0.3rem 0.6rem; border: 1px solid var(--color-border); border-radius: 4px;
+      background: var(--v4-bg-card); color: var(--color-text-light); cursor: pointer; transition: all var(--v4-transition);
+    }
+    .vital-chart-btn:hover { border-color: #bbb; color: var(--color-text); }
+    .vital-chart-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+    .vital-svg-wrap { width: 100%; overflow-x: auto; }
+    .vital-svg-wrap svg { width: 100%; height: 180px; }
+    .vital-svg-wrap svg text { font-family: var(--font-body); }
+
+    /* ---- Modal ---- */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      animation: modalFadeIn 0.2s ease;
+    }
+    .modal-overlay.visible { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-content {
+      background: var(--v4-bg-card); border-radius: 12px; width: 100%; max-width: 800px;
+      box-shadow: var(--v4-shadow-lg); animation: modalSlideIn 0.25s ease; position: relative;
+    }
+    @keyframes modalSlideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--color-border);
+    }
+    .modal-header h2 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--color-border);
+      background: var(--v4-bg-card); color: var(--color-text-light); font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--v4-transition);
+    }
+    .modal-close:hover { background: var(--color-bg-alt); color: var(--color-text); }
+    .modal-body { padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
+    .modal-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--color-border); margin-bottom: 1.25rem; overflow-x: auto; }
+    .modal-tab {
+      padding: 0.55rem 0.85rem; font-size: 0.775rem; font-weight: 500;
+      color: var(--color-text-light); cursor: pointer; border: none; background: none;
+      border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap;
+      font-family: var(--font-body); transition: color var(--v4-transition), border-color var(--v4-transition);
+    }
+    .modal-tab:hover { color: var(--color-text); }
+    .modal-tab.active { color: var(--color-accent); border-bottom-color: var(--color-accent); font-weight: 600; }
+    .modal-section { display: none; }
+    .modal-section.active { display: block; }
+    .modal-actions {
+      padding: 1rem 1.5rem; border-top: 1px solid var(--color-border);
+      display: flex; gap: 0.5rem; justify-content: flex-end;
+    }
+
+    /* ---- Buttons ---- */
+    .btn-primary {
+      font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+      padding: 0.5rem 1rem; border-radius: 6px; border: none;
+      background: var(--color-accent); color: #fff; cursor: pointer; transition: background var(--v4-transition);
+    }
+    .btn-primary:hover { background: var(--color-accent-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary {
+      font-family: var(--font-body); font-size: 0.8rem; font-weight: 500;
+      padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--color-border);
+      background: var(--v4-bg-card); color: var(--color-text); cursor: pointer; transition: all var(--v4-transition);
+    }
+    .btn-secondary:hover { background: var(--color-bg-alt); }
+    .btn-danger {
+      font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+      padding: 0.5rem 1rem; border-radius: 6px; border: none;
+      background: #dc2626; color: #fff; cursor: pointer; transition: background var(--v4-transition);
+    }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm { font-size: 0.725rem; padding: 0.35rem 0.65rem; }
+
+    /* ---- Interaction warnings ---- */
+    .interaction-warn {
+      background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px;
+      padding: 0.85rem 1rem; margin-bottom: 0.75rem; font-size: 0.8rem;
+      line-height: 1.5; display: flex; gap: 0.6rem; align-items: flex-start;
+    }
+    .interaction-warn-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.4; }
+    .interaction-warn strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; color: #92400e; margin-bottom: 0.15rem; }
+    .interaction-warn p { color: #78350f; margin: 0; }
+    .interaction-warn.severity-high { background: #fef2f2; border-color: #fca5a5; }
+    .interaction-warn.severity-high strong { color: #991b1b; }
+    .interaction-warn.severity-high p { color: #7f1d1d; }
+
+    /* ---- Print button ---- */
+    .print-btn {
+      font-family: var(--font-body); font-size: 0.775rem; font-weight: 500;
+      padding: 0.45rem 0.75rem; border: 1px solid var(--color-border); border-radius: 6px;
+      background: var(--v4-bg-card); color: var(--color-text-light); cursor: pointer;
+      transition: all var(--v4-transition); display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .print-btn:hover { border-color: #bbb; color: var(--color-text); }
+
+    /* ========================================
+       V4 NEW FEATURES
+       ======================================== */
+
+    /* ---- Weekly/Monthly Dashboard View ---- */
+    .week-view { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 1.25rem; }
+    .week-day-card {
+      border: 1px solid var(--color-border); border-radius: 8px; padding: 0.65rem;
+      background: var(--v4-bg-card); min-height: 80px; font-size: 0.75rem; transition: box-shadow var(--v4-transition);
+    }
+    .week-day-card:hover { box-shadow: var(--v4-shadow-sm); }
+    .week-day-card.today { border-color: var(--color-accent); border-width: 2px; }
+    .week-day-header { font-weight: 700; font-size: 0.7rem; color: var(--color-text-light); text-transform: uppercase; margin-bottom: 0.4rem; }
+    .week-day-date { font-size: 0.65rem; color: var(--color-text-light); margin-bottom: 0.5rem; }
+    .week-event { font-size: 0.65rem; padding: 0.2rem 0.35rem; border-radius: 3px; margin-bottom: 0.2rem; line-height: 1.3; }
+    .week-event.we-red { background: #fef2f2; color: #dc2626; }
+    .week-event.we-amber { background: #fffbeb; color: #92400e; }
+    .week-event.we-blue { background: #eff6ff; color: #1e40af; }
+    .week-event.we-green { background: #f0fdf4; color: #166534; }
+
+    .month-view { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.35rem; margin-bottom: 1.25rem; }
+    .month-day {
+      border: 1px solid var(--v4-border-subtle); border-radius: 4px; padding: 0.3rem;
+      font-size: 0.65rem; min-height: 50px; background: var(--v4-bg-card);
+    }
+    .month-day.today { border-color: var(--color-accent); background: #eff6ff; }
+    body.dark-mode .month-day.today { background: #172554; }
+    .month-day-num { font-weight: 600; font-size: 0.7rem; margin-bottom: 0.15rem; }
+    .month-day-dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; margin: 0 1px; }
+    .month-day.empty { background: transparent; border-color: transparent; }
+
+    /* ---- Nova Consulta Wizard ---- */
+    .wizard-steps { display: flex; gap: 0; margin-bottom: 1.5rem; justify-content: center; }
+    .wizard-step {
+      display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem;
+      color: var(--color-text-light); font-weight: 500;
+    }
+    .wizard-step + .wizard-step::before {
+      content: ''; display: block; width: 40px; height: 1px;
+      background: var(--color-border); margin-right: 0.4rem;
+    }
+    .wizard-step-num {
+      width: 24px; height: 24px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;
+      background: var(--v4-bg-surface); color: var(--color-text-light); border: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .wizard-step-num.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+    .wizard-step-num.done { background: #16a34a; color: #fff; border-color: #16a34a; }
+    .wizard-panel { display: none; }
+    .wizard-panel.active { display: block; }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.35rem; }
+    .form-input { width: 100%; }
+    .form-select {
+      font-family: var(--font-body); font-size: 0.85rem; padding: 0.45rem 0.65rem;
+      border: 1px solid var(--color-border); border-radius: 6px; background: var(--v4-bg-card);
+      color: var(--color-text); width: 100%; outline: none; transition: border-color var(--v4-transition);
+    }
+    .form-select:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .form-textarea {
+      font-family: var(--font-body); font-size: 0.85rem; padding: 0.6rem 0.75rem;
+      border: 1px solid var(--color-border); border-radius: 6px; background: var(--v4-bg-card);
+      color: var(--color-text); width: 100%; min-height: 80px; resize: vertical; outline: none;
+      line-height: 1.5; transition: border-color var(--v4-transition);
+    }
+    .form-textarea:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .wizard-nav { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+    /* ---- Prescription Generator ---- */
+    .rx-preview {
+      border: 2px solid var(--color-border); border-radius: var(--v4-radius);
+      padding: 2rem; background: #fff; margin-top: 1.25rem; font-size: 0.85rem;
+      line-height: 1.7; color: #1a1a1a; max-width: 600px;
+    }
+    body.dark-mode .rx-preview { background: #1e293b; color: #e2e8f0; }
+    .rx-header { text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #333; }
+    .rx-header h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .rx-header p { font-size: 0.75rem; color: var(--color-text-light); }
+    .rx-patient { margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-border); }
+    .rx-patient strong { display: block; font-size: 0.9rem; }
+    .rx-med-item { margin-bottom: 1rem; padding: 0.75rem; background: var(--v4-bg-surface); border-radius: 6px; }
+    .rx-med-name { font-weight: 700; font-size: 0.9rem; }
+    .rx-med-dose { font-size: 0.8rem; color: var(--color-text-light); }
+    .rx-footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--color-border); text-align: center; }
+    .rx-footer .rx-date { font-size: 0.8rem; color: var(--color-text-light); }
+    .rx-footer .rx-sig { margin-top: 2rem; border-top: 1px solid #333; padding-top: 0.5rem; font-size: 0.8rem; display: inline-block; min-width: 200px; }
+
+    /* ---- Risk Stratification ---- */
+    .risk-card {
+      border: 1px solid var(--color-border); border-radius: var(--v4-radius);
+      padding: 1.25rem; background: var(--v4-bg-card); margin-bottom: 1rem;
+    }
+    .risk-card h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .risk-gauge { height: 12px; background: var(--v4-bg-surface); border-radius: 6px; overflow: hidden; margin-bottom: 0.5rem; position: relative; }
+    .risk-gauge-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+    .risk-gauge-fill.rg-low { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .risk-gauge-fill.rg-moderate { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .risk-gauge-fill.rg-high { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .risk-score { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 0.75rem; }
+    .risk-score-value { font-size: 1.35rem; font-weight: 700; }
+    .risk-factors { font-size: 0.8rem; line-height: 1.7; }
+    .risk-factors li { padding: 0.2rem 0; }
+
+    /* ---- Notifications/Reminders ---- */
+    .notif-list { max-height: 400px; overflow-y: auto; }
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem;
+      border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 0.5rem;
+      background: var(--v4-bg-card); transition: all var(--v4-transition); cursor: pointer;
+    }
+    .notif-item:hover { box-shadow: var(--v4-shadow-sm); }
+    .notif-item.notif-unread { border-left: 3px solid var(--color-accent); }
+    .notif-item.notif-urgent { border-left: 3px solid #dc2626; }
+    .notif-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+    .notif-icon.ni-red { background: #fef2f2; }
+    .notif-icon.ni-amber { background: #fffbeb; }
+    .notif-icon.ni-blue { background: #eff6ff; }
+    .notif-icon.ni-green { background: #f0fdf4; }
+    body.dark-mode .notif-icon.ni-red { background: #450a0a; }
+    body.dark-mode .notif-icon.ni-amber { background: #451a03; }
+    body.dark-mode .notif-icon.ni-blue { background: #172554; }
+    body.dark-mode .notif-icon.ni-green { background: #052e16; }
+    .notif-body { flex: 1; }
+    .notif-title { font-size: 0.825rem; font-weight: 600; margin-bottom: 0.1rem; }
+    .notif-desc { font-size: 0.75rem; color: var(--color-text-light); line-height: 1.4; }
+    .notif-time { font-size: 0.65rem; color: var(--color-text-light); white-space: nowrap; flex-shrink: 0; margin-top: 0.1rem; }
+    .notif-actions { display: flex; gap: 0.35rem; margin-top: 0.4rem; }
+    .notif-action-btn {
+      font-family: var(--font-body); font-size: 0.65rem; font-weight: 600;
+      padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--color-border);
+      background: var(--v4-bg-card); color: var(--color-text-light); cursor: pointer;
+      transition: all var(--v4-transition);
+    }
+    .notif-action-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .notif-filter-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+
+    /* ---- Export Functionality ---- */
+    .export-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem; }
+    .export-option {
+      border: 1px solid var(--color-border); border-radius: var(--v4-radius);
+      padding: 1.25rem; background: var(--v4-bg-card); text-align: center;
+      cursor: pointer; transition: all var(--v4-transition);
+    }
+    .export-option:hover { box-shadow: var(--v4-shadow-md); transform: translateY(-2px); }
+    .export-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .export-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .export-desc { font-size: 0.725rem; color: var(--color-text-light); line-height: 1.4; }
+
+    /* ---- Clinical Decision Support ---- */
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+    .calc-card {
+      border: 1px solid var(--color-border); border-radius: var(--v4-radius);
+      padding: 1.25rem; background: var(--v4-bg-card);
+    }
+    .calc-card h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .calc-result {
+      margin-top: 1rem; padding: 0.85rem; border-radius: 8px;
+      background: var(--v4-bg-surface); font-size: 0.85rem;
+    }
+    .calc-result-value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+    .calc-result-label { font-size: 0.725rem; color: var(--color-text-light); margin-top: 0.15rem; }
+
+    /* ---- Toast Notification ---- */
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 2000; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast {
+      padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 500;
+      box-shadow: var(--v4-shadow-lg); animation: toastIn 0.3s ease;
+      display: flex; align-items: center; gap: 0.5rem; max-width: 350px;
+    }
+    .toast-success { background: #16a34a; color: #fff; }
+    .toast-info { background: var(--color-accent); color: #fff; }
+    .toast-error { background: #dc2626; color: #fff; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ---- Print styles ---- */
+    @media print {
+      .nav, .dash-tabs, .filter-bar, .patient-select,
+      .print-btn, .dark-toggle, .modal-overlay,
+      .dash-date, .alert-strip, .btn-primary, .btn-secondary, .btn-danger,
+      .modal-close, .bmi-form button, .wizard-nav, .view-toggle,
+      .persist-badge, .notif-action-btn, .export-grid, .toast-container { display: none !important; }
+      body, body.dark-mode {
+        --color-text: #1a1a1a; --color-text-light: #555; --color-bg: #ffffff;
+        --color-bg-alt: #f8f8f8; --color-border: #e5e5e5; --v4-bg-card: #ffffff;
+        background: #fff; color: #1a1a1a; font-size: 11pt;
+      }
+      .dash-section { display: block !important; page-break-inside: avoid; }
+      .metric-card, .detail-card, .med-card, .protocol-card { break-inside: avoid; box-shadow: none !important; }
+      .lab-page-inner { max-width: 100%; }
+      .container { padding: 0 0.5rem; }
+      .rx-preview { border: 2px solid #333; max-width: 100%; }
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 900px) {
+      .metrics-row { grid-template-columns: repeat(3, 1fr); }
+      .detail-grid, .calc-grid { grid-template-columns: 1fr; }
+      .detail-card-full { grid-column: 1; }
+      .exam-calendar { grid-template-columns: repeat(2, 1fr); }
+      .protocol-grid { grid-template-columns: 1fr; }
+      .emergency-numbers { grid-template-columns: repeat(3, 1fr); }
+      .week-view { grid-template-columns: repeat(4, 1fr); }
+      .month-view { grid-template-columns: repeat(7, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
+      .dash-header h1 { font-size: 1.35rem; }
+      .exam-calendar { grid-template-columns: 1fr 1fr; }
+      .donut-wrap { flex-direction: column; align-items: flex-start; }
+      .search-input { width: 100%; }
+      .filter-bar { flex-direction: column; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .patient-panel-header { flex-direction: column; align-items: flex-start; }
+      .dash-header-top { flex-direction: column; }
+      .emergency-numbers { grid-template-columns: 1fr; }
+      .bar-chart { height: 90px; }
+      .modal-content { margin: 0.5rem; }
+      .modal-body { max-height: 80vh; }
+      .vaccine-grid { grid-template-columns: 1fr; }
+      .week-view { grid-template-columns: repeat(2, 1fr); }
+      .export-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../100-pessoas.html">&larr; Back</a>
+        <a href="../100-pessoas.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
+
   <main class="lab-page">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>100 Pessoas — Version 4</h1>
-    </div>
+
+      <!-- =============================== -->
+      <!-- HEADER                          -->
+      <!-- =============================== -->
+      <div class="dash-header">
+        <div class="dash-header-top">
+          <div>
+            <span class="lab-tag">V4 — Fluxo Clinico</span>
+            <h1>100 Pessoas</h1>
+            <p>Gestao de pacientes para medicina por assinatura. Ate 100 pacientes com acompanhamento longitudinal.</p>
+          </div>
+          <div class="dash-header-right">
+            <span class="persist-badge" id="persistBadge">&#9679; Dados salvos</span>
+            <button class="dark-toggle" onclick="toggleDarkMode()">
+              <span class="dark-toggle-icon" id="darkIcon">&#9790;</span>
+              <span id="darkLabel">Escuro</span>
+            </button>
+            <button class="print-btn" onclick="window.print()">&#9113; Imprimir</button>
+            <span class="dash-date">14 de abril de 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- KEY METRICS                     -->
+      <!-- =============================== -->
+      <div class="metrics-row" id="metricsRow">
+        <div class="metric-card mc-blue">
+          <div class="metric-label">Pacientes ativos</div>
+          <div class="metric-value blue" id="metricPatients">6</div>
+          <div class="metric-sub">de 100 vagas</div>
+        </div>
+        <div class="metric-card mc-green">
+          <div class="metric-label">Consultas — Abril</div>
+          <div class="metric-value green" id="metricConsultas">4</div>
+          <div class="metric-sub" id="metricConsultasSub">2 realizadas, 2 pendentes</div>
+        </div>
+        <div class="metric-card mc-amber">
+          <div class="metric-label">Exames pendentes</div>
+          <div class="metric-value amber">3</div>
+          <div class="metric-sub">necessitam agendamento</div>
+        </div>
+        <div class="metric-card mc-red">
+          <div class="metric-label">Alertas ativos</div>
+          <div class="metric-value red" id="metricAlertas">5</div>
+          <div class="metric-sub">2 urgentes, 3 atencao</div>
+        </div>
+        <div class="metric-card mc-purple">
+          <div class="metric-label">Custo med. mensal</div>
+          <div class="metric-value" style="color: #7c3aed;">R$ 123</div>
+          <div class="metric-sub">8 medicacoes ativas</div>
+        </div>
+      </div>
+
+      <!-- Capacity bar -->
+      <div class="capacity-bar-wrap">
+        <div class="capacity-bar-header">
+          <span>Capacidade da pratica</span>
+          <strong>6 / 100 pacientes (6%)</strong>
+        </div>
+        <div class="capacity-bar">
+          <div class="capacity-fill" style="width: 6%;"></div>
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- ALERT STRIP                     -->
+      <!-- =============================== -->
+      <div class="alert-strip" id="alertStrip">
+        <div class="alert-card alert-urgent">
+          <strong>Urgente</strong>
+          Vo Istelina — consulta vencida desde 05/04. Reagendar imediatamente.
+        </div>
+        <div class="alert-card alert-urgent">
+          <strong>Urgente</strong>
+          Vo Antonio — consulta vencida desde 05/04. Reagendar imediatamente.
+        </div>
+        <div class="alert-card alert-warn">
+          <strong>Estoque critico</strong>
+          Enalapril (Pai) — estoque para ~10 dias. Providenciar reposicao.
+        </div>
+        <div class="alert-card alert-warn">
+          <strong>Exame pendente</strong>
+          Pai — hemograma e funcao renal a agendar.
+        </div>
+        <div class="alert-card alert-info">
+          <strong>Lembrete</strong>
+          Meta 2026: 20 pacientes. 14 vagas a preencher.
+        </div>
+      </div>
+
+      <!-- =============================== -->
+      <!-- TAB NAVIGATION                  -->
+      <!-- =============================== -->
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="dashboard">Dashboard</button>
+        <button class="dash-tab" data-tab="pacientes">Pacientes</button>
+        <button class="dash-tab" data-tab="consulta">Nova Consulta <span class="tab-badge-blue">+</span></button>
+        <button class="dash-tab" data-tab="receita">Receituario</button>
+        <button class="dash-tab" data-tab="risco">Risco</button>
+        <button class="dash-tab" data-tab="notificacoes">Lembretes <span class="tab-badge" id="notifBadge">7</span></button>
+        <button class="dash-tab" data-tab="calculadoras">Calculadoras</button>
+        <button class="dash-tab" data-tab="medicacoes">Medicacoes</button>
+        <button class="dash-tab" data-tab="exames">Exames</button>
+        <button class="dash-tab" data-tab="suporte">Emergencia</button>
+        <button class="dash-tab" data-tab="exportar">Exportar</button>
+        <button class="dash-tab" data-tab="plano">Plano</button>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: DASHBOARD (week/month view)            -->
+      <!-- ============================================ -->
+      <div class="dash-section active" id="dashboard">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Painel Semanal / Mensal</h2>
+            <p class="section-subtitle" style="margin-bottom:0;">Visao geral das atividades e compromissos.</p>
+          </div>
+          <div class="view-toggle">
+            <button class="view-toggle-btn active" onclick="switchDashView('week', this)">Semana</button>
+            <button class="view-toggle-btn" onclick="switchDashView('month', this)">Mes</button>
+          </div>
+        </div>
+
+        <div id="dashWeekView" class="week-view"></div>
+        <div id="dashMonthView" class="month-view" style="display:none;"></div>
+
+        <!-- Quick summary cards below -->
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Proximas consultas</h4>
+            <div class="timeline">
+              <div class="timeline-item tl-red">
+                <div class="timeline-date">05/04 — Vencida</div>
+                <div class="timeline-text">Vo Istelina (reagendar)</div>
+              </div>
+              <div class="timeline-item tl-red">
+                <div class="timeline-date">05/04 — Vencida</div>
+                <div class="timeline-text">Vo Antonio (reagendar)</div>
+              </div>
+              <div class="timeline-item tl-amber">
+                <div class="timeline-date">22/05/2026</div>
+                <div class="timeline-text">Pai</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">10/06/2026</div>
+                <div class="timeline-text">Eu (Hermano)</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">15/06/2026</div>
+                <div class="timeline-text">Mae</div>
+              </div>
+              <div class="timeline-item tl-green">
+                <div class="timeline-date">20/06/2026</div>
+                <div class="timeline-text">Dona Marly</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Distribuicao por prioridade</h4>
+            <div class="donut-wrap">
+              <div class="donut" style="background: conic-gradient(#dc2626 0deg 120deg, #d97706 120deg 240deg, #16a34a 240deg 360deg);">
+                <div class="donut-center">6</div>
+              </div>
+              <div class="donut-legend">
+                <div><span class="donut-legend-dot" style="background: #dc2626;"></span>Urgente — 2</div>
+                <div><span class="donut-legend-dot" style="background: #d97706;"></span>Atencao — 2</div>
+                <div><span class="donut-legend-dot" style="background: #16a34a;"></span>Rotina — 2</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Faixa etaria dos pacientes</h4>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar-value">1</div><div class="bar bar-blue" style="height: 17%;"></div><div class="bar-label">30-39</div></div>
+              <div class="bar-col"><div class="bar-value">0</div><div class="bar bar-blue" style="height: 3%;"></div><div class="bar-label">40-49</div></div>
+              <div class="bar-col"><div class="bar-value">0</div><div class="bar bar-blue" style="height: 3%;"></div><div class="bar-label">50-59</div></div>
+              <div class="bar-col"><div class="bar-value">2</div><div class="bar bar-blue" style="height: 34%;"></div><div class="bar-label">60-69</div></div>
+              <div class="bar-col"><div class="bar-value">1</div><div class="bar bar-amber" style="height: 17%;"></div><div class="bar-label">70-79</div></div>
+              <div class="bar-col"><div class="bar-value">2</div><div class="bar bar-red" style="height: 34%;"></div><div class="bar-label">80+</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: PACIENTES (list + ficha)               -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="pacientes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Lista de Pacientes</h2>
+            <span style="font-size: 0.825rem; color: var(--color-text-light);">6 cadastrados &middot; 94 vagas disponiveis &middot; Clique para ver detalhes</span>
+          </div>
+          <div class="filter-bar">
+            <input type="text" class="search-input" id="patientSearch" placeholder="Buscar paciente...">
+            <button class="filter-btn active" data-filter="todos" onclick="filterPatients('todos', this)">Todos</button>
+            <button class="filter-btn" data-filter="urgente" onclick="filterPatients('urgente', this)">Urgente</button>
+            <button class="filter-btn" data-filter="atencao" onclick="filterPatients('atencao', this)">Atencao</button>
+            <button class="filter-btn" data-filter="rotina" onclick="filterPatients('rotina', this)">Rotina</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="patientTable">
+            <thead>
+              <tr>
+                <th data-sort="num" style="width: 40px;">#</th>
+                <th data-sort="name">Nome</th>
+                <th data-sort="age">Idade</th>
+                <th>Status</th>
+                <th data-sort="last">Ultima consulta</th>
+                <th data-sort="next">Proxima visita</th>
+                <th data-sort="priority">Prioridade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-priority="rotina" data-patient="hermano" onclick="openPatientModal('hermano')">
+                <td>1</td>
+                <td class="name-cell">Eu (Hermano)</td>
+                <td data-val="32">32</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260310">10/03/2026</td>
+                <td data-val="20260610">10/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-green"></span>Rotina</span></td>
+              </tr>
+              <tr data-priority="atencao" data-patient="pai" onclick="openPatientModal('pai')">
+                <td>2</td>
+                <td class="name-cell">Pai</td>
+                <td data-val="63">63</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260222">22/02/2026</td>
+                <td data-val="20260522">22/05/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-amber"></span>Atencao</span></td>
+              </tr>
+              <tr data-priority="rotina" data-patient="mae" onclick="openPatientModal('mae')">
+                <td>3</td>
+                <td class="name-cell">Mae</td>
+                <td data-val="60">60</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260315">15/03/2026</td>
+                <td data-val="20260615">15/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-green"></span>Rotina</span></td>
+              </tr>
+              <tr data-priority="urgente" data-patient="istelina" onclick="openPatientModal('istelina')">
+                <td>4</td>
+                <td class="name-cell">Vo Istelina</td>
+                <td data-val="84">84</td>
+                <td><span class="status-dot dot-red"></span><span class="badge badge-red">Vencido</span></td>
+                <td data-val="20260105">05/01/2026</td>
+                <td data-val="20260405">05/04/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-red"></span>Urgente</span></td>
+              </tr>
+              <tr data-priority="urgente" data-patient="antonio" onclick="openPatientModal('antonio')">
+                <td>5</td>
+                <td class="name-cell">Vo Antonio</td>
+                <td data-val="87">87</td>
+                <td><span class="status-dot dot-red"></span><span class="badge badge-red">Vencido</span></td>
+                <td data-val="20260105">05/01/2026</td>
+                <td data-val="20260405">05/04/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-red"></span>Urgente</span></td>
+              </tr>
+              <tr data-priority="atencao" data-patient="marly" onclick="openPatientModal('marly')">
+                <td>6</td>
+                <td class="name-cell">Dona Marly</td>
+                <td data-val="72">72</td>
+                <td><span class="status-dot dot-green"></span><span class="badge badge-green">Ativo</span></td>
+                <td data-val="20260320">20/03/2026</td>
+                <td data-val="20260620">20/06/2026</td>
+                <td><span class="priority-indicator"><span class="priority-bar p-amber"></span>Atencao</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: NOVA CONSULTA (SOAP Wizard)            -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="consulta">
+        <h2 class="section-title">Nova Consulta</h2>
+        <p class="section-subtitle">Registre uma nova consulta com formulario SOAP estruturado.</p>
+
+        <div class="wizard-steps">
+          <div class="wizard-step"><span class="wizard-step-num active" id="ws1">1</span> Paciente</div>
+          <div class="wizard-step"><span class="wizard-step-num" id="ws2">2</span> Subjetivo</div>
+          <div class="wizard-step"><span class="wizard-step-num" id="ws3">3</span> Objetivo</div>
+          <div class="wizard-step"><span class="wizard-step-num" id="ws4">4</span> Avaliacao/Plano</div>
+          <div class="wizard-step"><span class="wizard-step-num" id="ws5">5</span> Confirmar</div>
+        </div>
+
+        <!-- Step 1: Select patient -->
+        <div class="wizard-panel active" id="wizStep1">
+          <div class="detail-card">
+            <h4>Dados da consulta</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="wizPatient">Paciente</label>
+                <select class="form-select" id="wizPatient">
+                  <option value="">Selecionar paciente...</option>
+                  <option value="hermano">Eu (Hermano) — 32 anos</option>
+                  <option value="pai">Pai — 63 anos</option>
+                  <option value="mae">Mae — 60 anos</option>
+                  <option value="istelina">Vo Istelina — 84 anos</option>
+                  <option value="antonio">Vo Antonio — 87 anos</option>
+                  <option value="marly">Dona Marly — 72 anos</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="wizDate">Data da consulta</label>
+                <input type="date" class="form-input" id="wizDate" value="2026-04-14">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="wizType">Tipo de consulta</label>
+                <select class="form-select" id="wizType">
+                  <option value="rotina">Rotina</option>
+                  <option value="retorno">Retorno</option>
+                  <option value="urgencia">Urgencia</option>
+                  <option value="preventivo">Check-up preventivo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="wizMode">Modalidade</label>
+                <select class="form-select" id="wizMode">
+                  <option value="presencial">Presencial</option>
+                  <option value="teleconsulta">Teleconsulta</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="wizard-nav">
+            <button class="btn-primary" onclick="wizardNext(2)">Proximo &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Subjetivo -->
+        <div class="wizard-panel" id="wizStep2">
+          <div class="detail-card">
+            <h4>S — Subjetivo</h4>
+            <div class="form-group">
+              <label class="form-label" for="wizQueixa">Queixa principal</label>
+              <input type="text" class="form-input" id="wizQueixa" placeholder="Ex: Dor no joelho direito">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="wizHDA">Historia da doenca atual</label>
+              <textarea class="form-textarea" id="wizHDA" placeholder="Descreva a evolucao da queixa..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="wizRevisao">Revisao de sistemas</label>
+              <textarea class="form-textarea" id="wizRevisao" rows="3" placeholder="Sintomas associados, negacoes relevantes..."></textarea>
+            </div>
+          </div>
+          <div class="wizard-nav">
+            <button class="btn-secondary" onclick="wizardNext(1)">&larr; Voltar</button>
+            <button class="btn-primary" onclick="wizardNext(3)">Proximo &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Objetivo -->
+        <div class="wizard-panel" id="wizStep3">
+          <div class="detail-card">
+            <h4>O — Objetivo (sinais vitais e exame fisico)</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="wizPA">Pressao arterial (mmHg)</label>
+                <input type="text" class="form-input" id="wizPA" placeholder="120/80">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="wizFC">Frequencia cardiaca (bpm)</label>
+                <input type="number" class="form-input" id="wizFC" placeholder="72">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="wizPeso">Peso (kg)</label>
+                <input type="number" class="form-input" id="wizPeso" step="0.1" placeholder="70">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="wizTemp">Temperatura (C)</label>
+                <input type="number" class="form-input" id="wizTemp" step="0.1" placeholder="36.5">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="wizGlic">Glicemia (mg/dL)</label>
+                <input type="number" class="form-input" id="wizGlic" placeholder="90">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="wizSpO2">SpO2 (%)</label>
+                <input type="number" class="form-input" id="wizSpO2" placeholder="98">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="wizExFisico">Exame fisico</label>
+              <textarea class="form-textarea" id="wizExFisico" placeholder="Achados relevantes do exame fisico..."></textarea>
+            </div>
+          </div>
+          <div class="wizard-nav">
+            <button class="btn-secondary" onclick="wizardNext(2)">&larr; Voltar</button>
+            <button class="btn-primary" onclick="wizardNext(4)">Proximo &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Avaliacao e Plano -->
+        <div class="wizard-panel" id="wizStep4">
+          <div class="detail-card">
+            <h4>A — Avaliacao</h4>
+            <div class="form-group">
+              <label class="form-label" for="wizAvaliacao">Hipoteses diagnosticas / Avaliacao clinica</label>
+              <textarea class="form-textarea" id="wizAvaliacao" placeholder="Diagnosticos e avaliacao clinica..."></textarea>
+            </div>
+          </div>
+          <div class="detail-card" style="margin-top:1rem;">
+            <h4>P — Plano</h4>
+            <div class="form-group">
+              <label class="form-label" for="wizPlano">Conduta / Plano terapeutico</label>
+              <textarea class="form-textarea" id="wizPlano" placeholder="Medicacoes, exames, retorno..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="wizRetorno">Data de retorno</label>
+              <input type="date" class="form-input" id="wizRetorno" style="width:auto;">
+            </div>
+          </div>
+          <div class="wizard-nav">
+            <button class="btn-secondary" onclick="wizardNext(3)">&larr; Voltar</button>
+            <button class="btn-primary" onclick="wizardNext(5)">Revisar &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 5: Confirm & Save -->
+        <div class="wizard-panel" id="wizStep5">
+          <div class="detail-card">
+            <h4>Resumo da consulta</h4>
+            <div id="wizSummary"></div>
+          </div>
+          <div class="wizard-nav">
+            <button class="btn-secondary" onclick="wizardNext(4)">&larr; Voltar</button>
+            <button class="btn-primary" onclick="saveConsultation()">Salvar consulta</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: RECEITUARIO (Prescription Generator)   -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="receita">
+        <h2 class="section-title">Gerador de Receita</h2>
+        <p class="section-subtitle">Selecione o paciente e as medicacoes para gerar uma receita formatada.</p>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Dados da receita</h4>
+            <div class="form-group">
+              <label class="form-label" for="rxPatient">Paciente</label>
+              <select class="form-select" id="rxPatient" onchange="updateRxMeds()">
+                <option value="">Selecionar paciente...</option>
+                <option value="hermano">Eu (Hermano)</option>
+                <option value="pai">Pai</option>
+                <option value="mae">Mae</option>
+                <option value="istelina">Vo Istelina</option>
+                <option value="antonio">Vo Antonio</option>
+                <option value="marly">Dona Marly</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Medicacoes do paciente</label>
+              <div id="rxCurrentMeds" style="font-size: 0.8rem; color: var(--color-text-light);">Selecione um paciente para ver as medicacoes.</div>
+            </div>
+            <hr style="border: none; border-top: 1px solid var(--color-border); margin: 1rem 0;">
+            <h4 style="margin-top: 0;">Adicionar medicacao</h4>
+            <div class="form-group">
+              <label class="form-label" for="rxMedName">Nome do medicamento</label>
+              <input type="text" class="form-input" id="rxMedName" placeholder="Ex: Losartana 50mg">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="rxDose">Posologia</label>
+                <input type="text" class="form-input" id="rxDose" placeholder="Ex: 1 comp. 1x/dia">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="rxDuration">Duracao</label>
+                <input type="text" class="form-input" id="rxDuration" placeholder="Ex: Uso continuo">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rxObs">Observacoes</label>
+              <input type="text" class="form-input" id="rxObs" placeholder="Ex: Tomar pela manha">
+            </div>
+            <button class="btn-primary btn-sm" onclick="addRxMed()">+ Adicionar a receita</button>
+          </div>
+
+          <div class="detail-card">
+            <h4>Medicacoes na receita</h4>
+            <div id="rxMedList" style="font-size: 0.8rem; color: var(--color-text-light);">Nenhuma medicacao adicionada.</div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn-primary" onclick="generateRx()">Gerar receita</button>
+              <button class="btn-secondary" onclick="clearRx()">Limpar</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="rxOutput"></div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: RISCO (Risk Stratification)            -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="risco">
+        <h2 class="section-title">Estratificacao de Risco</h2>
+        <p class="section-subtitle">Avaliacao de risco cardiovascular e de diabetes para cada paciente.</p>
+
+        <div class="patient-select">
+          <button class="patient-select-btn active" onclick="showRisk('pai', this)">Pai</button>
+          <button class="patient-select-btn" onclick="showRisk('istelina', this)">Vo Istelina</button>
+          <button class="patient-select-btn" onclick="showRisk('marly', this)">Dona Marly</button>
+          <button class="patient-select-btn" onclick="showRisk('hermano', this)">Eu (Hermano)</button>
+        </div>
+
+        <div id="riskContent"></div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: NOTIFICACOES (Reminders)               -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="notificacoes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Lembretes e Notificacoes</h2>
+            <p style="font-size: 0.825rem; color: var(--color-text-light); margin: 0;">Consultas pendentes, exames vencidos e alertas clinicos.</p>
+          </div>
+          <div class="notif-filter-bar">
+            <button class="filter-btn active" onclick="filterNotifs('all', this)">Todos</button>
+            <button class="filter-btn" onclick="filterNotifs('urgent', this)">Urgentes</button>
+            <button class="filter-btn" onclick="filterNotifs('exam', this)">Exames</button>
+            <button class="filter-btn" onclick="filterNotifs('med', this)">Medicacoes</button>
+            <button class="filter-btn" onclick="filterNotifs('appt', this)">Consultas</button>
+          </div>
+        </div>
+
+        <div class="notif-list" id="notifList"></div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: CALCULADORAS (Clinical Decision)       -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="calculadoras">
+        <h2 class="section-title">Suporte a Decisao Clinica</h2>
+        <p class="section-subtitle">Calculadoras clinicas para auxilio na tomada de decisao.</p>
+
+        <div class="calc-grid">
+          <!-- IMC Calculator -->
+          <div class="calc-card">
+            <h4>Calculadora de IMC</h4>
+            <div class="bmi-form">
+              <div class="bmi-field">
+                <label for="bmiWeight">Peso (kg)</label>
+                <input type="number" id="bmiWeight" placeholder="70" step="0.1" min="20" max="300">
+              </div>
+              <div class="bmi-field">
+                <label for="bmiHeight">Altura (m)</label>
+                <input type="number" id="bmiHeight" placeholder="1.70" step="0.01" min="0.5" max="2.5">
+              </div>
+              <button class="btn-primary btn-sm" onclick="calcBMI()">Calcular</button>
+            </div>
+            <div class="calc-result" id="bmiResult" style="display: none;">
+              <div style="display:flex;align-items:center;gap:1rem;">
+                <div>
+                  <div class="calc-result-value" id="bmiValue">--</div>
+                  <div class="calc-result-label">IMC</div>
+                </div>
+                <div>
+                  <div class="bmi-result-class" id="bmiClass">--</div>
+                  <div class="calc-result-label" id="bmiRange">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GFR Calculator (CKD-EPI) -->
+          <div class="calc-card">
+            <h4>Taxa de Filtracao Glomerular (TFG)</h4>
+            <p style="font-size: 0.75rem; color: var(--color-text-light); margin-bottom: 0.75rem;">Estimativa pela formula CKD-EPI (Creatinina)</p>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="gfrCreat">Creatinina (mg/dL)</label>
+                <input type="number" class="form-input" id="gfrCreat" step="0.01" placeholder="1.0">
+              </div>
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="gfrAge">Idade (anos)</label>
+                <input type="number" class="form-input" id="gfrAge" placeholder="60">
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="gfrSex">Sexo</label>
+                <select class="form-select" id="gfrSex">
+                  <option value="M">Masculino</option>
+                  <option value="F">Feminino</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0.5rem; display: flex; align-items: flex-end;">
+                <button class="btn-primary btn-sm" onclick="calcGFR()">Calcular TFG</button>
+              </div>
+            </div>
+            <div class="calc-result" id="gfrResult" style="display: none;">
+              <div>
+                <div class="calc-result-value" id="gfrValue">--</div>
+                <div class="calc-result-label">mL/min/1.73m2</div>
+              </div>
+              <div id="gfrStage" style="font-size: 0.8rem; font-weight: 600; margin-top: 0.3rem;"></div>
+            </div>
+          </div>
+
+          <!-- Drug Dosage Calculator -->
+          <div class="calc-card">
+            <h4>Calculadora de Dose por Peso</h4>
+            <div class="form-group">
+              <label class="form-label" for="doseWeight">Peso do paciente (kg)</label>
+              <input type="number" class="form-input" id="doseWeight" step="0.1" placeholder="70">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="doseMgKg">Dose prescrita (mg/kg)</label>
+              <input type="number" class="form-input" id="doseMgKg" step="0.01" placeholder="5">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="doseFreq">Frequencia (doses/dia)</label>
+              <input type="number" class="form-input" id="doseFreq" value="1" min="1" max="6">
+            </div>
+            <button class="btn-primary btn-sm" onclick="calcDose()">Calcular</button>
+            <div class="calc-result" id="doseResult" style="display: none;">
+              <div>
+                <div class="calc-result-value" id="doseValue">--</div>
+                <div class="calc-result-label">mg por dose</div>
+              </div>
+              <div id="doseDayTotal" style="font-size: 0.8rem; color: var(--color-text-light); margin-top: 0.3rem;"></div>
+            </div>
+          </div>
+
+          <!-- Cardiovascular Risk (Framingham simplified) -->
+          <div class="calc-card">
+            <h4>Risco Cardiovascular Simplificado</h4>
+            <p style="font-size: 0.75rem; color: var(--color-text-light); margin-bottom: 0.75rem;">Estimativa baseada em fatores de risco tradicionais</p>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="cvAge">Idade</label>
+                <input type="number" class="form-input" id="cvAge" placeholder="55">
+              </div>
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="cvSex">Sexo</label>
+                <select class="form-select" id="cvSex">
+                  <option value="M">Masculino</option>
+                  <option value="F">Feminino</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 0.5rem;">
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="cvPAS">PAS (mmHg)</label>
+                <input type="number" class="form-input" id="cvPAS" placeholder="130">
+              </div>
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" for="cvCT">Colesterol total (mg/dL)</label>
+                <input type="number" class="form-input" id="cvCT" placeholder="200">
+              </div>
+            </div>
+            <div style="margin-bottom: 0.75rem;">
+              <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                <input type="checkbox" id="cvDM"> Diabetes
+              </label>
+              <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; margin-top: 0.25rem;">
+                <input type="checkbox" id="cvSmoke"> Tabagismo
+              </label>
+              <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; margin-top: 0.25rem;">
+                <input type="checkbox" id="cvHAS"> Hipertensao em tratamento
+              </label>
+            </div>
+            <button class="btn-primary btn-sm" onclick="calcCVRisk()">Calcular risco</button>
+            <div class="calc-result" id="cvResult" style="display: none;">
+              <div>
+                <div class="calc-result-value" id="cvValue">--</div>
+                <div class="calc-result-label" id="cvLabel">Risco em 10 anos</div>
+              </div>
+              <div id="cvClass" style="font-size: 0.8rem; font-weight: 600; margin-top: 0.3rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vitals trend chart -->
+        <div class="vital-chart-area">
+          <h4>Tendencia de Pressao Arterial — Vo Istelina</h4>
+          <div class="vital-chart-select">
+            <button class="vital-chart-btn active" onclick="showVitalChart('pa-istelina', this)">PA Istelina</button>
+            <button class="vital-chart-btn" onclick="showVitalChart('pa-pai', this)">PA Pai</button>
+            <button class="vital-chart-btn" onclick="showVitalChart('glic-istelina', this)">Glicemia Istelina</button>
+            <button class="vital-chart-btn" onclick="showVitalChart('peso-istelina', this)">Peso Istelina</button>
+          </div>
+          <div class="vital-svg-wrap" id="vitalChartContainer"></div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: MEDICACOES                             -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="medicacoes">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Controle de Medicacoes</h2>
+            <span style="font-size: 0.825rem; color: var(--color-text-light);">Estoque, validades, interacoes e custo medio mensal</span>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active" data-medfilter="todos" onclick="filterMeds('todos', this)">Todos</button>
+            <button class="filter-btn" data-medfilter="alerta" onclick="filterMeds('alerta', this)">Com alerta</button>
+          </div>
+        </div>
+
+        <div class="interaction-warn severity-high">
+          <span class="interaction-warn-icon">&#9888;</span>
+          <div>
+            <strong>Interacao — AAS + Enalapril (Pai)</strong>
+            <p>O uso concomitante de AAS com inibidores da ECA (Enalapril) pode reduzir o efeito anti-hipertensivo. Monitorar PA regularmente.</p>
+          </div>
+        </div>
+        <div class="interaction-warn">
+          <span class="interaction-warn-icon">&#9888;</span>
+          <div>
+            <strong>Atencao — Levotiroxina + Metformina (Vo Istelina)</strong>
+            <p>Metformina pode alterar niveis de TSH. Monitorar TSH a cada 6 meses. Levotiroxina em jejum 30-60min antes.</p>
+          </div>
+        </div>
+        <div class="interaction-warn">
+          <span class="interaction-warn-icon">&#9888;</span>
+          <div>
+            <strong>Atencao — Omeprazol uso prolongado (Dona Marly)</strong>
+            <p>IBP > 1 ano: risco de deficiencia de B12, magnesio e fraturas. Avaliar reducao. Dosar B12 e Mg anualmente.</p>
+          </div>
+        </div>
+
+        <div class="med-cards" id="medCards">
+          <div class="med-card" data-medstatus="critical">
+            <div class="med-card-status med-status-critical">Estoque baixo</div>
+            <div class="med-card-name">Enalapril 10mg</div>
+            <div class="med-card-patient">Pai — 2x/dia</div>
+            <div class="med-card-detail"><span>Estoque</span><span style="font-weight: 600; color: #dc2626;">20 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>05/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 15,80</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-critical" style="width: 22%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="warn">
+            <div class="med-card-status med-status-warn">Repor em breve</div>
+            <div class="med-card-name">Metformina 850mg</div>
+            <div class="med-card-patient">Vo Istelina — 2x/dia</div>
+            <div class="med-card-detail"><span>Estoque</span><span style="font-weight: 600; color: #d97706;">30 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>06/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 18,50</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-warn" style="width: 50%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="warn">
+            <div class="med-card-status med-status-warn">Repor em breve</div>
+            <div class="med-card-name">Omeprazol 20mg</div>
+            <div class="med-card-patient">Dona Marly — 1x/dia (jejum)</div>
+            <div class="med-card-detail"><span>Estoque</span><span style="font-weight: 600; color: #d97706;">28 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>04/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 11,90</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-warn" style="width: 47%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Losartana 50mg</div>
+            <div class="med-card-patient">Vo Istelina — 1x/dia (manha)</div>
+            <div class="med-card-detail"><span>Estoque</span><span>45 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>08/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 12,90</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-ok" style="width: 75%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Levotiroxina 50mcg</div>
+            <div class="med-card-patient">Vo Istelina — 1x/dia (jejum)</div>
+            <div class="med-card-detail"><span>Estoque</span><span>60 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>12/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 22,00</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-ok" style="width: 100%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Sinvastatina 20mg</div>
+            <div class="med-card-patient">Pai — 1x/dia (noite)</div>
+            <div class="med-card-detail"><span>Estoque</span><span>50 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>09/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 19,90</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-ok" style="width: 83%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">AAS 100mg</div>
+            <div class="med-card-patient">Pai — 1x/dia</div>
+            <div class="med-card-detail"><span>Estoque</span><span>90 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>11/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 8,50</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-ok" style="width: 100%;"></div></div>
+          </div>
+          <div class="med-card" data-medstatus="ok">
+            <div class="med-card-status med-status-ok">OK</div>
+            <div class="med-card-name">Anlodipino 5mg</div>
+            <div class="med-card-patient">Dona Marly — 1x/dia</div>
+            <div class="med-card-detail"><span>Estoque</span><span>40 comp.</span></div>
+            <div class="med-card-detail"><span>Validade</span><span>07/2027</span></div>
+            <div class="med-card-detail"><span>Custo/mes</span><span>R$ 14,20</span></div>
+            <div class="med-stock-bar"><div class="med-stock-fill stock-ok" style="width: 67%;"></div></div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Resumo de custos mensais</h4>
+            <div class="info-row"><span class="label">Vo Istelina (3 medicacoes)</span><span class="value">R$ 53,40</span></div>
+            <div class="info-row"><span class="label">Pai (3 medicacoes)</span><span class="value">R$ 44,20</span></div>
+            <div class="info-row"><span class="label">Dona Marly (2 medicacoes)</span><span class="value">R$ 26,10</span></div>
+            <div class="info-row" style="border-top: 2px solid var(--color-border); margin-top: 0.5rem; padding-top: 0.75rem;">
+              <span class="label"><strong>Total mensal</strong></span>
+              <span class="value" style="color: var(--color-accent);"><strong>R$ 123,70</strong></span>
+            </div>
+          </div>
+          <div class="detail-card">
+            <h4>Custo por paciente</h4>
+            <div class="bar-chart" style="height: 100px;">
+              <div class="bar-col"><div class="bar-value">R$53</div><div class="bar bar-blue" style="height: 100%;"></div><div class="bar-label">Istelina</div></div>
+              <div class="bar-col"><div class="bar-value">R$44</div><div class="bar bar-blue" style="height: 82%;"></div><div class="bar-label">Pai</div></div>
+              <div class="bar-col"><div class="bar-value">R$26</div><div class="bar bar-blue" style="height: 49%;"></div><div class="bar-label">Marly</div></div>
+              <div class="bar-col"><div class="bar-value">R$0</div><div class="bar bar-green" style="height: 3%;"></div><div class="bar-label">Outros</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: EXAMES                                 -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="exames">
+        <h2 class="section-title">Controle de Exames</h2>
+        <p class="section-subtitle">Rastreamento por idade e condicoes. Linha do tempo e calendario de triagem.</p>
+
+        <div class="timeline-view">
+          <div class="tl-month-header">Janeiro 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">05/01</span>
+            <span class="tl-event-name">Hemograma, Glicemia, HbA1c, TSH</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">05/01</span>
+            <span class="tl-event-name">Hemograma basico</span>
+            <span class="tl-event-patient">Vo Antonio</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-month-header">Fevereiro 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">22/02</span>
+            <span class="tl-event-name">Perfil lipidico, Glicemia jejum</span>
+            <span class="tl-event-patient">Pai</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-month-header">Marco 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">10/03</span>
+            <span class="tl-event-name">Check-up completo</span>
+            <span class="tl-event-patient">Hermano</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">15/03</span>
+            <span class="tl-event-name">Hemograma, Glicemia, Perfil lipidico</span>
+            <span class="tl-event-patient">Mae</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-done"></span>
+            <span class="tl-event-date">20/03</span>
+            <span class="tl-event-name">Hemograma, PA, Avaliacao clinica</span>
+            <span class="tl-event-patient">D. Marly</span>
+            <span class="badge badge-green">Realizado</span>
+          </div>
+          <div class="tl-month-header" style="color: #dc2626;">Abril 2026 (atual)</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-overdue"></span>
+            <span class="tl-event-date">05/04</span>
+            <span class="tl-event-name">Funcao renal, Eletrolitos, ECG</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-red">Vencido</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-overdue"></span>
+            <span class="tl-event-date">05/04</span>
+            <span class="tl-event-name">ECG, PSA, Hemograma</span>
+            <span class="tl-event-patient">Vo Antonio</span>
+            <span class="badge badge-red">Vencido</span>
+          </div>
+          <div class="tl-month-header">Maio 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-scheduled"></span>
+            <span class="tl-event-date">22/05</span>
+            <span class="tl-event-name">Hemograma, Funcao renal</span>
+            <span class="tl-event-patient">Pai</span>
+            <span class="badge badge-amber">Agendado</span>
+          </div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Mai</span>
+            <span class="tl-event-name">Mamografia</span>
+            <span class="tl-event-patient">Mae</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+          <div class="tl-month-header">Julho 2026</div>
+          <div class="tl-event">
+            <span class="tl-event-dot dot-upcoming"></span>
+            <span class="tl-event-date">Jul</span>
+            <span class="tl-event-name">Hemograma, Glicemia, HbA1c</span>
+            <span class="tl-event-patient">Vo Istelina</span>
+            <span class="badge badge-blue">Programado</span>
+          </div>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Status de exames por paciente</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Paciente</th><th>Ultimo check-up</th><th>Exames em dia</th><th>Pendentes</th><th>Proximo</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-cell">Eu (Hermano)</td><td>10/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td><td style="color: var(--color-text-light);">—</td><td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Pai</td><td>22/02/2026</td>
+                <td><span class="badge badge-amber">Parcial</span></td><td>Hemograma, Funcao renal</td><td>Mai 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Mae</td><td>15/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td><td style="color: var(--color-text-light);">—</td><td>Set 2026</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Istelina</td><td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td><td><strong>Funcao renal, Eletrolitos, ECG</strong></td><td style="color: #dc2626; font-weight: 600;">Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Vo Antonio</td><td>05/01/2026</td>
+                <td><span class="badge badge-red">Atrasado</span></td><td><strong>ECG, PSA, Hemograma</strong></td><td style="color: #dc2626; font-weight: 600;">Abr 2026 (vencido)</td>
+              </tr>
+              <tr>
+                <td class="name-cell">Dona Marly</td><td>20/03/2026</td>
+                <td><span class="badge badge-green">Todos em dia</span></td><td style="color: var(--color-text-light);">—</td><td>Set 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: EMERGENCIA                             -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="suporte">
+        <h2 class="section-title">Mapeamento do Suporte de Saude</h2>
+        <p class="section-subtitle">Contatos de emergencia, protocolos e rede de apoio por paciente.</p>
+
+        <div class="emergency-banner">
+          <div class="emergency-banner-header">Protocolo de emergencia geral</div>
+          <div class="emergency-banner-body">
+            <div class="emergency-numbers">
+              <div class="emergency-num"><div class="num">192</div><div class="num-label">SAMU</div></div>
+              <div class="emergency-num"><div class="num">193</div><div class="num-label">Bombeiros</div></div>
+              <div class="emergency-num"><div class="num">190</div><div class="num-label">Emergencia</div></div>
+            </div>
+            <div class="emergency-instructions">
+              <strong>Em caso de dor toracica, falta de ar severa, AVC ou perda de consciencia:</strong> ligar 192 imediatamente e encaminhar para a emergencia mais proxima.
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>Vo Istelina — Rede de suporte</h4>
+            <div class="info-row"><span class="label">Contato principal</span><span class="value">Pai (filho)</span></div>
+            <div class="info-row"><span class="label">Cuidador</span><span class="value">Neta Maria</span></div>
+            <div class="info-row"><span class="label">Hospital</span><span class="value">Hospital Sao Lucas</span></div>
+            <div class="info-row"><span class="label">Plano</span><span class="value">SUS + particular</span></div>
+            <div class="info-row"><span class="label">Alergias</span><span class="value" style="color: #dc2626; font-weight: 700;">Dipirona</span></div>
+          </div>
+          <div class="detail-card">
+            <h4>Pai — Rede de suporte</h4>
+            <div class="info-row"><span class="label">Contato principal</span><span class="value">Mae (esposa)</span></div>
+            <div class="info-row"><span class="label">Hospital</span><span class="value">Hospital Santa Casa</span></div>
+            <div class="info-row"><span class="label">Plano</span><span class="value">Unimed</span></div>
+            <div class="info-row"><span class="label">Alergias</span><span class="value" style="color: #dc2626; font-weight: 700;">Penicilina</span></div>
+          </div>
+          <div class="detail-card">
+            <h4>Dona Marly — Rede de suporte</h4>
+            <div class="info-row"><span class="label">Contato principal</span><span class="value">Filha Ana</span></div>
+            <div class="info-row"><span class="label">Hospital</span><span class="value">Hospital Santa Casa</span></div>
+            <div class="info-row"><span class="label">Plano</span><span class="value">Unimed</span></div>
+            <div class="info-row"><span class="label">Alergias</span><span class="value" style="color: #dc2626; font-weight: 700;">Sulfa</span></div>
+          </div>
+          <div class="detail-card">
+            <h4>Vo Antonio — Rede de suporte</h4>
+            <div class="info-row"><span class="label">Contato principal</span><span class="value">Pai (filho)</span></div>
+            <div class="info-row"><span class="label">Hospital</span><span class="value">Hospital Sao Lucas</span></div>
+            <div class="info-row"><span class="label">Plano</span><span class="value">SUS</span></div>
+            <div class="info-row"><span class="label">Alergias</span><span class="value">Nenhuma conhecida</span></div>
+            <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #92400e; background: #fffbeb; padding: 0.5rem 0.75rem; border-radius: 6px; line-height: 1.5;"><strong>Risco de queda:</strong> ambiente adaptado, tapetes removidos, barras no banheiro.</p>
+          </div>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Protocolos de emergencia</h3>
+        <div class="protocol-grid">
+          <div class="protocol-card">
+            <div class="protocol-card-header p-red">Dor no peito</div>
+            <div class="protocol-card-body"><ol><li>Sentar o paciente, afrouxar roupas</li><li>Se usar AAS, mastigar 1 comprimido</li><li>Ligar SAMU 192</li><li>Nao dar agua ou comida</li></ol></div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-amber">Hipoglicemia</div>
+            <div class="protocol-card-body"><ol><li>Oferecer 15g de carboidrato rapido</li><li>Aguardar 15 min, medir novamente</li><li>Se inconsciente: SAMU 192</li><li>Posicao lateral de seguranca</li></ol></div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-blue">Queda com suspeita de fratura</div>
+            <div class="protocol-card-body"><ol><li>Nao mover o paciente</li><li>Imobilizar o membro</li><li>Aplicar gelo</li><li>Encaminhar para emergencia</li></ol></div>
+          </div>
+          <div class="protocol-card">
+            <div class="protocol-card-header p-red">Crise hipertensiva (PA > 180/110)</div>
+            <div class="protocol-card-body"><ol><li>Repouso absoluto</li><li>Verificar se tomou medicacao</li><li>Com sintomas: SAMU 192</li><li>Assintomatico: medicar e reavaliar 30 min</li></ol></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: EXPORTAR                               -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="exportar">
+        <h2 class="section-title">Exportar e Relatorios</h2>
+        <p class="section-subtitle">Gere relatorios e exporte dados dos pacientes.</p>
+
+        <div class="export-grid">
+          <div class="export-option" onclick="exportPatientSummary()">
+            <div class="export-icon">&#128196;</div>
+            <div class="export-title">Resumo do Paciente</div>
+            <div class="export-desc">Gerar ficha completa do paciente para impressao</div>
+          </div>
+          <div class="export-option" onclick="exportAllPatients()">
+            <div class="export-icon">&#128203;</div>
+            <div class="export-title">Lista de Pacientes</div>
+            <div class="export-desc">Exportar lista completa em formato texto</div>
+          </div>
+          <div class="export-option" onclick="exportMedReport()">
+            <div class="export-icon">&#128138;</div>
+            <div class="export-title">Relatorio de Medicacoes</div>
+            <div class="export-desc">Resumo de todas as medicacoes e custos</div>
+          </div>
+          <div class="export-option" onclick="exportConsultations()">
+            <div class="export-icon">&#128221;</div>
+            <div class="export-title">Historico de Consultas</div>
+            <div class="export-desc">Exportar todas as notas de consulta registradas</div>
+          </div>
+          <div class="export-option" onclick="window.print()">
+            <div class="export-icon">&#9113;</div>
+            <div class="export-title">Imprimir Dashboard</div>
+            <div class="export-desc">Imprimir a pagina atual completa</div>
+          </div>
+          <div class="export-option" onclick="exportJSON()">
+            <div class="export-icon">&#128190;</div>
+            <div class="export-title">Backup Completo (JSON)</div>
+            <div class="export-desc">Exportar todos os dados em formato JSON</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="exportPatientSelect">Selecionar paciente para resumo individual:</label>
+          <select class="form-select" id="exportPatientSelect" style="max-width: 300px;">
+            <option value="hermano">Eu (Hermano)</option>
+            <option value="pai">Pai</option>
+            <option value="mae">Mae</option>
+            <option value="istelina">Vo Istelina</option>
+            <option value="antonio">Vo Antonio</option>
+            <option value="marly">Dona Marly</option>
+          </select>
+        </div>
+
+        <div id="exportOutput"></div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- TAB: PLANO                                  -->
+      <!-- ============================================ -->
+      <div class="dash-section" id="plano">
+        <h2 class="section-title">Plano e Valores</h2>
+        <p class="section-subtitle">Estrutura de precos da pratica 100 Pessoas.</p>
+
+        <div class="pricing-hero">
+          <div class="pricing-price">R$ 500</div>
+          <div class="pricing-label">Consulta inicial — Avaliacao completa</div>
+          <div class="pricing-divider"></div>
+          <div class="pricing-note">Inclui anamnese detalhada, exame fisico, plano de cuidado personalizado e solicitacao de exames iniciais.</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h4>O que inclui a consulta inicial</h4>
+            <ul>
+              <li>Anamnese completa (historico pessoal e familiar)</li>
+              <li>Exame fisico detalhado</li>
+              <li>Revisao de medicacoes em uso</li>
+              <li>Solicitacao de exames laboratoriais basicos</li>
+              <li>ECG (se indicado)</li>
+              <li>Plano de cuidado individualizado</li>
+              <li>Calendario de exames personalizado</li>
+              <li>Mapeamento de rede de suporte</li>
+            </ul>
+          </div>
+          <div class="detail-card">
+            <h4>Modelo de acompanhamento</h4>
+            <ul>
+              <li><strong>Consultas de retorno:</strong> a cada 3-6 meses</li>
+              <li><strong>Contato via mensagem:</strong> disponivel para duvidas</li>
+              <li><strong>Gestao de medicacoes:</strong> controle de estoque e receitas</li>
+              <li><strong>Coordenacao de cuidado:</strong> encaminhamentos</li>
+              <li><strong>Limite:</strong> ate 100 pacientes</li>
+            </ul>
+          </div>
+          <div class="detail-card detail-card-full">
+            <h4>Capacidade e metas</h4>
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.825rem; margin-bottom: 0.35rem;">
+                <span>6 de 100 pacientes</span>
+                <span style="font-weight: 600;">6%</span>
+              </div>
+              <div style="background: var(--v4-bg-surface); border-radius: 6px; height: 10px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, var(--color-accent), #3b82f6); height: 100%; width: 6%; border-radius: 6px;"></div>
+              </div>
+            </div>
+            <div class="detail-grid" style="margin-bottom: 0;">
+              <div>
+                <div class="info-row"><span class="label">Vagas disponiveis</span><span class="value" style="color: #16a34a;">94</span></div>
+                <div class="info-row"><span class="label">Meta para 2026</span><span class="value">20 pacientes</span></div>
+              </div>
+              <div>
+                <div class="info-row"><span class="label">Receita potencial (20 pac.)</span><span class="value" style="color: var(--color-accent);">R$ 10.000</span></div>
+                <div class="info-row"><span class="label">Progresso da meta</span><span class="value">6 / 20 (30%)</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.container -->
   </main>
+
+  <!-- ============================================ -->
+  <!-- PATIENT DETAIL MODAL                        -->
+  <!-- ============================================ -->
+  <div class="modal-overlay" id="patientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalPatientName">
+          <span class="status-dot" id="modalDot"></span>
+          <span id="modalName">Paciente</span>
+        </h2>
+        <button class="modal-close" onclick="closePatientModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="modal-tab active" onclick="switchModalTab('m-resumo', this)">Resumo</button>
+          <button class="modal-tab" onclick="switchModalTab('m-vitais', this)">Sinais Vitais</button>
+          <button class="modal-tab" onclick="switchModalTab('m-meds', this)">Medicacoes</button>
+          <button class="modal-tab" onclick="switchModalTab('m-notas', this)">Notas</button>
+          <button class="modal-tab" onclick="switchModalTab('m-vacinas', this)">Vacinas</button>
+        </div>
+        <div class="modal-section active" id="m-resumo"></div>
+        <div class="modal-section" id="m-vitais"></div>
+        <div class="modal-section" id="m-meds"></div>
+        <div class="modal-section" id="m-notas"></div>
+        <div class="modal-section" id="m-vacinas"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closePatientModal()">Fechar</button>
+        <button class="btn-primary" onclick="printPatientSummary()">Imprimir resumo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>100 Pessoas — MedStack Lab v4</p>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================
+    // Patient Data Store (persisted to localStorage)
+    // =============================================
+    const DEFAULT_PATIENTS = {
+      hermano: {
+        name: 'Eu (Hermano)', age: 32, dot: 'dot-green', status: 'Em dia',
+        statusClass: 'badge-green', birth: '15/05/1993', blood: '—', allergies: 'Nenhuma conhecida',
+        weight: 75, height: 1.78, sex: 'M',
+        conditions: [],
+        meds: [],
+        lastVisit: '10/03/2026',
+        vitals: { pa: '120/75', fc: '68', glic: '88', spo2: '99%', temp: '36.2' },
+        notes: [
+          { date: '10/03/2026', type: 'Check-up', typeClass: 'badge-green',
+            soap: { s: 'Sem queixas. Pratica atividade fisica regular. Sono adequado.', o: 'PA 120/75 mmHg. FC 68 bpm. Peso 75 kg. IMC 23.7. Todos exames normais.', a: 'Paciente saudavel, sem fatores de risco.', p: 'Manter estilo de vida. Proximo check-up: set/2026.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'dT (em dia)', 'Hepatite B (completa)', 'Febre Amarela (completa)', 'Triplice Viral (completa)']
+      },
+      pai: {
+        name: 'Pai', age: 63, dot: 'dot-amber', status: 'Exame pendente',
+        statusClass: 'badge-amber', birth: '—', blood: 'O+', allergies: 'Penicilina',
+        weight: 82, height: 1.74, sex: 'M',
+        conditions: ['HAS', 'Dislipidemia', 'Pre-diabetes'],
+        meds: ['Enalapril 10mg 2x/dia', 'Sinvastatina 20mg 1x/dia (noite)', 'AAS 100mg 1x/dia'],
+        lastVisit: '22/02/2026',
+        vitals: { pa: '135/80', fc: '72', glic: '108', ct: '210', ldl: '140', spo2: '98%', temp: '36.3' },
+        notes: [
+          { date: '22/02/2026', type: 'Rotina', typeClass: 'badge-amber',
+            soap: { s: 'Boa adesao. Ganho de peso recente (~2 kg em 3 meses).', o: 'PA 135/80 mmHg. Peso 82 kg. CT 210, LDL 140, Glic 108.', a: 'HAS controlada. LDL fora do alvo. Pre-diabetes limiar.', p: 'Hemograma + funcao renal. Avaliar troca de estatina. Reforcar dieta.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'Pneumococica (pendente)', 'Herpes Zoster (pendente)', 'dT (em dia)', 'Hepatite B (completa)']
+      },
+      mae: {
+        name: 'Mae', age: 60, dot: 'dot-green', status: 'Em dia',
+        statusClass: 'badge-green', birth: '—', blood: '—', allergies: 'Nenhuma conhecida',
+        weight: 65, height: 1.60, sex: 'F',
+        conditions: [],
+        meds: [],
+        lastVisit: '15/03/2026',
+        vitals: { pa: '125/78', fc: '72', glic: '92', spo2: '98%', temp: '36.3' },
+        notes: [
+          { date: '15/03/2026', type: 'Rotina', typeClass: 'badge-green',
+            soap: { s: 'Sem queixas relevantes. Leve ansiedade situacional.', o: 'PA 125/78 mmHg. Peso 65 kg. Glicemia 92. Exames normais.', a: 'Saude geral boa. Leve sobrepeso.', p: 'Atividade fisica. Mamografia agendada. Retorno 3 meses.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'dT (em dia)', 'Herpes Zoster (pendente)', 'Hepatite B (completa)']
+      },
+      istelina: {
+        name: 'Vo Istelina', age: 84, dot: 'dot-red', status: 'Consulta vencida',
+        statusClass: 'badge-red', birth: '12/08/1941', blood: 'A+', allergies: 'Dipirona',
+        weight: 68, height: 1.58, sex: 'F',
+        conditions: ['HAS', 'DM2', 'Osteoartrose', 'Hipotireoidismo'],
+        meds: ['Losartana 50mg 1x/dia', 'Metformina 850mg 2x/dia', 'Levotiroxina 50mcg jejum', 'Paracetamol 750mg SN'],
+        lastVisit: '05/01/2026',
+        vitals: { pa: '140/85', fc: '76', glic: '132', hba1c: '7.2%', tsh: '3.1', spo2: '97%', temp: '36.4' },
+        notes: [
+          { date: '05/01/2026', type: 'Rotina', typeClass: 'badge-red',
+            soap: { s: 'Dor joelho D, piora ao subir escadas. Boa adesao. Esquece Metformina da tarde.', o: 'PA 140/85. Peso 68 kg. Glic 132. HbA1c 7.2%. TSH 3.1. Joelho D com crepitacao.', a: 'HAS subotimo. DM2 acima da meta. Hipo controlado. OA estavel.', p: 'Manter Losartana. Reforcar Metformina. Exames abr. Paracetamol. Retorno 3m.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'Pneumococica (em dia)', 'Herpes Zoster (pendente)', 'dT (em dia)', 'Hepatite B (pendente)']
+      },
+      antonio: {
+        name: 'Vo Antonio', age: 87, dot: 'dot-red', status: 'Consulta vencida',
+        statusClass: 'badge-red', birth: '—', blood: '—', allergies: 'Nenhuma conhecida',
+        weight: 70, height: 1.68, sex: 'M',
+        conditions: ['Risco de queda elevado'],
+        meds: ['A atualizar na proxima consulta'],
+        lastVisit: '05/01/2026',
+        vitals: { pa: '—', fc: '—', glic: '—', spo2: '—', temp: '—' },
+        notes: [
+          { date: '05/01/2026', type: 'Avaliacao', typeClass: 'badge-red',
+            soap: { s: 'Paciente trazido pelo filho. Dificuldade de deambulacao.', o: 'Exames basicos realizados. Pendente: ECG, PSA, hemograma.', a: 'Risco de queda elevado. Necessita avaliacao geriatrica completa.', p: 'Reagendar com urgencia. Solicitar ECG, PSA, hemograma.' }}
+        ],
+        vaccines: ['Influenza (atrasada)', 'COVID-19 (em dia)', 'Pneumococica (pendente)', 'dT (atrasada)', 'Herpes Zoster (pendente)']
+      },
+      marly: {
+        name: 'Dona Marly', age: 72, dot: 'dot-green', status: 'Atencao',
+        statusClass: 'badge-amber', birth: '—', blood: '—', allergies: 'Sulfa',
+        weight: 62, height: 1.55, sex: 'F',
+        conditions: ['HAS', 'DRGE'],
+        meds: ['Anlodipino 5mg 1x/dia', 'Omeprazol 20mg jejum'],
+        lastVisit: '20/03/2026',
+        vitals: { pa: '130/80', fc: '74', glic: '95', spo2: '97%', temp: '36.5' },
+        notes: [
+          { date: '20/03/2026', type: 'Rotina', typeClass: 'badge-amber',
+            soap: { s: 'Melhora de refluxo com Omeprazol. Boa adesao.', o: 'PA 130/80. Peso 62 kg. Exame sem alteracoes.', a: 'HAS controlada. DRGE em remissao. Boa adesao.', p: 'Manter medicacoes. Avaliar reducao Omeprazol em 6m. Retorno jun/2026.' }}
+        ],
+        vaccines: ['Influenza (em dia)', 'COVID-19 (em dia)', 'Pneumococica (em dia)', 'Herpes Zoster (pendente)', 'dT (em dia)']
+      }
+    };
+
+    // =============================================
+    // localStorage Persistence
+    // =============================================
+    const STORAGE_KEY = 'medstack-100pessoas-v4';
+
+    function loadData() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.patients) return parsed;
+        }
+      } catch (e) { /* ignore */ }
+      return { patients: JSON.parse(JSON.stringify(DEFAULT_PATIENTS)), consultations: [], prescriptions: [] };
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(APP_DATA));
+        updatePersistBadge(true);
+      } catch (e) { updatePersistBadge(false); }
+    }
+
+    function updatePersistBadge(ok) {
+      const b = document.getElementById('persistBadge');
+      if (ok) { b.innerHTML = '&#9679; Dados salvos'; b.style.color = '#16a34a'; }
+      else { b.innerHTML = '&#9679; Erro ao salvar'; b.style.color = '#dc2626'; }
+    }
+
+    let APP_DATA = loadData();
+    const PATIENTS = APP_DATA.patients;
+
+    // =============================================
+    // Toast notifications
+    // =============================================
+    function showToast(msg, type) {
+      type = type || 'info';
+      const container = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast toast-' + type;
+      t.textContent = msg;
+      container.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+
+    // =============================================
+    // Tab switching
+    // =============================================
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // =============================================
+    // Patient search
+    // =============================================
+    document.getElementById('patientSearch').addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      document.querySelectorAll('#patientTable tbody tr').forEach(row => {
+        const name = row.querySelector('.name-cell').textContent.toLowerCase();
+        row.classList.toggle('hidden-row', query !== '' && !name.includes(query));
+      });
+    });
+
+    function filterPatients(filter, btn) {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#patientTable tbody tr').forEach(row => {
+        row.classList.toggle('hidden-row', filter !== 'todos' && row.dataset.priority !== filter);
+      });
+      document.getElementById('patientSearch').value = '';
+    }
+
+    // =============================================
+    // Table sorting
+    // =============================================
+    document.querySelectorAll('#patientTable th[data-sort]').forEach(th => {
+      th.addEventListener('click', function() {
+        const table = document.getElementById('patientTable');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const sortKey = this.dataset.sort;
+        const isAsc = this.classList.contains('sorted-asc');
+        table.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+        this.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+        const dir = isAsc ? -1 : 1;
+        rows.sort((a, b) => {
+          switch (sortKey) {
+            case 'num': return (parseInt(a.cells[0].textContent) - parseInt(b.cells[0].textContent)) * dir;
+            case 'name': return a.cells[1].textContent.trim().toLowerCase().localeCompare(b.cells[1].textContent.trim().toLowerCase()) * dir;
+            case 'age': return (parseInt(a.cells[2].dataset.val) - parseInt(b.cells[2].dataset.val)) * dir;
+            case 'last': return (parseInt(a.cells[4].dataset.val) - parseInt(b.cells[4].dataset.val)) * dir;
+            case 'next': return (parseInt(a.cells[5].dataset.val) - parseInt(b.cells[5].dataset.val)) * dir;
+            case 'priority':
+              const p = { urgente: 0, atencao: 1, rotina: 2 };
+              return ((p[a.dataset.priority] || 99) - (p[b.dataset.priority] || 99)) * dir;
+            default: return 0;
+          }
+        });
+        rows.forEach(row => tbody.appendChild(row));
+      });
+    });
+
+    // =============================================
+    // Dark mode
+    // =============================================
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('darkIcon').innerHTML = isDark ? '&#9788;' : '&#9790;';
+      document.getElementById('darkLabel').textContent = isDark ? 'Claro' : 'Escuro';
+      localStorage.setItem('v4-dark-mode', isDark ? '1' : '0');
+    }
+    if (localStorage.getItem('v4-dark-mode') === '1') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkIcon').innerHTML = '&#9788;';
+      document.getElementById('darkLabel').textContent = 'Claro';
+    }
+
+    // =============================================
+    // Medication filter
+    // =============================================
+    function filterMeds(filter, btn) {
+      document.querySelectorAll('[data-medfilter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.med-card').forEach(card => {
+        if (filter === 'todos') card.style.display = '';
+        else card.style.display = (card.dataset.medstatus === 'critical' || card.dataset.medstatus === 'warn') ? '' : 'none';
+      });
+    }
+
+    // =============================================
+    // BMI Calculator
+    // =============================================
+    function calcBMI() {
+      const w = parseFloat(document.getElementById('bmiWeight').value);
+      const h = parseFloat(document.getElementById('bmiHeight').value);
+      if (!w || !h || h <= 0) return;
+      const bmi = w / (h * h);
+      const bmiR = bmi.toFixed(1);
+      document.getElementById('bmiValue').textContent = bmiR;
+      let cls, range, color;
+      if (bmi < 18.5) { cls = 'Abaixo do peso'; range = '< 18.5'; color = '#2563eb'; }
+      else if (bmi < 25) { cls = 'Peso normal'; range = '18.5 - 24.9'; color = '#16a34a'; }
+      else if (bmi < 30) { cls = 'Sobrepeso'; range = '25.0 - 29.9'; color = '#d97706'; }
+      else if (bmi < 35) { cls = 'Obesidade grau I'; range = '30.0 - 34.9'; color = '#dc2626'; }
+      else if (bmi < 40) { cls = 'Obesidade grau II'; range = '35.0 - 39.9'; color = '#dc2626'; }
+      else { cls = 'Obesidade grau III'; range = '>= 40.0'; color = '#991b1b'; }
+      document.getElementById('bmiClass').textContent = cls;
+      document.getElementById('bmiClass').style.color = color;
+      document.getElementById('bmiRange').textContent = 'Faixa: ' + range;
+      document.getElementById('bmiValue').style.color = color;
+      document.getElementById('bmiResult').style.display = '';
+    }
+
+    // =============================================
+    // GFR Calculator (CKD-EPI 2021 simplified)
+    // =============================================
+    function calcGFR() {
+      const creat = parseFloat(document.getElementById('gfrCreat').value);
+      const age = parseInt(document.getElementById('gfrAge').value);
+      const sex = document.getElementById('gfrSex').value;
+      if (!creat || !age) return;
+
+      // CKD-EPI 2021 (race-free)
+      let A, B;
+      if (sex === 'F') { A = 0.7; B = creat <= 0.7 ? -0.241 : -1.2; }
+      else { A = 0.9; B = creat <= 0.9 ? -0.302 : -1.2; }
+      const kappa = sex === 'F' ? 0.7 : 0.9;
+      const alpha = sex === 'F' ? -0.241 : -0.302;
+      const minCr = Math.min(creat / kappa, 1);
+      const maxCr = Math.max(creat / kappa, 1);
+      let gfr = 142 * Math.pow(minCr, sex === 'F' ? -0.241 : -0.302) * Math.pow(maxCr, -1.2) * Math.pow(0.9938, age);
+      if (sex === 'F') gfr *= 1.012;
+
+      const gfrR = Math.round(gfr);
+      document.getElementById('gfrValue').textContent = gfrR;
+
+      let stage, color;
+      if (gfrR >= 90) { stage = 'G1 — Normal ou alta'; color = '#16a34a'; }
+      else if (gfrR >= 60) { stage = 'G2 — Levemente diminuida'; color = '#d97706'; }
+      else if (gfrR >= 45) { stage = 'G3a — Leve a moderada'; color = '#d97706'; }
+      else if (gfrR >= 30) { stage = 'G3b — Moderada a grave'; color = '#dc2626'; }
+      else if (gfrR >= 15) { stage = 'G4 — Gravemente diminuida'; color = '#dc2626'; }
+      else { stage = 'G5 — Falencia renal'; color = '#991b1b'; }
+
+      document.getElementById('gfrValue').style.color = color;
+      document.getElementById('gfrStage').textContent = stage;
+      document.getElementById('gfrStage').style.color = color;
+      document.getElementById('gfrResult').style.display = '';
+    }
+
+    // =============================================
+    // Drug Dosage Calculator
+    // =============================================
+    function calcDose() {
+      const w = parseFloat(document.getElementById('doseWeight').value);
+      const mgkg = parseFloat(document.getElementById('doseMgKg').value);
+      const freq = parseInt(document.getElementById('doseFreq').value) || 1;
+      if (!w || !mgkg) return;
+      const perDose = (w * mgkg / freq).toFixed(1);
+      const perDay = (w * mgkg).toFixed(1);
+      document.getElementById('doseValue').textContent = perDose + ' mg';
+      document.getElementById('doseDayTotal').textContent = 'Dose diaria total: ' + perDay + ' mg (' + freq + 'x/dia)';
+      document.getElementById('doseResult').style.display = '';
+    }
+
+    // =============================================
+    // Cardiovascular Risk Calculator (simplified)
+    // =============================================
+    function calcCVRisk() {
+      const age = parseInt(document.getElementById('cvAge').value);
+      const sex = document.getElementById('cvSex').value;
+      const pas = parseInt(document.getElementById('cvPAS').value);
+      const ct = parseInt(document.getElementById('cvCT').value);
+      const dm = document.getElementById('cvDM').checked;
+      const smoke = document.getElementById('cvSmoke').checked;
+      const has = document.getElementById('cvHAS').checked;
+      if (!age || !pas || !ct) return;
+
+      // Simplified risk scoring
+      let score = 0;
+      if (sex === 'M') score += 2;
+      if (age >= 55) score += 3; else if (age >= 45) score += 2; else if (age >= 35) score += 1;
+      if (pas >= 160) score += 3; else if (pas >= 140) score += 2; else if (pas >= 130) score += 1;
+      if (ct >= 240) score += 2; else if (ct >= 200) score += 1;
+      if (dm) score += 3;
+      if (smoke) score += 2;
+      if (has) score += 1;
+
+      let risk, cls, color;
+      if (score <= 3) { risk = '< 5%'; cls = 'Baixo risco'; color = '#16a34a'; }
+      else if (score <= 6) { risk = '5-10%'; cls = 'Risco moderado'; color = '#d97706'; }
+      else if (score <= 9) { risk = '10-20%'; cls = 'Risco alto'; color = '#dc2626'; }
+      else { risk = '> 20%'; cls = 'Risco muito alto'; color = '#991b1b'; }
+
+      document.getElementById('cvValue').textContent = risk;
+      document.getElementById('cvValue').style.color = color;
+      document.getElementById('cvClass').textContent = cls;
+      document.getElementById('cvClass').style.color = color;
+      document.getElementById('cvResult').style.display = '';
+    }
+
+    // =============================================
+    // Vital Signs Trend Charts (SVG)
+    // =============================================
+    const VITAL_DATA = {
+      'pa-istelina': {
+        title: 'Pressao Arterial — Vo Istelina', unit: 'mmHg',
+        series: [
+          { label: 'Sistolica', color: '#dc2626', points: [{ date: 'Jul/25', val: 145 }, { date: 'Out/25', val: 138 }, { date: 'Jan/26', val: 140 }] },
+          { label: 'Diastolica', color: '#2563eb', points: [{ date: 'Jul/25', val: 88 }, { date: 'Out/25', val: 82 }, { date: 'Jan/26', val: 85 }] }
+        ],
+        target: { label: 'Alvo', val: 130, color: '#16a34a' }, yMin: 60, yMax: 160
+      },
+      'pa-pai': {
+        title: 'Pressao Arterial — Pai', unit: 'mmHg',
+        series: [
+          { label: 'Sistolica', color: '#dc2626', points: [{ date: 'Mai/25', val: 142 }, { date: 'Ago/25', val: 138 }, { date: 'Nov/25', val: 130 }, { date: 'Fev/26', val: 135 }] },
+          { label: 'Diastolica', color: '#2563eb', points: [{ date: 'Mai/25', val: 90 }, { date: 'Ago/25', val: 85 }, { date: 'Nov/25', val: 78 }, { date: 'Fev/26', val: 80 }] }
+        ],
+        target: { label: 'Alvo', val: 130, color: '#16a34a' }, yMin: 60, yMax: 160
+      },
+      'glic-istelina': {
+        title: 'Glicemia de Jejum — Vo Istelina', unit: 'mg/dL',
+        series: [{ label: 'Glicemia', color: '#d97706', points: [{ date: 'Jul/25', val: 140 }, { date: 'Out/25', val: 128 }, { date: 'Jan/26', val: 132 }] }],
+        target: { label: 'Alvo', val: 100, color: '#16a34a' }, yMin: 60, yMax: 180
+      },
+      'peso-istelina': {
+        title: 'Peso Corporal — Vo Istelina', unit: 'kg',
+        series: [{ label: 'Peso', color: '#7c3aed', points: [{ date: 'Jan/25', val: 69.5 }, { date: 'Abr/25', val: 69.0 }, { date: 'Jul/25', val: 68.2 }, { date: 'Out/25', val: 67.5 }, { date: 'Jan/26', val: 68.0 }] }],
+        target: null, yMin: 60, yMax: 75
+      }
+    };
+
+    function renderVitalChart(key) {
+      const data = VITAL_DATA[key];
+      if (!data) return;
+      const titleEl = document.querySelector('.vital-chart-area h4');
+      if (titleEl) titleEl.textContent = 'Tendencia: ' + data.title;
+      const container = document.getElementById('vitalChartContainer');
+      const W = 600, H = 180, padL = 50, padR = 20, padT = 20, padB = 35;
+      const chartW = W - padL - padR, chartH = H - padT - padB;
+      const allDates = [];
+      data.series.forEach(s => s.points.forEach(p => { if (!allDates.includes(p.date)) allDates.push(p.date); }));
+      const yMin = data.yMin, yMax = data.yMax;
+      const yScale = v => padT + chartH - ((v - yMin) / (yMax - yMin)) * chartH;
+      const xScale = i => padL + (allDates.length > 1 ? (i / (allDates.length - 1)) * chartW : chartW / 2);
+      let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">';
+      for (let i = 0; i <= 5; i++) {
+        const yVal = yMin + (yMax - yMin) * (i / 5), y = yScale(yVal);
+        svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="var(--color-border)" stroke-width="0.5" stroke-dasharray="4,3"/>';
+        svg += '<text x="' + (padL - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="9" fill="var(--color-text-light)">' + Math.round(yVal) + '</text>';
+      }
+      if (data.target) {
+        const ty = yScale(data.target.val);
+        svg += '<line x1="' + padL + '" y1="' + ty + '" x2="' + (W - padR) + '" y2="' + ty + '" stroke="' + data.target.color + '" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>';
+      }
+      allDates.forEach((d, i) => { svg += '<text x="' + xScale(i) + '" y="' + (H - 5) + '" text-anchor="middle" font-size="9" fill="var(--color-text-light)">' + d + '</text>'; });
+      data.series.forEach(s => {
+        let pathD = '';
+        s.points.forEach((p, i) => { const x = xScale(allDates.indexOf(p.date)), y = yScale(p.val); pathD += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1); });
+        svg += '<path d="' + pathD + '" fill="none" stroke="' + s.color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        s.points.forEach(p => {
+          const x = xScale(allDates.indexOf(p.date)), y = yScale(p.val);
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="4" fill="' + s.color + '" stroke="var(--v4-bg-card)" stroke-width="2"/>';
+          svg += '<text x="' + x + '" y="' + (y - 8) + '" text-anchor="middle" font-size="9" font-weight="600" fill="' + s.color + '">' + (typeof p.val === 'number' && p.val % 1 !== 0 ? p.val.toFixed(1) : p.val) + '</text>';
+        });
+      });
+      let legendX = padL;
+      data.series.forEach(s => {
+        svg += '<rect x="' + legendX + '" y="' + (H - 16) + '" width="8" height="8" rx="2" fill="' + s.color + '"/>';
+        svg += '<text x="' + (legendX + 12) + '" y="' + (H - 9) + '" font-size="8" fill="var(--color-text-light)">' + s.label + '</text>';
+        legendX += s.label.length * 5 + 25;
+      });
+      svg += '</svg>';
+      container.innerHTML = svg;
+    }
+
+    function showVitalChart(key, btn) {
+      document.querySelectorAll('.vital-chart-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderVitalChart(key);
+    }
+
+    // =============================================
+    // Patient Detail Modal
+    // =============================================
+    function openPatientModal(id) {
+      const p = PATIENTS[id];
+      if (!p) return;
+      document.getElementById('modalDot').className = 'status-dot ' + p.dot;
+      document.getElementById('modalName').textContent = p.name;
+      const bmi = (p.weight / (p.height * p.height)).toFixed(1);
+      let bmiLabel = 'Normal';
+      if (bmi < 18.5) bmiLabel = 'Abaixo do peso';
+      else if (bmi >= 25 && bmi < 30) bmiLabel = 'Sobrepeso';
+      else if (bmi >= 30) bmiLabel = 'Obeso';
+
+      document.getElementById('m-resumo').innerHTML =
+        '<div class="detail-grid"><div class="detail-card"><h4>Dados pessoais</h4>' +
+        '<div class="info-row"><span class="label">Idade</span><span class="value">' + p.age + ' anos</span></div>' +
+        (p.birth !== '—' ? '<div class="info-row"><span class="label">Nascimento</span><span class="value">' + p.birth + '</span></div>' : '') +
+        (p.blood !== '—' ? '<div class="info-row"><span class="label">Tipo sanguineo</span><span class="value">' + p.blood + '</span></div>' : '') +
+        '<div class="info-row"><span class="label">Alergias</span><span class="value"' + (p.allergies !== 'Nenhuma conhecida' ? ' style="color:#dc2626;font-weight:700"' : '') + '>' + p.allergies + '</span></div>' +
+        '<div class="info-row"><span class="label">Peso / Altura</span><span class="value">' + p.weight + ' kg / ' + p.height.toFixed(2) + ' m</span></div>' +
+        '<div class="info-row"><span class="label">IMC</span><span class="value">' + bmi + ' (' + bmiLabel + ')</span></div>' +
+        '</div><div class="detail-card"><h4>Problemas de saude</h4>' +
+        (p.conditions.length > 0 ? '<ul>' + p.conditions.map(c => '<li><span class="badge badge-amber">' + c + '</span></li>').join('') + '</ul>' : '<p style="color:var(--color-text-light)">Nenhum problema cronico registrado.</p>') +
+        '</div></div>' +
+        '<div class="detail-card" style="margin-bottom:0.75rem"><h4>Status</h4>' +
+        '<div class="info-row"><span class="label">Status</span><span class="value"><span class="badge ' + p.statusClass + '">' + p.status + '</span></span></div>' +
+        '<div class="info-row"><span class="label">Ultima consulta</span><span class="value">' + p.lastVisit + '</span></div></div>';
+
+      const vitalLabels = { pa: 'PA', fc: 'FC', glic: 'Glicemia', hba1c: 'HbA1c', tsh: 'TSH', ct: 'CT', ldl: 'LDL', spo2: 'SpO2', temp: 'Temp' };
+      const vEntries = Object.entries(p.vitals).filter(([, v]) => v !== '—');
+      document.getElementById('m-vitais').innerHTML = '<div class="detail-card"><h4>Sinais vitais — ' + p.lastVisit + '</h4>' +
+        vEntries.map(([k, v]) => '<div class="info-row"><span class="label">' + (vitalLabels[k] || k) + '</span><span class="value">' + v + '</span></div>').join('') +
+        (vEntries.length === 0 ? '<p style="color:var(--color-text-light)">Sem dados registrados.</p>' : '') + '</div>';
+
+      document.getElementById('m-meds').innerHTML = '<div class="detail-card"><h4>Medicacoes em uso</h4>' +
+        (p.meds.length > 0 ? '<ul>' + p.meds.map(m => '<li><strong>' + m + '</strong></li>').join('') + '</ul>' : '<p style="color:var(--color-text-light)">Nenhuma medicacao continua.</p>') + '</div>';
+
+      document.getElementById('m-notas').innerHTML = p.notes.map(n =>
+        '<div class="note-card"><div class="note-header"><span class="note-date">' + n.date + ' — ' + n.type + '</span><span class="note-type badge ' + n.typeClass + '">Presencial</span></div>' +
+        '<div class="note-body"><p><span class="note-soap-label">S:</span> ' + n.soap.s + '</p><p><span class="note-soap-label">O:</span> ' + n.soap.o + '</p><p><span class="note-soap-label">A:</span> ' + n.soap.a + '</p><p><span class="note-soap-label">P:</span> ' + n.soap.p + '</p></div></div>'
+      ).join('');
+
+      document.getElementById('m-vacinas').innerHTML = '<div class="detail-card"><h4>Vacinas — ' + p.name + '</h4><ul>' +
+        p.vaccines.map(v => {
+          let cls = 'badge-gray';
+          if (v.includes('em dia') || v.includes('completa')) cls = 'badge-green';
+          else if (v.includes('pendente')) cls = 'badge-amber';
+          else if (v.includes('atrasada')) cls = 'badge-red';
+          const parts = v.split('(');
+          return '<li><strong>' + parts[0].trim() + '</strong> <span class="badge ' + cls + '">' + (parts[1] ? parts[1].replace(')', '') : '') + '</span></li>';
+        }).join('') + '</ul></div>';
+
+      document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+      document.querySelectorAll('.modal-section').forEach((s, i) => s.classList.toggle('active', i === 0));
+      document.getElementById('patientModal').classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePatientModal() {
+      document.getElementById('patientModal').classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+    function switchModalTab(id, btn) {
+      document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.modal-section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+    function printPatientSummary() { closePatientModal(); setTimeout(() => window.print(), 200); }
+    document.getElementById('patientModal').addEventListener('click', function(e) { if (e.target === this) closePatientModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePatientModal(); });
+
+    // =============================================
+    // Dashboard Week/Month View
+    // =============================================
+    function buildWeekView() {
+      const today = new Date(2026, 3, 14); // April 14, 2026 (Tuesday)
+      const dayOfWeek = today.getDay();
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+      const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+      const events = {
+        '2026-04-14': [{ text: 'Reagendar Istelina', cls: 'we-red' }, { text: 'Reagendar Antonio', cls: 'we-red' }],
+        '2026-04-15': [{ text: 'Ligar farmacia (Enalapril)', cls: 'we-amber' }],
+        '2026-04-16': [{ text: 'Revisar exames pendentes', cls: 'we-blue' }],
+        '2026-04-17': [{ text: 'Agendar hemograma Pai', cls: 'we-amber' }],
+        '2026-04-18': [{ text: 'Teleconsulta disponivel', cls: 'we-green' }]
+      };
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const key = d.toISOString().split('T')[0];
+        const isToday = d.getDate() === 14 && d.getMonth() === 3;
+        html += '<div class="week-day-card' + (isToday ? ' today' : '') + '">';
+        html += '<div class="week-day-header">' + days[i] + '</div>';
+        html += '<div class="week-day-date">' + d.getDate().toString().padStart(2, '0') + '/04</div>';
+        if (events[key]) events[key].forEach(e => { html += '<div class="week-event ' + e.cls + '">' + e.text + '</div>'; });
+        html += '</div>';
+      }
+      document.getElementById('dashWeekView').innerHTML = html;
+    }
+
+    function buildMonthView() {
+      const year = 2026, month = 3; // April
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+      const dayHeaders = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+      const eventDays = { 5: ['#dc2626', '#dc2626'], 14: ['#dc2626', '#d97706'], 15: ['#d97706'], 16: ['#2563eb'], 17: ['#d97706'], 18: ['#16a34a'], 22: ['#2563eb'] };
+      let html = dayHeaders.map(d => '<div class="month-day" style="text-align:center;font-weight:700;font-size:0.65rem;min-height:auto;padding:0.4rem;color:var(--color-text-light);">' + d + '</div>').join('');
+      for (let i = 0; i < startOffset; i++) html += '<div class="month-day empty"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const isToday = d === 14;
+        html += '<div class="month-day' + (isToday ? ' today' : '') + '"><div class="month-day-num">' + d + '</div>';
+        if (eventDays[d]) eventDays[d].forEach(c => { html += '<span class="month-day-dot" style="background:' + c + ';"></span>'; });
+        html += '</div>';
+      }
+      document.getElementById('dashMonthView').innerHTML = html;
+    }
+
+    function switchDashView(view, btn) {
+      btn.parentElement.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('dashWeekView').style.display = view === 'week' ? '' : 'none';
+      document.getElementById('dashMonthView').style.display = view === 'month' ? '' : 'none';
+    }
+
+    // =============================================
+    // Nova Consulta Wizard
+    // =============================================
+    let currentWizStep = 1;
+
+    function wizardNext(step) {
+      if (step === 2 && !document.getElementById('wizPatient').value) {
+        showToast('Selecione um paciente.', 'error');
+        return;
+      }
+      document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('wizStep' + step).classList.add('active');
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById('ws' + i);
+        el.className = 'wizard-step-num';
+        if (i < step) el.classList.add('done');
+        else if (i === step) el.classList.add('active');
+      }
+      currentWizStep = step;
+      if (step === 5) buildWizSummary();
+    }
+
+    function buildWizSummary() {
+      const pid = document.getElementById('wizPatient').value;
+      const p = PATIENTS[pid];
+      if (!p) return;
+      const date = document.getElementById('wizDate').value;
+      const type = document.getElementById('wizType').value;
+      const s = document.getElementById('wizQueixa').value + (document.getElementById('wizHDA').value ? '. ' + document.getElementById('wizHDA').value : '');
+      const o = [
+        document.getElementById('wizPA').value ? 'PA ' + document.getElementById('wizPA').value + ' mmHg' : '',
+        document.getElementById('wizFC').value ? 'FC ' + document.getElementById('wizFC').value + ' bpm' : '',
+        document.getElementById('wizPeso').value ? 'Peso ' + document.getElementById('wizPeso').value + ' kg' : '',
+        document.getElementById('wizTemp').value ? 'Temp ' + document.getElementById('wizTemp').value + ' C' : '',
+        document.getElementById('wizGlic').value ? 'Glic ' + document.getElementById('wizGlic').value + ' mg/dL' : '',
+        document.getElementById('wizSpO2').value ? 'SpO2 ' + document.getElementById('wizSpO2').value + '%' : '',
+        document.getElementById('wizExFisico').value
+      ].filter(Boolean).join('. ');
+      const a = document.getElementById('wizAvaliacao').value;
+      const pl = document.getElementById('wizPlano').value;
+
+      const html = '<div class="note-card"><div class="note-header"><span class="note-date">' + date + ' — ' + type + '</span><span class="note-type badge badge-blue">' + document.getElementById('wizMode').value + '</span></div>' +
+        '<div class="note-body">' +
+        '<p><span class="note-soap-label">Paciente:</span> ' + p.name + '</p>' +
+        '<p><span class="note-soap-label">S:</span> ' + (s || '—') + '</p>' +
+        '<p><span class="note-soap-label">O:</span> ' + (o || '—') + '</p>' +
+        '<p><span class="note-soap-label">A:</span> ' + (a || '—') + '</p>' +
+        '<p><span class="note-soap-label">P:</span> ' + (pl || '—') + '</p>' +
+        '</div></div>';
+      document.getElementById('wizSummary').innerHTML = html;
+    }
+
+    function saveConsultation() {
+      const pid = document.getElementById('wizPatient').value;
+      if (!pid) { showToast('Selecione um paciente.', 'error'); return; }
+      const p = PATIENTS[pid];
+      const date = document.getElementById('wizDate').value;
+      const type = document.getElementById('wizType').value;
+      const s = document.getElementById('wizQueixa').value + (document.getElementById('wizHDA').value ? '. ' + document.getElementById('wizHDA').value : '');
+      const vitalsText = [
+        document.getElementById('wizPA').value ? 'PA ' + document.getElementById('wizPA').value : '',
+        document.getElementById('wizFC').value ? 'FC ' + document.getElementById('wizFC').value : '',
+        document.getElementById('wizPeso').value ? 'Peso ' + document.getElementById('wizPeso').value + ' kg' : '',
+        document.getElementById('wizExFisico').value
+      ].filter(Boolean).join('. ');
+
+      const note = {
+        date: date, type: type.charAt(0).toUpperCase() + type.slice(1),
+        typeClass: 'badge-blue',
+        soap: {
+          s: s || 'Sem queixas registradas.',
+          o: vitalsText || 'Sem dados objetivos registrados.',
+          a: document.getElementById('wizAvaliacao').value || '—',
+          p: document.getElementById('wizPlano').value || '—'
+        }
+      };
+      p.notes.unshift(note);
+
+      // Update vitals if provided
+      if (document.getElementById('wizPA').value) p.vitals.pa = document.getElementById('wizPA').value;
+      if (document.getElementById('wizFC').value) p.vitals.fc = document.getElementById('wizFC').value;
+      if (document.getElementById('wizPeso').value) {
+        p.weight = parseFloat(document.getElementById('wizPeso').value);
+        p.vitals.peso = document.getElementById('wizPeso').value;
+      }
+      if (document.getElementById('wizGlic').value) p.vitals.glic = document.getElementById('wizGlic').value;
+      if (document.getElementById('wizSpO2').value) p.vitals.spo2 = document.getElementById('wizSpO2').value + '%';
+      if (document.getElementById('wizTemp').value) p.vitals.temp = document.getElementById('wizTemp').value;
+      p.lastVisit = date;
+
+      saveData();
+      showToast('Consulta salva com sucesso!', 'success');
+
+      // Reset wizard
+      wizardNext(1);
+      ['wizQueixa', 'wizHDA', 'wizRevisao', 'wizPA', 'wizFC', 'wizPeso', 'wizTemp', 'wizGlic', 'wizSpO2', 'wizExFisico', 'wizAvaliacao', 'wizPlano'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+    }
+
+    // =============================================
+    // Prescription Generator
+    // =============================================
+    let rxMeds = [];
+
+    function updateRxMeds() {
+      const pid = document.getElementById('rxPatient').value;
+      const container = document.getElementById('rxCurrentMeds');
+      if (!pid || !PATIENTS[pid]) { container.innerHTML = 'Selecione um paciente.'; return; }
+      const p = PATIENTS[pid];
+      if (p.meds.length === 0) { container.innerHTML = 'Nenhuma medicacao cadastrada.'; return; }
+      container.innerHTML = '<ul style="list-style:none;padding:0;">' + p.meds.map(m =>
+        '<li style="padding:0.25rem 0;border-bottom:1px solid var(--v4-border-subtle);display:flex;justify-content:space-between;align-items:center;">' +
+        '<span>' + m + '</span>' +
+        '<button class="btn-sm btn-secondary" onclick="addExistingRxMed(\'' + m.replace(/'/g, "\\'") + '\')">+ Receita</button></li>'
+      ).join('') + '</ul>';
+    }
+
+    function addExistingRxMed(medStr) {
+      const parts = medStr.split(' ');
+      const name = parts.slice(0, 2).join(' ');
+      const dose = parts.slice(2).join(' ');
+      rxMeds.push({ name: name, dose: dose, duration: 'Uso continuo', obs: '' });
+      renderRxList();
+      showToast('Medicacao adicionada a receita.', 'info');
+    }
+
+    function addRxMed() {
+      const name = document.getElementById('rxMedName').value.trim();
+      const dose = document.getElementById('rxDose').value.trim();
+      const duration = document.getElementById('rxDuration').value.trim();
+      const obs = document.getElementById('rxObs').value.trim();
+      if (!name || !dose) { showToast('Preencha nome e posologia.', 'error'); return; }
+      rxMeds.push({ name, dose, duration, obs });
+      renderRxList();
+      document.getElementById('rxMedName').value = '';
+      document.getElementById('rxDose').value = '';
+      document.getElementById('rxDuration').value = '';
+      document.getElementById('rxObs').value = '';
+      showToast('Medicacao adicionada.', 'success');
+    }
+
+    function renderRxList() {
+      const container = document.getElementById('rxMedList');
+      if (rxMeds.length === 0) { container.innerHTML = 'Nenhuma medicacao adicionada.'; return; }
+      container.innerHTML = rxMeds.map((m, i) =>
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--v4-border-subtle);">' +
+        '<div><strong>' + m.name + '</strong><br><span style="font-size:0.75rem;color:var(--color-text-light);">' + m.dose + (m.duration ? ' — ' + m.duration : '') + '</span></div>' +
+        '<button class="btn-sm btn-danger" onclick="rxMeds.splice(' + i + ',1);renderRxList();">&times;</button></div>'
+      ).join('');
+    }
+
+    function clearRx() { rxMeds = []; renderRxList(); document.getElementById('rxOutput').innerHTML = ''; }
+
+    function generateRx() {
+      const pid = document.getElementById('rxPatient').value;
+      if (!pid) { showToast('Selecione um paciente.', 'error'); return; }
+      if (rxMeds.length === 0) { showToast('Adicione pelo menos uma medicacao.', 'error'); return; }
+      const p = PATIENTS[pid];
+      let html = '<div class="rx-preview" id="rxPrintArea">';
+      html += '<div class="rx-header"><h3>RECEITUARIO MEDICO</h3><p>Dr(a). _________________<br>CRM: _________________</p></div>';
+      html += '<div class="rx-patient"><strong>Paciente: ' + p.name + '</strong><br>Idade: ' + p.age + ' anos';
+      if (p.allergies !== 'Nenhuma conhecida') html += ' | <span style="color:#dc2626;font-weight:700;">Alergia: ' + p.allergies + '</span>';
+      html += '</div>';
+      rxMeds.forEach((m, i) => {
+        html += '<div class="rx-med-item"><div class="rx-med-name">' + (i + 1) + '. ' + m.name + '</div>';
+        html += '<div class="rx-med-dose">' + m.dose;
+        if (m.duration) html += ' — ' + m.duration;
+        html += '</div>';
+        if (m.obs) html += '<div style="font-size:0.75rem;color:var(--color-text-light);margin-top:0.2rem;">' + m.obs + '</div>';
+        html += '</div>';
+      });
+      html += '<div class="rx-footer"><div class="rx-date">Data: 14/04/2026</div><div class="rx-sig">Assinatura e carimbo</div></div>';
+      html += '</div>';
+      html += '<div style="margin-top:1rem;"><button class="btn-primary" onclick="printRx()">Imprimir receita</button></div>';
+      document.getElementById('rxOutput').innerHTML = html;
+
+      // Save to data
+      APP_DATA.prescriptions.push({ patient: pid, date: '14/04/2026', meds: [...rxMeds] });
+      saveData();
+      showToast('Receita gerada com sucesso!', 'success');
+    }
+
+    function printRx() { window.print(); }
+
+    // =============================================
+    // Risk Stratification
+    // =============================================
+    const RISK_DATA = {
+      pai: {
+        cv: { score: 7, pct: '10-15%', level: 'moderate', label: 'Risco moderado-alto',
+          factors: ['Sexo masculino, 63 anos', 'Hipertensao arterial (PA 135/80)', 'Dislipidemia (LDL 140 mg/dL)', 'Pre-diabetes (Glic 108 mg/dL)', 'Sobrepeso (IMC 27.1)'],
+          rec: 'Considerar intensificacao da estatina. Meta LDL < 100 mg/dL. Manter controle pressao e glicemico.'
+        },
+        dm: { score: 5, pct: '15-20%', level: 'moderate', label: 'Risco moderado',
+          factors: ['Glicemia de jejum 108 mg/dL (pre-diabetes)', 'Sobrepeso (IMC 27.1)', 'Historico familiar a investigar', 'Idade > 45 anos'],
+          rec: 'Perda de peso (meta 5-7%). Atividade fisica 150 min/semana. HbA1c em 3 meses.'
+        }
+      },
+      istelina: {
+        cv: { score: 12, pct: '> 20%', level: 'high', label: 'Risco alto',
+          factors: ['Sexo feminino, 84 anos', 'HAS com controle subotimo', 'DM2 com HbA1c 7.2%', 'Sobrepeso (IMC 27.2)', 'Idade > 65 anos'],
+          rec: 'Otimizar controle pressao (alvo < 140/90 em idosos). Manter HbA1c < 7.5%. Evitar hipoglicemia.'
+        },
+        dm: { score: 10, pct: 'DM2 confirmado', level: 'high', label: 'Diabetes tipo 2 em tratamento',
+          factors: ['DM2 diagnosticado', 'HbA1c 7.2% (acima da meta)', 'Uso de Metformina 850mg 2x/dia', 'Aderencia parcial (esquece dose da tarde)'],
+          rec: 'Reforcar adesao. Avaliar necessidade de segundo agente. Fundo de olho anual. Funcao renal semestral.'
+        }
+      },
+      marly: {
+        cv: { score: 5, pct: '5-10%', level: 'moderate', label: 'Risco moderado',
+          factors: ['Sexo feminino, 72 anos', 'HAS controlada (PA 130/80)', 'Idade > 65 anos', 'Sobrepeso leve (IMC 25.8)'],
+          rec: 'Manter tratamento atual. Perfil lipidico anual. Monitorar funcao renal.'
+        },
+        dm: { score: 2, pct: '< 5%', level: 'low', label: 'Baixo risco',
+          factors: ['Glicemia normal (95 mg/dL)', 'Sem historico de pre-diabetes'],
+          rec: 'Manter rastreio anual com glicemia de jejum.'
+        }
+      },
+      hermano: {
+        cv: { score: 1, pct: '< 1%', level: 'low', label: 'Risco muito baixo',
+          factors: ['Sexo masculino, 32 anos', 'PA normal (120/75)', 'Sem fatores de risco', 'IMC normal (23.7)'],
+          rec: 'Manter estilo de vida saudavel. Check-up a cada 2-3 anos.'
+        },
+        dm: { score: 0, pct: '< 1%', level: 'low', label: 'Risco muito baixo',
+          factors: ['Glicemia normal (88 mg/dL)', 'Sem fatores de risco'],
+          rec: 'Manter rastreio com glicemia em check-ups.'
+        }
+      }
+    };
+
+    function showRisk(pid, btn) {
+      btn.parentElement.querySelectorAll('.patient-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const data = RISK_DATA[pid];
+      if (!data) return;
+      const p = PATIENTS[pid];
+
+      function riskCard(title, r) {
+        const fillCls = r.level === 'low' ? 'rg-low' : r.level === 'moderate' ? 'rg-moderate' : 'rg-high';
+        const fillWidth = r.level === 'low' ? '20%' : r.level === 'moderate' ? '55%' : '85%';
+        return '<div class="risk-card"><h4>' + title + ' — ' + p.name + '</h4>' +
+          '<div class="risk-gauge"><div class="risk-gauge-fill ' + fillCls + '" style="width:' + fillWidth + ';"></div></div>' +
+          '<div class="risk-score"><div><span class="risk-score-value">' + r.pct + '</span><br><span style="font-size:0.75rem;color:var(--color-text-light);">em 10 anos</span></div>' +
+          '<span class="badge ' + (r.level === 'low' ? 'badge-green' : r.level === 'moderate' ? 'badge-amber' : 'badge-red') + '">' + r.label + '</span></div>' +
+          '<div class="risk-factors"><strong style="font-size:0.75rem;">Fatores:</strong><ul>' + r.factors.map(f => '<li>' + f + '</li>').join('') + '</ul></div>' +
+          '<div style="margin-top:0.75rem;padding:0.75rem;background:var(--v4-bg-surface);border-radius:6px;font-size:0.8rem;line-height:1.5;"><strong>Recomendacao:</strong> ' + r.rec + '</div></div>';
+      }
+
+      document.getElementById('riskContent').innerHTML = '<div class="detail-grid">' + riskCard('Risco Cardiovascular', data.cv) + riskCard('Risco de Diabetes', data.dm) + '</div>';
+    }
+
+    // =============================================
+    // Notifications / Reminders
+    // =============================================
+    const NOTIFICATIONS = [
+      { id: 1, type: 'urgent', cat: 'appt', icon: 'ni-red', iconChar: '!', title: 'Consulta vencida — Vo Istelina', desc: 'Consulta vencida desde 05/04/2026. Reagendar com urgencia.', time: 'Atrasada 9 dias', read: false },
+      { id: 2, type: 'urgent', cat: 'appt', icon: 'ni-red', iconChar: '!', title: 'Consulta vencida — Vo Antonio', desc: 'Consulta vencida desde 05/04/2026. Reagendar com urgencia.', time: 'Atrasada 9 dias', read: false },
+      { id: 3, type: 'normal', cat: 'med', icon: 'ni-amber', iconChar: '&#128138;', title: 'Estoque critico — Enalapril', desc: 'Enalapril 10mg (Pai): estoque para ~10 dias. Providenciar reposicao.', time: 'Hoje', read: false },
+      { id: 4, type: 'normal', cat: 'exam', icon: 'ni-amber', iconChar: '&#128203;', title: 'Exames pendentes — Pai', desc: 'Hemograma e funcao renal precisam ser agendados para a consulta de maio.', time: 'Pendente', read: false },
+      { id: 5, type: 'normal', cat: 'exam', icon: 'ni-red', iconChar: '&#128203;', title: 'Exames vencidos — Vo Istelina', desc: 'Funcao renal, eletrolitos e ECG vencidos desde 05/04.', time: 'Atrasado', read: false },
+      { id: 6, type: 'normal', cat: 'exam', icon: 'ni-red', iconChar: '&#128203;', title: 'Exames vencidos — Vo Antonio', desc: 'ECG, PSA e hemograma vencidos desde 05/04.', time: 'Atrasado', read: false },
+      { id: 7, type: 'normal', cat: 'appt', icon: 'ni-blue', iconChar: '&#128197;', title: 'Proxima consulta — Pai', desc: 'Consulta agendada para 22/05/2026. Lembrar paciente 1 semana antes.', time: 'Em 38 dias', read: true },
+      { id: 8, type: 'normal', cat: 'med', icon: 'ni-amber', iconChar: '&#128138;', title: 'Repor Metformina', desc: 'Metformina 850mg (Vo Istelina): estoque para ~15 dias.', time: 'Em breve', read: true },
+      { id: 9, type: 'normal', cat: 'appt', icon: 'ni-green', iconChar: '&#10003;', title: 'Meta 2026', desc: '6 de 20 pacientes (30%). 14 vagas a preencher ate dezembro.', time: 'Anual', read: true }
+    ];
+
+    function renderNotifications(filter) {
+      filter = filter || 'all';
+      const container = document.getElementById('notifList');
+      const filtered = NOTIFICATIONS.filter(n => {
+        if (filter === 'all') return true;
+        if (filter === 'urgent') return n.type === 'urgent';
+        return n.cat === filter;
+      });
+
+      container.innerHTML = filtered.map(n =>
+        '<div class="notif-item' + (!n.read ? ' notif-unread' : '') + (n.type === 'urgent' ? ' notif-urgent' : '') + '">' +
+        '<div class="notif-icon ' + n.icon + '">' + n.iconChar + '</div>' +
+        '<div class="notif-body"><div class="notif-title">' + n.title + '</div><div class="notif-desc">' + n.desc + '</div>' +
+        '<div class="notif-actions">' +
+        (!n.read ? '<button class="notif-action-btn" onclick="markNotifRead(' + n.id + ')">Marcar como lido</button>' : '') +
+        '<button class="notif-action-btn" onclick="dismissNotif(' + n.id + ')">Dispensar</button></div></div>' +
+        '<div class="notif-time">' + n.time + '</div></div>'
+      ).join('');
+
+      if (filtered.length === 0) container.innerHTML = '<p style="text-align:center;color:var(--color-text-light);padding:2rem;">Nenhuma notificacao nesta categoria.</p>';
+    }
+
+    function filterNotifs(filter, btn) {
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderNotifications(filter);
+    }
+
+    function markNotifRead(id) {
+      const n = NOTIFICATIONS.find(n => n.id === id);
+      if (n) n.read = true;
+      renderNotifications();
+      updateNotifBadge();
+    }
+
+    function dismissNotif(id) {
+      const idx = NOTIFICATIONS.findIndex(n => n.id === id);
+      if (idx >= 0) NOTIFICATIONS.splice(idx, 1);
+      renderNotifications();
+      updateNotifBadge();
+    }
+
+    function updateNotifBadge() {
+      const unread = NOTIFICATIONS.filter(n => !n.read).length;
+      const badge = document.getElementById('notifBadge');
+      badge.textContent = unread;
+      badge.style.display = unread > 0 ? '' : 'none';
+    }
+
+    // =============================================
+    // Export Functionality
+    // =============================================
+    function downloadText(filename, text) {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function exportPatientSummary() {
+      const pid = document.getElementById('exportPatientSelect').value;
+      const p = PATIENTS[pid];
+      if (!p) return;
+      const bmi = (p.weight / (p.height * p.height)).toFixed(1);
+      let txt = '=== RESUMO DO PACIENTE ===\n\n';
+      txt += 'Nome: ' + p.name + '\nIdade: ' + p.age + ' anos\n';
+      txt += 'Peso: ' + p.weight + ' kg | Altura: ' + p.height.toFixed(2) + ' m | IMC: ' + bmi + '\n';
+      txt += 'Alergias: ' + p.allergies + '\n';
+      txt += 'Status: ' + p.status + '\nUltima consulta: ' + p.lastVisit + '\n\n';
+      txt += 'CONDICOES: ' + (p.conditions.length > 0 ? p.conditions.join(', ') : 'Nenhuma') + '\n';
+      txt += 'MEDICACOES: ' + (p.meds.length > 0 ? p.meds.join('; ') : 'Nenhuma') + '\n\n';
+      txt += 'SINAIS VITAIS:\n';
+      Object.entries(p.vitals).forEach(([k, v]) => { if (v !== '—') txt += '  ' + k.toUpperCase() + ': ' + v + '\n'; });
+      txt += '\nNOTAS DE CONSULTA:\n';
+      p.notes.forEach(n => {
+        txt += '\n--- ' + n.date + ' (' + n.type + ') ---\n';
+        txt += 'S: ' + n.soap.s + '\nO: ' + n.soap.o + '\nA: ' + n.soap.a + '\nP: ' + n.soap.p + '\n';
+      });
+      downloadText('paciente_' + pid + '.txt', txt);
+      showToast('Resumo exportado!', 'success');
+    }
+
+    function exportAllPatients() {
+      let txt = '=== LISTA DE PACIENTES — 100 PESSOAS ===\nData: 14/04/2026\n\n';
+      Object.entries(PATIENTS).forEach(([id, p]) => {
+        txt += p.name + ' | ' + p.age + ' anos | Status: ' + p.status + ' | Ultima: ' + p.lastVisit + '\n';
+      });
+      downloadText('pacientes_100pessoas.txt', txt);
+      showToast('Lista exportada!', 'success');
+    }
+
+    function exportMedReport() {
+      let txt = '=== RELATORIO DE MEDICACOES ===\nData: 14/04/2026\n\n';
+      Object.entries(PATIENTS).forEach(([id, p]) => {
+        if (p.meds.length > 0 && p.meds[0] !== 'A atualizar na proxima consulta') {
+          txt += p.name + ':\n';
+          p.meds.forEach(m => { txt += '  - ' + m + '\n'; });
+          txt += '\n';
+        }
+      });
+      txt += 'Custo mensal total estimado: R$ 123,70\n';
+      downloadText('medicacoes_relatorio.txt', txt);
+      showToast('Relatorio exportado!', 'success');
+    }
+
+    function exportConsultations() {
+      let txt = '=== HISTORICO DE CONSULTAS ===\nData: 14/04/2026\n\n';
+      Object.entries(PATIENTS).forEach(([id, p]) => {
+        p.notes.forEach(n => {
+          txt += '--- ' + p.name + ' — ' + n.date + ' (' + n.type + ') ---\n';
+          txt += 'S: ' + n.soap.s + '\nO: ' + n.soap.o + '\nA: ' + n.soap.a + '\nP: ' + n.soap.p + '\n\n';
+        });
+      });
+      downloadText('consultas_historico.txt', txt);
+      showToast('Historico exportado!', 'success');
+    }
+
+    function exportJSON() {
+      const json = JSON.stringify(APP_DATA, null, 2);
+      downloadText('100pessoas_backup.json', json);
+      showToast('Backup JSON exportado!', 'success');
+    }
+
+    // =============================================
+    // Initialize
+    // =============================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Capacity bar animation
+      const fill = document.querySelector('.capacity-fill');
+      if (fill) {
+        fill.style.width = '0%';
+        requestAnimationFrame(() => { requestAnimationFrame(() => { fill.style.width = '6%'; }); });
+      }
+
+      // Render vital chart
+      renderVitalChart('pa-istelina');
+
+      // Build dashboard views
+      buildWeekView();
+      buildMonthView();
+
+      // Render notifications
+      renderNotifications();
+      updateNotifBadge();
+
+      // Default risk view
+      showRisk('pai', document.querySelector('#risco .patient-select-btn.active'));
+    });
+  </script>
 </body>
 </html>

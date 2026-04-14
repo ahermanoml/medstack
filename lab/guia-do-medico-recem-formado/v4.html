@@ -1,26 +1,3082 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guia do Médico Recém-Formado — Version 4</title>
+  <title>Guia do Medico Recem-Formado — Version 4</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ===== Dark mode variables ===== */
+    :root {
+      --dm-bg: #0f1117;
+      --dm-bg-alt: #1a1d27;
+      --dm-text: #e4e4e7;
+      --dm-text-light: #9ca3af;
+      --dm-border: #2a2d3a;
+      --dm-accent: #60a5fa;
+      --dm-accent-hover: #93bbfd;
+    }
+
+    html.dark {
+      color-scheme: dark;
+    }
+
+    html.dark body {
+      background: var(--dm-bg);
+      color: var(--dm-text);
+    }
+
+    html.dark .nav {
+      background: rgba(15, 17, 23, 0.95);
+      border-bottom-color: var(--dm-border);
+    }
+
+    html.dark .nav-name { color: var(--dm-text); }
+    html.dark .nav-name:hover { color: var(--dm-text); }
+    html.dark .nav-links a { color: var(--dm-text-light); }
+    html.dark .nav-links a:hover { color: var(--dm-text); background: var(--dm-bg-alt); }
+
+    html.dark a { color: var(--dm-accent); }
+    html.dark a:hover { color: var(--dm-accent-hover); }
+
+    /* ===== Page-specific overrides ===== */
+    .lab-page {
+      min-height: auto;
+      align-items: flex-start;
+      padding-top: var(--space-lg);
+      padding-bottom: var(--space-xl);
+    }
+
+    .lab-page-inner {
+      max-width: var(--max-width);
+    }
+
+    /* ===== Breadcrumb ===== */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+      margin-bottom: var(--space-sm);
+      flex-wrap: wrap;
+    }
+    html.dark .breadcrumb { color: var(--dm-text-light); }
+
+    .breadcrumb a {
+      color: var(--color-text-light);
+      transition: color 0.2s ease;
+    }
+    .breadcrumb a:hover { color: var(--color-accent); }
+    html.dark .breadcrumb a { color: var(--dm-text-light); }
+    html.dark .breadcrumb a:hover { color: var(--dm-accent); }
+
+    .breadcrumb-sep {
+      color: var(--color-border);
+      font-size: 0.7rem;
+    }
+    html.dark .breadcrumb-sep { color: var(--dm-border); }
+
+    /* ===== Hero header area ===== */
+    .page-header {
+      margin-bottom: var(--space-md);
+    }
+
+    .page-header h1 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .page-intro {
+      color: var(--color-text-light);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: var(--space-sm);
+      max-width: 680px;
+    }
+    html.dark .page-intro { color: var(--dm-text-light); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: var(--space-md);
+    }
+
+    /* ===== Dark mode toggle ===== */
+    .dark-toggle, .profile-toggle, .favorites-toggle {
+      background: none;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      cursor: pointer;
+      color: var(--color-text-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+
+    .dark-toggle:hover, .profile-toggle:hover, .favorites-toggle:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    .dark-toggle:focus-visible, .profile-toggle:focus-visible, .favorites-toggle:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .dark-toggle svg, .profile-toggle svg, .favorites-toggle svg { width: 16px; height: 16px; }
+    .dark-toggle .icon-sun { display: none; }
+    .dark-toggle .icon-moon { display: block; }
+    html.dark .dark-toggle .icon-sun { display: block; }
+    html.dark .dark-toggle .icon-moon { display: none; }
+
+    html.dark .dark-toggle, html.dark .profile-toggle, html.dark .favorites-toggle {
+      border-color: var(--dm-border);
+      color: var(--dm-text-light);
+    }
+    html.dark .dark-toggle:hover, html.dark .profile-toggle:hover, html.dark .favorites-toggle:hover {
+      border-color: var(--dm-accent);
+      color: var(--dm-accent);
+    }
+
+    .favorites-toggle .fav-count {
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1rem 0.35rem;
+      border-radius: 10px;
+      min-width: 16px;
+      text-align: center;
+      line-height: 1.3;
+    }
+    html.dark .favorites-toggle .fav-count { background: var(--dm-accent); color: var(--dm-bg); }
+    .favorites-toggle .fav-count:empty { display: none; }
+
+    .profile-toggle.active, .favorites-toggle.active {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background: #eff6ff;
+    }
+    html.dark .profile-toggle.active, html.dark .favorites-toggle.active {
+      border-color: var(--dm-accent);
+      color: var(--dm-accent);
+      background: #1e3a5f;
+    }
+
+    /* ===== Profile Panel ===== */
+    .profile-panel {
+      display: none;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: var(--space-md);
+      background: linear-gradient(135deg, #fafbff 0%, var(--color-bg) 100%);
+      animation: slideDown 0.25s ease;
+    }
+    html.dark .profile-panel {
+      border-color: var(--dm-border);
+      background: linear-gradient(135deg, var(--dm-bg-alt) 0%, var(--dm-bg) 100%);
+    }
+    .profile-panel.visible { display: block; }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-panel h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .profile-panel .profile-subtitle {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      margin-bottom: 1rem;
+    }
+    html.dark .profile-panel .profile-subtitle { color: var(--dm-text-light); }
+
+    .profile-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+    @media (min-width: 540px) {
+      .profile-options { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .profile-option {
+      border: 2px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--color-bg);
+      text-align: left;
+      font-family: var(--font-body);
+    }
+    .profile-option:hover {
+      border-color: var(--color-accent);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+    }
+    .profile-option.selected {
+      border-color: var(--color-accent);
+      background: #eff6ff;
+    }
+    html.dark .profile-option {
+      border-color: var(--dm-border);
+      background: var(--dm-bg-alt);
+    }
+    html.dark .profile-option:hover {
+      border-color: var(--dm-accent);
+    }
+    html.dark .profile-option.selected {
+      border-color: var(--dm-accent);
+      background: #1e3a5f;
+    }
+
+    .profile-option-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-option-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .profile-option-desc {
+      font-size: 0.78rem;
+      color: var(--color-text-light);
+      line-height: 1.4;
+    }
+    html.dark .profile-option-desc { color: var(--dm-text-light); }
+
+    .profile-recommendation {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      background: #eff6ff;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      font-size: 0.85rem;
+      line-height: 1.55;
+      display: none;
+    }
+    .profile-recommendation.visible { display: block; }
+    html.dark .profile-recommendation {
+      background: #1e3a5f;
+      border-color: rgba(96, 165, 250, 0.2);
+    }
+    .profile-recommendation strong {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--color-accent);
+    }
+    html.dark .profile-recommendation strong { color: var(--dm-accent); }
+
+    .profile-clear {
+      display: none;
+      margin-top: 0.75rem;
+      background: none;
+      border: none;
+      color: var(--color-text-light);
+      font-size: 0.78rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      padding: 0.25rem 0;
+      text-decoration: underline;
+    }
+    .profile-clear:hover { color: var(--color-accent); }
+    html.dark .profile-clear { color: var(--dm-text-light); }
+    html.dark .profile-clear:hover { color: var(--dm-accent); }
+    .profile-clear.visible { display: inline-block; }
+
+    /* ===== Personalized badge on cards ===== */
+    .badge-recommended {
+      display: none;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.12rem 0.4rem;
+      border-radius: 3px;
+      color: #059669;
+      background: #ecfdf5;
+      border: 1px solid rgba(5, 150, 105, 0.15);
+    }
+    html.dark .badge-recommended {
+      color: #34d399;
+      background: #1a3a2a;
+      border-color: rgba(52, 211, 153, 0.2);
+    }
+    .resource-card.profile-recommended .badge-recommended { display: inline-flex; }
+
+    .resource-card.profile-recommended {
+      border-color: rgba(5, 150, 105, 0.3);
+    }
+    html.dark .resource-card.profile-recommended {
+      border-color: rgba(52, 211, 153, 0.3);
+    }
+
+    /* ===== Bookmark button on cards ===== */
+    .bookmark-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-light);
+      transition: all 0.2s ease;
+      z-index: 5;
+      padding: 0;
+    }
+    .bookmark-btn:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+    html.dark .bookmark-btn {
+      background: var(--dm-bg);
+      border-color: var(--dm-border);
+      color: var(--dm-text-light);
+    }
+    html.dark .bookmark-btn:hover {
+      color: var(--dm-accent);
+      border-color: var(--dm-accent);
+    }
+    .bookmark-btn svg { width: 14px; height: 14px; }
+    .bookmark-btn .bk-filled { display: none; }
+    .bookmark-btn .bk-outline { display: block; }
+
+    .bookmark-btn.bookmarked {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      background: #eff6ff;
+    }
+    .bookmark-btn.bookmarked .bk-filled { display: block; }
+    .bookmark-btn.bookmarked .bk-outline { display: none; }
+    html.dark .bookmark-btn.bookmarked {
+      color: var(--dm-accent);
+      border-color: var(--dm-accent);
+      background: #1e3a5f;
+    }
+
+    /* ===== Editorial rating on cards ===== */
+    .editorial-rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      margin-left: auto;
+    }
+    html.dark .editorial-rating { color: var(--dm-text-light); }
+
+    .rating-stars {
+      display: inline-flex;
+      gap: 1px;
+      color: #f59e0b;
+    }
+    html.dark .rating-stars { color: #fbbf24; }
+    .rating-stars svg { width: 11px; height: 11px; }
+
+    /* ===== Favorites Panel ===== */
+    .favorites-panel {
+      display: none;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: var(--space-md);
+      background: var(--color-bg);
+      animation: slideDown 0.25s ease;
+    }
+    html.dark .favorites-panel {
+      border-color: var(--dm-border);
+      background: var(--dm-bg-alt);
+    }
+    .favorites-panel.visible { display: block; }
+
+    .favorites-panel h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .favorites-list {
+      list-style: none;
+      padding: 0;
+    }
+    .favorites-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.88rem;
+    }
+    html.dark .favorites-list li { border-bottom-color: var(--dm-border); }
+    .favorites-list li:last-child { border-bottom: none; }
+
+    .favorites-list a {
+      flex-grow: 1;
+    }
+
+    .fav-remove {
+      background: none;
+      border: none;
+      color: var(--color-text-light);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .fav-remove:hover { color: #dc2626; background: #fef2f2; }
+    html.dark .fav-remove { color: var(--dm-text-light); }
+    html.dark .fav-remove:hover { color: #f87171; background: #3d1f1f; }
+
+    .favorites-empty {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      padding: 0.5rem 0;
+    }
+    html.dark .favorites-empty { color: var(--dm-text-light); }
+
+    .favorites-clear-all {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--color-text-light);
+      font-size: 0.78rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      padding: 0.25rem 0;
+      text-decoration: underline;
+    }
+    .favorites-clear-all:hover { color: #dc2626; }
+    html.dark .favorites-clear-all { color: var(--dm-text-light); }
+    html.dark .favorites-clear-all:hover { color: #f87171; }
+
+    /* ===== Search bar ===== */
+    .search-wrapper {
+      position: relative;
+      max-width: 480px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-light);
+      pointer-events: none;
+      width: 18px;
+      height: 18px;
+    }
+    html.dark .search-icon { color: var(--dm-text-light); }
+
+    .search-input {
+      width: 100%;
+      padding: 0.7rem 2.8rem 0.7rem 2.6rem;
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-input::placeholder { color: #999; }
+    html.dark .search-input::placeholder { color: #666; }
+
+    .search-input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    html.dark .search-input:focus {
+      border-color: var(--dm-accent);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+
+    html.dark .search-input {
+      background: var(--dm-bg-alt);
+      border-color: var(--dm-border);
+      color: var(--dm-text);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--color-text-light);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      line-height: 1;
+      display: none;
+    }
+
+    .search-clear:hover {
+      color: var(--color-text);
+      background: var(--color-bg-alt);
+    }
+
+    html.dark .search-clear { color: var(--dm-text-light); }
+    html.dark .search-clear:hover { color: var(--dm-text); background: var(--dm-bg-alt); }
+
+    .search-clear.visible { display: block; }
+
+    .search-no-results {
+      display: none;
+      padding: var(--space-lg) 0;
+      text-align: center;
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+    }
+    html.dark .search-no-results { color: var(--dm-text-light); }
+
+    .search-no-results.visible { display: block; }
+
+    .search-no-results span {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .search-count {
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+      margin-top: -1.5rem;
+      margin-bottom: var(--space-md);
+      display: none;
+    }
+    .search-count.visible { display: block; }
+    html.dark .search-count { color: var(--dm-text-light); }
+
+    /* ===== Highlights strip ===== */
+    .highlights {
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+    }
+    html.dark .highlights { border-bottom-color: var(--dm-border); }
+
+    .highlights-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    html.dark .highlights-label { color: var(--dm-accent); }
+
+    .highlights-label svg { width: 14px; height: 14px; }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 540px) {
+      .highlights-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 900px) {
+      .highlights-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .highlight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 1rem 1.15rem;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: linear-gradient(135deg, #fafbff 0%, var(--color-bg) 100%);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      color: inherit;
+    }
+
+    .highlight-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+      color: inherit;
+    }
+
+    html.dark .highlight-card {
+      border-color: var(--dm-border);
+      background: linear-gradient(135deg, var(--dm-bg-alt) 0%, var(--dm-bg) 100%);
+      color: var(--dm-text);
+    }
+    html.dark .highlight-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      color: var(--dm-text);
+    }
+
+    .highlight-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .highlight-icon.blue { background: #eff6ff; color: #2563eb; }
+    .highlight-icon.green { background: #ecfdf5; color: #059669; }
+    .highlight-icon.purple { background: #f5f3ff; color: #7c3aed; }
+    .highlight-icon.orange { background: #fff7ed; color: #ea580c; }
+    .highlight-icon.rose { background: #fff1f2; color: #e11d48; }
+
+    html.dark .highlight-icon.blue { background: #1e3a5f; color: #60a5fa; }
+    html.dark .highlight-icon.green { background: #1a3a2a; color: #34d399; }
+    html.dark .highlight-icon.purple { background: #2d1f5e; color: #a78bfa; }
+    html.dark .highlight-icon.orange { background: #3d2510; color: #fb923c; }
+    html.dark .highlight-icon.rose { background: #3d1f2a; color: #fb7185; }
+
+    .highlight-text h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .highlight-text h4 a { color: var(--color-text); transition: color 0.2s ease; }
+    .highlight-text h4 a:hover { color: var(--color-accent); }
+    html.dark .highlight-text h4,
+    html.dark .highlight-text h4 a { color: var(--dm-text); }
+
+    .highlight-text p {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      line-height: 1.45;
+    }
+    html.dark .highlight-text p { color: var(--dm-text-light); }
+
+    /* ===== Sticky section nav ===== */
+    .section-nav {
+      position: sticky;
+      top: var(--nav-height);
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border);
+      margin: 0 calc(-1 * var(--space-md));
+      padding: 0 var(--space-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    html.dark .section-nav {
+      background: rgba(15, 17, 23, 0.95);
+      border-bottom-color: var(--dm-border);
+    }
+
+    .section-nav::-webkit-scrollbar { display: none; }
+
+    .section-nav-inner {
+      display: flex;
+      gap: 0.25rem;
+      min-width: max-content;
+      padding: 0.5rem 0;
+    }
+
+    .section-nav a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .section-nav a:hover {
+      color: var(--color-text);
+      background: var(--color-bg-alt);
+    }
+
+    .section-nav a.active {
+      color: var(--color-accent);
+      background: #eff6ff;
+      border-color: rgba(37, 99, 235, 0.15);
+    }
+
+    html.dark .section-nav a { color: var(--dm-text-light); }
+    html.dark .section-nav a:hover { color: var(--dm-text); background: var(--dm-bg-alt); }
+    html.dark .section-nav a.active {
+      color: var(--dm-accent);
+      background: #1e3a5f;
+      border-color: rgba(96, 165, 250, 0.2);
+    }
+
+    /* ===== Sections ===== */
+    .guide-section {
+      margin-bottom: var(--space-xl);
+      scroll-margin-top: calc(var(--nav-height) + 56px);
+    }
+
+    .guide-section:last-child { margin-bottom: 0; }
+
+    .guide-section.search-hidden { display: none; }
+
+    /* Lazy reveal animation */
+    .guide-section {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .guide-section.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      background: #eff6ff;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    html.dark .section-number { color: var(--dm-accent); background: #1e3a5f; }
+
+    .guide-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      color: var(--color-text-light);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      margin-bottom: var(--space-md);
+      max-width: 680px;
+    }
+    html.dark .section-desc { color: var(--dm-text-light); }
+
+    /* ===== Resource cards grid ===== */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 540px) {
+      .resources-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 900px) {
+      .resources-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .resource-card {
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      background: var(--color-bg);
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .resource-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+      transform: translateY(-2px);
+    }
+
+    html.dark .resource-card {
+      border-color: var(--dm-border);
+      background: var(--dm-bg-alt);
+    }
+    html.dark .resource-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .resource-card.search-hidden { display: none; }
+
+    .resource-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      padding-right: 2rem;
+    }
+
+    .resource-card-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .resource-card-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .resource-card-type svg { width: 12px; height: 12px; }
+
+    .type-site { color: #2563eb; background: #eff6ff; }
+    .type-app { color: #7c3aed; background: #f5f3ff; }
+    .type-curso { color: #059669; background: #ecfdf5; }
+    .type-cert { color: #d97706; background: #fffbeb; }
+    .type-grupo { color: #dc2626; background: #fef2f2; }
+    .type-ferramenta { color: #0891b2; background: #ecfeff; }
+    .type-livro { color: #be185d; background: #fdf2f8; }
+    .type-gov { color: #4338ca; background: #eef2ff; }
+    .type-comunidade { color: #ea580c; background: #fff7ed; }
+    .type-podcast { color: #7c3aed; background: #f5f3ff; }
+
+    html.dark .type-site { color: #60a5fa; background: #1e3a5f; }
+    html.dark .type-app { color: #a78bfa; background: #2d1f5e; }
+    html.dark .type-curso { color: #34d399; background: #1a3a2a; }
+    html.dark .type-cert { color: #fbbf24; background: #3d2f10; }
+    html.dark .type-grupo { color: #f87171; background: #3d1f1f; }
+    html.dark .type-ferramenta { color: #22d3ee; background: #1a3340; }
+    html.dark .type-livro { color: #f472b6; background: #3d1f33; }
+    html.dark .type-gov { color: #818cf8; background: #252550; }
+    html.dark .type-comunidade { color: #fb923c; background: #3d2510; }
+    html.dark .type-podcast { color: #a78bfa; background: #2d1f5e; }
+
+    .resource-card-price {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+    }
+
+    .price-free { color: #059669; background: #ecfdf5; }
+    .price-paid { color: #d97706; background: #fffbeb; }
+    .price-freemium { color: #7c3aed; background: #f5f3ff; }
+
+    html.dark .price-free { color: #34d399; background: #1a3a2a; }
+    html.dark .price-paid { color: #fbbf24; background: #3d2f10; }
+    html.dark .price-freemium { color: #a78bfa; background: #2d1f5e; }
+
+    .resource-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .resource-card h3 a {
+      color: var(--color-text);
+      transition: color 0.2s ease;
+    }
+
+    .resource-card h3 a:hover { color: var(--color-accent); }
+    html.dark .resource-card h3 a { color: var(--dm-text); }
+    html.dark .resource-card h3 a:hover { color: var(--dm-accent); }
+
+    .resource-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+    html.dark .resource-card p { color: var(--dm-text-light); }
+
+    .resource-card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .feature-tag {
+      font-size: 0.68rem;
+      color: var(--color-text-light);
+      background: var(--color-bg-alt);
+      padding: 0.12rem 0.4rem;
+      border-radius: 3px;
+      border: 1px solid var(--color-border);
+    }
+    html.dark .feature-tag {
+      color: var(--dm-text-light);
+      background: var(--dm-bg);
+      border-color: var(--dm-border);
+    }
+
+    .resource-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--color-border);
+    }
+    html.dark .resource-card-footer { border-top-color: var(--dm-border); }
+
+    .resource-card .resource-url {
+      display: inline-block;
+      font-size: 0.78rem;
+      color: var(--color-accent);
+      word-break: break-all;
+    }
+    html.dark .resource-card .resource-url { color: var(--dm-accent); }
+
+    .resource-card .resource-arrow {
+      flex-shrink: 0;
+      color: var(--color-text-light);
+      transition: transform 0.2s ease, color 0.2s ease;
+      width: 16px;
+      height: 16px;
+    }
+    html.dark .resource-card .resource-arrow { color: var(--dm-text-light); }
+
+    .resource-card:hover .resource-arrow {
+      transform: translateX(2px);
+      color: var(--color-accent);
+    }
+    html.dark .resource-card:hover .resource-arrow { color: var(--dm-accent); }
+
+    /* ===== Subsection headings ===== */
+    .subsection { margin-bottom: var(--space-md); }
+    .subsection:last-child { margin-bottom: 0; }
+
+    .subsection h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    html.dark .subsection h3 { color: var(--dm-text); }
+
+    .subsection h3 svg {
+      width: 18px;
+      height: 18px;
+      color: var(--color-text-light);
+    }
+    html.dark .subsection h3 svg { color: var(--dm-text-light); }
+
+    /* ===== Section divider ===== */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: var(--space-xl) 0;
+    }
+    html.dark .section-divider { border-top-color: var(--dm-border); }
+
+    .section-content {
+      padding-top: var(--space-md);
+    }
+
+    /* ===== Comparison Table ===== */
+    .comparison-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: var(--space-md);
+      margin-bottom: var(--space-sm);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+    }
+    html.dark .comparison-wrapper { border-color: var(--dm-border); }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 700px;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    html.dark .comparison-table th,
+    html.dark .comparison-table td { border-bottom-color: var(--dm-border); }
+
+    .comparison-table thead th {
+      background: var(--color-bg-alt);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      position: sticky;
+      top: 0;
+    }
+    html.dark .comparison-table thead th {
+      background: var(--dm-bg);
+      color: var(--dm-text-light);
+    }
+
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+
+    .comparison-table tbody tr {
+      transition: background 0.15s ease;
+    }
+    .comparison-table tbody tr:hover {
+      background: var(--color-bg-alt);
+    }
+    html.dark .comparison-table tbody tr:hover {
+      background: var(--dm-bg);
+    }
+
+    .comparison-table .curso-name {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    html.dark .comparison-table .curso-name { color: var(--dm-text); }
+
+    .comparison-table .curso-name a {
+      color: var(--color-accent);
+    }
+    html.dark .comparison-table .curso-name a { color: var(--dm-accent); }
+
+    .comp-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+    }
+    .comp-badge.best { color: #059669; background: #ecfdf5; }
+    html.dark .comp-badge.best { color: #34d399; background: #1a3a2a; }
+
+    .comparison-note {
+      font-size: 0.78rem;
+      color: var(--color-text-light);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+    html.dark .comparison-note { color: var(--dm-text-light); }
+
+    /* ===== Roadmap / Priority Guide ===== */
+    .roadmap {
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+    }
+    html.dark .roadmap { border-bottom-color: var(--dm-border); }
+
+    .roadmap-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    html.dark .roadmap-label { color: var(--dm-accent); }
+    .roadmap-label svg { width: 14px; height: 14px; }
+
+    .roadmap-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .roadmap-step {
+      display: flex;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .roadmap-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 32px;
+    }
+
+    .roadmap-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .roadmap-dot.step-1 { background: #2563eb; }
+    .roadmap-dot.step-2 { background: #7c3aed; }
+    .roadmap-dot.step-3 { background: #059669; }
+    .roadmap-dot.step-4 { background: #ea580c; }
+    .roadmap-dot.step-5 { background: #e11d48; }
+
+    .roadmap-line {
+      width: 2px;
+      flex-grow: 1;
+      background: var(--color-border);
+      min-height: 16px;
+    }
+    html.dark .roadmap-line { background: var(--dm-border); }
+
+    .roadmap-content {
+      padding-bottom: 1.25rem;
+      flex-grow: 1;
+    }
+
+    .roadmap-step:last-child .roadmap-content { padding-bottom: 0; }
+    .roadmap-step:last-child .roadmap-line { display: none; }
+
+    .roadmap-content h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .roadmap-content .roadmap-when {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.35rem;
+    }
+    html.dark .roadmap-content .roadmap-when { color: var(--dm-text-light); }
+
+    .roadmap-content p {
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+      line-height: 1.5;
+    }
+    html.dark .roadmap-content p { color: var(--dm-text-light); }
+
+    .roadmap-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+    }
+
+    .roadmap-link {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--color-border);
+      color: var(--color-accent);
+      transition: all 0.2s ease;
+    }
+    .roadmap-link:hover {
+      border-color: var(--color-accent);
+      background: #eff6ff;
+    }
+    html.dark .roadmap-link {
+      border-color: var(--dm-border);
+      color: var(--dm-accent);
+    }
+    html.dark .roadmap-link:hover {
+      border-color: var(--dm-accent);
+      background: #1e3a5f;
+    }
+
+    /* ===== Footer note ===== */
+    .guide-footer {
+      margin-top: var(--space-xl);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-light);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    html.dark .guide-footer {
+      border-top-color: var(--dm-border);
+      color: var(--dm-text-light);
+    }
+
+    .guide-footer p { max-width: 680px; }
+
+    .footer-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+    }
+    html.dark .footer-stats { color: var(--dm-text-light); }
+
+    .footer-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .footer-stats strong {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    html.dark .footer-stats strong { color: var(--dm-text); }
+
+    /* ===== Back to top ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s ease, border-color 0.2s ease;
+      pointer-events: none;
+      cursor: pointer;
+      z-index: 40;
+    }
+
+    .back-to-top:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+
+    html.dark .back-to-top {
+      background: var(--dm-bg-alt);
+      border-color: var(--dm-border);
+      color: var(--dm-text-light);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    html.dark .back-to-top:hover {
+      color: var(--dm-accent);
+      border-color: var(--dm-accent);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ===== Skip link ===== */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 0;
+      background: var(--color-accent);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      z-index: 200;
+      font-size: 0.9rem;
+      border-radius: 0 0 8px 0;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus {
+      top: 0;
+      color: #fff;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 539px) {
+      .section-nav {
+        margin: 0 calc(-1 * var(--space-md));
+        padding: 0 var(--space-md);
+      }
+
+      .highlight-card { padding: 0.85rem 1rem; }
+      .guide-section h2 { font-size: 1.3rem; }
+      .highlights-grid { gap: 0.6rem; }
+      .header-actions { gap: 0.4rem; }
+    }
+
+    /* ===== Focus visible global ===== */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    html.dark a:focus-visible,
+    html.dark button:focus-visible,
+    html.dark input:focus-visible {
+      outline-color: var(--dm-accent);
+    }
+
+    .ico { display: inline-block; vertical-align: middle; }
+  </style>
 </head>
 <body>
-  <nav class="nav">
+  <!-- Skip to content -->
+  <a href="#main-content" class="skip-link">Pular para o conteudo</a>
+
+  <nav class="nav" role="navigation" aria-label="Navegacao principal">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
+        <button class="dark-toggle" id="darkToggle" aria-label="Alternar modo escuro" title="Alternar modo escuro">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
         <a href="../guia-do-medico-recem-formado.html">&larr; Back</a>
       </div>
     </div>
   </nav>
-  <main class="lab-page">
+
+  <main class="lab-page" id="main-content" role="main">
     <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Guia do Médico Recém-Formado — Version 4</h1>
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../">MedStack</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <a href="../guia-do-medico-recem-formado.html">Guia do Medico</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">v4</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="page-header">
+        <span class="lab-tag">Version 4</span>
+        <h1>Guia do Medico Recem-Formado</h1>
+        <p class="page-intro">
+          Tudo que voce precisa saber ao sair da faculdade de medicina: como conseguir trabalho,
+          como se preparar para a residencia, quais certificacoes tirar, quais ferramentas
+          usar no dia a dia do plantao e do postinho, e onde encontrar comunidade.
+        </p>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="header-actions">
+        <button class="profile-toggle" id="profileToggle" aria-label="Meu Perfil" title="Selecione seu perfil para recomendacoes personalizadas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Meu Perfil
+        </button>
+        <button class="favorites-toggle" id="favoritesToggle" aria-label="Meus Favoritos" title="Ver recursos salvos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          Favoritos
+          <span class="fav-count" id="favCount"></span>
+        </button>
+      </div>
+
+      <!-- Profile Panel -->
+      <div class="profile-panel" id="profilePanel" role="region" aria-label="Selecao de perfil">
+        <h3>Qual e a sua fase?</h3>
+        <p class="profile-subtitle">Selecione para receber recomendacoes personalizadas de recursos.</p>
+        <div class="profile-options">
+          <button class="profile-option" data-profile="recem-formado" type="button">
+            <div class="profile-option-icon" aria-hidden="true">&#127891;</div>
+            <div class="profile-option-title">Recem-formado</div>
+            <div class="profile-option-desc">Acabei de me formar e preciso comecar a trabalhar e decidir os proximos passos.</div>
+          </button>
+          <button class="profile-option" data-profile="preparando-residencia" type="button">
+            <div class="profile-option-icon" aria-hidden="true">&#128218;</div>
+            <div class="profile-option-title">Preparando Residencia</div>
+            <div class="profile-option-desc">Estou estudando para as provas de residencia medica e preciso de foco.</div>
+          </button>
+          <button class="profile-option" data-profile="ja-trabalhando" type="button">
+            <div class="profile-option-icon" aria-hidden="true">&#129657;</div>
+            <div class="profile-option-title">Ja Trabalhando</div>
+            <div class="profile-option-desc">Estou atuando como plantonista ou na APS e quero ferramentas para o dia a dia.</div>
+          </button>
+        </div>
+        <div class="profile-recommendation" id="profileRecommendation"></div>
+        <button class="profile-clear" id="profileClear" type="button">Limpar selecao</button>
+      </div>
+
+      <!-- Favorites Panel -->
+      <div class="favorites-panel" id="favoritesPanel" role="region" aria-label="Recursos favoritos">
+        <h3>Meus Favoritos</h3>
+        <ul class="favorites-list" id="favoritesList"></ul>
+        <button class="favorites-clear-all" id="favoritesClearAll" type="button">Limpar todos</button>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrapper" role="search" aria-label="Buscar recursos">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="search-input" placeholder="Buscar recursos (ex: Whitebook, ACLS, plantao...)" id="searchInput" autocomplete="off" aria-label="Campo de busca de recursos" role="searchbox">
+        <button class="search-clear" id="searchClear" aria-label="Limpar busca">&times;</button>
+      </div>
+      <div class="search-count" id="searchCount" aria-live="polite" role="status"></div>
+
+      <!-- Roadmap: O que estudar primeiro -->
+      <div class="roadmap" id="roadmap" aria-label="Roadmap de prioridades">
+        <div class="roadmap-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+          O que fazer primeiro
+        </div>
+        <div class="roadmap-timeline">
+          <div class="roadmap-step">
+            <div class="roadmap-marker">
+              <div class="roadmap-dot step-1">1</div>
+              <div class="roadmap-line"></div>
+            </div>
+            <div class="roadmap-content">
+              <div class="roadmap-when">Semana 1-2</div>
+              <h4>Documentacao e registro</h4>
+              <p>Registre-se no CRM do seu estado, obtenha o RQE se necessario, cadastre-se no CNES. Sem isso voce nao pode trabalhar legalmente.</p>
+            </div>
+          </div>
+          <div class="roadmap-step">
+            <div class="roadmap-marker">
+              <div class="roadmap-dot step-2">2</div>
+              <div class="roadmap-line"></div>
+            </div>
+            <div class="roadmap-content">
+              <div class="roadmap-when">Semana 2-4</div>
+              <h4>Certificacoes essenciais</h4>
+              <p>Faca BLS primeiro (1 dia, pre-requisito). Depois ACLS (2 dias). Se for trabalhar com trauma, ATLS. Isso abre portas em PS e UTI.</p>
+              <div class="roadmap-links">
+                <a href="#certificacoes" class="roadmap-link">Ver certificacoes</a>
+              </div>
+            </div>
+          </div>
+          <div class="roadmap-step">
+            <div class="roadmap-marker">
+              <div class="roadmap-dot step-3">3</div>
+              <div class="roadmap-line"></div>
+            </div>
+            <div class="roadmap-content">
+              <div class="roadmap-when">Mes 1</div>
+              <h4>Instale as ferramentas do dia a dia</h4>
+              <p>Whitebook, MDCalc e Medscape no celular. Esses tres apps cobrem condutas, scores clinicos e interacoes medicamentosas.</p>
+              <div class="roadmap-links">
+                <a href="#stack-plantao" class="roadmap-link">Stack Plantao</a>
+                <a href="#stack-postinho" class="roadmap-link">Stack Postinho</a>
+              </div>
+            </div>
+          </div>
+          <div class="roadmap-step">
+            <div class="roadmap-marker">
+              <div class="roadmap-dot step-4">4</div>
+              <div class="roadmap-line"></div>
+            </div>
+            <div class="roadmap-content">
+              <div class="roadmap-when">Mes 1-2</div>
+              <h4>Busque seus primeiros plantoes</h4>
+              <p>Cadastre-se em plataformas de vagas. Comece por UBS/ESF ou plantoes em cidades menores para ganhar experiencia e confianca.</p>
+              <div class="roadmap-links">
+                <a href="#trabalho" class="roadmap-link">Vagas e trabalho</a>
+              </div>
+            </div>
+          </div>
+          <div class="roadmap-step">
+            <div class="roadmap-marker">
+              <div class="roadmap-dot step-5">5</div>
+            </div>
+            <div class="roadmap-content">
+              <div class="roadmap-when">Mes 2+</div>
+              <h4>Planeje a residencia (se for o caminho)</h4>
+              <p>Escolha um preparatorio, monte um cronograma com Anki e banco de questoes. Compare cursos na tabela abaixo.</p>
+              <div class="roadmap-links">
+                <a href="#residencia" class="roadmap-link">Preparatorios</a>
+                <a href="#comparar-cursinhos" class="roadmap-link">Comparar cursinhos</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlights / Destaques -->
+      <div class="highlights" id="highlights" aria-label="Destaques">
+        <div class="highlights-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          Destaques para Quem Esta Comecando
+        </div>
+        <div class="highlights-grid">
+          <a href="#stack-plantao" class="highlight-card">
+            <div class="highlight-icon blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Whitebook</h4>
+              <p>App #1 dos medicos no Brasil. Condutas, prescricoes e CID no plantao.</p>
+            </div>
+          </a>
+          <a href="#certificacoes" class="highlight-card">
+            <div class="highlight-icon green">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>ACLS + ATLS</h4>
+              <p>Certificacoes essenciais para quem vai trabalhar em pronto-socorro.</p>
+            </div>
+          </a>
+          <a href="#residencia" class="highlight-card">
+            <div class="highlight-icon purple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Preparatorios para Residencia</h4>
+              <p>Compare os maiores cursos e escolha o que encaixa no seu perfil.</p>
+            </div>
+          </a>
+          <a href="#comunidades" class="highlight-card">
+            <div class="highlight-icon orange">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Comunidades</h4>
+              <p>Grupos no Telegram, WhatsApp, Reddit e forums para trocar experiencia.</p>
+            </div>
+          </a>
+          <a href="#comparar-cursinhos" class="highlight-card">
+            <div class="highlight-icon rose">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            </div>
+            <div class="highlight-text">
+              <h4>Comparar Cursinhos</h4>
+              <p>Tabela comparativa de preco, formato e banco de questoes dos preparatorios.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sticky section nav -->
+      <div class="section-nav" id="sectionNav" role="navigation" aria-label="Navegacao por secoes">
+        <div class="section-nav-inner">
+          <a href="#trabalho" data-section="trabalho">Trabalho</a>
+          <a href="#residencia" data-section="residencia">Residencia</a>
+          <a href="#comparar-cursinhos" data-section="comparar-cursinhos">Comparar Cursinhos</a>
+          <a href="#certificacoes" data-section="certificacoes">Certificacoes</a>
+          <a href="#stack-plantao" data-section="stack-plantao">Stack Plantao</a>
+          <a href="#stack-postinho" data-section="stack-postinho">Stack Postinho</a>
+          <a href="#referencias" data-section="referencias">Referencias</a>
+          <a href="#comunidades" data-section="comunidades">Comunidades</a>
+        </div>
+      </div>
+
+      <!-- No results state -->
+      <div class="search-no-results" id="noResults" role="status">
+        <span aria-hidden="true">&#128269;</span>
+        Nenhum recurso encontrado. Tente outra busca.
+      </div>
+
+      <div class="section-content">
+
+        <!-- ============================================================ -->
+        <!-- Section 1: Como Conseguir Trabalho -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="trabalho" data-searchable aria-labelledby="trabalho-heading">
+          <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 id="trabalho-heading">Como Conseguir Trabalho</h2>
+          </div>
+          <p class="section-desc">
+            Recem-formado e precisando de plantao? Estes sao os principais canais para
+            encontrar vagas como medico generalista, plantonista ou para concursos publicos.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              Plataformas de Vagas
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable data-id="mediconointerior" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="mediconointerior" aria-label="Salvar MedicoNoInterior">
+                  <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-site">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                      Site
+                    </span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating">
+                    <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                  </div>
+                </div>
+                <h3><a href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">MedicoNoInterior</a></h3>
+                <p>Vagas medicas no interior do Brasil. Ideal para quem quer comecar rapido, aceita cidades menores e busca remuneracao competitiva fora dos grandes centros.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Interior</span>
+                  <span class="feature-tag">Salarios altos</span>
+                  <span class="feature-tag">Vagas rapidas</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">mediconointerior.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="empregamed" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="empregamed" aria-label="Salvar EmpregaMed">
+                  <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-site">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                      Site
+                    </span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating">
+                    <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                  </div>
+                </div>
+                <h3><a href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">EmpregaMed</a></h3>
+                <p>Plataforma abrangente de vagas medicas em todo o Brasil. Filtre por tipo de contrato (CLT, PJ, plantao), especialidade e localizacao.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">CLT / PJ / Plantao</span>
+                  <span class="feature-tag">Filtros avancados</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">empregamed.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="pciconcursos" data-profiles="recem-formado,ja-trabalhando" data-rating="3">
+                <button class="bookmark-btn" data-bookmark="pciconcursos" aria-label="Salvar PCI Concursos">
+                  <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-site">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                      Site
+                    </span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">PCI Concursos (Medico)</a></h3>
+                <p>Concursos publicos para medicos atualizados diariamente. Estabilidade, beneficios e bons salarios em hospitais municipais, estaduais e UBS.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Concursos publicos</span>
+                  <span class="feature-tag">Estabilidade</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">pciconcursos.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="plantaoja" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="plantaoja" aria-label="Salvar Plantao Ja">
+                  <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-app">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                      App
+                    </span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating">
+                    <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                  </div>
+                </div>
+                <h3><a href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">Plantao Ja</a></h3>
+                <p>App para encontrar plantoes disponiveis na sua regiao com agilidade. Cadastre seu perfil e receba notificacoes de novas vagas em tempo real.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Push notifications</span>
+                  <span class="feature-tag">Plantoes 12h/24h</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">plantaoja.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="linkedin-vagas" data-profiles="recem-formado,ja-trabalhando" data-rating="3">
+                <button class="bookmark-btn" data-bookmark="linkedin-vagas" aria-label="Salvar LinkedIn Vagas">
+                  <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-site">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                      Site
+                    </span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.linkedin.com/jobs/search/?keywords=m%C3%A9dico" target="_blank" rel="noopener noreferrer">LinkedIn Vagas Medicas</a></h3>
+                <p>Filtro de vagas para medicos no LinkedIn. Crescente em vagas hospitalares privadas, cooperativas e cargos de gestao em saude.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">Networking</span>
+                  <span class="feature-tag">Setor privado</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">linkedin.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="trabalhasusb" data-profiles="recem-formado,ja-trabalhando" data-rating="3">
+                <button class="bookmark-btn" data-bookmark="trabalhasusb" aria-label="Salvar Trabalha SUS Brasil">
+                  <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-site">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                      Site
+                    </span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://trabalhasusbrasil.com.br" target="_blank" rel="noopener noreferrer">Trabalha SUS Brasil</a></h3>
+                <p>Plataforma focada em vagas no SUS. Filtra por municipio, especialidade e tipo de contrato. Boa opcao para quem quer atuar na rede publica e programas como Mais Medicos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">SUS</span>
+                  <span class="feature-tag">Mais Medicos</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://trabalhasusbrasil.com.br" target="_blank" rel="noopener noreferrer">trabalhasusbrasil.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 2: Estudar para Residencia -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="residencia" data-searchable aria-labelledby="residencia-heading">
+          <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 id="residencia-heading">Estudar para Residencia</h2>
+          </div>
+          <p class="section-desc">
+            Os principais cursos preparatorios para as provas de residencia medica no Brasil.
+            Cada um tem seu estilo -- escolha o que melhor se adapta ao seu ritmo de estudo,
+            orcamento e instituicao-alvo.
+          </p>
+
+          <div class="resources-grid">
+
+            <div class="resource-card" data-searchable data-id="medcurso" data-profiles="preparando-residencia" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="medcurso" aria-label="Salvar Medcurso">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                    Curso
+                  </span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+                <div class="editorial-rating">
+                  <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                </div>
+              </div>
+              <h3><a href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">Medcurso</a></h3>
+              <p>O preparatorio mais tradicional do Brasil. Apostilas densas e extensivas com cobertura completa. Referencia para provas do RJ (ENARE, UERJ, UFF).</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Apostilas extensivas</span>
+                <span class="feature-tag">Foco RJ</span>
+                <span class="feature-tag">~R$6.000/ano</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">medcurso.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="estrategiamed" data-profiles="preparando-residencia" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="estrategiamed" aria-label="Salvar Estrategia Med">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                    Curso
+                  </span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+                <div class="editorial-rating">
+                  <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                </div>
+              </div>
+              <h3><a href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">Estrategia Med</a></h3>
+              <p>Videoaulas organizadas e banco de questoes robusto. Formato acessivel e didatico. Plataforma com metricas de desempenho e plano de estudo adaptativo.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Videoaulas</span>
+                <span class="feature-tag">Plano adaptativo</span>
+                <span class="feature-tag">~R$4.000/ano</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">estrategiamed.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="medway" data-profiles="preparando-residencia" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="medway" aria-label="Salvar Medway">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg>
+                    Curso
+                  </span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+                <div class="editorial-rating">
+                  <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                </div>
+              </div>
+              <h3><a href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">Medway</a></h3>
+              <p>Focado nas provas de SP (USP, Unifesp, Santa Casa). Excelente banco de questoes comentadas, simulados periodicos e analises estatisticas.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Foco SP</span>
+                <span class="feature-tag">Banco de questoes</span>
+                <span class="feature-tag">Conteudo gratis no blog</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">medway.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="medcof" data-profiles="preparando-residencia" data-rating="4">
+              <button class="bookmark-btn" data-bookmark="medcof" aria-label="Salvar Medcof">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+              </div>
+              <h3><a href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">Medcof</a></h3>
+              <p>Forte em Clinica Medica e Cirurgia. Professores reconhecidos como referencia nacional. Material direto ao ponto.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Clinica + Cirurgia</span>
+                <span class="feature-tag">Direto ao ponto</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">medcof.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="medcel" data-profiles="preparando-residencia" data-rating="4">
+              <button class="bookmark-btn" data-bookmark="medcel" aria-label="Salvar Medcel">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+              </div>
+              <h3><a href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">Medcel</a></h3>
+              <p>Preparatorio completo com videoaulas, apostilas e banco de questoes. Boa opcao custo-beneficio com planos acessiveis.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Custo-beneficio</span>
+                <span class="feature-tag">Planos flexiveis</span>
+                <span class="feature-tag">~R$3.000/ano</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">medcel.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="hardwork" data-profiles="preparando-residencia" data-rating="4">
+              <button class="bookmark-btn" data-bookmark="hardwork" aria-label="Salvar Hardwork">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+              </div>
+              <h3><a href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">Hardwork Medicina</a></h3>
+              <p>Metodologia baseada em questoes e revisao ativa com repeticao espacada. Popular entre quem busca alto rendimento.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Repeticao espacada</span>
+                <span class="feature-tag">Comunidade ativa</span>
+                <span class="feature-tag">Alto rendimento</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">hardworkmedicina.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="medsimple" data-profiles="preparando-residencia" data-rating="3">
+              <button class="bookmark-btn" data-bookmark="medsimple" aria-label="Salvar MEDsimple">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                  <span class="resource-card-price price-paid">Pago</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+              </div>
+              <h3><a href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">MEDsimple</a></h3>
+              <p>Abordagem simplificada e objetiva. Bom para revisao de ultima hora. Resumos, mapas mentais e flashcards.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Resumos</span>
+                <span class="feature-tag">Mapas mentais</span>
+                <span class="feature-tag">Flashcards</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">medsimple.com.br</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="anki" data-profiles="preparando-residencia,recem-formado" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="anki" aria-label="Salvar Anki">
+                <svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+              </button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-ferramenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Ferramenta</span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+                <div class="editorial-rating">
+                  <span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+                </div>
+              </div>
+              <h3><a href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">Anki (Flashcards)</a></h3>
+              <p>Ferramenta de repeticao espacada open source. Excelente complemento a qualquer preparatorio. Decks prontos de residencia medica compartilhados pela comunidade.</p>
+              <div class="resource-card-features">
+                <span class="feature-tag">Open source</span>
+                <span class="feature-tag">Repeticao espacada</span>
+                <span class="feature-tag">Decks prontos</span>
+              </div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">apps.ankiweb.net</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 2.5: Comparar Cursinhos -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="comparar-cursinhos" data-searchable aria-labelledby="comparar-heading">
+          <div class="section-header">
+            <span class="section-number">02b</span>
+            <h2 id="comparar-heading">Comparar Cursinhos</h2>
+          </div>
+          <p class="section-desc">
+            Tabela comparativa dos principais preparatorios para residencia medica.
+            Precos aproximados e podem variar conforme o plano e periodo de matricula.
+          </p>
+
+          <div class="comparison-wrapper">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Cursinho</th>
+                  <th>Preco/ano</th>
+                  <th>Formato principal</th>
+                  <th>Banco de questoes</th>
+                  <th>Foco regional</th>
+                  <th>Destaque</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="curso-name"><a href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">Medcurso</a></td>
+                  <td>~R$6.000</td>
+                  <td>Apostilas extensivas</td>
+                  <td>~15.000</td>
+                  <td>RJ (ENARE, UERJ, UFF)</td>
+                  <td><span class="comp-badge best">Mais tradicional</span></td>
+                </tr>
+                <tr>
+                  <td class="curso-name"><a href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">Estrategia Med</a></td>
+                  <td>~R$4.000</td>
+                  <td>Videoaulas + banco</td>
+                  <td>~20.000</td>
+                  <td>Nacional</td>
+                  <td><span class="comp-badge best">Maior banco de questoes</span></td>
+                </tr>
+                <tr>
+                  <td class="curso-name"><a href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">Medway</a></td>
+                  <td>~R$5.000</td>
+                  <td>Questoes + simulados</td>
+                  <td>~18.000</td>
+                  <td>SP (USP, Unifesp, Santa Casa)</td>
+                  <td><span class="comp-badge best">Melhor para SP</span></td>
+                </tr>
+                <tr>
+                  <td class="curso-name"><a href="https://www.medcof.com.br" target="_blank" rel="noopener noreferrer">Medcof</a></td>
+                  <td>~R$4.500</td>
+                  <td>Videoaulas + apostilas</td>
+                  <td>~10.000</td>
+                  <td>Nacional</td>
+                  <td>Professores renomados</td>
+                </tr>
+                <tr>
+                  <td class="curso-name"><a href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">Medcel</a></td>
+                  <td>~R$3.000</td>
+                  <td>Videoaulas + apostilas</td>
+                  <td>~12.000</td>
+                  <td>Nacional</td>
+                  <td><span class="comp-badge best">Melhor custo-beneficio</span></td>
+                </tr>
+                <tr>
+                  <td class="curso-name"><a href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">Hardwork</a></td>
+                  <td>~R$4.000</td>
+                  <td>Questoes + repeticao espacada</td>
+                  <td>~14.000</td>
+                  <td>Nacional</td>
+                  <td><span class="comp-badge best">Metodologia ativa</span></td>
+                </tr>
+                <tr>
+                  <td class="curso-name"><a href="https://www.medsimple.com.br" target="_blank" rel="noopener noreferrer">MEDsimple</a></td>
+                  <td>~R$2.500</td>
+                  <td>Resumos + flashcards</td>
+                  <td>~5.000</td>
+                  <td>Nacional</td>
+                  <td>Revisao de ultima hora</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="comparison-note">
+            * Precos referentes a 2025 e podem variar. Muitos cursos oferecem descontos em Black Friday e periodos promocionais.
+            Alguns possuem planos semestrais com valores proporcionalmente menores.
+          </p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 3: Cursos e Certificacoes -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="certificacoes" data-searchable aria-labelledby="cert-heading">
+          <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 id="cert-heading">Cursos e Certificacoes</h2>
+          </div>
+          <p class="section-desc">
+            Certificacoes essenciais para quem vai trabalhar em pronto-socorro, emergencia ou atencao primaria.
+            Valorizam o curriculo, sao pre-requisito em muitos hospitais e preparam para situacoes reais de risco.
+          </p>
+
+          <div class="subsection">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              Certificacoes de Emergencia
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable data-id="acls" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="bookmark-btn" data-bookmark="acls" aria-label="Salvar ACLS"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Certificacao</span>
+                    <span class="resource-card-price price-paid">~R$2.500</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+                </div>
+                <h3><a href="https://internacional.cardiol.br/acls/" target="_blank" rel="noopener noreferrer">ACLS</a></h3>
+                <p>Advanced Cardiovascular Life Support (AHA). Protocolo de parada cardiorrespiratoria, arritmias e emergencias cardiovasculares. Obrigatorio na maioria dos PS e UTIs. Validade de 2 anos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AHA</span>
+                  <span class="feature-tag">2 dias</span>
+                  <span class="feature-tag">Validade 2 anos</span>
+                  <span class="feature-tag">Obrigatorio PS/UTI</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://internacional.cardiol.br" target="_blank" rel="noopener noreferrer">SBC - Soc. Brasileira de Cardiologia</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="atls" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="bookmark-btn" data-bookmark="atls" aria-label="Salvar ATLS"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Certificacao</span>
+                    <span class="resource-card-price price-paid">~R$4.000</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+                </div>
+                <h3><a href="https://www.sbait.org.br/atls.php" target="_blank" rel="noopener noreferrer">ATLS</a></h3>
+                <p>Advanced Trauma Life Support (ACS). Padrao-ouro para atendimento ao politraumatizado. Exigido por hospitais de trauma. Validade de 4 anos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">ACS</span>
+                  <span class="feature-tag">2-3 dias</span>
+                  <span class="feature-tag">Validade 4 anos</span>
+                  <span class="feature-tag">Trauma</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.sbait.org.br" target="_blank" rel="noopener noreferrer">SBAIT</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="pals" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="pals" aria-label="Salvar PALS"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Certificacao</span>
+                    <span class="resource-card-price price-paid">~R$2.000</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://internacional.cardiol.br/cursos/" target="_blank" rel="noopener noreferrer">PALS</a></h3>
+                <p>Pediatric Advanced Life Support (AHA). Protocolos de emergencia pediatrica. Essencial para PS pediatrico. Validade de 2 anos.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AHA</span>
+                  <span class="feature-tag">Pediatria</span>
+                  <span class="feature-tag">Validade 2 anos</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="bls" data-profiles="recem-formado,ja-trabalhando,preparando-residencia" data-rating="5">
+                <button class="bookmark-btn" data-bookmark="bls" aria-label="Salvar BLS"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Certificacao</span>
+                    <span class="resource-card-price price-paid">~R$800</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://internacional.cardiol.br/cursos/" target="_blank" rel="noopener noreferrer">BLS</a></h3>
+                <p>Basic Life Support (AHA). Suporte Basico de Vida: compressoes, ventilacao, DEA. Pre-requisito para ACLS. Melhor primeiro passo para quem esta comecando.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AHA</span>
+                  <span class="feature-tag">1 dia</span>
+                  <span class="feature-tag">Pre-requisito ACLS</span>
+                  <span class="feature-tag">Primeiro passo</span>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="fccs" data-profiles="ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="fccs" aria-label="Salvar FCCS"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-cert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Certificacao</span>
+                    <span class="resource-card-price price-paid">~R$3.000</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.amib.org.br/cursos/" target="_blank" rel="noopener noreferrer">FCCS (AMIB)</a></h3>
+                <p>Fundamental Critical Care Support. Manejo basico do paciente critico: ventilacao mecanica, drogas vasoativas, sedacao, choque. Diferencial para UTI.</p>
+                <div class="resource-card-features">
+                  <span class="feature-tag">AMIB/SCCM</span>
+                  <span class="feature-tag">Terapia intensiva</span>
+                  <span class="feature-tag">2 dias</span>
+                </div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.amib.org.br" target="_blank" rel="noopener noreferrer">amib.org.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="subsection" style="margin-top: 1.5rem;">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              Cursos Praticos para o PS
+            </h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable data-id="mediconapratica" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="mediconapratica" aria-label="Salvar Medico Na Pratica"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                    <span class="resource-card-price price-paid">Pago</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.mediconapratica.com.br" target="_blank" rel="noopener noreferrer">Medico Na Pratica</a></h3>
+                <p>Curso pratico para recem-formados no PS. Condutas objetivas para os 50 casos mais comuns da emergencia. Inclui simulacoes.</p>
+                <div class="resource-card-features"><span class="feature-tag">Recem-formados</span><span class="feature-tag">50 casos</span><span class="feature-tag">Simulacoes</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.mediconapratica.com.br" target="_blank" rel="noopener noreferrer">mediconapratica.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="pszerado" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="pszerado" aria-label="Salvar PS Zerado"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                    <span class="resource-card-price price-paid">Pago</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.pszerado.com.br" target="_blank" rel="noopener noreferrer">PS Zerado</a></h3>
+                <p>Preparacao intensiva para o PS. Diagnosticos e condutas mais frequentes da emergencia com linguagem pratica. Aulas curtas e diretas.</p>
+                <div class="resource-card-features"><span class="feature-tag">Aulas curtas</span><span class="feature-tag">Emergencia</span><span class="feature-tag">Pratico</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.pszerado.com.br" target="_blank" rel="noopener noreferrer">pszerado.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="sanarmed" data-profiles="recem-formado,ja-trabalhando,preparando-residencia" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="sanarmed" aria-label="Salvar Sanar Med"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"></path></svg> Curso</span>
+                    <span class="resource-card-price price-freemium">Freemium</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">Sanar Med (Yellowbook)</a></h3>
+                <p>Yellowbook (fluxogramas de conduta) e cursos de emergencia. Conteudo visual e esquematizado. Blog e podcasts gratuitos.</p>
+                <div class="resource-card-features"><span class="feature-tag">Fluxogramas</span><span class="feature-tag">Blog gratis</span><span class="feature-tag">Podcast</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">sanarmed.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 4: Stack Plantao -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="stack-plantao" data-searchable aria-labelledby="plantao-heading">
+          <div class="section-header">
+            <span class="section-number">04</span>
+            <h2 id="plantao-heading">Stack Plantao</h2>
+          </div>
+          <p class="section-desc">
+            Ferramentas que todo plantonista usa no dia a dia. Apps de consulta rapida, calculadoras
+            medicas e referencias de condutas para ter no celular durante o plantao.
+          </p>
+
+          <div class="subsection">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Apps Essenciais</h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable data-id="whitebook" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="bookmark-btn" data-bookmark="whitebook" aria-label="Salvar Whitebook"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> App</span>
+                    <span class="resource-card-price price-freemium">Freemium</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+                </div>
+                <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook</a></h3>
+                <p>O app mais usado por medicos no Brasil. Condutas, prescricoes prontas, bulario, CID-10/11 e calculadoras, tudo offline. ~R$70/mes.</p>
+                <div class="resource-card-features"><span class="feature-tag">Offline</span><span class="feature-tag">Prescricoes prontas</span><span class="feature-tag">CID-10/11</span><span class="feature-tag">~R$70/mes</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="wemeds" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="wemeds" aria-label="Salvar WeMeds"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> App</span>
+                    <span class="resource-card-price price-freemium">Freemium</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.wemeds.com.br" target="_blank" rel="noopener noreferrer">WeMeds</a></h3>
+                <p>Prescricoes prontas e personalizaveis para o PS. Modelos validados com doses ajustadas por peso e funcao renal.</p>
+                <div class="resource-card-features"><span class="feature-tag">Prescricoes por peso</span><span class="feature-tag">Ajuste renal</span><span class="feature-tag">Versao gratis</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.wemeds.com.br" target="_blank" rel="noopener noreferrer">wemeds.com.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="medscape" data-profiles="recem-formado,ja-trabalhando,preparando-residencia" data-rating="5">
+                <button class="bookmark-btn" data-bookmark="medscape" aria-label="Salvar Medscape"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> App</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+                </div>
+                <h3><a href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">Medscape</a></h3>
+                <p>Referencia internacional gratuita. Drug interaction checker, doses, protocolos e noticias. Em ingles, base de dados mais completa do mundo.</p>
+                <div class="resource-card-features"><span class="feature-tag">Drug checker</span><span class="feature-tag">Em ingles</span><span class="feature-tag">100% gratis</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">medscape.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="mdcalc" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="bookmark-btn" data-bookmark="mdcalc" aria-label="Salvar MDCalc"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-ferramenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Ferramenta</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                  <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+                </div>
+                <h3><a href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">MDCalc</a></h3>
+                <p>600+ calculadoras de scores clinicos validados: CURB-65, Wells, Glasgow, CHA2DS2-VASc, MELD e centenas de outros. Indispensavel na emergencia.</p>
+                <div class="resource-card-features"><span class="feature-tag">600+ scores</span><span class="feature-tag">Offline</span><span class="feature-tag">Validados</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">mdcalc.com</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 5: Stack Postinho -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="stack-postinho" data-searchable aria-labelledby="postinho-heading">
+          <div class="section-header">
+            <span class="section-number">05</span>
+            <h2 id="postinho-heading">Stack Postinho</h2>
+          </div>
+          <p class="section-desc">
+            Ferramentas e referencias para quem trabalha na Atencao Primaria (UBS/ESF).
+            Protocolos do Ministerio da Saude, cadernos de atencao basica e apps que facilitam
+            o manejo ambulatorial do dia a dia.
+          </p>
+
+          <div class="subsection">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Protocolos e Apps</h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable data-id="linhasdecuidado" data-profiles="ja-trabalhando,recem-formado" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="linhasdecuidado" aria-label="Salvar Linhas de Cuidado"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"></path></svg> Gov</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.gov.br/saude/pt-br/composicao/saps/linha-de-cuidado" target="_blank" rel="noopener noreferrer">Linhas de Cuidado (MS)</a></h3>
+                <p>Protocolos de hipertensao, diabetes, saude mental, pre-natal e mais. Referencia oficial para condutas na UBS.</p>
+                <div class="resource-card-features"><span class="feature-tag">Oficial MS</span><span class="feature-tag">HAS / DM</span><span class="feature-tag">Pre-natal</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.gov.br/saude" target="_blank" rel="noopener noreferrer">gov.br/saude</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="rename" data-profiles="ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="rename" aria-label="Salvar RENAME"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"></path></svg> Gov</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.gov.br/saude/pt-br/composicao/sctie/daf/rename" target="_blank" rel="noopener noreferrer">RENAME</a></h3>
+                <p>Lista de medicamentos essenciais do SUS. Essencial para prescrever dentro da farmacia basica e popular.</p>
+                <div class="resource-card-features"><span class="feature-tag">Oficial MS</span><span class="feature-tag">Farmacia basica</span><span class="feature-tag">Farmacia popular</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.gov.br/saude" target="_blank" rel="noopener noreferrer">gov.br/saude</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="telessaude" data-profiles="ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="telessaude" aria-label="Salvar Telessaude"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-ferramenta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Ferramenta</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">Telessaude UFMG</a></h3>
+                <p>Teleconsultoria para medicos da APS. Duvidas respondidas por especialistas em ate 72h. Gratuito para cadastrados no CNES.</p>
+                <div class="resource-card-features"><span class="feature-tag">Teleconsultoria</span><span class="feature-tag">Especialistas</span><span class="feature-tag">72h resposta</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">telessaude.hc.ufmg.br</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 6: Referencias e Livros -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="referencias" data-searchable aria-labelledby="ref-heading">
+          <div class="section-header">
+            <span class="section-number">06</span>
+            <h2 id="ref-heading">Referencias e Livros</h2>
+          </div>
+          <p class="section-desc">
+            Livros e referencias que todo medico recem-formado deveria ter por perto.
+            Desde guias de conduta rapida ate tratados para aprofundamento.
+          </p>
+
+          <div class="resources-grid">
+
+            <div class="resource-card" data-searchable data-id="yellowbook" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="yellowbook" aria-label="Salvar Yellowbook"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-livro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Livro</span>
+                  <span class="resource-card-price price-paid">~R$120</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+                <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+              </div>
+              <h3><a href="https://www.sanarmed.com/yellowbook" target="_blank" rel="noopener noreferrer">Yellowbook - Fluxos e Condutas</a></h3>
+              <p>Guia pratico de condutas em emergencia e ambulatorio da Sanar. Fluxogramas visuais e objetivos. Formato de bolso.</p>
+              <div class="resource-card-features"><span class="feature-tag">Fluxogramas</span><span class="feature-tag">Formato bolso</span><span class="feature-tag">Atualizado anual</span></div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">sanarmed.com</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="uptodate" data-profiles="recem-formado,ja-trabalhando,preparando-residencia" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="uptodate" aria-label="Salvar UpToDate"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> Site</span>
+                  <span class="resource-card-price price-paid">Institucional</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+                <div class="editorial-rating"><span class="rating-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></div>
+              </div>
+              <h3><a href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">UpToDate</a></h3>
+              <p>Base de dados de medicina baseada em evidencias mais respeitada do mundo. Muitos hospitais oferecem acesso institucional gratuito.</p>
+              <div class="resource-card-features"><span class="feature-tag">Evidencias</span><span class="feature-tag">Acesso institucional</span><span class="feature-tag">Em ingles</span></div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">uptodate.com</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+            <div class="resource-card" data-searchable data-id="pubmed" data-profiles="preparando-residencia,ja-trabalhando" data-rating="5">
+              <button class="bookmark-btn" data-bookmark="pubmed" aria-label="Salvar PubMed"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+              <div class="resource-card-top">
+                <div class="resource-card-badges">
+                  <span class="resource-card-type type-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> Site</span>
+                  <span class="resource-card-price price-free">Gratis</span>
+                  <span class="badge-recommended">Recomendado</span>
+                </div>
+              </div>
+              <h3><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">PubMed</a></h3>
+              <p>Base bibliografica da NLM. Milhoes de artigos cientificos. Essencial para buscar evidencias e se manter atualizado.</p>
+              <div class="resource-card-features"><span class="feature-tag">Artigos cientificos</span><span class="feature-tag">NLM/NIH</span><span class="feature-tag">Em ingles</span></div>
+              <div class="resource-card-footer">
+                <a class="resource-url" href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">pubmed.ncbi.nlm.nih.gov</a>
+                <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- ============================================================ -->
+        <!-- Section 7: Comunidades -->
+        <!-- ============================================================ -->
+        <section class="guide-section" id="comunidades" data-searchable aria-labelledby="comunidades-heading">
+          <div class="section-header">
+            <span class="section-number">07</span>
+            <h2 id="comunidades-heading">Comunidades</h2>
+          </div>
+          <p class="section-desc">
+            Nao enfrente a jornada sozinho. Grupos de Telegram, WhatsApp, forums e comunidades
+            online onde medicos recem-formados trocam experiencias e oportunidades.
+          </p>
+
+          <div class="subsection">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Grupos e Forums</h3>
+            <div class="resources-grid">
+
+              <div class="resource-card" data-searchable data-id="reddit-medicina" data-profiles="recem-formado,preparando-residencia,ja-trabalhando" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="reddit-medicina" aria-label="Salvar r/medicina"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-comunidade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Comunidade</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.reddit.com/r/medicina/" target="_blank" rel="noopener noreferrer">r/medicina (Reddit)</a></h3>
+                <p>Subreddit brasileiro com discussoes sobre residencia, plantao e carreira. Comunidade ativa, anonimato permite discussoes francas.</p>
+                <div class="resource-card-features"><span class="feature-tag">Reddit</span><span class="feature-tag">Anonimo</span><span class="feature-tag">Discussoes francas</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.reddit.com/r/medicina/" target="_blank" rel="noopener noreferrer">reddit.com/r/medicina</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="telegram-med" data-profiles="recem-formado,preparando-residencia" data-rating="3">
+                <button class="bookmark-btn" data-bookmark="telegram-med" aria-label="Salvar Telegram"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-comunidade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Comunidade</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://t.me/s/medicinabr" target="_blank" rel="noopener noreferrer">Canais Telegram - Medicina BR</a></h3>
+                <p>Canais e grupos voltados para medicos brasileiros. Dicas de estudo, materiais, editais de residencia e casos clinicos.</p>
+                <div class="resource-card-features"><span class="feature-tag">Telegram</span><span class="feature-tag">Materiais</span><span class="feature-tag">Editais</span></div>
+              </div>
+
+              <div class="resource-card" data-searchable data-id="blog-medway" data-profiles="preparando-residencia" data-rating="4">
+                <button class="bookmark-btn" data-bookmark="blog-medway" aria-label="Salvar Blog Medway"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="resource-card-top">
+                  <div class="resource-card-badges">
+                    <span class="resource-card-type type-comunidade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Comunidade</span>
+                    <span class="resource-card-price price-free">Gratis</span>
+                    <span class="badge-recommended">Recomendado</span>
+                  </div>
+                </div>
+                <h3><a href="https://www.medway.com.br/blog/" target="_blank" rel="noopener noreferrer">Blog Medway</a></h3>
+                <p>Artigos sobre residencia, comparativos de provas, editais e dicas de estudo. Conteudo gratuito e atualizado frequentemente.</p>
+                <div class="resource-card-features"><span class="feature-tag">Blog</span><span class="feature-tag">Editais</span><span class="feature-tag">Dicas de estudo</span></div>
+                <div class="resource-card-footer">
+                  <a class="resource-url" href="https://www.medway.com.br/blog/" target="_blank" rel="noopener noreferrer">medway.com.br/blog</a>
+                  <svg class="resource-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </div><!-- .section-content -->
+
+      <!-- Footer note -->
+      <div class="guide-footer">
+        <div class="footer-stats">
+          <span><strong>40+</strong> recursos curados</span>
+          <span><strong>8</strong> secoes</span>
+          <span><strong>3</strong> perfis personalizaveis</span>
+        </div>
+        <p>
+          Este guia e uma curadoria de recursos uteis para medicos recem-formados no Brasil.
+          Links externos levam a sites de terceiros e foram verificados na data de publicacao.
+          Precos sao aproximados e podem variar. Sugestoes de novos recursos sao bem-vindas.
+        </p>
+      </div>
+
     </div>
   </main>
+
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <script>
+    // === Dark mode toggle ===
+    (function() {
+      var toggle = document.getElementById('darkToggle');
+      var html = document.documentElement;
+      var stored = localStorage.getItem('medstack-dark-mode');
+      if (stored === 'true' || (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+      }
+      toggle.addEventListener('click', function() {
+        html.classList.toggle('dark');
+        localStorage.setItem('medstack-dark-mode', html.classList.contains('dark'));
+      });
+    })();
+
+    // === Smooth scroll for anchor links ===
+    (function() {
+      document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.pushState(null, '', this.getAttribute('href'));
+          }
+        });
+      });
+    })();
+
+    // === Lazy reveal with IntersectionObserver ===
+    (function() {
+      var sections = document.querySelectorAll('.guide-section');
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.05, rootMargin: '0px 0px -60px 0px' });
+        sections.forEach(function(section) { observer.observe(section); });
+      } else {
+        sections.forEach(function(s) { s.classList.add('revealed'); });
+      }
+    })();
+
+    // === Sticky section nav: active state ===
+    (function() {
+      var sections = document.querySelectorAll('.guide-section');
+      var navLinks = document.querySelectorAll('.section-nav a');
+      var sectionNav = document.getElementById('sectionNav');
+
+      function updateActiveNav() {
+        var scrollY = window.scrollY;
+        var offset = 140;
+        var current = '';
+        sections.forEach(function(section) {
+          if (section.classList.contains('search-hidden')) return;
+          var top = section.offsetTop - offset;
+          if (scrollY >= top) current = section.getAttribute('id');
+        });
+        navLinks.forEach(function(link) {
+          var isActive = link.getAttribute('data-section') === current;
+          link.classList.toggle('active', isActive);
+          link.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+      }
+
+      function scrollNavToActive() {
+        var active = sectionNav.querySelector('.active');
+        if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+
+      window.addEventListener('scroll', function() { updateActiveNav(); scrollNavToActive(); }, { passive: true });
+      updateActiveNav();
+    })();
+
+    // === Back to top button ===
+    (function() {
+      var btn = document.getElementById('backToTop');
+      window.addEventListener('scroll', function() {
+        btn.classList.toggle('visible', window.scrollY > 600);
+      }, { passive: true });
+      btn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+
+    // === Profile System ===
+    (function() {
+      var profileToggle = document.getElementById('profileToggle');
+      var profilePanel = document.getElementById('profilePanel');
+      var profileOptions = document.querySelectorAll('.profile-option');
+      var profileRec = document.getElementById('profileRecommendation');
+      var profileClear = document.getElementById('profileClear');
+      var cards = document.querySelectorAll('.resource-card[data-profiles]');
+
+      var recommendations = {
+        'recem-formado': {
+          title: 'Recomendado para voce: Recem-formado',
+          text: 'Foque primeiro em BLS/ACLS, instale o Whitebook e MDCalc, e cadastre-se nas plataformas de vagas. O roadmap acima mostra o passo a passo ideal.'
+        },
+        'preparando-residencia': {
+          title: 'Recomendado para voce: Preparando Residencia',
+          text: 'Compare os cursinhos na tabela abaixo, baixe o Anki para repeticao espacada e acompanhe o Blog Medway para editais. Foque no banco de questoes da sua instituicao-alvo.'
+        },
+        'ja-trabalhando': {
+          title: 'Recomendado para voce: Ja Trabalhando',
+          text: 'Aproveite o Telessaude para duvidas clinicas, mantenha a RENAME e as Linhas de Cuidado como referencia na UBS, e renove suas certificacoes (ACLS/ATLS) em dia.'
+        }
+      };
+
+      function applyProfile(profile) {
+        cards.forEach(function(card) {
+          var profiles = (card.getAttribute('data-profiles') || '').split(',');
+          card.classList.toggle('profile-recommended', profiles.indexOf(profile) !== -1);
+        });
+
+        profileOptions.forEach(function(opt) {
+          opt.classList.toggle('selected', opt.getAttribute('data-profile') === profile);
+        });
+
+        var rec = recommendations[profile];
+        if (rec) {
+          profileRec.innerHTML = '<strong>' + rec.title + '</strong>' + rec.text;
+          profileRec.classList.add('visible');
+        }
+
+        profileClear.classList.add('visible');
+        localStorage.setItem('medstack-profile', profile);
+      }
+
+      function clearProfile() {
+        cards.forEach(function(card) { card.classList.remove('profile-recommended'); });
+        profileOptions.forEach(function(opt) { opt.classList.remove('selected'); });
+        profileRec.classList.remove('visible');
+        profileClear.classList.remove('visible');
+        localStorage.removeItem('medstack-profile');
+      }
+
+      profileToggle.addEventListener('click', function() {
+        var isVisible = profilePanel.classList.toggle('visible');
+        profileToggle.classList.toggle('active', isVisible);
+        // Close favorites if open
+        document.getElementById('favoritesPanel').classList.remove('visible');
+        document.getElementById('favoritesToggle').classList.remove('active');
+      });
+
+      profileOptions.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          applyProfile(this.getAttribute('data-profile'));
+        });
+      });
+
+      profileClear.addEventListener('click', clearProfile);
+
+      // Restore saved profile
+      var savedProfile = localStorage.getItem('medstack-profile');
+      if (savedProfile) applyProfile(savedProfile);
+    })();
+
+    // === Bookmarks / Favorites System ===
+    (function() {
+      var favToggle = document.getElementById('favoritesToggle');
+      var favPanel = document.getElementById('favoritesPanel');
+      var favList = document.getElementById('favoritesList');
+      var favCount = document.getElementById('favCount');
+      var favClearAll = document.getElementById('favoritesClearAll');
+      var bookmarkBtns = document.querySelectorAll('.bookmark-btn');
+
+      function getFavorites() {
+        try { return JSON.parse(localStorage.getItem('medstack-favorites') || '[]'); }
+        catch(e) { return []; }
+      }
+
+      function saveFavorites(favs) {
+        localStorage.setItem('medstack-favorites', JSON.stringify(favs));
+      }
+
+      function getCardInfo(id) {
+        var card = document.querySelector('.resource-card[data-id="' + id + '"]');
+        if (!card) return null;
+        var titleEl = card.querySelector('h3 a');
+        return {
+          id: id,
+          title: titleEl ? titleEl.textContent : id,
+          url: titleEl ? titleEl.getAttribute('href') : '#'
+        };
+      }
+
+      function updateUI() {
+        var favs = getFavorites();
+        favCount.textContent = favs.length > 0 ? favs.length : '';
+
+        // Update bookmark buttons
+        bookmarkBtns.forEach(function(btn) {
+          var id = btn.getAttribute('data-bookmark');
+          btn.classList.toggle('bookmarked', favs.indexOf(id) !== -1);
+        });
+
+        // Render favorites list
+        if (favs.length === 0) {
+          favList.innerHTML = '<li class="favorites-empty">Nenhum recurso salvo ainda. Clique no icone de marcador em qualquer card para salvar.</li>';
+          favClearAll.style.display = 'none';
+        } else {
+          favList.innerHTML = '';
+          favClearAll.style.display = '';
+          favs.forEach(function(id) {
+            var info = getCardInfo(id);
+            if (!info) return;
+            var li = document.createElement('li');
+            li.innerHTML = '<a href="' + info.url + '" target="_blank" rel="noopener noreferrer">' + info.title + '</a>';
+            var removeBtn = document.createElement('button');
+            removeBtn.className = 'fav-remove';
+            removeBtn.setAttribute('aria-label', 'Remover ' + info.title);
+            removeBtn.textContent = '\u00d7';
+            removeBtn.addEventListener('click', function() { toggleFavorite(id); });
+            li.appendChild(removeBtn);
+            favList.appendChild(li);
+          });
+        }
+      }
+
+      function toggleFavorite(id) {
+        var favs = getFavorites();
+        var idx = favs.indexOf(id);
+        if (idx !== -1) {
+          favs.splice(idx, 1);
+        } else {
+          favs.push(id);
+        }
+        saveFavorites(favs);
+        updateUI();
+      }
+
+      favToggle.addEventListener('click', function() {
+        var isVisible = favPanel.classList.toggle('visible');
+        favToggle.classList.toggle('active', isVisible);
+        // Close profile if open
+        document.getElementById('profilePanel').classList.remove('visible');
+        document.getElementById('profileToggle').classList.remove('active');
+        if (isVisible) updateUI();
+      });
+
+      bookmarkBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleFavorite(this.getAttribute('data-bookmark'));
+        });
+      });
+
+      favClearAll.addEventListener('click', function() {
+        saveFavorites([]);
+        updateUI();
+      });
+
+      // Initial render
+      updateUI();
+    })();
+
+    // === Search / Filter ===
+    (function() {
+      var input = document.getElementById('searchInput');
+      var clearBtn = document.getElementById('searchClear');
+      var noResults = document.getElementById('noResults');
+      var searchCount = document.getElementById('searchCount');
+      var highlights = document.getElementById('highlights');
+      var roadmap = document.getElementById('roadmap');
+      var sectionNav = document.getElementById('sectionNav');
+      var cards = document.querySelectorAll('.resource-card[data-searchable]');
+      var sections = document.querySelectorAll('.guide-section[data-searchable]');
+      var dividers = document.querySelectorAll('.section-divider');
+
+      function normalize(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      }
+
+      function doSearch() {
+        var query = normalize(input.value.trim());
+        clearBtn.classList.toggle('visible', query.length > 0);
+
+        if (!query) {
+          cards.forEach(function(c) { c.classList.remove('search-hidden'); });
+          sections.forEach(function(s) {
+            s.classList.remove('search-hidden');
+            if (!s.classList.contains('revealed')) s.classList.add('revealed');
+          });
+          dividers.forEach(function(d) { d.style.display = ''; });
+          highlights.style.display = '';
+          roadmap.style.display = '';
+          sectionNav.style.display = '';
+          noResults.classList.remove('visible');
+          searchCount.classList.remove('visible');
+          searchCount.textContent = '';
+          return;
+        }
+
+        highlights.style.display = 'none';
+        roadmap.style.display = 'none';
+
+        var visibleSections = new Set();
+
+        cards.forEach(function(card) {
+          var text = normalize(card.textContent);
+          var match = text.indexOf(query) !== -1;
+          card.classList.toggle('search-hidden', !match);
+          if (match) {
+            var section = card.closest('.guide-section');
+            if (section) visibleSections.add(section.id);
+          }
+        });
+
+        sections.forEach(function(section) {
+          var isVisible = visibleSections.has(section.id);
+          section.classList.toggle('search-hidden', !isVisible);
+          if (isVisible && !section.classList.contains('revealed')) section.classList.add('revealed');
+        });
+
+        dividers.forEach(function(d) { d.style.display = 'none'; });
+
+        var totalVisible = document.querySelectorAll('.resource-card[data-searchable]:not(.search-hidden)').length;
+        noResults.classList.toggle('visible', totalVisible === 0);
+        sectionNav.style.display = totalVisible === 0 ? 'none' : '';
+
+        if (totalVisible > 0) {
+          searchCount.textContent = totalVisible + ' recurso' + (totalVisible !== 1 ? 's' : '') + ' encontrado' + (totalVisible !== 1 ? 's' : '');
+          searchCount.classList.add('visible');
+        } else {
+          searchCount.classList.remove('visible');
+          searchCount.textContent = '';
+        }
+      }
+
+      var debounceTimer;
+      input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(doSearch, 150);
+      });
+
+      clearBtn.addEventListener('click', function() {
+        input.value = '';
+        doSearch();
+        input.focus();
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { input.value = ''; doSearch(); input.blur(); }
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          var firstCard = document.querySelector('.resource-card[data-searchable]:not(.search-hidden) h3 a');
+          if (firstCard) firstCard.focus();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          input.focus();
+          input.select();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        var active = document.activeElement;
+        if (!active || !active.closest('.resource-card')) return;
+        e.preventDefault();
+        var allLinks = Array.from(document.querySelectorAll('.resource-card[data-searchable]:not(.search-hidden) h3 a'));
+        var idx = allLinks.indexOf(active);
+        if (idx === -1) return;
+        var next = e.key === 'ArrowDown' ? (allLinks[idx + 1] || allLinks[0]) : (allLinks[idx - 1] || allLinks[allLinks.length - 1]);
+        if (next) next.focus();
+      });
+    })();
+  </script>
 </body>
 </html>
