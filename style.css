@@ -232,10 +232,89 @@ a:hover {
   line-height: 1.65;
 }
 
+.project-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
 .card-link {
   font-weight: 500;
   display: inline-block;
   padding: 0.5rem 0;
+}
+
+/* Lab */
+.lab {
+  padding: var(--space-xl) 0;
+}
+
+.lab h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.lab-intro {
+  color: var(--color-text-light);
+  margin-bottom: var(--space-lg);
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+.lab-card {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-md);
+  background: var(--color-bg);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.lab-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.lab-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  background: #eff6ff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.lab-card h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.lab-card p {
+  color: var(--color-text-light);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+.lab-card .card-link {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
 }
 
 /* About */
@@ -292,6 +371,10 @@ a:hover {
 
 /* Responsive */
 @media (min-width: 768px) {
+  .lab-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .project-card {
     grid-template-columns: 1fr 1fr;
     gap: 0;
@@ -321,6 +404,7 @@ a:hover {
   }
 
   .projects h2,
+  .lab h2,
   .about h2 {
     font-size: 2.25rem;
   }
