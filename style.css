@@ -274,12 +274,18 @@ a:hover {
 }
 
 .lab-card {
+  display: block;
   position: relative;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: var(--space-md);
   background: var(--color-bg);
+  color: inherit;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.lab-card:hover {
+  color: inherit;
 }
 
 .lab-card:hover {
@@ -315,6 +321,29 @@ a:hover {
 .lab-card .card-link {
   margin-top: 0.75rem;
   font-size: 0.95rem;
+}
+
+/* Lab page */
+.lab-page {
+  min-height: 60svh;
+  display: flex;
+  align-items: center;
+  padding: var(--space-xl) 0;
+}
+
+.lab-page-inner {
+  max-width: 600px;
+}
+
+.lab-page h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.lab-page p {
+  color: var(--color-text-light);
+  line-height: 1.7;
 }
 
 /* About */
