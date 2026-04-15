@@ -1,26 +1,982 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guia do Médico Recém-Formado — Version 10</title>
+  <title>Guia do Medico Recem-Formado — v10 | MedStack</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ===== V10 DESIGN TOKENS ===== */
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f7f8fa;
+      --bg-card: #ffffff;
+      --text: #1a1a2e;
+      --text-2: #4a4f6a;
+      --text-3: #8b90a5;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: #eff4ff;
+      --border: #e4e7ef;
+      --border-light: #f0f1f5;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --red: #dc2626;
+      --red-soft: #fef2f2;
+      --purple: #7c3aed;
+      --purple-soft: #f5f3ff;
+      --teal: #0d9488;
+      --teal-soft: #f0fdfa;
+      --r: 10px;
+      --r-sm: 6px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.07);
+      --tr: .18s ease;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f1117;
+      --bg-alt: #181b25;
+      --bg-card: #1e2130;
+      --text: #e4e6f0;
+      --text-2: #a0a4b8;
+      --text-3: #6b6f85;
+      --accent: #6699ff;
+      --accent-hover: #88b1ff;
+      --accent-soft: #1a2440;
+      --border: #2a2e3f;
+      --border-light: #22263a;
+      --green: #34d399;
+      --green-soft: #0d2818;
+      --amber: #fbbf24;
+      --amber-soft: #2a2010;
+      --red: #f87171;
+      --red-soft: #2a1010;
+      --purple: #a78bfa;
+      --purple-soft: #1e1635;
+      --teal: #5eead4;
+      --teal-soft: #0d2a28;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.3);
+    }
+
+    [data-theme="dark"] .nav { background: rgba(15,17,23,.95) !important; border-bottom-color: var(--border); }
+    [data-theme="dark"] body { background: var(--bg); color: var(--text); }
+
+    /* ===== RESET & LAYOUT ===== */
+    .v10 { font-family: var(--font); color: var(--text); background: var(--bg); min-height: 100vh; }
+    .v10-wrap { max-width: 1060px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* Header */
+    .v10-header { padding: 2.5rem 0 1.5rem; }
+    .v10-header .lab-tag { display: inline-block; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); background: var(--accent-soft); padding: .2rem .6rem; border-radius: 20px; margin-bottom: .5rem; }
+    .v10-header h1 { font-size: 1.65rem; font-weight: 700; color: var(--text); margin-bottom: .3rem; line-height: 1.25; letter-spacing: -.01em; }
+    .v10-header p { color: var(--text-2); font-size: .92rem; line-height: 1.55; max-width: 640px; }
+    .v10-topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .2rem; }
+    .v10-topbar .lab-tag { margin-bottom: 0; }
+
+    /* Dark toggle */
+    .v10-dark-btn { background: none; border: 1px solid var(--border); border-radius: var(--r-sm); padding: .3rem .7rem; cursor: pointer; font-size: .78rem; color: var(--text-2); font-family: inherit; transition: all var(--tr); }
+    .v10-dark-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ===== SEARCH ===== */
+    .v10-search { position: relative; margin-bottom: 1rem; }
+    .v10-search-icon { position: absolute; left: .85rem; top: 50%; transform: translateY(-50%); width: 17px; height: 17px; color: var(--text-3); pointer-events: none; }
+    .v10-search input { width: 100%; padding: .65rem 2.5rem .65rem 2.6rem; border: 1px solid var(--border); border-radius: var(--r); font-size: .88rem; background: var(--bg-card); color: var(--text); font-family: inherit; transition: border-color var(--tr), box-shadow var(--tr); }
+    .v10-search input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .v10-search input::placeholder { color: var(--text-3); }
+    .v10-search-clear { position: absolute; right: .75rem; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.15rem; color: var(--text-3); cursor: pointer; display: none; padding: .25rem; line-height: 1; transition: color var(--tr); }
+    .v10-search-clear:hover { color: var(--text); }
+    .v10-search-meta { font-size: .76rem; color: var(--text-3); margin-top: .3rem; }
+    .v10-kbd { font-size: .64rem; padding: .12rem .35rem; border: 1px solid var(--border); border-radius: 3px; color: var(--text-3); background: var(--bg-alt); font-family: inherit; margin-left: .2rem; }
+
+    /* ===== SECTION NAV ===== */
+    .v10-nav { position: sticky; top: 60px; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); margin: 0 -1.25rem; padding: 0 1.25rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .v10-nav::-webkit-scrollbar { display: none; }
+    .v10-nav-inner { display: flex; gap: 0; white-space: nowrap; }
+    .v10-nav a { display: inline-block; padding: .55rem .7rem; font-size: .78rem; font-weight: 500; color: var(--text-3); text-decoration: none; border-bottom: 2px solid transparent; transition: color var(--tr), border-color var(--tr); }
+    .v10-nav a:hover { color: var(--text); }
+    .v10-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+    [data-theme="dark"] .v10-nav { background: var(--bg); }
+
+    /* ===== ROADMAP ===== */
+    .v10-roadmap { margin-bottom: 1.75rem; }
+    .v10-label { display: flex; align-items: center; gap: .4rem; font-size: .78rem; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .65rem; }
+    .v10-label svg { width: 15px; height: 15px; }
+    .v10-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .5rem; }
+    .v10-step { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: .75rem; transition: border-color var(--tr); }
+    .v10-step:hover { border-color: var(--accent); }
+    .v10-step-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: .7rem; font-weight: 700; color: #fff; margin-bottom: .35rem; }
+    .v10-step-num.c1 { background: var(--accent); }
+    .v10-step-num.c2 { background: var(--green); }
+    .v10-step-num.c3 { background: var(--teal); }
+    .v10-step-num.c4 { background: var(--amber); }
+    .v10-step-num.c5 { background: var(--purple); }
+    .v10-step-num.c6 { background: var(--red); }
+    .v10-step-when { font-size: .66rem; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; color: var(--text-3); margin-bottom: .1rem; }
+    .v10-step h3 { font-size: .84rem; font-weight: 600; margin-bottom: .1rem; }
+    .v10-step p { font-size: .77rem; color: var(--text-2); line-height: 1.4; }
+
+    /* ===== NO RESULTS ===== */
+    .v10-empty { display: none; text-align: center; padding: 3rem 1rem; color: var(--text-3); font-size: .9rem; }
+
+    /* ===== SECTIONS ===== */
+    .v10-sections { padding: 1.25rem 0 3rem; }
+    .v10-section { margin-bottom: 2rem; }
+    .v10-section-head { display: flex; align-items: center; gap: .5rem; margin-bottom: .35rem; }
+    .v10-section-num { font-size: .7rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: .18rem .45rem; border-radius: var(--r-sm); min-width: 24px; text-align: center; }
+    .v10-section-head h2 { font-size: 1.15rem; font-weight: 700; margin: 0; }
+    .v10-section-desc { font-size: .84rem; color: var(--text-2); margin-bottom: .75rem; line-height: 1.5; }
+    .v10-divider { border: none; border-top: 1px solid var(--border-light); margin: 0; }
+
+    /* ===== RESOURCE CARDS ===== */
+    .v10-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .6rem; }
+    .v10-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: .85rem; transition: border-color var(--tr), box-shadow var(--tr); }
+    .v10-card:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
+    .v10-card-badges { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .35rem; }
+    .v10-badge { display: inline-block; font-size: .65rem; font-weight: 600; padding: .12rem .4rem; border-radius: 4px; line-height: 1.4; }
+    .v10-badge-type { background: var(--bg-alt); color: var(--text-2); }
+    .v10-badge-free { background: var(--green-soft); color: var(--green); }
+    .v10-badge-paid { background: var(--amber-soft); color: var(--amber); }
+    .v10-badge-rec { background: var(--accent-soft); color: var(--accent); }
+    .v10-card h3 { font-size: .9rem; font-weight: 600; margin-bottom: .25rem; }
+    .v10-card h3 a { color: var(--text); text-decoration: none; transition: color var(--tr); }
+    .v10-card h3 a:hover { color: var(--accent); }
+    .v10-card > p { font-size: .8rem; color: var(--text-2); line-height: 1.5; margin-bottom: .35rem; }
+    .v10-card-review { font-size: .76rem; color: var(--text-3); font-style: italic; margin-bottom: .35rem; padding-left: .6rem; border-left: 2px solid var(--border); line-height: 1.45; }
+    .v10-card-tags { display: flex; flex-wrap: wrap; gap: .25rem; margin-bottom: .35rem; }
+    .v10-tag { font-size: .65rem; padding: .1rem .38rem; border-radius: 4px; background: var(--bg-alt); color: var(--text-3); line-height: 1.4; }
+    .v10-card-link { font-size: .76rem; color: var(--accent); transition: color var(--tr); }
+    .v10-card-link:hover { color: var(--accent-hover); }
+
+    /* ===== COMPARE TABLE ===== */
+    .v10-tabs { display: flex; gap: .25rem; margin-bottom: .6rem; flex-wrap: wrap; }
+    .v10-tab { padding: .35rem .65rem; font-size: .78rem; border: 1px solid var(--border); background: var(--bg); color: var(--text-2); border-radius: var(--r-sm); cursor: pointer; font-family: inherit; transition: all var(--tr); }
+    .v10-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .v10-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .v10-table-wrap { overflow-x: auto; margin-top: .4rem; border-radius: var(--r-sm); border: 1px solid var(--border); }
+    .v10-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    .v10-table th, .v10-table td { padding: .5rem .65rem; text-align: left; border-bottom: 1px solid var(--border-light); }
+    .v10-table th { font-weight: 600; color: var(--text); background: var(--bg-alt); font-size: .75rem; text-transform: uppercase; letter-spacing: .02em; }
+    .v10-table td { color: var(--text-2); }
+    .v10-table tbody tr:last-child td { border-bottom: none; }
+    .v10-table tbody tr:hover td { background: var(--accent-soft); }
+
+    /* ===== COMMUNITY CARDS ===== */
+    .v10-communities { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .6rem; }
+    .v10-community { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: .8rem; transition: border-color var(--tr); }
+    .v10-community:hover { border-color: var(--accent); }
+    .v10-community h3 { font-size: .86rem; font-weight: 600; margin-bottom: .15rem; }
+    .v10-community p { font-size: .78rem; color: var(--text-2); line-height: 1.4; margin-bottom: .3rem; }
+    .v10-community-platform { font-size: .7rem; font-weight: 600; color: var(--accent); }
+
+    /* ===== CALENDAR ===== */
+    .v10-calendar { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .5rem; }
+    .v10-cal-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: .7rem; display: flex; gap: .6rem; align-items: center; transition: border-color var(--tr); }
+    .v10-cal-item:hover { border-color: var(--accent); }
+    .v10-cal-date { min-width: 52px; text-align: center; flex-shrink: 0; }
+    .v10-cal-period { font-size: .68rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: .02em; line-height: 1.3; }
+    .v10-cal-info h3 { font-size: .82rem; font-weight: 600; margin-bottom: .05rem; }
+    .v10-cal-info p { font-size: .72rem; color: var(--text-2); line-height: 1.35; }
+    .v10-cal-note { font-size: .72rem; color: var(--text-3); margin-top: .5rem; font-style: italic; }
+
+    /* ===== CALCULATOR ===== */
+    .v10-calc { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 1rem; }
+    .v10-calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: .75rem; }
+    .v10-calc-field label { display: block; font-size: .74rem; font-weight: 500; color: var(--text-2); margin-bottom: .15rem; }
+    .v10-calc-field input { width: 100%; padding: .45rem .55rem; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: .82rem; font-family: inherit; color: var(--text); background: var(--bg); transition: border-color var(--tr); }
+    .v10-calc-field input:focus { outline: none; border-color: var(--accent); }
+    .v10-calc-result { background: var(--accent-soft); border-radius: var(--r); padding: .75rem; text-align: center; }
+    .v10-calc-result .big { font-size: 1.35rem; font-weight: 700; color: var(--accent); }
+    .v10-calc-result .detail { font-size: .74rem; color: var(--text-2); margin-top: .1rem; }
+
+    /* ===== CHECKLIST ===== */
+    .v10-checklist { display: flex; flex-direction: column; gap: .25rem; }
+    .v10-check-item { display: flex; align-items: center; gap: .5rem; padding: .45rem .65rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-sm); font-size: .82rem; cursor: pointer; transition: all var(--tr); user-select: none; }
+    .v10-check-item:hover { border-color: var(--accent); }
+    .v10-check-item.done { background: var(--green-soft); border-color: var(--green); }
+    .v10-check-item.done span { text-decoration: line-through; color: var(--text-3); }
+    .v10-check-item.done .v10-checkbox { background: var(--green); border-color: var(--green); }
+    .v10-check-item.done .v10-checkbox::after { content: ""; display: block; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin: -1px 0 0 1px; }
+    .v10-checkbox { width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all var(--tr); }
+    .v10-check-hint { font-size: .7rem; color: var(--text-3); margin-left: auto; white-space: nowrap; }
+    .v10-progress { margin-top: .5rem; }
+    .v10-progress-bar { height: 4px; background: var(--bg-alt); border-radius: 2px; overflow: hidden; }
+    .v10-progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .3s ease; }
+    .v10-progress-text { font-size: .74rem; color: var(--text-3); margin-top: .2rem; }
+
+    /* ===== QUIZ ===== */
+    .v10-quiz { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 1rem; }
+    .v10-quiz-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+    .v10-quiz-counter { font-size: .78rem; font-weight: 600; color: var(--text-2); }
+    .v10-quiz-diff { font-size: .66rem; font-weight: 600; padding: .1rem .38rem; border-radius: 4px; }
+    .v10-quiz-diff.easy { background: var(--green-soft); color: var(--green); }
+    .v10-quiz-diff.medium { background: var(--amber-soft); color: var(--amber); }
+    .v10-quiz-diff.hard { background: var(--red-soft); color: var(--red); }
+    .v10-quiz-spec { font-size: .7rem; color: var(--text-3); margin-bottom: .35rem; }
+    .v10-quiz-q { font-size: .88rem; font-weight: 500; margin-bottom: .5rem; line-height: 1.5; }
+    .v10-quiz-opts { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .65rem; }
+    .v10-quiz-opt { padding: .5rem .7rem; border: 1px solid var(--border); border-radius: var(--r-sm); cursor: pointer; font-size: .82rem; transition: all var(--tr); background: var(--bg); text-align: left; font-family: inherit; color: var(--text); line-height: 1.4; }
+    .v10-quiz-opt:hover:not(.correct):not(.wrong) { border-color: var(--accent); background: var(--accent-soft); }
+    .v10-quiz-opt.correct { border-color: var(--green); background: var(--green-soft); color: var(--green); font-weight: 500; }
+    .v10-quiz-opt.wrong { border-color: var(--red); background: var(--red-soft); color: var(--red); }
+    .v10-quiz-opt.disabled { pointer-events: none; opacity: .65; }
+    .v10-quiz-opt.correct.disabled { opacity: 1; }
+    .v10-quiz-explain { display: none; padding: .6rem; background: var(--bg-alt); border-radius: var(--r-sm); font-size: .8rem; color: var(--text-2); line-height: 1.5; margin-bottom: .6rem; }
+    .v10-quiz-actions { display: flex; gap: .35rem; }
+    .v10-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .42rem .8rem; border: none; border-radius: var(--r-sm); font-size: .8rem; font-weight: 500; cursor: pointer; transition: all var(--tr); font-family: inherit; }
+    .v10-btn-primary { background: var(--accent); color: #fff; }
+    .v10-btn-primary:hover { background: var(--accent-hover); }
+    .v10-btn-ghost { background: var(--bg-alt); color: var(--text-2); border: 1px solid var(--border); }
+    .v10-btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .v10-quiz-score { text-align: center; padding: 1.25rem; }
+    .v10-quiz-score h3 { font-size: 1.05rem; margin-bottom: .3rem; }
+    .v10-quiz-score .score-big { font-size: 2.2rem; font-weight: 700; color: var(--accent); }
+
+    /* ===== PRINT ===== */
+    @media print { .nav, .v10-nav, .v10-search, button { display: none !important; } .v10-card, .v10-section { break-inside: avoid; } body, .v10 { background: #fff !important; color: #000 !important; } }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) { .v10-header h1 { font-size: 1.3rem; } .v10-grid, .v10-calc-grid, .v10-communities, .v10-calendar { grid-template-columns: 1fr; } .v10-steps { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .v10-steps { grid-template-columns: 1fr; } .v10-wrap { padding: 0 1rem; } .v10-nav { margin: 0 -1rem; padding: 0 1rem; } }
+
+    /* ===== ACCESSIBILITY ===== */
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .v10-skip { position: absolute; left: -9999px; top: 0; background: var(--accent); color: #fff; padding: .5rem 1rem; z-index: 200; font-size: .82rem; border-radius: 0 0 var(--r-sm) var(--r-sm); text-decoration: none; }
+    .v10-skip:focus { left: 50%; transform: translateX(-50%); color: #fff; }
+  </style>
 </head>
 <body>
+  <a href="#main-content" class="v10-skip">Pular para conteudo principal</a>
+
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../guia-do-medico-recem-formado.html">&larr; Back</a>
+        <a href="../guia-do-medico-recem-formado.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
-  <main class="lab-page">
-    <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Guia do Médico Recém-Formado — Version 10</h1>
-    </div>
-  </main>
+
+  <div class="v10" id="app">
+    <main id="main-content">
+      <div class="v10-wrap">
+
+        <!-- Header -->
+        <header class="v10-header">
+          <div class="v10-topbar">
+            <span class="lab-tag">Version 10 — Final</span>
+            <button class="v10-dark-btn" id="darkToggle" aria-label="Alternar tema escuro/claro">Escuro</button>
+          </div>
+          <h1>Guia do Medico Recem-Formado</h1>
+          <p>Vagas, residencia, certificacoes, ferramentas e comunidades para quem acabou de se formar em medicina no Brasil.</p>
+        </header>
+
+        <!-- Search -->
+        <div class="v10-search" role="search" aria-label="Buscar recursos">
+          <svg class="v10-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar recursos (ex: Whitebook, ACLS, plantao, PJ...)" id="searchInput" autocomplete="off" aria-label="Campo de busca">
+          <button class="v10-search-clear" id="searchClear" aria-label="Limpar busca">&times;</button>
+        </div>
+        <div class="v10-search-meta" id="searchMeta"><span class="v10-kbd">Ctrl K</span> para buscar</div>
+
+        <!-- Roadmap -->
+        <div class="v10-roadmap" aria-label="Roteiro dos primeiros meses">
+          <div class="v10-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> Por onde comecar</div>
+          <div class="v10-steps">
+            <div class="v10-step"><div class="v10-step-num c1">1</div><div class="v10-step-when">Semana 1-2</div><h3>CRM estadual</h3><p>Registre-se no Conselho Regional do seu estado.</p></div>
+            <div class="v10-step"><div class="v10-step-num c2">2</div><div class="v10-step-when">Semana 2-4</div><h3>Abrir PJ</h3><p>CNPJ medico para trabalhar como pessoa juridica em plantoes.</p></div>
+            <div class="v10-step"><div class="v10-step-num c3">3</div><div class="v10-step-when">Mes 1</div><h3>Certificacoes</h3><p>BLS primeiro, depois ACLS. Portas de PS exigem.</p></div>
+            <div class="v10-step"><div class="v10-step-num c4">4</div><div class="v10-step-when">Mes 1</div><h3>Apps essenciais</h3><p>Whitebook, MDCalc e Medscape no celular.</p></div>
+            <div class="v10-step"><div class="v10-step-num c5">5</div><div class="v10-step-when">Mes 1-2</div><h3>Primeiros plantoes</h3><p>Cadastre-se em plataformas de vagas e comece a trabalhar.</p></div>
+            <div class="v10-step"><div class="v10-step-num c6">6</div><div class="v10-step-when">Mes 2+</div><h3>Residencia</h3><p>Escolha preparatorio e comece banco de questoes.</p></div>
+          </div>
+        </div>
+
+        <!-- Section nav -->
+        <nav class="v10-nav" id="sectionNav" aria-label="Secoes do guia">
+          <div class="v10-nav-inner">
+            <a href="#primeiros-passos" data-section="primeiros-passos">Primeiros Passos</a>
+            <a href="#trabalho" data-section="trabalho">Trabalho</a>
+            <a href="#residencia" data-section="residencia">Residencia</a>
+            <a href="#comparativo" data-section="comparativo">Comparar</a>
+            <a href="#certificacoes" data-section="certificacoes">Certificacoes</a>
+            <a href="#ferramentas" data-section="ferramentas">Ferramentas</a>
+            <a href="#referencias" data-section="referencias">Referencias</a>
+            <a href="#comunidades" data-section="comunidades">Comunidades</a>
+            <a href="#calendario" data-section="calendario">Calendario</a>
+            <a href="#custos" data-section="custos">Custos</a>
+            <a href="#quiz" data-section="quiz">Quiz</a>
+            <a href="#checklist" data-section="checklist">Checklist</a>
+          </div>
+        </nav>
+
+        <div class="v10-empty" id="noResults">Nenhum recurso encontrado. Tente outra busca.</div>
+
+        <div class="v10-sections">
+
+          <!-- S01: Primeiros Passos (CRM + PJ) -->
+          <section class="v10-section" id="primeiros-passos" data-searchable aria-labelledby="primeiros-passos-h">
+            <div class="v10-section-head"><span class="v10-section-num">01</span><h2 id="primeiros-passos-h">Primeiros Passos Burocraticos</h2></div>
+            <p class="v10-section-desc">O que fazer antes de comecar a trabalhar: CRM e abertura de PJ.</p>
+            <div class="v10-grid">
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Registro</span><span class="v10-badge v10-badge-paid">Custo variavel</span><span class="v10-badge v10-badge-rec">Obrigatorio</span></div>
+                <h3>Obter CRM Estadual</h3>
+                <p>O CRM (Conselho Regional de Medicina) e obrigatorio para exercer a medicina. Voce precisa do diploma e historico da faculdade. O registro e feito no CRM do estado onde voce vai atuar. Se mudar de estado, precisa de transferencia ou inscricao secundaria.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Obrigatorio</span><span class="v10-tag">~R$500-800 anuidade</span><span class="v10-tag">Demora 1-4 semanas</span></div>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Empresa</span><span class="v10-badge v10-badge-paid">~R$150-300/mes</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3>Abrir PJ (Pessoa Juridica)</h3>
+                <p>A maioria dos plantoes e contratos medicos no Brasil exige emissao de nota fiscal (PJ). Abra um CNPJ medico (atividade CNAE 8630-5/03) como MEI medico nao e permitido, entao o formato mais usado e Sociedade Limitada Unipessoal (SLU) no Simples Nacional. Um contador especializado em medicos facilita muito.</p>
+                <div class="v10-card-tags"><span class="v10-tag">SLU / Simples Nacional</span><span class="v10-tag">Exigido para plantoes PJ</span><span class="v10-tag">Contador medico</span></div>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Dica</span></div>
+                <h3>E o CNES? E o RQE?</h3>
+                <p><strong>CNES</strong> (Cadastro Nacional de Estabelecimentos de Saude) e o registro do <em>estabelecimento</em>, nao do medico. O hospital ou clinica que te contrata cuida disso. <strong>RQE</strong> (Registro de Qualificacao de Especialista) so se aplica apos completar residencia medica ou prova de titulo. Recem-formado nao precisa se preocupar com nenhum dos dois agora.</p>
+                <div class="v10-card-tags"><span class="v10-tag">CNES = responsabilidade do empregador</span><span class="v10-tag">RQE = so para especialistas</span></div>
+              </article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S02: Trabalho -->
+          <section class="v10-section" id="trabalho" data-searchable aria-labelledby="trabalho-h">
+            <div class="v10-section-head"><span class="v10-section-num">02</span><h2 id="trabalho-h">Como Conseguir Trabalho</h2></div>
+            <p class="v10-section-desc">Vagas para generalista, plantonista e concursos publicos.</p>
+            <div class="v10-grid">
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Site</span><span class="v10-badge v10-badge-free">Gratis</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://www.empregamed.com.br" target="_blank" rel="noopener noreferrer">EmpregaMed</a></h3>
+                <p>Uma das maiores plataformas de vagas medicas do Brasil. Filtros por tipo de contrato (CLT, PJ, plantao), especialidade e estado.</p>
+                <div class="v10-card-tags"><span class="v10-tag">CLT / PJ / Plantao</span><span class="v10-tag">Filtros avancados</span></div>
+                <a class="v10-card-link" href="https://www.empregamed.com.br" target="_blank" rel="noopener noreferrer">empregamed.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">App</span><span class="v10-badge v10-badge-free">Gratis</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">Plantao Ja</a></h3>
+                <p>Plataforma focada em plantoes medicos. Notificacoes de vagas disponiveis na sua regiao.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Plantoes</span><span class="v10-tag">Notificacoes em tempo real</span></div>
+                <a class="v10-card-link" href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">plantaoja.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Site</span><span class="v10-badge v10-badge-free">Gratis</span></div>
+                <h3><a href="https://www.pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">PCI Concursos</a></h3>
+                <p>Agregador de concursos publicos para medicos em todo o Brasil. Estabilidade e bons salarios.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Concursos</span><span class="v10-tag">Estabilidade</span></div>
+                <a class="v10-card-link" href="https://www.pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">pciconcursos.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Site</span><span class="v10-badge v10-badge-free">Gratis</span></div>
+                <h3><a href="https://www.gov.br/saude/pt-br/composicao/sgtes/mais-medicos" target="_blank" rel="noopener noreferrer">Programa Mais Medicos</a></h3>
+                <p>Programa federal de alocacao de medicos em municipios com carencia. Bolsa atrativa e experiencia em APS.</p>
+                <div class="v10-card-tags"><span class="v10-tag">APS</span><span class="v10-tag">Interior</span><span class="v10-tag">Federal</span></div>
+                <a class="v10-card-link" href="https://www.gov.br/saude/pt-br/composicao/sgtes/mais-medicos" target="_blank" rel="noopener noreferrer">gov.br/mais-medicos</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Grupos</span><span class="v10-badge v10-badge-free">Gratis</span></div>
+                <h3>Grupos de WhatsApp/Telegram</h3>
+                <p>Muitas vagas de plantao circulam em grupos regionais de WhatsApp e Telegram. Pergunte a colegas da sua cidade ou do seu CRM regional.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Vagas informais</span><span class="v10-tag">Networking</span></div>
+              </article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S03: Residencia -->
+          <section class="v10-section" id="residencia" data-searchable aria-labelledby="residencia-h">
+            <div class="v10-section-head"><span class="v10-section-num">03</span><h2 id="residencia-h">Estudar para Residencia</h2></div>
+            <p class="v10-section-desc">Principais cursos preparatorios para residencia medica.</p>
+            <div class="v10-grid">
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Curso</span><span class="v10-badge v10-badge-paid">Pago</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">Medcurso</a></h3>
+                <p>O mais tradicional preparatorio do Brasil. Apostilas extensivas com conteudo denso. Forte referencia para provas do Rio de Janeiro.</p>
+                <div class="v10-card-review">"Material denso mas completo. Se voce gosta de ler, e imbativel." -- R3 Clinica Medica UERJ</div>
+                <div class="v10-card-tags"><span class="v10-tag">Apostilas extensivas</span><span class="v10-tag">Foco RJ</span><span class="v10-tag">~R$6.000/ano</span></div>
+                <a class="v10-card-link" href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">medcurso.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Curso</span><span class="v10-badge v10-badge-paid">Pago</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">Estrategia MED</a></h3>
+                <p>Plataforma com videoaulas organizadas, banco de questoes robusto e plano de estudo adaptativo. Cresceu muito nos ultimos anos.</p>
+                <div class="v10-card-review">"A plataforma mais organizada que ja usei. O banco de questoes e excelente." -- Aprovada USP 2025</div>
+                <div class="v10-card-tags"><span class="v10-tag">Videoaulas</span><span class="v10-tag">Plano adaptativo</span><span class="v10-tag">~R$4.000/ano</span></div>
+                <a class="v10-card-link" href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">estrategiamed.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Curso</span><span class="v10-badge v10-badge-paid">Pago</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">Medway</a></h3>
+                <p>Focado em provas de SP (USP, Unifesp, Santa Casa). Banco de questoes comentadas e simulados periodicos. Blog com conteudo gratuito.</p>
+                <div class="v10-card-review">"Os simulados sao muito proximos da prova real." -- R1 Cirurgia Unifesp</div>
+                <div class="v10-card-tags"><span class="v10-tag">Foco SP</span><span class="v10-tag">Banco de questoes</span><span class="v10-tag">~R$4.500/ano</span></div>
+                <a class="v10-card-link" href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">medway.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Curso</span><span class="v10-badge v10-badge-paid">Pago</span></div>
+                <h3><a href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">Medcel</a></h3>
+                <p>Videoaulas e apostilas com bom custo-beneficio. Boa opcao para quem tem orcamento mais apertado.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Custo-beneficio</span><span class="v10-tag">~R$3.000/ano</span></div>
+                <a class="v10-card-link" href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">medcel.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Curso</span><span class="v10-badge v10-badge-paid">Pago</span></div>
+                <h3><a href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">Hardwork Medicina</a></h3>
+                <p>Metodologia baseada em revisao ativa e repeticao espacada. Foco em alto rendimento e memorizacao duradoura.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Repeticao espacada</span><span class="v10-tag">~R$4.000/ano</span></div>
+                <a class="v10-card-link" href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">hardworkmedicina.com.br</a>
+              </article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S04: Comparativo -->
+          <section class="v10-section" id="comparativo" data-searchable aria-labelledby="comparativo-h">
+            <div class="v10-section-head"><span class="v10-section-num">04</span><h2 id="comparativo-h">Comparativo de Recursos</h2></div>
+            <p class="v10-section-desc">Compare cursinhos, apps e certificacoes lado a lado.</p>
+            <div class="v10-tabs" role="tablist" aria-label="Categorias de comparacao">
+              <button class="v10-tab active" data-tab="cursos" role="tab" aria-selected="true">Cursinhos</button>
+              <button class="v10-tab" data-tab="apps" role="tab" aria-selected="false">Apps Medicos</button>
+              <button class="v10-tab" data-tab="certs" role="tab" aria-selected="false">Certificacoes</button>
+            </div>
+            <div class="v10-table-wrap" role="tabpanel">
+              <table class="v10-table" id="compareTable">
+                <thead id="compareHead"></thead>
+                <tbody id="compareBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S05: Certificacoes -->
+          <section class="v10-section" id="certificacoes" data-searchable aria-labelledby="certificacoes-h">
+            <div class="v10-section-head"><span class="v10-section-num">05</span><h2 id="certificacoes-h">Certificacoes Essenciais</h2></div>
+            <p class="v10-section-desc">Certificacoes que abrem portas em pronto-socorro e UTI. Muitos hospitais exigem BLS e ACLS para contratacao.</p>
+            <div class="v10-grid">
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Certificacao</span><span class="v10-badge v10-badge-paid">~R$800</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3>BLS (Basic Life Support)</h3>
+                <p>Suporte Basico de Vida pela AHA (American Heart Association). Pre-requisito para ACLS. Curso presencial de 1 dia com certificado internacional.</p>
+                <div class="v10-card-tags"><span class="v10-tag">1 dia</span><span class="v10-tag">AHA</span><span class="v10-tag">Validade 2 anos</span><span class="v10-tag">Faca primeiro</span></div>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Certificacao</span><span class="v10-badge v10-badge-paid">~R$1.500</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3>ACLS (Advanced Cardiac Life Support)</h3>
+                <p>Suporte Avancado de Vida em Cardiologia. Essencial para PS e UTI. Curso de 2 dias. Muitos hospitais privados exigem para contratacao.</p>
+                <div class="v10-card-tags"><span class="v10-tag">2 dias</span><span class="v10-tag">AHA</span><span class="v10-tag">Exigido em muitos PS</span></div>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Certificacao</span><span class="v10-badge v10-badge-paid">~R$3.000</span></div>
+                <h3>ATLS (Advanced Trauma Life Support)</h3>
+                <p>Atendimento Avancado ao Trauma pelo ACS (American College of Surgeons). Valorizado em PS de emergencia e SAMU. Investimento mais alto.</p>
+                <div class="v10-card-tags"><span class="v10-tag">2.5 dias</span><span class="v10-tag">ACS</span><span class="v10-tag">Validade 4 anos</span></div>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Certificacao</span><span class="v10-badge v10-badge-paid">~R$1.500</span></div>
+                <h3>PALS (Pediatric Advanced Life Support)</h3>
+                <p>Suporte Avancado de Vida em Pediatria pela AHA. Indicado para quem vai atuar em PS infantil ou pediatria.</p>
+                <div class="v10-card-tags"><span class="v10-tag">2 dias</span><span class="v10-tag">AHA</span><span class="v10-tag">Validade 2 anos</span></div>
+              </article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S06: Ferramentas -->
+          <section class="v10-section" id="ferramentas" data-searchable aria-labelledby="ferramentas-h">
+            <div class="v10-section-head"><span class="v10-section-num">06</span><h2 id="ferramentas-h">Ferramentas do Dia a Dia</h2></div>
+            <p class="v10-section-desc">Apps e recursos para plantao, UBS e estudo.</p>
+            <div class="v10-grid">
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">App</span><span class="v10-badge v10-badge-paid">Pago</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook</a></h3>
+                <p>O app mais usado por medicos no Brasil. Condutas clinicas, prescricoes prontas, CIDs, bulario e calculadoras. Funciona offline.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Condutas</span><span class="v10-tag">Prescricoes</span><span class="v10-tag">~R$50/mes</span></div>
+                <a class="v10-card-link" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">App</span><span class="v10-badge v10-badge-free">Gratis</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">MDCalc</a></h3>
+                <p>Calculadoras medicas validadas por evidencia: CURB-65, Wells, CHA2DS2-VASc, Glasgow, MELD e centenas de outros scores.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Calculadoras</span><span class="v10-tag">Scores</span><span class="v10-tag">Funciona offline</span></div>
+                <a class="v10-card-link" href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">mdcalc.com</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">App</span><span class="v10-badge v10-badge-free">Gratis</span></div>
+                <h3><a href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">Medscape</a></h3>
+                <p>Verificador de interacoes medicamentosas, protocolos clinicos e noticias medicas. Conteudo em ingles.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Interacoes</span><span class="v10-tag">Protocolos</span><span class="v10-tag">Ingles</span></div>
+                <a class="v10-card-link" href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">medscape.com</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">App</span><span class="v10-badge v10-badge-paid">Pago</span></div>
+                <h3><a href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">UpToDate</a></h3>
+                <p>Maior base de evidencias clinicas do mundo. Muitos hospitais e faculdades dao acesso institucional gratuito — verifique antes de assinar.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Evidencias</span><span class="v10-tag">Cheque acesso institucional</span></div>
+                <a class="v10-card-link" href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">uptodate.com</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Servico</span><span class="v10-badge v10-badge-free">Gratis</span></div>
+                <h3><a href="https://telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">Telessaude UFMG</a></h3>
+                <p>Teleconsultoria gratuita para profissionais da APS. Voce envia uma duvida clinica e recebe resposta de especialistas. Vinculado ao Ministerio da Saude.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Teleconsultoria</span><span class="v10-tag">APS / ESF</span><span class="v10-tag">Gratuito pelo SUS</span></div>
+                <a class="v10-card-link" href="https://telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">telessaude.hc.ufmg.br</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Livro</span><span class="v10-badge v10-badge-paid">Pago</span></div>
+                <h3>Tratado de MFC (Gusso, Lopes & Dias)</h3>
+                <p>Referencia brasileira em Medicina de Familia e Comunidade. Essencial para quem vai trabalhar em UBS ou ESF.</p>
+                <div class="v10-card-tags"><span class="v10-tag">MFC</span><span class="v10-tag">Referencia nacional</span></div>
+              </article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S07: Referencias -->
+          <section class="v10-section" id="referencias" data-searchable aria-labelledby="referencias-h">
+            <div class="v10-section-head"><span class="v10-section-num">07</span><h2 id="referencias-h">Referencias e Estudo</h2></div>
+            <p class="v10-section-desc">Materiais de referencia e ferramentas de estudo continuo.</p>
+            <div class="v10-grid">
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">App</span><span class="v10-badge v10-badge-free">Gratis</span><span class="v10-badge v10-badge-rec">Recomendado</span></div>
+                <h3><a href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">Anki</a></h3>
+                <p>Software de repeticao espacada com eficacia comprovada. Crie seus proprios flashcards ou baixe decks prontos de medicina. Gratis no desktop e Android (pago no iOS).</p>
+                <div class="v10-card-tags"><span class="v10-tag">Repeticao espacada</span><span class="v10-tag">Decks prontos</span><span class="v10-tag">Gratis*</span></div>
+                <a class="v10-card-link" href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">ankiweb.net</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Plataforma</span><span class="v10-badge v10-badge-paid">Pago</span></div>
+                <h3><a href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">Sanar</a></h3>
+                <p>Videoaulas, resumos e banco de questoes para residencia. Conteudo organizado por tema. Pode ser complemento ao cursinho principal.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Videoaulas</span><span class="v10-tag">Resumos</span><span class="v10-tag">~R$100/mes</span></div>
+                <a class="v10-card-link" href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">sanarmed.com</a>
+              </article>
+              <article class="v10-card" data-searchable>
+                <div class="v10-card-badges"><span class="v10-badge v10-badge-type">Site</span><span class="v10-badge v10-badge-free">Gratis</span></div>
+                <h3><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">PubMed</a></h3>
+                <p>Maior base de artigos cientificos em medicina do mundo. Essencial para buscar evidencias e se manter atualizado.</p>
+                <div class="v10-card-tags"><span class="v10-tag">Artigos cientificos</span><span class="v10-tag">Pesquisa</span></div>
+                <a class="v10-card-link" href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">pubmed.ncbi.nlm.nih.gov</a>
+              </article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S08: Comunidades -->
+          <section class="v10-section" id="comunidades" data-searchable aria-labelledby="comunidades-h">
+            <div class="v10-section-head"><span class="v10-section-num">08</span><h2 id="comunidades-h">Comunidades</h2></div>
+            <p class="v10-section-desc">Grupos para trocar experiencias, duvidas e oportunidades com outros medicos.</p>
+            <div class="v10-communities">
+              <article class="v10-community" data-searchable><h3>Grupos de Telegram regionais</h3><p>Busque por "medicos recem-formados [seu estado]" no Telegram. Grupos ativos com vagas, duvidas e dicas do dia a dia.</p><span class="v10-community-platform">Telegram</span></article>
+              <article class="v10-community" data-searchable><h3>r/medicina</h3><p>Subreddit brasileiro para discussao de carreira medica, residencia, plantoes e especializacao.</p><span class="v10-community-platform">Reddit</span></article>
+              <article class="v10-community" data-searchable><h3>Grupos de residencia (Facebook)</h3><p>Grupos como "Residencia Medica" e "Residencia Medica Brasil" com dicas de estudo e relatos de aprovados.</p><span class="v10-community-platform">Facebook</span></article>
+              <article class="v10-community" data-searchable><h3>Comunidade do seu cursinho</h3><p>Medcurso, Estrategia MED, Medway — todos tem grupos de alunos no Telegram ou Discord. Otimo para duvidas e motivacao.</p><span class="v10-community-platform">Telegram / Discord</span></article>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S09: Calendario -->
+          <section class="v10-section" id="calendario" data-searchable aria-labelledby="calendario-h">
+            <div class="v10-section-head"><span class="v10-section-num">09</span><h2 id="calendario-h">Calendario de Provas 2026</h2></div>
+            <p class="v10-section-desc">Periodos estimados das principais provas de residencia. Datas exatas sao divulgadas pelos editais ao longo do ano.</p>
+            <div class="v10-calendar">
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Ago-Out</div></div><div class="v10-cal-info"><h3>ENARE 2026</h3><p>Exame Nacional de Residencia. Inscricao geralmente entre junho e agosto.</p></div></div>
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Set-Out</div></div><div class="v10-cal-info"><h3>USP (FMUSP)</h3><p>Uma das provas mais concorridas. Prova geralmente entre setembro e novembro.</p></div></div>
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Out-Nov</div></div><div class="v10-cal-info"><h3>Unifesp</h3><p>Universidade Federal de Sao Paulo. Prova no segundo semestre.</p></div></div>
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Out-Nov</div></div><div class="v10-cal-info"><h3>Unicamp</h3><p>Universidade Estadual de Campinas. Provas entre outubro e novembro.</p></div></div>
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Nov-Dez</div></div><div class="v10-cal-info"><h3>Santa Casa SP</h3><p>Santa Casa de Misericordia de Sao Paulo. Final do segundo semestre.</p></div></div>
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Nov-Jan</div></div><div class="v10-cal-info"><h3>SUS-SP</h3><p>Prova unificada do SUS no estado de SP. Geralmente entre novembro e janeiro.</p></div></div>
+              <div class="v10-cal-item" data-searchable><div class="v10-cal-date"><div class="v10-cal-period">Out-Dez</div></div><div class="v10-cal-info"><h3>UERJ</h3><p>Universidade do Estado do Rio de Janeiro. Segundo semestre.</p></div></div>
+            </div>
+            <p class="v10-cal-note">* Datas aproximadas baseadas em anos anteriores. Sempre consulte os editais oficiais das instituicoes.</p>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S10: Custos -->
+          <section class="v10-section" id="custos" data-searchable aria-labelledby="custos-h">
+            <div class="v10-section-head"><span class="v10-section-num">10</span><h2 id="custos-h">Calculadora de Custos</h2></div>
+            <p class="v10-section-desc">Estime o investimento total no primeiro ano pos-formatura.</p>
+            <div class="v10-calc">
+              <div class="v10-calc-grid">
+                <div class="v10-calc-field"><label for="calcCRM">CRM anuidade (R$/ano)</label><input type="number" id="calcCRM" value="700" min="0"></div>
+                <div class="v10-calc-field"><label for="calcPJ">Abertura + manutencao PJ (R$/ano)</label><input type="number" id="calcPJ" value="3000" min="0"></div>
+                <div class="v10-calc-field"><label for="calcCurso">Cursinho preparatorio (R$/ano)</label><input type="number" id="calcCurso" value="4000" min="0"></div>
+                <div class="v10-calc-field"><label for="calcCerts">Certificacoes (BLS + ACLS)</label><input type="number" id="calcCerts" value="2300" min="0"></div>
+                <div class="v10-calc-field"><label for="calcApps">Apps e assinaturas (R$/ano)</label><input type="number" id="calcApps" value="600" min="0"></div>
+                <div class="v10-calc-field"><label for="calcLivros">Livros e materiais (R$/ano)</label><input type="number" id="calcLivros" value="500" min="0"></div>
+              </div>
+              <div class="v10-calc-result">
+                <div class="big" id="calcTotal">R$ 11.100</div>
+                <div class="detail">Investimento estimado no primeiro ano</div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S11: Quiz -->
+          <section class="v10-section" id="quiz" data-searchable aria-labelledby="quiz-h">
+            <div class="v10-section-head"><span class="v10-section-num">11</span><h2 id="quiz-h">Quiz Rapido</h2></div>
+            <p class="v10-section-desc">Teste seus conhecimentos com 10 questoes aleatorias no estilo residencia.</p>
+            <div class="v10-quiz" id="quizArea">
+              <div class="v10-quiz-head">
+                <span class="v10-quiz-counter" id="quizCounter">Questao 1 / 10</span>
+                <span class="v10-quiz-diff" id="quizDiff"></span>
+              </div>
+              <div class="v10-quiz-spec" id="quizSpec"></div>
+              <div class="v10-quiz-q" id="quizQ"></div>
+              <div class="v10-quiz-opts" id="quizOpts" role="group" aria-label="Opcoes de resposta"></div>
+              <div class="v10-quiz-explain" id="quizExplain"></div>
+              <div class="v10-quiz-actions">
+                <button class="v10-btn v10-btn-primary" id="quizNext">Proxima</button>
+                <button class="v10-btn v10-btn-ghost" id="quizRestart">Reiniciar</button>
+              </div>
+              <div class="v10-quiz-score" id="quizScore" style="display:none"></div>
+            </div>
+          </section>
+
+          <hr class="v10-divider">
+
+          <!-- S12: Checklist -->
+          <section class="v10-section" id="checklist" data-searchable aria-labelledby="checklist-h">
+            <div class="v10-section-head"><span class="v10-section-num">12</span><h2 id="checklist-h">Checklist do Recem-Formado</h2></div>
+            <p class="v10-section-desc">Marque cada item conforme for concluindo. Progresso salvo no navegador.</p>
+            <div class="v10-checklist" id="checklistArea" role="list"></div>
+            <div class="v10-progress">
+              <div class="v10-progress-bar"><div class="v10-progress-fill" id="checklistFill" style="width:0%"></div></div>
+              <div class="v10-progress-text" id="checklistText">0 de 0 concluidos</div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ===== DATA =====
+    var COMPARE = {
+      cursos: {
+        headers: ['Cursinho', 'Preco/ano', 'Formato', 'Banco de Questoes', 'Foco Regional', 'Destaque'],
+        rows: [
+          ['Medcurso', '~R$6.000', 'Apostilas + Video', 'Sim', 'RJ', 'Mais tradicional'],
+          ['Estrategia MED', '~R$4.000', 'Video + Adaptativo', 'Robusto', 'Nacional', 'Plano de estudo IA'],
+          ['Medway', '~R$4.500', 'Video + Simulados', 'Excelente', 'SP', 'Simulados realistas'],
+          ['Medcel', '~R$3.000', 'Video + Apostilas', 'Sim', 'Nacional', 'Melhor custo-beneficio'],
+          ['Hardwork', '~R$4.000', 'Questoes + Revisao', 'Sim', 'Nacional', 'Repeticao espacada'],
+          ['Sanar', '~R$1.200', 'Video + Resumos', 'Basico', 'Nacional', 'Complementar']
+        ]
+      },
+      apps: {
+        headers: ['App', 'Preco', 'Funcao Principal', 'Offline', 'Plataforma', 'Para quem'],
+        rows: [
+          ['Whitebook', '~R$50/mes', 'Condutas e prescricoes', 'Sim', 'iOS / Android', 'Todo medico BR'],
+          ['MDCalc', 'Gratis', 'Calculadoras medicas', 'Sim', 'iOS / Android / Web', 'PS e enfermaria'],
+          ['Medscape', 'Gratis', 'Interacoes + protocolos', 'Parcial', 'iOS / Android / Web', 'Quem le em ingles'],
+          ['UpToDate', 'Institucional*', 'Base de evidencias', 'Nao', 'Web / App', 'Cheque acesso gratis'],
+          ['Anki', 'Gratis*', 'Repeticao espacada', 'Sim', 'Multi', 'Estudo para prova']
+        ]
+      },
+      certs: {
+        headers: ['Certificacao', 'Preco', 'Duracao', 'Entidade', 'Validade', 'Indicado para'],
+        rows: [
+          ['BLS', '~R$800', '1 dia', 'AHA', '2 anos', 'Todos — faca primeiro'],
+          ['ACLS', '~R$1.500', '2 dias', 'AHA', '2 anos', 'PS / UTI / Enfermaria'],
+          ['ATLS', '~R$3.000', '2.5 dias', 'ACS', '4 anos', 'Trauma / SAMU'],
+          ['PALS', '~R$1.500', '2 dias', 'AHA', '2 anos', 'PS infantil / Pediatria'],
+          ['ALSO', '~R$2.000', '2 dias', 'AAFP', '~5 anos', 'Obstetricia / PSF'],
+          ['NRP', '~R$800', '1 dia', 'AAP/AHA', '2 anos', 'Sala de parto / Neo']
+        ]
+      }
+    };
+
+    var QUESTIONS = [
+      { q: "Qual e o antidoto para intoxicacao por benzodiazepinicos?", opts: ["Naloxona", "Flumazenil", "N-acetilcisteina", "Atropina"], correct: 1, explanation: "Flumazenil e o antagonista especifico dos receptores benzodiazepinico GABA-A. Naloxona e antidoto para opioides.", specialty: "Emergencia", difficulty: "easy" },
+      { q: "Paciente com suspeita de TEP e baixa probabilidade clinica (Wells <=4). Qual o primeiro exame?", opts: ["Angio-TC de torax", "D-dimero", "Ecocardiograma", "Cintilografia V/Q"], correct: 1, explanation: "Em pacientes com baixa probabilidade clinica, o D-dimero e usado para triagem. Se elevado, solicita-se angio-TC.", specialty: "Clinica Medica", difficulty: "medium" },
+      { q: "Qual antibiotico e primeira escolha para faringite estreptococica?", opts: ["Azitromicina", "Amoxicilina", "Cefalexina", "Clindamicina"], correct: 1, explanation: "Amoxicilina (ou penicilina benzatina IM) sao primeira escolha para S. pyogenes. Azitromicina e reservada para alergicos.", specialty: "Clinica Medica", difficulty: "easy" },
+      { q: "Qual e o sinal clinico mais precoce de hipertensao intracraniana?", opts: ["Bradicardia", "Cefaleia", "Vomitos em jato", "Papiledema"], correct: 1, explanation: "A cefaleia e o sintoma mais precoce, tipicamente pior pela manha. A triade de Cushing (HAS, bradicardia, alteracao respiratoria) e sinal tardio.", specialty: "Clinica Medica", difficulty: "medium" },
+      { q: "Na classificacao de Forrest, IIa corresponde a:", opts: ["Sangramento ativo em jato", "Vaso visivel sem sangramento", "Coagulo aderido", "Base limpa"], correct: 1, explanation: "Forrest IIa = vaso visivel nao sangrante, com alto risco de ressangramento (~40-50%). Ia = jato arterial, IIb = coagulo, III = base limpa.", specialty: "Cirurgia", difficulty: "hard" },
+      { q: "Qual e a principal causa de abdome agudo cirurgico?", opts: ["Apendicite aguda", "Colecistite aguda", "Obstrucao intestinal", "Ulcera perfurada"], correct: 0, explanation: "Apendicite aguda e a causa mais comum de abdome agudo cirurgico em todas as faixas etarias.", specialty: "Cirurgia", difficulty: "easy" },
+      { q: "Qual vacina e contraindicada em gestantes?", opts: ["Influenza", "Triplice viral (SCR)", "dTpa", "Hepatite B"], correct: 1, explanation: "SCR (sarampo, caxumba, rubeola) e vacina de virus vivo atenuado, contraindicada na gravidez. Influenza, dTpa e hepatite B sao seguras.", specialty: "GO", difficulty: "easy" },
+      { q: "Qual o marco do desenvolvimento esperado aos 2 meses de vida?", opts: ["Sentar sem apoio", "Sorriso social", "Pinca fina", "Falar palavras"], correct: 1, explanation: "O sorriso social e esperado entre 1,5 e 2 meses. Sentar sem apoio e aos ~6 meses, pinca fina aos ~9 meses.", specialty: "Pediatria", difficulty: "easy" },
+      { q: "Qual e a dose de adrenalina na PCR em adultos?", opts: ["0,5 mg IV a cada 3-5 min", "1 mg IV a cada 3-5 min", "0,1 mg/kg IV", "2 mg IV a cada 5 min"], correct: 1, explanation: "Adrenalina 1 mg IV/IO a cada 3-5 minutos durante a PCR, conforme protocolo ACLS da AHA.", specialty: "Emergencia", difficulty: "medium" },
+      { q: "Qual e o principal fator de risco para cancer de colo de utero?", opts: ["Tabagismo", "Infeccao persistente por HPV", "Uso de ACO", "Nuliparidade"], correct: 1, explanation: "Infeccao persistente por HPV oncogenico (tipos 16 e 18 principalmente) e o principal fator de risco.", specialty: "GO", difficulty: "easy" },
+      { q: "Qual e a triade de Cushing?", opts: ["Hipertensao, bradicardia, respiracao irregular", "Febre, ictericia, dor em HCD", "Hipotensao, taquicardia, sudorese", "Cefaleia, vomito, convulsao"], correct: 0, explanation: "Triade de Cushing: hipertensao arterial + bradicardia + alteracao do padrao respiratorio. Indica hipertensao intracraniana grave.", specialty: "Emergencia", difficulty: "medium" },
+      { q: "Qual vitamina esta deficiente no beriberi?", opts: ["B12 (cobalamina)", "B1 (tiamina)", "B6 (piridoxina)", "Acido folico (B9)"], correct: 1, explanation: "Beriberi e causado por deficiencia de tiamina (vitamina B1). Pode ser seco (neuropatia) ou umido (insuficiencia cardiaca).", specialty: "Clinica Medica", difficulty: "easy" },
+      { q: "Criterio de Light para exsudato: proteina do liquido/soro maior que:", opts: ["0,3", "0,5", "0,7", "0,1"], correct: 1, explanation: "Criterios de Light: proteina liquido/soro >0,5 OU LDH liquido/soro >0,6 OU LDH liquido >2/3 do limite superior normal serico.", specialty: "Clinica Medica", difficulty: "hard" },
+      { q: "Qual e a conduta inicial no volvulo de sigmoide sem sinais de peritonite?", opts: ["Cirurgia de emergencia", "Descompressao endoscopica", "Antibioticoterapia IV", "Observacao clinica"], correct: 1, explanation: "Descompressao por retossigmoidoscopia/colonoscopia e a primeira linha quando nao ha sinais de peritonite ou necrose.", specialty: "Cirurgia", difficulty: "medium" },
+      { q: "Ictericia neonatal fisiologica aparece tipicamente:", opts: ["Primeiras 24h de vida", "Apos 24-48h de vida", "Apos 7 dias de vida", "Apos 14 dias de vida"], correct: 1, explanation: "Ictericia fisiologica surge apos 24h (geralmente 2o-3o dia). Ictericia antes de 24h e SEMPRE patologica e requer investigacao.", specialty: "Pediatria", difficulty: "easy" },
+      { q: "Rastreamento de cancer colorretal — qual o exame padrao a partir dos 45 anos?", opts: ["TC de abdome anual", "Colonoscopia a cada 10 anos", "Retossigmoidoscopia anual", "CEA semestral"], correct: 1, explanation: "Colonoscopia a cada 10 anos e o exame padrao-ouro para rastreamento de cancer colorretal.", specialty: "Preventiva", difficulty: "easy" },
+      { q: "Na eclampsia, qual e a droga de escolha para prevenir e tratar convulsoes?", opts: ["Diazepam", "Sulfato de magnesio", "Fenitoina", "Fenobarbital"], correct: 1, explanation: "Sulfato de magnesio (esquema Zuspan IV ou Pritchard IM/IV) e o padrao-ouro tanto para prevencao quanto tratamento.", specialty: "GO", difficulty: "medium" },
+      { q: "Qual escore e classicamente usado para avaliar gravidade na pancreatite aguda?", opts: ["APACHE II", "Ranson / Glasgow-Imrie", "CURB-65", "Wells"], correct: 1, explanation: "Ranson e Glasgow-Imrie sao os escores classicos para pancreatite aguda. CURB-65 e para pneumonia, Wells para TEP.", specialty: "Cirurgia", difficulty: "medium" },
+      { q: "Qual e o agente mais comum de meningite bacteriana em neonatos?", opts: ["Neisseria meningitidis", "Streptococcus do grupo B (agalactiae)", "Haemophilus influenzae", "Listeria monocytogenes"], correct: 1, explanation: "S. agalactiae (GBS) e o mais comum em RN, seguido por E. coli e Listeria monocytogenes.", specialty: "Pediatria", difficulty: "medium" },
+      { q: "Quais sao os ritmos chovaveis na PCR?", opts: ["Assistolia e AESP", "FV e TV sem pulso", "Assistolia e FV", "AESP e TV sem pulso"], correct: 1, explanation: "Fibrilacao ventricular (FV) e taquicardia ventricular sem pulso (TVSP) sao os ritmos chovaveis. Assistolia e AESP nao sao.", specialty: "Emergencia", difficulty: "easy" },
+      { q: "Sinal de Blumberg positivo sugere:", opts: ["Derrame pleural", "Irritacao peritoneal", "Obstrucao intestinal", "Hepatomegalia"], correct: 1, explanation: "Blumberg: dor a descompressao brusca do abdome — sinal classico de irritacao peritoneal (peritonite).", specialty: "Cirurgia", difficulty: "easy" },
+      { q: "Qual e a principal causa de hipotireoidismo em adultos no Brasil?", opts: ["Tireoidite de Hashimoto", "Deficiencia de iodo", "Pos-tireoidectomia", "Uso de amiodarona"], correct: 0, explanation: "Tireoidite de Hashimoto (autoimune) e a causa mais comum em areas iodo-suficientes, como o Brasil apos a iodacao do sal.", specialty: "Clinica Medica", difficulty: "medium" },
+      { q: "Qual exame confirma o diagnostico de doenca celiaca?", opts: ["Anti-transglutaminase IgA + biopsia duodenal", "Teste de hidrogenio expirado", "Colonoscopia com biopsia", "Teste de Schilling"], correct: 0, explanation: "Anti-tTG IgA e o screening sorologico. A confirmacao e por biopsia duodenal mostrando atrofia vilositaria (Marsh III).", specialty: "Clinica Medica", difficulty: "hard" },
+      { q: "Qual indicador avalia a cobertura vacinal de uma populacao?", opts: ["Taxa de mortalidade infantil", "Doses aplicadas / populacao-alvo x 100", "Incidencia de doencas imunopreveniveeis", "IDH municipal"], correct: 1, explanation: "Cobertura vacinal = (doses aplicadas / populacao-alvo) x 100. Meta do PNI e geralmente >= 95%.", specialty: "Preventiva", difficulty: "easy" }
+    ];
+
+    var CHECKLIST_ITEMS = [
+      { text: "Registrar CRM no estado onde vai atuar", hint: "Semana 1" },
+      { text: "Contratar contador e abrir PJ (CNPJ medico)", hint: "Semana 2-3" },
+      { text: "Abrir conta bancaria PJ", hint: "Semana 3-4" },
+      { text: "Fazer curso de BLS (AHA)", hint: "Mes 1" },
+      { text: "Fazer curso de ACLS (AHA)", hint: "Mes 1-2" },
+      { text: "Instalar Whitebook no celular", hint: "Semana 1" },
+      { text: "Instalar MDCalc no celular", hint: "Semana 1" },
+      { text: "Cadastrar em plataformas de vagas (EmpregaMed, Plantao Ja)", hint: "Semana 2" },
+      { text: "Escolher cursinho preparatorio para residencia", hint: "Mes 1" },
+      { text: "Montar cronograma semanal de estudos", hint: "Mes 1" },
+      { text: "Fazer primeiro simulado diagnostico", hint: "Mes 1" },
+      { text: "Definir especialidade(s) alvo para residencia", hint: "Mes 2" },
+      { text: "Verificar datas de inscricao das provas de residencia", hint: "Primeiro semestre" },
+      { text: "Separar documentos para inscricoes (diploma, historico, CRM)", hint: "Antes das inscricoes" }
+    ];
+
+    // ===== HELPERS =====
+    var $ = function(s, p) { return (p || document).querySelector(s); };
+    var $$ = function(s, p) { return [].slice.call((p || document).querySelectorAll(s)); };
+
+    // ===== DARK MODE =====
+    var darkMode = localStorage.getItem('v10_dark') === 'true';
+    function applyDark() {
+      document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+      $('#darkToggle').textContent = darkMode ? 'Claro' : 'Escuro';
+    }
+    $('#darkToggle').addEventListener('click', function() {
+      darkMode = !darkMode;
+      localStorage.setItem('v10_dark', darkMode);
+      applyDark();
+    });
+    applyDark();
+
+    // ===== SEARCH =====
+    var searchInput = $('#searchInput');
+    var searchClear = $('#searchClear');
+    var searchMeta = $('#searchMeta');
+    var noResults = $('#noResults');
+
+    function doSearch() {
+      var q = searchInput.value.toLowerCase().trim();
+      searchClear.style.display = q ? 'block' : 'none';
+      var cards = $$('[data-searchable]');
+      var visible = 0;
+
+      if (!q) {
+        cards.forEach(function(c) { c.style.display = ''; });
+        $$('.v10-section').forEach(function(s) { s.style.display = ''; });
+        $$('.v10-divider').forEach(function(d) { d.style.display = ''; });
+        searchMeta.innerHTML = '<span class="v10-kbd">Ctrl K</span> para buscar';
+        noResults.style.display = 'none';
+        return;
+      }
+
+      cards.forEach(function(c) {
+        var match = c.textContent.toLowerCase().indexOf(q) !== -1;
+        c.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+
+      $$('.v10-section').forEach(function(s) {
+        var hasVisible = $$('[data-searchable]', s).some(function(c) { return c.style.display !== 'none'; });
+        s.style.display = hasVisible ? '' : 'none';
+      });
+
+      $$('.v10-divider').forEach(function(d) {
+        var next = d.nextElementSibling;
+        d.style.display = (next && next.style.display === 'none') ? 'none' : '';
+      });
+
+      searchMeta.textContent = visible + ' resultado' + (visible !== 1 ? 's' : '') + ' encontrado' + (visible !== 1 ? 's' : '');
+      noResults.style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    searchInput.addEventListener('input', doSearch);
+    searchClear.addEventListener('click', function() { searchInput.value = ''; doSearch(); searchInput.focus(); });
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); searchInput.focus(); }
+      if (e.key === 'Escape' && searchInput.value) { searchInput.value = ''; doSearch(); }
+    });
+
+    // ===== SECTION NAV =====
+    var navLinks = $$('.v10-nav a');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          navLinks.forEach(function(l) { l.classList.remove('active'); });
+          var link = $('.v10-nav a[data-section="' + entry.target.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-100px 0px -60% 0px' });
+    $$('.v10-section').forEach(function(s) { observer.observe(s); });
+
+    // ===== COMPARE TABLE =====
+    function renderCompare(tab) {
+      var data = COMPARE[tab];
+      if (!data) return;
+      $('#compareHead').innerHTML = '<tr>' + data.headers.map(function(h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+      $('#compareBody').innerHTML = data.rows.map(function(row) { return '<tr>' + row.map(function(c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('');
+    }
+    $$('.v10-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        $$('.v10-tab').forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        renderCompare(tab.dataset.tab);
+      });
+    });
+    renderCompare('cursos');
+
+    // ===== CALCULATOR =====
+    function updateCalc() {
+      var ids = ['calcCRM', 'calcPJ', 'calcCurso', 'calcCerts', 'calcApps', 'calcLivros'];
+      var total = 0;
+      ids.forEach(function(id) { total += parseFloat($('#' + id).value) || 0; });
+      $('#calcTotal').textContent = 'R$ ' + total.toLocaleString('pt-BR');
+    }
+    $$('.v10-calc-field input').forEach(function(input) { input.addEventListener('input', updateCalc); });
+
+    // ===== QUIZ =====
+    var quizQuestions = [];
+    var quizIdx = 0;
+    var quizCorrect = 0;
+    var quizAnswered = 0;
+    var QUIZ_SIZE = 10;
+
+    function shuffleQuiz() {
+      var shuffled = QUESTIONS.slice();
+      for (var i = shuffled.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = tmp;
+      }
+      quizQuestions = shuffled.slice(0, QUIZ_SIZE);
+      quizIdx = 0;
+      quizCorrect = 0;
+      quizAnswered = 0;
+    }
+
+    function renderQuiz() {
+      var q = quizQuestions[quizIdx];
+      if (!q) { showScore(); return; }
+
+      $('#quizScore').style.display = 'none';
+      $('#quizArea').querySelector('.v10-quiz-head').style.display = '';
+      $('#quizQ').style.display = '';
+      $('#quizOpts').style.display = '';
+      $('#quizSpec').style.display = '';
+
+      $('#quizCounter').textContent = 'Questao ' + (quizIdx + 1) + ' / ' + QUIZ_SIZE;
+
+      var diffLabels = { easy: 'Facil', medium: 'Media', hard: 'Dificil' };
+      var diffEl = $('#quizDiff');
+      diffEl.textContent = diffLabels[q.difficulty] || '';
+      diffEl.className = 'v10-quiz-diff ' + q.difficulty;
+
+      $('#quizSpec').textContent = q.specialty;
+      $('#quizQ').textContent = q.q;
+      $('#quizExplain').style.display = 'none';
+
+      var optsEl = $('#quizOpts');
+      optsEl.innerHTML = '';
+      q.opts.forEach(function(opt, i) {
+        var btn = document.createElement('button');
+        btn.className = 'v10-quiz-opt';
+        btn.textContent = String.fromCharCode(65 + i) + ') ' + opt;
+        btn.addEventListener('click', function() { answerQuiz(i); });
+        optsEl.appendChild(btn);
+      });
+    }
+
+    function answerQuiz(idx) {
+      var q = quizQuestions[quizIdx];
+      if (!q) return;
+      var opts = $$('.v10-quiz-opt');
+      if (opts[0].classList.contains('disabled')) return;
+
+      opts.forEach(function(o, i) {
+        if (i === q.correct) o.classList.add('correct');
+        else if (i === idx) o.classList.add('wrong');
+        o.classList.add('disabled');
+      });
+
+      if (idx === q.correct) quizCorrect++;
+      quizAnswered++;
+
+      $('#quizExplain').textContent = q.explanation;
+      $('#quizExplain').style.display = 'block';
+    }
+
+    function showScore() {
+      $('#quizArea').querySelector('.v10-quiz-head').style.display = 'none';
+      $('#quizQ').style.display = 'none';
+      $('#quizOpts').style.display = 'none';
+      $('#quizExplain').style.display = 'none';
+      $('#quizSpec').style.display = 'none';
+
+      var pct = quizAnswered > 0 ? Math.round((quizCorrect / quizAnswered) * 100) : 0;
+      var msg = pct >= 80 ? 'Excelente!' : pct >= 60 ? 'Bom resultado!' : 'Continue estudando!';
+      var scoreEl = $('#quizScore');
+      scoreEl.innerHTML = '<h3>' + msg + '</h3><div class="score-big">' + pct + '%</div><p>' + quizCorrect + ' de ' + quizAnswered + ' corretas</p>';
+      scoreEl.style.display = 'block';
+    }
+
+    $('#quizNext').addEventListener('click', function() { quizIdx++; renderQuiz(); });
+    $('#quizRestart').addEventListener('click', function() { shuffleQuiz(); renderQuiz(); });
+
+    shuffleQuiz();
+    renderQuiz();
+
+    // ===== CHECKLIST =====
+    var checkState = JSON.parse(localStorage.getItem('v10_checklist') || '{}');
+
+    function renderChecklist() {
+      var area = $('#checklistArea');
+      area.innerHTML = '';
+      var done = 0;
+
+      CHECKLIST_ITEMS.forEach(function(item, i) {
+        var checked = checkState[i] || false;
+        if (checked) done++;
+        var div = document.createElement('div');
+        div.className = 'v10-check-item' + (checked ? ' done' : '');
+        div.setAttribute('role', 'listitem');
+        div.innerHTML = '<div class="v10-checkbox"></div><span>' + item.text + '</span><span class="v10-check-hint">' + item.hint + '</span>';
+        div.addEventListener('click', function() {
+          checkState[i] = !checkState[i];
+          localStorage.setItem('v10_checklist', JSON.stringify(checkState));
+          renderChecklist();
+        });
+        area.appendChild(div);
+      });
+
+      var total = CHECKLIST_ITEMS.length;
+      var pct = Math.round((done / total) * 100);
+      $('#checklistFill').style.width = pct + '%';
+      $('#checklistText').textContent = done + ' de ' + total + ' concluidos (' + pct + '%)';
+    }
+    renderChecklist();
+
+  })();
+  </script>
 </body>
 </html>
