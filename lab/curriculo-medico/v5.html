@@ -1,26 +1,4315 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Currículo Médico — Version 5</title>
+  <title>Curriculo Medico v5 — Antonio Hermano</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ── Color System & Themes ── */
+    :root {
+      --cv-accent: #1e40af;
+      --cv-accent-light: #dbeafe;
+      --cv-accent-mid: #3b82f6;
+      --cv-accent-subtle: #eff6ff;
+      --cv-green: #166534;
+      --cv-green-bg: #dcfce7;
+      --cv-green-mid: #22c55e;
+      --cv-amber: #92400e;
+      --cv-amber-bg: #fef3c7;
+      --cv-red: #991b1b;
+      --cv-red-bg: #fef2f2;
+      --cv-sidebar-width: 260px;
+      --cv-radius: 10px;
+      --cv-transition: 0.3s ease;
+      --cv-anim-duration: 0.4s;
+    }
+
+    html[data-theme="green"] {
+      --cv-accent: #166534;
+      --cv-accent-light: #dcfce7;
+      --cv-accent-mid: #22c55e;
+      --cv-accent-subtle: #f0fdf4;
+    }
+
+    html[data-theme="black"] {
+      --cv-accent: #1a1a1a;
+      --cv-accent-light: #e5e5e5;
+      --cv-accent-mid: #525252;
+      --cv-accent-subtle: #fafafa;
+    }
+
+    /* ── Dark Mode ── */
+    html.dark {
+      --color-text: #e5e7eb;
+      --color-text-light: #9ca3af;
+      --color-bg: #111827;
+      --color-bg-alt: #1f2937;
+      --color-border: #374151;
+      --color-accent: #60a5fa;
+      --color-accent-hover: #93bbfd;
+      --cv-accent: #60a5fa;
+      --cv-accent-light: #1e3a5f;
+      --cv-accent-mid: #3b82f6;
+      --cv-accent-subtle: #172554;
+      --cv-green: #4ade80;
+      --cv-green-bg: #14532d;
+      --cv-green-mid: #4ade80;
+      --cv-amber: #fbbf24;
+      --cv-amber-bg: #422006;
+    }
+
+    html.dark[data-theme="green"] {
+      --cv-accent: #4ade80;
+      --cv-accent-light: #14532d;
+      --cv-accent-mid: #22c55e;
+      --cv-accent-subtle: #052e16;
+    }
+
+    html.dark[data-theme="black"] {
+      --cv-accent: #d1d5db;
+      --cv-accent-light: #374151;
+      --cv-accent-mid: #9ca3af;
+      --cv-accent-subtle: #1f2937;
+    }
+
+    html.dark .nav {
+      background: rgba(17, 24, 39, 0.95);
+      border-bottom-color: var(--color-border);
+    }
+
+    html.dark .cv-photo {
+      border-color: var(--cv-accent-light);
+      background: var(--color-bg-alt);
+    }
+
+    html.dark .practice-area {
+      background: linear-gradient(135deg, var(--cv-accent-subtle) 0%, var(--color-bg-alt) 100%);
+      border-color: var(--cv-accent-light);
+      border-left-color: var(--cv-accent);
+    }
+
+    html.dark .cert-item,
+    html.dark .skill-category,
+    html.dark .availability-card,
+    html.dark .lang-card,
+    html.dark .course-item,
+    html.dark .ref-card,
+    html.dark .shift-card,
+    html.dark .endorsement-card,
+    html.dark .pub-item,
+    html.dark .volunteer-card {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+    }
+
+    html.dark .city-tag {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+      color: var(--color-text);
+    }
+
+    html.dark .timeline-date {
+      background: var(--cv-accent-light);
+      color: var(--cv-accent);
+    }
+
+    html.dark .summary-box {
+      background: var(--cv-accent-subtle);
+      border-color: var(--cv-accent-light);
+    }
+
+    html.dark .qr-placeholder {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+    }
+
+    html.dark .fab-actions button {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+      color: var(--color-text);
+    }
+
+    html.dark .fab-actions button:hover {
+      background: var(--color-border);
+    }
+
+    html.dark .toolbar {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--color-border);
+    }
+
+    html.dark .toolbar-btn {
+      color: var(--color-text-light);
+    }
+
+    html.dark .toolbar-btn:hover,
+    html.dark .toolbar-btn.active {
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+
+    html.dark .theme-dot {
+      border-color: var(--color-border);
+    }
+
+    html.dark .proficiency-bar-bg {
+      background: var(--color-border);
+    }
+
+    html.dark .cover-letter-box {
+      background: var(--cv-accent-subtle);
+      border-color: var(--cv-accent-light);
+    }
+
+    html.dark .editable:hover {
+      background: rgba(96, 165, 250, 0.08);
+    }
+
+    html.dark .editable:focus {
+      background: rgba(96, 165, 250, 0.12);
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3);
+    }
+
+    html.dark .template-btn {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+      color: var(--color-text-light);
+    }
+
+    html.dark .template-btn:hover,
+    html.dark .template-btn.active {
+      background: var(--cv-accent-subtle);
+      border-color: var(--cv-accent);
+      color: var(--cv-accent);
+    }
+
+    html.dark .detail-toggle {
+      color: var(--cv-accent);
+    }
+
+    html.dark .detail-panel {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+    }
+
+    html.dark .radar-chart {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+    }
+
+    html.dark .calendar-day {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+      color: var(--color-text-light);
+    }
+
+    html.dark .calendar-day.available {
+      background: var(--cv-green-bg);
+      border-color: var(--cv-green);
+      color: var(--cv-green);
+    }
+
+    html.dark .calendar-day.partial {
+      background: var(--cv-amber-bg);
+      border-color: var(--cv-amber);
+      color: var(--cv-amber);
+    }
+
+    html.dark .endorsement-quote {
+      color: var(--color-text-light);
+    }
+
+    html.dark .mobile-section-header {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      position: sticky;
+      top: var(--nav-height);
+      z-index: 90;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0.5rem 0;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .toolbar-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .toolbar-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-right: 0.25rem;
+    }
+
+    .toolbar-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      height: 32px;
+      padding: 0 0.65rem;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--color-text-light);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .toolbar-btn:hover {
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+
+    .toolbar-btn.active {
+      background: var(--cv-accent-subtle);
+      color: var(--cv-accent);
+    }
+
+    .toolbar-btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--color-border);
+      margin: 0 0.25rem;
+    }
+
+    .theme-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .theme-dot:hover {
+      transform: scale(1.15);
+    }
+
+    .theme-dot.active {
+      border-color: var(--color-text);
+      box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 3px var(--color-text);
+    }
+
+    .theme-dot-blue { background: #2563eb; }
+    .theme-dot-green { background: #16a34a; }
+    .theme-dot-black { background: #1a1a1a; }
+
+    /* ── Template Picker ── */
+    .template-bar {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0.65rem var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    html.dark .template-bar {
+      background: rgba(17, 24, 39, 0.95);
+      border-color: var(--color-border);
+    }
+
+    .template-bar-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-right: 0.25rem;
+      white-space: nowrap;
+    }
+
+    .template-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      height: 30px;
+      padding: 0 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 15px;
+      background: var(--color-bg);
+      color: var(--color-text-light);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .template-btn:hover {
+      border-color: var(--cv-accent);
+      color: var(--cv-accent);
+      background: var(--cv-accent-subtle);
+    }
+
+    .template-btn.active {
+      border-color: var(--cv-accent);
+      color: var(--cv-accent);
+      background: var(--cv-accent-subtle);
+      box-shadow: 0 0 0 1px var(--cv-accent);
+    }
+
+    .template-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ── CV Layout ── */
+    .cv {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-md);
+      transition: opacity var(--cv-anim-duration) ease;
+    }
+
+    /* ── Editable Fields ── */
+    .editable {
+      cursor: text;
+      border-radius: 4px;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      padding: 1px 3px;
+      margin: -1px -3px;
+    }
+
+    .editable:hover {
+      background: rgba(37, 99, 235, 0.04);
+    }
+
+    .editable:focus {
+      outline: none;
+      background: rgba(37, 99, 235, 0.06);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .edit-mode-indicator {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 100;
+      background: var(--cv-accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .edit-mode-indicator.visible {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .edit-mode-indicator svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+      50% { box-shadow: 0 2px 20px rgba(37, 99, 235, 0.3); }
+    }
+
+    /* ── CV Header ── */
+    .cv-header {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 1.75rem;
+      align-items: center;
+      padding-bottom: 1.75rem;
+      border-bottom: 2px solid var(--cv-accent);
+      margin-bottom: 2rem;
+      transition: border-color var(--cv-transition);
+    }
+
+    .cv-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--color-bg-alt);
+      border: 3px solid var(--cv-accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color var(--cv-transition);
+    }
+
+    .cv-photo svg {
+      width: 52px;
+      height: 52px;
+      color: var(--color-border);
+    }
+
+    .cv-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cv-header-text {
+      min-width: 0;
+    }
+
+    .cv-name {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--color-text);
+      margin-bottom: 0.25rem;
+      line-height: 1.2;
+    }
+
+    .cv-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--cv-accent);
+      margin-bottom: 0.75rem;
+      transition: color var(--cv-transition);
+    }
+
+    .cv-contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      font-size: 0.875rem;
+      color: var(--color-text-light);
+    }
+
+    .cv-contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .cv-contact-item svg {
+      width: 15px;
+      height: 15px;
+      color: var(--cv-accent-mid);
+      flex-shrink: 0;
+      transition: color var(--cv-transition);
+    }
+
+    .cv-contact-item a {
+      color: var(--color-text-light);
+      text-decoration: none;
+    }
+
+    .cv-contact-item a:hover {
+      color: var(--cv-accent);
+    }
+
+    /* ── Professional Summary ── */
+    .summary-box {
+      background: linear-gradient(135deg, var(--cv-accent-subtle) 0%, #f8faff 100%);
+      border: 1px solid var(--cv-accent-light);
+      border-radius: var(--cv-radius);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 2.25rem;
+      position: relative;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .summary-box::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--cv-accent);
+      border-radius: var(--cv-radius) 0 0 var(--cv-radius);
+      transition: background var(--cv-transition);
+    }
+
+    .summary-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cv-accent);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color var(--cv-transition);
+    }
+
+    .summary-label svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .summary-text {
+      font-size: 0.95rem;
+      color: var(--color-text-light);
+      line-height: 1.7;
+    }
+
+    /* ── Cover Letter ── */
+    .cover-letter-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--cv-accent);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0.3rem 0;
+      font-family: inherit;
+      transition: color 0.15s ease;
+    }
+
+    .cover-letter-toggle:hover {
+      color: var(--cv-accent-mid);
+    }
+
+    .cover-letter-toggle svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .cover-letter-toggle.expanded svg {
+      transform: rotate(180deg);
+    }
+
+    .cover-letter-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .cover-letter-content.expanded {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 1rem;
+    }
+
+    .cover-letter-box {
+      background: linear-gradient(135deg, var(--cv-accent-subtle) 0%, #f8faff 100%);
+      border: 1px solid var(--cv-accent-light);
+      border-radius: var(--cv-radius);
+      padding: 1.5rem 1.75rem;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .cover-letter-box p {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      line-height: 1.75;
+      margin-bottom: 0.75rem;
+    }
+
+    .cover-letter-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cover-letter-box .cl-greeting {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .cover-letter-box .cl-sign {
+      font-weight: 600;
+      color: var(--color-text);
+      margin-top: 0.5rem;
+    }
+
+    /* ── Section Styling ── */
+    .cv-section {
+      margin-bottom: 2.25rem;
+    }
+
+    .section-enter {
+      animation: sectionSlideIn var(--cv-anim-duration) ease both;
+    }
+
+    @keyframes sectionSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .cv-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cv-accent);
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--cv-accent-light);
+      margin-bottom: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .cv-section-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--cv-accent-mid);
+      transition: color var(--cv-transition);
+    }
+
+    /* ── Practice Area ── */
+    .practice-area {
+      background: linear-gradient(135deg, var(--cv-accent-light) 0%, #f0f4ff 100%);
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--cv-accent);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .practice-area-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cv-accent);
+      margin-bottom: 0.3rem;
+      transition: color var(--cv-transition);
+    }
+
+    .practice-area-value {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .practice-area-desc {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin-top: 0.4rem;
+      line-height: 1.65;
+    }
+
+    /* ── Timeline Experience ── */
+    .timeline {
+      position: relative;
+      padding-left: 1.75rem;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.35rem;
+      bottom: 0;
+      width: 2px;
+      background: var(--cv-accent-light);
+      transition: background var(--cv-transition);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -1.75rem;
+      top: 0.35rem;
+      width: 12px;
+      height: 12px;
+      background: var(--cv-accent);
+      border: 2px solid var(--color-bg);
+      border-radius: 50%;
+      transform: translateX(-5px);
+      box-shadow: 0 0 0 2px var(--cv-accent-light);
+      transition: background var(--cv-transition), box-shadow var(--cv-transition);
+    }
+
+    .timeline-item:first-child .timeline-dot {
+      background: var(--cv-accent-mid);
+      box-shadow: 0 0 0 3px var(--cv-accent-light);
+      width: 14px;
+      height: 14px;
+      transform: translateX(-6px);
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-role {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--cv-accent);
+      background: var(--cv-accent-light);
+      padding: 0.15rem 0.6rem;
+      border-radius: 10px;
+      white-space: nowrap;
+      transition: color var(--cv-transition), background var(--cv-transition);
+    }
+
+    .timeline-org {
+      font-size: 0.925rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-details {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      line-height: 1.65;
+    }
+
+    .timeline-details ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .timeline-details li {
+      position: relative;
+      padding-left: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-details li::before {
+      content: "\2022";
+      position: absolute;
+      left: 0;
+      color: var(--cv-accent-mid);
+      font-weight: 700;
+      transition: color var(--cv-transition);
+    }
+
+    .accomplishment {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    /* ── Expandable Detail Panel ── */
+    .detail-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--cv-accent);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0.25rem 0;
+      font-family: inherit;
+      transition: color 0.15s ease;
+    }
+
+    .detail-toggle:hover {
+      color: var(--cv-accent-mid);
+    }
+
+    .detail-toggle svg {
+      width: 13px;
+      height: 13px;
+      transition: transform 0.3s ease;
+    }
+
+    .detail-toggle.expanded svg {
+      transform: rotate(180deg);
+    }
+
+    .detail-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0 1.15rem;
+    }
+
+    .detail-panel.expanded {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 0.75rem;
+      padding: 1rem 1.15rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .detail-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .detail-stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-light);
+    }
+
+    .detail-stat-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .detail-subtitle {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cv-accent);
+      margin-top: 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .detail-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .detail-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--cv-accent);
+      background: var(--cv-accent-subtle);
+      border: 1px solid var(--cv-accent-light);
+      padding: 0.2rem 0.55rem;
+      border-radius: 12px;
+    }
+
+    /* ── Timeline Stats ── */
+    .timeline-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .timeline-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--cv-accent);
+      background: var(--cv-accent-subtle);
+      border: 1px solid var(--cv-accent-light);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      transition: color var(--cv-transition), background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .timeline-stat svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    /* ── City Tags ── */
+    .city-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      padding: 0;
+      margin-top: 0.6rem;
+    }
+
+    .city-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      color: var(--color-text);
+      font-weight: 500;
+    }
+
+    /* ── Education Entry ── */
+    .edu-entry {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+
+    .edu-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .edu-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--cv-accent-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--cv-transition);
+    }
+
+    .edu-icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--cv-accent);
+      transition: color var(--cv-transition);
+    }
+
+    .edu-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .edu-role {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .edu-org {
+      font-size: 0.925rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.25rem;
+    }
+
+    .edu-desc {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      line-height: 1.6;
+    }
+
+    /* ── Skills / Procedimentos with Proficiency ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .skill-category {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .skill-category-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cv-accent);
+      margin-bottom: 0.6rem;
+      transition: color var(--cv-transition);
+    }
+
+    .skill-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .skill-list li {
+      font-size: 0.875rem;
+      color: var(--color-text);
+      padding: 0.35rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .skill-list li::before {
+      content: none;
+    }
+
+    .skill-name {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .proficiency-dots {
+      display: flex;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .proficiency-dots .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-border);
+      transition: background var(--cv-transition);
+    }
+
+    .proficiency-dots .dot.filled {
+      background: var(--cv-accent-mid);
+    }
+
+    /* ── Radar Chart (CSS-only) ── */
+    .radar-chart-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1.25rem;
+    }
+
+    .radar-chart {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .radar-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: border-color var(--cv-transition);
+    }
+
+    .radar-ring-1 { width: 80%; height: 80%; }
+    .radar-ring-2 { width: 60%; height: 60%; }
+    .radar-ring-3 { width: 40%; height: 40%; }
+    .radar-ring-4 { width: 20%; height: 20%; }
+
+    .radar-axis {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50%;
+      height: 1px;
+      background: var(--color-border);
+      transform-origin: left center;
+      transition: background var(--cv-transition);
+    }
+
+    .radar-point {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--cv-accent-mid);
+      border: 2px solid var(--color-bg);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .radar-polygon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .radar-polygon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .radar-label {
+      position: absolute;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--color-text);
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+    }
+
+    .radar-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .radar-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+    }
+
+    .radar-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cv-accent-mid);
+      flex-shrink: 0;
+    }
+
+    .radar-legend-value {
+      font-weight: 700;
+      color: var(--cv-accent);
+      margin-left: auto;
+      font-size: 0.78rem;
+      min-width: 28px;
+      text-align: right;
+    }
+
+    /* ── Language Skills ── */
+    .lang-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .lang-card {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .lang-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.25rem;
+    }
+
+    .lang-level {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.6rem;
+    }
+
+    .proficiency-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--color-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .proficiency-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--cv-accent-mid);
+      transition: width 1s ease, background var(--cv-transition);
+      width: 0;
+    }
+
+    /* ── Certifications ── */
+    .cert-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .cert-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: var(--color-bg);
+      transition: box-shadow 0.15s ease, background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .cert-item:hover {
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .cert-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .cert-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-text);
+    }
+
+    .cert-full {
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+    }
+
+    .cert-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.65rem;
+      border-radius: 10px;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    .cert-status.pending {
+      color: var(--cv-amber);
+      background: var(--cv-amber-bg);
+    }
+
+    .cert-status.complete {
+      color: var(--cv-green);
+      background: var(--cv-green-bg);
+    }
+
+    /* ── Plantoes Realizados (Shift Stats) ── */
+    .shift-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .shift-card {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1.15rem;
+      text-align: center;
+      transition: background var(--cv-transition), border-color var(--cv-transition), transform 0.2s ease;
+    }
+
+    .shift-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .shift-number {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--cv-accent);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+      transition: color var(--cv-transition);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .shift-number .counter {
+      display: inline-block;
+    }
+
+    .shift-unit {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+    }
+
+    .shift-bar-section {
+      margin-top: 0.25rem;
+    }
+
+    .shift-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.82rem;
+    }
+
+    .shift-bar-label {
+      width: 100px;
+      flex-shrink: 0;
+      font-weight: 500;
+      color: var(--color-text);
+      text-align: right;
+    }
+
+    .shift-bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--color-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .shift-bar-value {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--cv-accent-mid);
+      transition: width 1s ease, background var(--cv-transition);
+      width: 0;
+    }
+
+    .shift-bar-pct {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--cv-accent);
+      width: 36px;
+      text-align: right;
+      transition: color var(--cv-transition);
+    }
+
+    /* ── Continuing Education / Courses ── */
+    .course-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .course-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: var(--color-bg);
+      transition: box-shadow 0.15s ease, background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .course-item:hover {
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .course-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .course-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--color-text);
+    }
+
+    .course-provider {
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+    }
+
+    .course-hours {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      margin-top: 0.15rem;
+    }
+
+    .course-date {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--cv-accent);
+      background: var(--cv-accent-subtle);
+      border: 1px solid var(--cv-accent-light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-left: 0.75rem;
+      margin-top: 0.15rem;
+      transition: color var(--cv-transition), background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    /* ── Publications ── */
+    .pub-list {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .pub-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-bg);
+      transition: box-shadow 0.15s ease, background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .pub-item:hover {
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+
+    .pub-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--cv-accent-subtle);
+      border: 1px solid var(--cv-accent-light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pub-icon svg {
+      width: 18px;
+      height: 18px;
+      color: var(--cv-accent);
+    }
+
+    .pub-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pub-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.15rem;
+    }
+
+    .pub-venue {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      font-style: italic;
+    }
+
+    .pub-date {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--cv-accent);
+      margin-top: 0.2rem;
+    }
+
+    .pub-type {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 8px;
+      background: var(--cv-accent-subtle);
+      color: var(--cv-accent);
+      border: 1px solid var(--cv-accent-light);
+      margin-top: 0.3rem;
+    }
+
+    /* ── Volunteer / Community Work ── */
+    .volunteer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .volunteer-card {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1.15rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: var(--color-bg-alt);
+      transition: background var(--cv-transition), border-color var(--cv-transition), box-shadow 0.15s ease;
+    }
+
+    .volunteer-card:hover {
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+
+    .volunteer-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--cv-green-bg);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .volunteer-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--cv-green);
+    }
+
+    .volunteer-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .volunteer-role {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.1rem;
+    }
+
+    .volunteer-org {
+      font-size: 0.85rem;
+      color: var(--cv-accent);
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .volunteer-desc {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      line-height: 1.6;
+    }
+
+    .volunteer-period {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--color-text-light);
+      margin-top: 0.35rem;
+    }
+
+    /* ── Disponibilidade Calendar ── */
+    .calendar-container {
+      margin-top: 1rem;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .calendar-month {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .calendar-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--color-text-light);
+    }
+
+    html.dark .calendar-nav-btn {
+      background: var(--color-bg-alt);
+      border-color: var(--color-border);
+      color: var(--color-text-light);
+    }
+
+    .calendar-nav-btn:hover {
+      border-color: var(--cv-accent);
+      color: var(--cv-accent);
+    }
+
+    .calendar-nav-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .calendar-weekday {
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      padding: 0.3rem 0;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg);
+      color: var(--color-text-light);
+      transition: all 0.15s ease;
+    }
+
+    .calendar-day.empty {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .calendar-day.available {
+      background: var(--cv-green-bg);
+      border-color: var(--cv-green-mid);
+      color: var(--cv-green);
+    }
+
+    .calendar-day.partial {
+      background: var(--cv-amber-bg);
+      border-color: #f59e0b;
+      color: var(--cv-amber);
+    }
+
+    .calendar-day.unavailable {
+      background: var(--cv-red-bg);
+      border-color: #fca5a5;
+      color: var(--cv-red);
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .calendar-legend {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .calendar-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      color: var(--color-text-light);
+    }
+
+    .calendar-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .calendar-legend-dot.avail { background: var(--cv-green-bg); border: 1px solid var(--cv-green-mid); }
+    .calendar-legend-dot.partial { background: var(--cv-amber-bg); border: 1px solid #f59e0b; }
+    .calendar-legend-dot.unavail { background: var(--cv-red-bg); border: 1px solid #fca5a5; }
+
+    /* ── Endorsements / Social Proof ── */
+    .endorsements-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .endorsement-card {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1.15rem;
+      position: relative;
+      transition: background var(--cv-transition), border-color var(--cv-transition), box-shadow 0.15s ease;
+    }
+
+    .endorsement-card:hover {
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+
+    .endorsement-card::before {
+      content: "\201C";
+      position: absolute;
+      top: 0.5rem;
+      left: 0.75rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--cv-accent-light);
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+
+    .endorsement-quote {
+      font-size: 0.88rem;
+      color: var(--color-text-light);
+      line-height: 1.65;
+      font-style: italic;
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .endorsement-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .endorsement-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--cv-accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--cv-accent);
+    }
+
+    .endorsement-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .endorsement-role {
+      font-size: 0.72rem;
+      color: var(--color-text-light);
+    }
+
+    /* ── References ── */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .ref-card {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1.15rem;
+      transition: background var(--cv-transition), border-color var(--cv-transition), box-shadow 0.15s ease;
+    }
+
+    .ref-card:hover {
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .ref-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.15rem;
+    }
+
+    .ref-role {
+      font-size: 0.82rem;
+      color: var(--cv-accent);
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+      transition: color var(--cv-transition);
+    }
+
+    .ref-org {
+      font-size: 0.82rem;
+      color: var(--color-text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .ref-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .ref-contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      color: var(--color-text-light);
+    }
+
+    .ref-contact-item svg {
+      width: 13px;
+      height: 13px;
+      color: var(--cv-accent-mid);
+      flex-shrink: 0;
+      transition: color var(--cv-transition);
+    }
+
+    .ref-contact-item a {
+      color: var(--color-text-light);
+    }
+
+    .ref-contact-item a:hover {
+      color: var(--cv-accent);
+    }
+
+    .ref-note {
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--color-text-light);
+      margin-top: 0.75rem;
+    }
+
+    /* ── Availability / Contact Section ── */
+    .availability-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .availability-card {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      text-align: center;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .availability-card svg {
+      width: 24px;
+      height: 24px;
+      color: var(--cv-accent-mid);
+      margin-bottom: 0.5rem;
+      transition: color var(--cv-transition);
+    }
+
+    .availability-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-light);
+      margin-bottom: 0.25rem;
+    }
+
+    .availability-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .availability-value a {
+      color: var(--cv-accent);
+      transition: color var(--cv-transition);
+    }
+
+    .availability-value a:hover {
+      color: var(--cv-accent-mid);
+      text-decoration: underline;
+    }
+
+    /* ── Research / Academic Interests ── */
+    .interests-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      list-style: none;
+      padding: 0;
+    }
+
+    .interest-tag {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--cv-accent);
+      background: var(--cv-accent-subtle);
+      border: 1px solid var(--cv-accent-light);
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color var(--cv-transition), background var(--cv-transition), border-color var(--cv-transition), transform 0.15s ease;
+    }
+
+    .interest-tag:hover {
+      transform: translateY(-1px);
+    }
+
+    .interest-tag svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ── QR Code Placeholder ── */
+    .qr-section {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .qr-placeholder {
+      width: 100px;
+      height: 100px;
+      border: 2px dashed var(--color-border);
+      border-radius: var(--cv-radius);
+      background: var(--color-bg-alt);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .qr-placeholder svg {
+      width: 32px;
+      height: 32px;
+      color: var(--color-border);
+      margin-bottom: 0.25rem;
+    }
+
+    .qr-placeholder span {
+      font-size: 0.65rem;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    .qr-text {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      line-height: 1.6;
+    }
+
+    .qr-text strong {
+      color: var(--color-text);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ── Floating Action Buttons ── */
+    .fab-group {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .fab-actions button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .fab-actions button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .fab-actions button svg {
+      width: 20px;
+      height: 20px;
+      color: var(--color-text);
+    }
+
+    .fab-tooltip {
+      position: absolute;
+      right: 56px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--color-text);
+      color: var(--color-bg);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .fab-actions button:hover .fab-tooltip {
+      opacity: 1;
+    }
+
+    /* ── Scroll Animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── Card Layout Mode ── */
+    .cv.card-layout .cv-header {
+      text-align: center;
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 1rem;
+      border-bottom: none;
+      background: linear-gradient(135deg, var(--cv-accent-subtle) 0%, var(--color-bg) 100%);
+      padding: 2.5rem 2rem;
+      border-radius: var(--cv-radius);
+      border: 1px solid var(--cv-accent-light);
+      margin-bottom: 2rem;
+      transition: background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .cv.card-layout .cv-photo {
+      width: 100px;
+      height: 100px;
+    }
+
+    .cv.card-layout .cv-contact-row {
+      justify-content: center;
+    }
+
+    .cv.card-layout .summary-box {
+      border-radius: var(--cv-radius);
+    }
+
+    .cv.card-layout .cv-section {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--cv-radius);
+      padding: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s ease, background var(--cv-transition), border-color var(--cv-transition);
+    }
+
+    .cv.card-layout .cv-section:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    .cv.card-layout .cv-section-title {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Layout transitions ── */
+    .cv-header,
+    .cv-section,
+    .summary-box {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Toast Notification ── */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--color-text);
+      color: var(--color-bg);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 200;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Export Plain Text Modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--cv-radius);
+      padding: 1.5rem;
+      max-width: 640px;
+      width: 90%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      transform: translateY(16px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.visible .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-light);
+      transition: background 0.15s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--color-bg-alt);
+    }
+
+    .modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 300px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--color-text);
+      background: var(--color-bg-alt);
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    .modal-btn {
+      height: 34px;
+      padding: 0 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+
+    .modal-btn:hover {
+      background: var(--color-bg-alt);
+    }
+
+    .modal-btn.primary {
+      background: var(--cv-accent);
+      color: #fff;
+      border-color: var(--cv-accent);
+    }
+
+    .modal-btn.primary:hover {
+      opacity: 0.9;
+    }
+
+    /* ── Section visibility for templates ── */
+    .cv-section[data-section] {
+      transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease;
+    }
+
+    .cv-section.section-hidden {
+      display: none;
+    }
+
+    /* ── Print Styles ── */
+    @media print {
+      @page {
+        margin: 1.2cm 1.5cm;
+        size: A4 portrait;
+      }
+
+      html.dark,
+      html[data-theme] {
+        --color-text: #1a1a1a;
+        --color-text-light: #555;
+        --color-bg: #ffffff;
+        --color-bg-alt: #f8f8f8;
+        --color-border: #e5e5e5;
+        --cv-accent: #1e40af;
+        --cv-accent-light: #dbeafe;
+        --cv-accent-mid: #3b82f6;
+        --cv-accent-subtle: #eff6ff;
+        --cv-green: #166534;
+        --cv-green-bg: #dcfce7;
+        --cv-amber: #92400e;
+        --cv-amber-bg: #fef3c7;
+      }
+
+      .nav,
+      .toolbar,
+      .template-bar,
+      .fab-group,
+      .edit-mode-indicator,
+      .cover-letter-toggle,
+      .detail-toggle,
+      .toast,
+      .modal-overlay {
+        display: none !important;
+      }
+
+      body {
+        font-size: 9.5pt;
+        color: #000;
+        background: #fff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .cv {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .cv.card-layout .cv-header {
+        background: #f8faff;
+        border-color: #dbeafe;
+      }
+
+      .cv.card-layout .cv-section {
+        border: 1px solid #e5e5e5;
+        box-shadow: none;
+      }
+
+      .cv-header {
+        grid-template-columns: 90px 1fr;
+        gap: 1.25rem;
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.25rem;
+        border-bottom-color: #1e40af;
+      }
+
+      .cv-photo {
+        width: 90px;
+        height: 90px;
+        border-color: #dbeafe;
+      }
+
+      .cv-name { font-size: 1.4rem; }
+      .cv-title { font-size: 0.95rem; color: #1e40af; }
+      .cv-contact-row { font-size: 0.8rem; }
+
+      .cv-contact-item svg,
+      .cv-section-title svg { color: #1e40af; }
+
+      .cv-section-title {
+        color: #1e40af;
+        border-bottom-color: #dbeafe;
+        font-size: 0.78rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.35rem;
+      }
+
+      .summary-box {
+        background: #f8faff;
+        border-color: #dbeafe;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .summary-box::before { background: #1e40af; }
+      .summary-label { color: #1e40af; font-size: 0.7rem; }
+      .summary-text { font-size: 0.85rem; }
+
+      .practice-area {
+        background: #f0f4ff;
+        border-color: #bfdbfe;
+        border-left-color: #1e40af;
+        padding: 0.85rem 1.15rem;
+      }
+
+      .practice-area-value { font-size: 1rem; }
+
+      .timeline::before { background: #dbeafe; }
+      .timeline-dot { background: #1e40af; box-shadow: 0 0 0 2px #dbeafe; border-color: #fff; }
+      .timeline-item:first-child .timeline-dot { background: #3b82f6; box-shadow: 0 0 0 3px #dbeafe; }
+      .timeline-date { color: #1e40af; background: #eff6ff; }
+      .timeline-details li::before { color: #3b82f6; }
+      .timeline-stat { color: #1e40af; background: #eff6ff; border-color: #dbeafe; }
+      .city-tag { border-color: #ddd; background: #f7f7f7; }
+      .skill-category { background: #f9f9f9; border-color: #ddd; }
+      .skill-category-title { color: #1e40af; }
+      .proficiency-dots .dot { background: #ddd; }
+      .proficiency-dots .dot.filled { background: #3b82f6; }
+      .proficiency-bar-bg { background: #e5e5e5; }
+      .proficiency-bar-fill { background: #3b82f6; }
+      .lang-card { background: #f9f9f9; border-color: #ddd; }
+      .cert-item, .course-item, .pub-item { border-color: #ddd; box-shadow: none; }
+      .cert-status.pending { background: #fef9e7; color: #6b4100; }
+      .cert-status.complete { background: #eef8ee; color: #14532d; }
+      .shift-card { background: #f9f9f9; border-color: #ddd; }
+      .shift-number { color: #1e40af; }
+      .shift-bar-value { background: #3b82f6; }
+      .ref-card { background: #f9f9f9; border-color: #ddd; }
+      .availability-card { background: #f9f9f9; border-color: #ddd; }
+      .availability-card svg { color: #1e40af; }
+      .interest-tag { color: #1e40af; background: #eff6ff; border-color: #dbeafe; }
+      .endorsement-card { background: #f9f9f9; border-color: #ddd; }
+      .volunteer-card { background: #f9f9f9; border-color: #ddd; }
+      .radar-chart { background: #f9f9f9; border-color: #ddd; }
+
+      a { color: #1e40af; text-decoration: none; }
+
+      .cv-section { break-inside: avoid; margin-bottom: 1.25rem; }
+      .cv-section:last-child { margin-bottom: 0; }
+      .timeline-item { break-inside: avoid; margin-bottom: 1rem; }
+      .cert-item, .course-item { break-inside: avoid; }
+      .skills-grid { break-inside: avoid; gap: 0.5rem; }
+      .skill-category { padding: 0.75rem 0.85rem; }
+      .edu-entry { break-inside: avoid; }
+      .availability-grid { gap: 0.5rem; }
+      .availability-card { padding: 0.65rem 0.85rem; }
+      .shift-stats-grid { gap: 0.5rem; }
+      .shift-card { padding: 0.65rem 0.85rem; }
+
+      .qr-section { break-inside: avoid; margin-top: 1rem; padding-top: 1rem; }
+      .qr-placeholder { width: 80px; height: 80px; border-color: #ccc; background: #f9f9f9; }
+
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .lang-grid, .ref-grid { gap: 0.5rem; }
+
+      .cover-letter-content { max-height: none; opacity: 1; }
+      .cover-letter-box { background: #f8faff; border-color: #dbeafe; }
+      .detail-panel { max-height: none; opacity: 1; padding: 1rem 1.15rem; margin-top: 0.5rem; }
+
+      .editable { padding: 0; margin: 0; }
+      .section-hidden { display: none !important; }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .cv {
+        padding: var(--space-md) var(--space-sm);
+      }
+
+      .cv-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+        gap: 1rem;
+      }
+
+      .cv-photo {
+        width: 100px;
+        height: 100px;
+      }
+
+      .cv-contact-row {
+        justify-content: center;
+      }
+
+      .cv-name {
+        font-size: 1.5rem;
+      }
+
+      .cv-title {
+        font-size: 1rem;
+      }
+
+      .skills-grid,
+      .lang-grid,
+      .ref-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .availability-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .shift-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .timeline-header {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .cert-item,
+      .course-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+      }
+
+      .course-date {
+        margin-left: 0;
+      }
+
+      .qr-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .fab-group {
+        bottom: 16px;
+        right: 16px;
+      }
+
+      .fab-tooltip {
+        display: none;
+      }
+
+      .toolbar-inner {
+        gap: 0.3rem;
+      }
+
+      .toolbar-label,
+      .template-bar-label {
+        display: none;
+      }
+
+      .edit-mode-indicator {
+        left: 16px;
+        bottom: 16px;
+      }
+
+      .radar-chart-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .radar-chart {
+        width: 200px;
+        height: 200px;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .endorsements-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Mobile collapsible sections */
+      .mobile-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        padding: 0.65rem 0;
+        border-bottom: 1px solid var(--color-border);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .mobile-section-header .cv-section-title {
+        margin-bottom: 0;
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .mobile-collapse-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--color-text-light);
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .mobile-section-header.collapsed .mobile-collapse-icon {
+        transform: rotate(-90deg);
+      }
+
+      .mobile-section-body {
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+      }
+
+      .mobile-section-body.collapsed {
+        max-height: 0 !important;
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .shift-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .template-bar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    /* ── Swipe indicator ── */
+    @media (max-width: 640px) {
+      .template-bar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .template-bar::-webkit-scrollbar { display: none; }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../curriculo-medico.html">&larr; Back</a>
+        <a href="../curriculo-medico.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
-  <main class="lab-page">
-    <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Currículo Médico — Version 5</h1>
+
+  <!-- Toolbar -->
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar-inner">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Layout</span>
+        <button class="toolbar-btn active" id="btnClassic" onclick="setLayout('classic')" title="Layout classico">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+          Classico
+        </button>
+        <button class="toolbar-btn" id="btnCards" onclick="setLayout('cards')" title="Layout em cards">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" /></svg>
+          Cards
+        </button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" id="btnEdit" onclick="toggleEditMode()" title="Modo edicao">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
+          Editar
+        </button>
+      </div>
+      <div class="toolbar-group">
+        <span class="toolbar-label">Tema</span>
+        <button class="theme-dot theme-dot-blue active" onclick="setTheme('blue')" title="Azul profissional" data-theme="blue"></button>
+        <button class="theme-dot theme-dot-green" onclick="setTheme('green')" title="Verde medico" data-theme="green"></button>
+        <button class="theme-dot theme-dot-black" onclick="setTheme('black')" title="Preto classico" data-theme="black"></button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" id="btnDark" onclick="toggleDark()" title="Modo escuro">
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>
+          <svg class="icon-sun" style="display:none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /></svg>
+        </button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-btn" onclick="window.print()" title="Imprimir / PDF">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+          PDF
+        </button>
+        <button class="toolbar-btn" onclick="exportPlainText()" title="Exportar texto puro">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+          TXT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Picker -->
+  <div class="toolbar">
+    <div class="template-bar">
+      <span class="template-bar-label">Modelo</span>
+      <button class="template-btn active" data-template="emergencia" onclick="setTemplate('emergencia')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+        Emergencia
+      </button>
+      <button class="template-btn" data-template="clinica" onclick="setTemplate('clinica')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+        Clinica Geral
+      </button>
+      <button class="template-btn" data-template="ubs" onclick="setTemplate('ubs')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21" /></svg>
+        UBS
+      </button>
+      <button class="template-btn" data-template="completo" onclick="setTemplate('completo')">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" /></svg>
+        Completo
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Mode Indicator -->
+  <div class="edit-mode-indicator" id="editIndicator">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
+    Modo edicao ativo — clique nos campos para editar
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Plain Text Export Modal -->
+  <div class="modal-overlay" id="txtModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">Exportar como Texto</span>
+        <button class="modal-close" onclick="closeTxtModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <textarea class="modal-textarea" id="txtContent" readonly></textarea>
+      <div class="modal-actions">
+        <button class="modal-btn" onclick="closeTxtModal()">Fechar</button>
+        <button class="modal-btn primary" onclick="copyTxtToClipboard()">Copiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FABs -->
+  <div class="fab-group">
+    <div class="fab-actions" style="position:relative">
+      <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">
+        <span class="fab-tooltip">Topo</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <main>
+    <div class="cv" id="cvRoot">
+
+      <!-- Header with Photo -->
+      <header class="cv-header reveal">
+        <div class="cv-photo" aria-label="Foto profissional">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+        </div>
+        <div class="cv-header-text">
+          <h1 class="cv-name" data-field="name">Antonio Hermano Mascarenhas da Luz</h1>
+          <p class="cv-title" data-field="title">Medico Generalista &mdash; Emergencia</p>
+          <div class="cv-contact-row">
+            <span class="cv-contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+              <a href="mailto:mascarenhasluz@gmail.com" data-field="email">mascarenhasluz@gmail.com</a>
+            </span>
+            <span class="cv-contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>
+              <span data-field="crm">CRM &mdash; SP / MG</span>
+            </span>
+            <span class="cv-contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
+              <span data-field="location">Sao Paulo, SP</span>
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Resumo Profissional + Carta de Apresentacao -->
+      <div class="summary-box reveal reveal-delay-1">
+        <div class="summary-label">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+          Resumo Profissional
+        </div>
+        <p class="summary-text" data-field="summary">
+          Medico generalista com experiencia consolidada em medicina de emergencia, atuando em unidades de pronto atendimento
+          e prontos-socorros em multiplas cidades de Sao Paulo e Minas Gerais. Formado pela Universidade Federal de Uberlandia (UFU),
+          com competencia em estabilizacao de pacientes criticos, procedimentos invasivos de emergencia e manejo de quadros
+          agudos clinicos e traumaticos. Comprometido com aprimoramento continuo e atendimento centrado no paciente.
+        </p>
+        <button class="cover-letter-toggle" id="clToggle" onclick="toggleCoverLetter()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          Ver Carta de Apresentacao
+        </button>
+      </div>
+
+      <!-- Carta de Apresentacao (Cover Letter) -->
+      <div class="cover-letter-content" id="coverLetter">
+        <div class="cover-letter-box">
+          <p class="cl-greeting" data-field="cl-greeting">Prezados Senhores,</p>
+          <p data-field="cl-p1">
+            Apresento-me como medico generalista com solida formacao pela Universidade Federal de Uberlandia e experiencia
+            pratica em unidades de emergencia de alta complexidade em Sao Paulo e Minas Gerais. Ao longo da minha
+            trajetoria profissional, desenvolvi competencias especificas em estabilizacao de pacientes criticos,
+            procedimentos invasivos e gestao de fluxo em pronto-socorro.
+          </p>
+          <p data-field="cl-p2">
+            Minha atuacao em multiplas unidades de pronto atendimento proporcionou-me uma visao ampla dos desafios
+            da medicina de emergencia no Brasil, desde a classificacao de risco ate a resolucao de casos complexos
+            em ambientes de alta demanda. Busco constantemente aprimorar minhas habilidades atraves de cursos de
+            atualizacao e certificacoes internacionais como ACLS e ATLS.
+          </p>
+          <p data-field="cl-p3">
+            Estou disponivel para integrar equipes comprometidas com a excelencia no atendimento ao paciente
+            e contribuir com minha experiencia em medicina de emergencia. Terei satisfacao em apresentar
+            maiores detalhes sobre minha trajetoria em uma entrevista.
+          </p>
+          <p class="cl-sign" data-field="cl-sign">Atenciosamente,<br>Antonio Hermano Mascarenhas da Luz</p>
+        </div>
+      </div>
+
+      <!-- Area de Atuacao -->
+      <section class="cv-section reveal" data-section="practice" data-priority-emergencia="1" data-priority-clinica="3" data-priority-ubs="5" data-priority-completo="1">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" /></svg>
+          Area de Atuacao
+        </h2>
+        <div class="practice-area">
+          <div class="practice-area-label">Foco principal</div>
+          <div class="practice-area-value" data-field="practice-focus">Medicina de Emergencia &mdash; Pronto Socorro</div>
+          <p class="practice-area-desc" data-field="practice-desc">
+            Atendimento em unidades de urgencia e emergencia, com experiencia em classificacao de risco,
+            estabilizacao de pacientes criticos e manejo de quadros agudos clinicos e traumaticos.
+          </p>
+        </div>
+      </section>
+
+      <!-- Plantoes Realizados -->
+      <section class="cv-section reveal" data-section="shifts" data-priority-emergencia="2" data-priority-clinica="6" data-priority-ubs="8" data-priority-completo="2">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+          Plantoes Realizados
+        </h2>
+        <div class="shift-stats-grid">
+          <div class="shift-card">
+            <div class="shift-number"><span class="counter" data-target="520">0</span>+</div>
+            <div class="shift-unit">Plantoes totais</div>
+          </div>
+          <div class="shift-card">
+            <div class="shift-number"><span class="counter" data-target="6400">0</span>+</div>
+            <div class="shift-unit">Horas clinicas</div>
+          </div>
+          <div class="shift-card">
+            <div class="shift-number"><span class="counter" data-target="25000">0</span>+</div>
+            <div class="shift-unit">Pacientes atendidos</div>
+          </div>
+          <div class="shift-card">
+            <div class="shift-number"><span class="counter" data-target="6">0</span></div>
+            <div class="shift-unit">Cidades de atuacao</div>
+          </div>
+        </div>
+        <div class="shift-bar-section">
+          <div class="shift-bar-row">
+            <span class="shift-bar-label">PS / UPA</span>
+            <div class="shift-bar-track">
+              <div class="shift-bar-value" data-width="70"></div>
+            </div>
+            <span class="shift-bar-pct">70%</span>
+          </div>
+          <div class="shift-bar-row">
+            <span class="shift-bar-label">Emergencia</span>
+            <div class="shift-bar-track">
+              <div class="shift-bar-value" data-width="20"></div>
+            </div>
+            <span class="shift-bar-pct">20%</span>
+          </div>
+          <div class="shift-bar-row">
+            <span class="shift-bar-label">Clinica Medica</span>
+            <div class="shift-bar-track">
+              <div class="shift-bar-value" data-width="10"></div>
+            </div>
+            <span class="shift-bar-pct">10%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formacao Academica -->
+      <section class="cv-section reveal" data-section="education" data-priority-emergencia="5" data-priority-clinica="2" data-priority-ubs="2" data-priority-completo="5">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" /></svg>
+          Formacao Academica
+        </h2>
+        <div class="edu-entry">
+          <div class="edu-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21" /></svg>
+          </div>
+          <div class="edu-content">
+            <div class="edu-role" data-field="edu-degree">Bacharel em Medicina</div>
+            <div class="edu-org" data-field="edu-school">Universidade Federal de Uberlandia (UFU)</div>
+            <p class="edu-desc" data-field="edu-desc">
+              Formacao generalista com enfase em pratica clinica e atendimento de emergencia.
+              Internato com rotacoes em Clinica Medica, Cirurgia, Pediatria, Ginecologia-Obstetricia e Saude Coletiva.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experiencia Profissional -->
+      <section class="cv-section reveal" data-section="experience" data-priority-emergencia="3" data-priority-clinica="1" data-priority-ubs="1" data-priority-completo="3">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+          Experiencia Profissional
+        </h2>
+        <div class="timeline">
+
+          <!-- Current Position -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-header">
+              <span class="timeline-role" data-field="exp1-role">Medico Plantonista &mdash; Pronto Atendimento</span>
+              <span class="timeline-date">Atual</span>
+            </div>
+            <div class="timeline-org" data-field="exp1-org">Unidades de Pronto Atendimento (UPAs) e Prontos-Socorros</div>
+            <div class="timeline-details">
+              <ul>
+                <li>Atendimento de urgencia e emergencia em regime de plantao 12h e 24h</li>
+                <li>Classificacao de risco (Protocolo de Manchester), estabilizacao inicial e conducao de casos clinicos e traumaticos</li>
+                <li>Realizacao de procedimentos de emergencia: intubacao orotraqueal, acesso venoso central, drenagem toracica, suturas e imobilizacoes</li>
+                <li><span class="accomplishment">Media de 40-60 atendimentos por plantao</span> em unidades de alta demanda</li>
+                <li>Atuacao em equipes multiprofissionais com <span class="accomplishment">coordenacao de sala de emergencia</span></li>
+                <li><span class="accomplishment">Reducao do tempo medio de espera em 15%</span> atraves de otimizacao do fluxo de triagem</li>
+                <li><span class="accomplishment">Taxa de resolutividade acima de 92%</span> em atendimentos de urgencia</li>
+              </ul>
+              <div class="timeline-stats">
+                <span class="timeline-stat">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+                  40-60 pac./plantao
+                </span>
+                <span class="timeline-stat">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                  Plantoes 12h / 24h
+                </span>
+                <span class="timeline-stat">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
+                  6 cidades
+                </span>
+                <span class="timeline-stat">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
+                  92% resolutividade
+                </span>
+              </div>
+              <div class="city-list" role="list" aria-label="Cidades de atuacao">
+                <span class="city-tag">Osasco &mdash; SP</span>
+                <span class="city-tag">Guarulhos &mdash; SP</span>
+                <span class="city-tag">Sao Paulo &mdash; SP</span>
+                <span class="city-tag">Araguari &mdash; MG</span>
+                <span class="city-tag">Uberlandia &mdash; MG</span>
+                <span class="city-tag">Tupaciguara &mdash; MG</span>
+              </div>
+
+              <!-- Experiencia Detalhada (expandable) -->
+              <button class="detail-toggle" onclick="toggleDetail(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                Experiencia Detalhada
+              </button>
+              <div class="detail-panel">
+                <div class="detail-grid">
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Volume mensal</span>
+                    <span class="detail-stat-value">8-12 plantoes/mes</span>
+                  </div>
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Pacientes/plantao</span>
+                    <span class="detail-stat-value">40-60 atendimentos</span>
+                  </div>
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Turnos</span>
+                    <span class="detail-stat-value">Diurno e noturno</span>
+                  </div>
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Complexidade</span>
+                    <span class="detail-stat-value">Alta (referencia)</span>
+                  </div>
+                </div>
+                <div class="detail-subtitle">Tipos de caso mais frequentes</div>
+                <div class="detail-tags">
+                  <span class="detail-tag">Dor toracica / SCA</span>
+                  <span class="detail-tag">Dispneia aguda</span>
+                  <span class="detail-tag">Trauma</span>
+                  <span class="detail-tag">Sepse</span>
+                  <span class="detail-tag">AVC</span>
+                  <span class="detail-tag">Crise hipertensiva</span>
+                  <span class="detail-tag">Intoxicacoes</span>
+                  <span class="detail-tag">Cetoacidose diabetica</span>
+                  <span class="detail-tag">Abdome agudo</span>
+                </div>
+                <div class="detail-subtitle">Procedimentos realizados rotineiramente</div>
+                <div class="detail-tags">
+                  <span class="detail-tag">IOT (150+)</span>
+                  <span class="detail-tag">Acesso central (80+)</span>
+                  <span class="detail-tag">Drenagem torax (40+)</span>
+                  <span class="detail-tag">Suturas (500+)</span>
+                  <span class="detail-tag">Cardioversao</span>
+                  <span class="detail-tag">Reducao de luxacao</span>
+                  <span class="detail-tag">Paracentese</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Internship -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-header">
+              <span class="timeline-role" data-field="exp2-role">Interno de Medicina</span>
+              <span class="timeline-date">Internato</span>
+            </div>
+            <div class="timeline-org" data-field="exp2-org">Hospital de Clinicas da UFU &mdash; Uberlandia, MG</div>
+            <div class="timeline-details">
+              <ul>
+                <li>Rotacoes em Clinica Medica, Cirurgia Geral, Pediatria, Ginecologia-Obstetricia e Saude Coletiva</li>
+                <li>Atendimento ambulatorial e enfermaria com supervisao direta</li>
+                <li>Participacao em plantoes de pronto-socorro e centro cirurgico</li>
+                <li><span class="accomplishment">Aprovacao com distincao</span> nas avaliacoes praticas de emergencia</li>
+                <li><span class="accomplishment">Apresentacao de caso clinico</span> em jornada academica do HC-UFU</li>
+              </ul>
+
+              <!-- Experiencia Detalhada (expandable) -->
+              <button class="detail-toggle" onclick="toggleDetail(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                Experiencia Detalhada
+              </button>
+              <div class="detail-panel">
+                <div class="detail-grid">
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Duracao</span>
+                    <span class="detail-stat-value">2 anos (internato)</span>
+                  </div>
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Hospital</span>
+                    <span class="detail-stat-value">HC-UFU (terciario)</span>
+                  </div>
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Rotacoes</span>
+                    <span class="detail-stat-value">5 especialidades</span>
+                  </div>
+                  <div class="detail-stat">
+                    <span class="detail-stat-label">Supervisao</span>
+                    <span class="detail-stat-value">Direta e indireta</span>
+                  </div>
+                </div>
+                <div class="detail-subtitle">Experiencias clinicas relevantes</div>
+                <div class="detail-tags">
+                  <span class="detail-tag">Enfermaria</span>
+                  <span class="detail-tag">Ambulatorio</span>
+                  <span class="detail-tag">Pronto-socorro</span>
+                  <span class="detail-tag">Centro cirurgico</span>
+                  <span class="detail-tag">UTI</span>
+                  <span class="detail-tag">Saude da familia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Procedimentos e Competencias -->
+      <section class="cv-section reveal" data-section="skills" data-priority-emergencia="4" data-priority-clinica="4" data-priority-ubs="6" data-priority-completo="4">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
+          Procedimentos e Competencias
+        </h2>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <div class="skill-category-title">Via Aerea</div>
+            <ul class="skill-list">
+              <li><span class="skill-name">Intubacao orotraqueal</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span></li>
+              <li><span class="skill-name">Ventilacao bolsa-valvula-mascara</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span></li>
+              <li><span class="skill-name">Cricotireoidostomia</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <div class="skill-category-title">Acessos Vasculares</div>
+            <ul class="skill-list">
+              <li><span class="skill-name">Acesso venoso central</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span></li>
+              <li><span class="skill-name">Acesso venoso periferico</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span></li>
+              <li><span class="skill-name">Acesso intraosseo</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <div class="skill-category-title">Procedimentos Toracicos</div>
+            <ul class="skill-list">
+              <li><span class="skill-name">Drenagem de torax</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span></li>
+              <li><span class="skill-name">Toracocentese</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span></li>
+              <li><span class="skill-name">Puncao de alivio</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <div class="skill-category-title">Outros Procedimentos</div>
+            <ul class="skill-list">
+              <li><span class="skill-name">Suturas e desbridamento</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span></li>
+              <li><span class="skill-name">Imobilizacoes</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span></li>
+              <li><span class="skill-name">Lavagem gastrica</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span></li>
+              <li><span class="skill-name">Sondagens (vesical / nasogastrica)</span><span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="radar-chart-container">
+          <div class="radar-chart" id="radarChart">
+            <div class="radar-ring radar-ring-1"></div>
+            <div class="radar-ring radar-ring-2"></div>
+            <div class="radar-ring radar-ring-3"></div>
+            <div class="radar-ring radar-ring-4"></div>
+            <!-- Axes rendered by JS -->
+            <div class="radar-polygon">
+              <svg viewBox="0 0 240 240" id="radarSvg">
+                <polygon id="radarPoly" fill="rgba(59,130,246,0.15)" stroke="var(--cv-accent-mid)" stroke-width="2" points=""/>
+              </svg>
+            </div>
+            <!-- Points and labels rendered by JS -->
+          </div>
+          <div class="radar-legend" id="radarLegend"></div>
+        </div>
+      </section>
+
+      <!-- Idiomas -->
+      <section class="cv-section reveal" data-section="languages" data-priority-emergencia="8" data-priority-clinica="7" data-priority-ubs="7" data-priority-completo="7">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" /></svg>
+          Idiomas
+        </h2>
+        <div class="lang-grid">
+          <div class="lang-card">
+            <div class="lang-name">Portugues</div>
+            <div class="lang-level">Nativo</div>
+            <div class="proficiency-bar-bg">
+              <div class="proficiency-bar-fill" data-width="100"></div>
+            </div>
+          </div>
+          <div class="lang-card">
+            <div class="lang-name">Ingles</div>
+            <div class="lang-level">Intermediario / Avancado</div>
+            <div class="proficiency-bar-bg">
+              <div class="proficiency-bar-fill" data-width="70"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cursos e Certificacoes -->
+      <section class="cv-section reveal" data-section="certifications" data-priority-emergencia="6" data-priority-clinica="5" data-priority-ubs="4" data-priority-completo="6">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
+          Cursos e Certificacoes
+        </h2>
+        <div class="cert-grid">
+          <div class="cert-item">
+            <div class="cert-info">
+              <span class="cert-name">ACLS</span>
+              <span class="cert-full">Advanced Cardiovascular Life Support</span>
+            </div>
+            <span class="cert-status pending">Em andamento</span>
+          </div>
+          <div class="cert-item">
+            <div class="cert-info">
+              <span class="cert-name">ATLS</span>
+              <span class="cert-full">Advanced Trauma Life Support</span>
+            </div>
+            <span class="cert-status pending">Em andamento</span>
+          </div>
+          <div class="cert-item">
+            <div class="cert-info">
+              <span class="cert-name">PALS</span>
+              <span class="cert-full">Pediatric Advanced Life Support</span>
+            </div>
+            <span class="cert-status pending">Em andamento</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Educacao Continuada -->
+      <section class="cv-section reveal" data-section="courses" data-priority-emergencia="7" data-priority-clinica="8" data-priority-ubs="3" data-priority-completo="8">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
+          Educacao Continuada
+        </h2>
+        <div class="course-list">
+          <div class="course-item">
+            <div class="course-info">
+              <span class="course-name">Ultrassonografia Point-of-Care (POCUS) em Emergencia</span>
+              <span class="course-provider">Sociedade Brasileira de Medicina de Emergencia (ABRAMEDE)</span>
+              <span class="course-hours">40 horas</span>
+            </div>
+            <span class="course-date">2025</span>
+          </div>
+          <div class="course-item">
+            <div class="course-info">
+              <span class="course-name">Manejo da Via Aerea Dificil</span>
+              <span class="course-provider">Sociedade Brasileira de Anestesiologia (SBA)</span>
+              <span class="course-hours">16 horas</span>
+            </div>
+            <span class="course-date">2024</span>
+          </div>
+          <div class="course-item">
+            <div class="course-info">
+              <span class="course-name">Ventilacao Mecanica para Emergencistas</span>
+              <span class="course-provider">Hospital Sirio-Libanes &mdash; Ensino e Pesquisa</span>
+              <span class="course-hours">24 horas</span>
+            </div>
+            <span class="course-date">2024</span>
+          </div>
+          <div class="course-item">
+            <div class="course-info">
+              <span class="course-name">Protocolo de Sepse e Choque Septico</span>
+              <span class="course-provider">ILAS &mdash; Instituto Latino Americano de Sepse</span>
+              <span class="course-hours">12 horas</span>
+            </div>
+            <span class="course-date">2023</span>
+          </div>
+          <div class="course-item">
+            <div class="course-info">
+              <span class="course-name">Eletrocardiografia Pratica para Emergencia</span>
+              <span class="course-provider">Sociedade Brasileira de Cardiologia (SBC)</span>
+              <span class="course-hours">20 horas</span>
+            </div>
+            <span class="course-date">2023</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Publicacoes e Apresentacoes -->
+      <section class="cv-section reveal" data-section="publications" data-priority-emergencia="11" data-priority-clinica="9" data-priority-ubs="10" data-priority-completo="9">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" /></svg>
+          Publicacoes e Apresentacoes
+        </h2>
+        <div class="pub-list">
+          <div class="pub-item">
+            <div class="pub-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5" /></svg>
+            </div>
+            <div class="pub-content">
+              <div class="pub-title">Manejo do paciente politraumatizado na UPA: relato de experiencia</div>
+              <div class="pub-venue">Jornada Academica do HC-UFU &mdash; Uberlandia, MG</div>
+              <div class="pub-date">2024</div>
+              <span class="pub-type">Apresentacao oral</span>
+            </div>
+          </div>
+          <div class="pub-item">
+            <div class="pub-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+            </div>
+            <div class="pub-content">
+              <div class="pub-title">Otimizacao do fluxo de triagem em unidade de pronto atendimento de alta demanda</div>
+              <div class="pub-venue">Congresso Brasileiro de Medicina de Emergencia (ABRAMEDE)</div>
+              <div class="pub-date">2025</div>
+              <span class="pub-type">Poster</span>
+            </div>
+          </div>
+          <div class="pub-item">
+            <div class="pub-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
+            </div>
+            <div class="pub-content">
+              <div class="pub-title">Revisao: Uso de POCUS no diagnostico rapido de pneumotorax em emergencia</div>
+              <div class="pub-venue">Em preparacao para submissao</div>
+              <div class="pub-date">2026</div>
+              <span class="pub-type">Artigo de revisao</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trabalho Voluntario e Comunitario -->
+      <section class="cv-section reveal" data-section="volunteer" data-priority-emergencia="12" data-priority-clinica="10" data-priority-ubs="3" data-priority-completo="10">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+          Trabalho Voluntario e Comunitario
+        </h2>
+        <div class="volunteer-grid">
+          <div class="volunteer-card">
+            <div class="volunteer-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
+            </div>
+            <div class="volunteer-content">
+              <div class="volunteer-role">Medico Voluntario em Acao Comunitaria de Saude</div>
+              <div class="volunteer-org">Projeto Saude na Comunidade &mdash; Uberlandia, MG</div>
+              <div class="volunteer-desc">
+                Atendimento medico em mutiroes de saude em comunidades perifericas, incluindo triagem,
+                consultas de atencao primaria e orientacao em saude preventiva.
+              </div>
+              <div class="volunteer-period">2023 &mdash; Presente</div>
+            </div>
+          </div>
+          <div class="volunteer-card">
+            <div class="volunteer-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" /></svg>
+            </div>
+            <div class="volunteer-content">
+              <div class="volunteer-role">Instrutor de Primeiros Socorros</div>
+              <div class="volunteer-org">Liga Academica de Emergencia &mdash; UFU</div>
+              <div class="volunteer-desc">
+                Ensino de tecnicas basicas de suporte a vida (BLS) para estudantes de medicina e
+                leigos, incluindo simulacoes praticas de RCP e uso de DEA.
+              </div>
+              <div class="volunteer-period">2022 &mdash; 2024</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Depoimentos de Colegas (Social Proof) -->
+      <section class="cv-section reveal" data-section="endorsements" data-priority-emergencia="10" data-priority-clinica="11" data-priority-ubs="11" data-priority-completo="11">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>
+          Depoimentos de Colegas
+        </h2>
+        <div class="endorsements-grid">
+          <div class="endorsement-card">
+            <div class="endorsement-quote">
+              Profissional extremamente competente e dedicado. Antonio demonstra raciocinio clinico rapido
+              e excelente capacidade de lideranca em situacoes de alta pressao na emergencia.
+              Trabalhar ao lado dele transmite seguranca a toda a equipe.
+            </div>
+            <div class="endorsement-author">
+              <div class="endorsement-avatar">CE</div>
+              <div>
+                <div class="endorsement-name">Dr. Carlos Eduardo Silva</div>
+                <div class="endorsement-role">Coordenador de Emergencia &mdash; UPA Guarulhos</div>
+              </div>
+            </div>
+          </div>
+          <div class="endorsement-card">
+            <div class="endorsement-quote">
+              O Dr. Antonio se destaca pela capacidade de manter a calma em cenarios criticos
+              e pela forma humana com que trata cada paciente. Sua resolutividade e habilidade
+              tecnica sao diferenciais claros.
+            </div>
+            <div class="endorsement-author">
+              <div class="endorsement-avatar">MF</div>
+              <div>
+                <div class="endorsement-name">Dra. Maria Fernanda Oliveira</div>
+                <div class="endorsement-role">Diretora Clinica &mdash; PS Osasco</div>
+              </div>
+            </div>
+          </div>
+          <div class="endorsement-card">
+            <div class="endorsement-quote">
+              Um dos melhores plantonistas com quem ja trabalhei. Antonio e proativo, domina os protocolos
+              de emergencia e sempre busca atualizar seus conhecimentos. Recomendo sem hesitacao.
+            </div>
+            <div class="endorsement-author">
+              <div class="endorsement-avatar">RL</div>
+              <div>
+                <div class="endorsement-name">Dr. Ricardo Lima</div>
+                <div class="endorsement-role">Emergencista &mdash; Hospital Municipal SP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interesses Academicos e de Pesquisa -->
+      <section class="cv-section reveal" data-section="interests" data-priority-emergencia="9" data-priority-clinica="12" data-priority-ubs="9" data-priority-completo="12">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg>
+          Interesses Academicos
+        </h2>
+        <ul class="interests-list">
+          <li class="interest-tag"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg> Medicina de Emergencia</li>
+          <li class="interest-tag"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg> Protocolos de Atendimento ao Trauma</li>
+          <li class="interest-tag"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg> Point-of-Care Ultrasound (POCUS)</li>
+          <li class="interest-tag"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg> Simulacao em Saude</li>
+          <li class="interest-tag"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" /></svg> Tecnologia Aplicada a Saude</li>
+          <li class="interest-tag"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg> Gestao de Fluxo em PS</li>
+        </ul>
+      </section>
+
+      <!-- Referencias Profissionais -->
+      <section class="cv-section reveal" data-section="references" data-priority-emergencia="13" data-priority-clinica="13" data-priority-ubs="12" data-priority-completo="13">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+          Referencias Profissionais
+        </h2>
+        <div class="ref-grid">
+          <div class="ref-card">
+            <div class="ref-name" data-field="ref1-name">Dr. Carlos Eduardo Silva</div>
+            <div class="ref-role">Coordenador de Emergencia</div>
+            <div class="ref-org">UPA 24h &mdash; Guarulhos, SP</div>
+            <div class="ref-contact">
+              <span class="ref-contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                <a href="mailto:disponivel@solicitacao.com">Disponivel sob solicitacao</a>
+              </span>
+              <span class="ref-contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
+                Disponivel sob solicitacao
+              </span>
+            </div>
+          </div>
+          <div class="ref-card">
+            <div class="ref-name" data-field="ref2-name">Dra. Maria Fernanda Oliveira</div>
+            <div class="ref-role">Diretora Clinica</div>
+            <div class="ref-org">Pronto-Socorro Municipal &mdash; Osasco, SP</div>
+            <div class="ref-contact">
+              <span class="ref-contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                <a href="mailto:disponivel@solicitacao.com">Disponivel sob solicitacao</a>
+              </span>
+              <span class="ref-contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
+                Disponivel sob solicitacao
+              </span>
+            </div>
+          </div>
+        </div>
+        <p class="ref-note">* Informacoes de contato das referencias disponiveis mediante solicitacao formal.</p>
+      </section>
+
+      <!-- Disponibilidade e Contato -->
+      <section class="cv-section reveal" data-section="availability" data-priority-emergencia="14" data-priority-clinica="14" data-priority-ubs="13" data-priority-completo="14">
+        <h2 class="cv-section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
+          Disponibilidade e Contato
+        </h2>
+        <div class="availability-grid">
+          <div class="availability-card">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            <div class="availability-label">Regime</div>
+            <div class="availability-value" data-field="avail-regime">Plantao 12h / 24h</div>
+          </div>
+          <div class="availability-card">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
+            <div class="availability-label">Regiao</div>
+            <div class="availability-value" data-field="avail-region">SP / MG</div>
+          </div>
+          <div class="availability-card">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+            <div class="availability-label">E-mail</div>
+            <div class="availability-value"><a href="mailto:mascarenhasluz@gmail.com">mascarenhasluz@gmail.com</a></div>
+          </div>
+          <div class="availability-card">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+            <div class="availability-label">Disponibilidade</div>
+            <div class="availability-value" data-field="avail-when">Imediata</div>
+          </div>
+        </div>
+
+        <!-- Calendario de Disponibilidade -->
+        <div class="calendar-container" id="calendarContainer">
+          <div class="calendar-header">
+            <button class="calendar-nav-btn" onclick="calendarPrev()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+            </button>
+            <span class="calendar-month" id="calendarMonth"></span>
+            <button class="calendar-nav-btn" onclick="calendarNext()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+            </button>
+          </div>
+          <div class="calendar-weekdays">
+            <span class="calendar-weekday">Dom</span>
+            <span class="calendar-weekday">Seg</span>
+            <span class="calendar-weekday">Ter</span>
+            <span class="calendar-weekday">Qua</span>
+            <span class="calendar-weekday">Qui</span>
+            <span class="calendar-weekday">Sex</span>
+            <span class="calendar-weekday">Sab</span>
+          </div>
+          <div class="calendar-days" id="calendarDays"></div>
+          <div class="calendar-legend">
+            <span class="calendar-legend-item"><span class="calendar-legend-dot avail"></span> Disponivel</span>
+            <span class="calendar-legend-item"><span class="calendar-legend-dot partial"></span> Apenas noturno</span>
+            <span class="calendar-legend-item"><span class="calendar-legend-dot unavail"></span> Indisponivel</span>
+          </div>
+        </div>
+
+        <!-- QR Code Placeholder -->
+        <div class="qr-section">
+          <div class="qr-placeholder" aria-label="QR Code para curriculo digital">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" /></svg>
+            <span>QR Code</span>
+          </div>
+          <div class="qr-text">
+            <strong>Curriculo Digital</strong>
+            Escaneie o QR code para acessar a versao digital deste curriculo, ou compartilhe o link diretamente.
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
+
+  <script>
+    // ── State ──
+    var state = {
+      layout: localStorage.getItem('cv5-layout') || 'classic',
+      theme: localStorage.getItem('cv5-theme') || 'blue',
+      template: localStorage.getItem('cv5-template') || 'emergencia',
+      dark: false,
+      editMode: false,
+      calendarMonth: new Date().getMonth(),
+      calendarYear: new Date().getFullYear()
+    };
+
+    // ── Init ──
+    (function init() {
+      var storedDark = localStorage.getItem('cv5-dark');
+      if (storedDark === 'true' || (!storedDark && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        state.dark = true;
+      }
+      applyDark();
+      applyTheme(state.theme);
+      applyLayout(state.layout);
+      applyTemplate(state.template);
+      restoreEditableFields();
+      renderCalendar();
+      renderRadarChart();
+      setupMobileCollapsible();
+      setupSwipeGestures();
+    })();
+
+    // ── Dark Mode ──
+    function toggleDark() {
+      state.dark = !state.dark;
+      localStorage.setItem('cv5-dark', state.dark);
+      applyDark();
+    }
+
+    function applyDark() {
+      var html = document.documentElement;
+      var btnDark = document.getElementById('btnDark');
+      if (state.dark) {
+        html.classList.add('dark');
+        btnDark.querySelector('.icon-moon').style.display = 'none';
+        btnDark.querySelector('.icon-sun').style.display = 'block';
+      } else {
+        html.classList.remove('dark');
+        btnDark.querySelector('.icon-moon').style.display = 'block';
+        btnDark.querySelector('.icon-sun').style.display = 'none';
+      }
+    }
+
+    // ── Theme Picker ──
+    function setTheme(theme) {
+      state.theme = theme;
+      localStorage.setItem('cv5-theme', theme);
+      applyTheme(theme);
+      showToast('Tema alterado: ' + ({blue:'Azul Profissional', green:'Verde Medico', black:'Preto Classico'}[theme]));
+    }
+
+    function applyTheme(theme) {
+      var html = document.documentElement;
+      html.removeAttribute('data-theme');
+      if (theme !== 'blue') {
+        html.setAttribute('data-theme', theme);
+      }
+      document.querySelectorAll('.theme-dot').forEach(function(dot) {
+        dot.classList.toggle('active', dot.dataset.theme === theme);
+      });
+      // Re-render radar with new colors
+      setTimeout(renderRadarChart, 50);
+    }
+
+    // ── Layout Switcher ──
+    function setLayout(layout) {
+      state.layout = layout;
+      localStorage.setItem('cv5-layout', layout);
+      applyLayout(layout);
+      showToast('Layout: ' + (layout === 'classic' ? 'Classico' : 'Cards'));
+    }
+
+    function applyLayout(layout) {
+      var cv = document.getElementById('cvRoot');
+      var btnClassic = document.getElementById('btnClassic');
+      var btnCards = document.getElementById('btnCards');
+
+      if (layout === 'cards') {
+        cv.classList.add('card-layout');
+        btnCards.classList.add('active');
+        btnClassic.classList.remove('active');
+      } else {
+        cv.classList.remove('card-layout');
+        btnClassic.classList.add('active');
+        btnCards.classList.remove('active');
+      }
+
+      cv.querySelectorAll('.cv-section').forEach(function(section, i) {
+        section.classList.remove('section-enter');
+        void section.offsetWidth;
+        section.style.animationDelay = (i * 0.06) + 's';
+        section.classList.add('section-enter');
+      });
+    }
+
+    // ── Template System ──
+    // Each template reorders sections by priority and hides low-priority ones
+    var templateConfig = {
+      emergencia: {
+        label: 'Emergencia',
+        // Sections shown in order: practice, shifts, experience, skills, education, certifications, courses
+        show: ['practice','shifts','experience','skills','education','certifications','courses','languages','interests','endorsements','publications','volunteer','references','availability']
+      },
+      clinica: {
+        label: 'Clinica Geral',
+        show: ['experience','education','practice','skills','certifications','shifts','languages','courses','publications','volunteer','endorsements','interests','references','availability']
+      },
+      ubs: {
+        label: 'UBS',
+        show: ['experience','education','volunteer','certifications','practice','skills','languages','courses','shifts','interests','publications','endorsements','references','availability']
+      },
+      completo: {
+        label: 'Completo',
+        show: ['practice','shifts','experience','skills','education','certifications','languages','courses','publications','volunteer','endorsements','interests','references','availability']
+      }
+    };
+
+    function setTemplate(tpl) {
+      state.template = tpl;
+      localStorage.setItem('cv5-template', tpl);
+      applyTemplate(tpl);
+      showToast('Modelo: ' + (templateConfig[tpl] ? templateConfig[tpl].label : tpl));
+    }
+
+    function applyTemplate(tpl) {
+      var config = templateConfig[tpl];
+      if (!config) return;
+
+      // Update active button
+      document.querySelectorAll('.template-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.template === tpl);
+      });
+
+      var cv = document.getElementById('cvRoot');
+      var sections = cv.querySelectorAll('.cv-section[data-section]');
+
+      // Get priority attr for this template
+      var priorityAttr = 'data-priority-' + tpl;
+
+      // Build sorted array
+      var sectionArr = Array.prototype.slice.call(sections);
+      sectionArr.sort(function(a, b) {
+        var pa = parseInt(a.getAttribute(priorityAttr) || '99', 10);
+        var pb = parseInt(b.getAttribute(priorityAttr) || '99', 10);
+        return pa - pb;
+      });
+
+      // Reorder DOM
+      var parent = sections[0] ? sections[0].parentNode : null;
+      if (parent) {
+        sectionArr.forEach(function(section) {
+          parent.appendChild(section);
+        });
+      }
+
+      // Show/hide based on template
+      sections.forEach(function(section) {
+        var name = section.getAttribute('data-section');
+        if (config.show.indexOf(name) >= 0) {
+          section.classList.remove('section-hidden');
+        } else {
+          section.classList.add('section-hidden');
+        }
+      });
+
+      // Re-trigger entrance animations
+      sectionArr.forEach(function(section, i) {
+        section.classList.remove('section-enter');
+        void section.offsetWidth;
+        section.style.animationDelay = (i * 0.06) + 's';
+        section.classList.add('section-enter');
+      });
+    }
+
+    // ── Edit Mode ──
+    function toggleEditMode() {
+      state.editMode = !state.editMode;
+      var btnEdit = document.getElementById('btnEdit');
+      var indicator = document.getElementById('editIndicator');
+
+      btnEdit.classList.toggle('active', state.editMode);
+      indicator.classList.toggle('visible', state.editMode);
+
+      var editables = document.querySelectorAll('[data-field]');
+      editables.forEach(function(el) {
+        if (state.editMode) {
+          el.classList.add('editable');
+          el.setAttribute('contenteditable', 'true');
+        } else {
+          el.classList.remove('editable');
+          el.removeAttribute('contenteditable');
+          saveEditableFields();
+        }
+      });
+
+      if (state.editMode) {
+        showToast('Modo edicao ativado — clique para editar');
+      } else {
+        showToast('Alteracoes salvas localmente');
+      }
+    }
+
+    function saveEditableFields() {
+      var data = {};
+      document.querySelectorAll('[data-field]').forEach(function(el) {
+        data[el.dataset.field] = el.innerHTML;
+      });
+      localStorage.setItem('cv5-fields', JSON.stringify(data));
+    }
+
+    function restoreEditableFields() {
+      var raw = localStorage.getItem('cv5-fields');
+      if (!raw) return;
+      try {
+        var data = JSON.parse(raw);
+        Object.keys(data).forEach(function(key) {
+          var el = document.querySelector('[data-field="' + key + '"]');
+          if (el) el.innerHTML = data[key];
+        });
+      } catch (e) {}
+    }
+
+    document.addEventListener('focusout', function(e) {
+      if (state.editMode && e.target.hasAttribute && e.target.hasAttribute('data-field')) {
+        saveEditableFields();
+      }
+    });
+
+    // ── Cover Letter Toggle ──
+    function toggleCoverLetter() {
+      var content = document.getElementById('coverLetter');
+      var toggle = document.getElementById('clToggle');
+      var isExpanded = content.classList.contains('expanded');
+      content.classList.toggle('expanded');
+      toggle.classList.toggle('expanded');
+      if (isExpanded) {
+        toggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ver Carta de Apresentacao';
+      } else {
+        toggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ocultar Carta de Apresentacao';
+      }
+    }
+
+    // ── Detail Panel Toggle ──
+    function toggleDetail(btn) {
+      var panel = btn.nextElementSibling;
+      var isExpanded = panel.classList.contains('expanded');
+      panel.classList.toggle('expanded');
+      btn.classList.toggle('expanded');
+      if (isExpanded) {
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Experiencia Detalhada';
+      } else {
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ocultar Detalhes';
+      }
+    }
+
+    // ── Toast ──
+    function showToast(msg) {
+      var toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(function() {
+        toast.classList.remove('visible');
+      }, 2200);
+    }
+
+    // ── Scroll Reveal Animations ──
+    (function() {
+      var reveals = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        reveals.forEach(function(el) { el.classList.add('visible'); });
+        return;
+      }
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      reveals.forEach(function(el) { observer.observe(el); });
+    })();
+
+    // ── Animate Proficiency Bars & Shift Bars on Scroll ──
+    (function() {
+      var bars = document.querySelectorAll('.proficiency-bar-fill, .shift-bar-value');
+      if (!('IntersectionObserver' in window)) {
+        bars.forEach(function(bar) { bar.style.width = bar.dataset.width + '%'; });
+        return;
+      }
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.style.width = entry.target.dataset.width + '%';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      bars.forEach(function(bar) { observer.observe(bar); });
+    })();
+
+    // ── Counter Animation ──
+    (function() {
+      var counters = document.querySelectorAll('.counter');
+      if (!('IntersectionObserver' in window)) {
+        counters.forEach(function(c) { c.textContent = c.dataset.target; });
+        return;
+      }
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      counters.forEach(function(c) { observer.observe(c); });
+
+      function animateCounter(el) {
+        var target = parseInt(el.dataset.target, 10);
+        var duration = 1500;
+        var startTime = null;
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          var progress = Math.min((timestamp - startTime) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = formatNumber(Math.round(eased * target));
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      function formatNumber(n) {
+        return n >= 1000 ? n.toLocaleString('pt-BR') : n.toString();
+      }
+    })();
+
+    // ── Radar Chart (CSS + SVG polygon) ──
+    function renderRadarChart() {
+      var skills = [
+        { name: 'Via Aerea', value: 90 },
+        { name: 'Acessos Vasc.', value: 80 },
+        { name: 'Proc. Toracicos', value: 75 },
+        { name: 'Suturas/Ortop.', value: 95 },
+        { name: 'Farmacologia', value: 85 },
+        { name: 'POCUS', value: 70 }
+      ];
+
+      var chart = document.getElementById('radarChart');
+      var svg = document.getElementById('radarSvg');
+      var poly = document.getElementById('radarPoly');
+      var legend = document.getElementById('radarLegend');
+
+      // Remove old points and labels
+      chart.querySelectorAll('.radar-point, .radar-label, .radar-axis').forEach(function(el) { el.remove(); });
+
+      var cx = 120, cy = 120, r = 96;
+      var n = skills.length;
+      var points = [];
+
+      for (var i = 0; i < n; i++) {
+        var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+        var val = skills[i].value / 100;
+
+        // Draw axis
+        var axisDiv = document.createElement('div');
+        axisDiv.className = 'radar-axis';
+        var deg = (360 / n * i);
+        axisDiv.style.transform = 'rotate(' + deg + 'deg)';
+        chart.appendChild(axisDiv);
+
+        // Data point position
+        var px = cx + Math.cos(angle) * r * val;
+        var py = cy + Math.sin(angle) * r * val;
+        points.push(px.toFixed(1) + ',' + py.toFixed(1));
+
+        // Point dot
+        var dot = document.createElement('div');
+        dot.className = 'radar-point';
+        dot.style.left = (px / 240 * 100) + '%';
+        dot.style.top = (py / 240 * 100) + '%';
+        chart.appendChild(dot);
+
+        // Label
+        var lx = cx + Math.cos(angle) * (r + 26);
+        var ly = cy + Math.sin(angle) * (r + 26);
+        var lbl = document.createElement('div');
+        lbl.className = 'radar-label';
+        lbl.textContent = skills[i].name;
+        lbl.style.left = (lx / 240 * 100) + '%';
+        lbl.style.top = (ly / 240 * 100) + '%';
+        chart.appendChild(lbl);
+      }
+
+      poly.setAttribute('points', points.join(' '));
+
+      // Legend
+      legend.innerHTML = '';
+      skills.forEach(function(s) {
+        var item = document.createElement('div');
+        item.className = 'radar-legend-item';
+        item.innerHTML = '<span class="radar-legend-dot"></span><span>' + s.name + '</span><span class="radar-legend-value">' + s.value + '%</span>';
+        legend.appendChild(item);
+      });
+    }
+
+    // ── Availability Calendar ──
+    var monthNames = ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+    // Sample availability data (day => status)
+    function getAvailability(year, month) {
+      var days = new Date(year, month + 1, 0).getDate();
+      var avail = {};
+      for (var d = 1; d <= days; d++) {
+        var dow = new Date(year, month, d).getDay();
+        // Weekends usually available, some weekdays partial, some unavailable
+        if (dow === 0 || dow === 6) {
+          avail[d] = 'available';
+        } else if (dow === 1 || dow === 3 || dow === 5) {
+          avail[d] = 'available';
+        } else if (dow === 2) {
+          avail[d] = 'partial';
+        } else {
+          avail[d] = 'partial';
+        }
+        // Mark a few as unavailable for realism
+        if (d === 15 || d === 16 || d === 25) {
+          avail[d] = 'unavailable';
+        }
+      }
+      return avail;
+    }
+
+    function renderCalendar() {
+      var m = state.calendarMonth;
+      var y = state.calendarYear;
+      document.getElementById('calendarMonth').textContent = monthNames[m] + ' ' + y;
+
+      var firstDay = new Date(y, m, 1).getDay();
+      var daysInMonth = new Date(y, m + 1, 0).getDate();
+      var avail = getAvailability(y, m);
+
+      var html = '';
+      // Empty cells for offset
+      for (var i = 0; i < firstDay; i++) {
+        html += '<div class="calendar-day empty"></div>';
+      }
+      for (var d = 1; d <= daysInMonth; d++) {
+        var cls = avail[d] || '';
+        html += '<div class="calendar-day ' + cls + '">' + d + '</div>';
+      }
+
+      document.getElementById('calendarDays').innerHTML = html;
+    }
+
+    function calendarPrev() {
+      state.calendarMonth--;
+      if (state.calendarMonth < 0) {
+        state.calendarMonth = 11;
+        state.calendarYear--;
+      }
+      renderCalendar();
+    }
+
+    function calendarNext() {
+      state.calendarMonth++;
+      if (state.calendarMonth > 11) {
+        state.calendarMonth = 0;
+        state.calendarYear++;
+      }
+      renderCalendar();
+    }
+
+    // ── Export Plain Text ──
+    function exportPlainText() {
+      var cv = document.getElementById('cvRoot');
+      var lines = [];
+
+      // Header
+      var name = cv.querySelector('.cv-name');
+      var title = cv.querySelector('.cv-title');
+      if (name) lines.push(name.textContent.trim());
+      if (title) lines.push(title.textContent.trim());
+      lines.push('');
+
+      // Contact
+      cv.querySelectorAll('.cv-contact-item').forEach(function(item) {
+        lines.push(item.textContent.trim());
+      });
+      lines.push('');
+
+      // Summary
+      var summary = cv.querySelector('.summary-text');
+      if (summary) {
+        lines.push('RESUMO PROFISSIONAL');
+        lines.push(summary.textContent.trim());
+        lines.push('');
+      }
+
+      // Sections
+      cv.querySelectorAll('.cv-section:not(.section-hidden)').forEach(function(section) {
+        var titleEl = section.querySelector('.cv-section-title');
+        if (titleEl) {
+          lines.push('='.repeat(50));
+          lines.push(titleEl.textContent.trim().toUpperCase());
+          lines.push('='.repeat(50));
+        }
+
+        // Timeline items
+        section.querySelectorAll('.timeline-item').forEach(function(item) {
+          var role = item.querySelector('.timeline-role');
+          var date = item.querySelector('.timeline-date');
+          var org = item.querySelector('.timeline-org');
+          if (role) lines.push(role.textContent.trim() + (date ? ' (' + date.textContent.trim() + ')' : ''));
+          if (org) lines.push(org.textContent.trim());
+          item.querySelectorAll('.timeline-details li').forEach(function(li) {
+            lines.push('  - ' + li.textContent.trim());
+          });
+          lines.push('');
+        });
+
+        // Skills
+        section.querySelectorAll('.skill-category').forEach(function(cat) {
+          var catTitle = cat.querySelector('.skill-category-title');
+          if (catTitle) lines.push(catTitle.textContent.trim() + ':');
+          cat.querySelectorAll('.skill-list li').forEach(function(li) {
+            var skillName = li.querySelector('.skill-name');
+            var dots = li.querySelectorAll('.dot.filled');
+            if (skillName) lines.push('  - ' + skillName.textContent.trim() + ' [' + dots.length + '/5]');
+          });
+          lines.push('');
+        });
+
+        // Certs
+        section.querySelectorAll('.cert-item').forEach(function(cert) {
+          var certName = cert.querySelector('.cert-name');
+          var certFull = cert.querySelector('.cert-full');
+          var certStatus = cert.querySelector('.cert-status');
+          if (certName) lines.push('  - ' + certName.textContent.trim() + (certFull ? ' - ' + certFull.textContent.trim() : '') + (certStatus ? ' [' + certStatus.textContent.trim() + ']' : ''));
+        });
+
+        // Courses
+        section.querySelectorAll('.course-item').forEach(function(course) {
+          var courseName = course.querySelector('.course-name');
+          var courseProvider = course.querySelector('.course-provider');
+          var courseDate = course.querySelector('.course-date');
+          if (courseName) lines.push('  - ' + courseName.textContent.trim() + (courseDate ? ' (' + courseDate.textContent.trim() + ')' : ''));
+          if (courseProvider) lines.push('    ' + courseProvider.textContent.trim());
+        });
+
+        // Pubs
+        section.querySelectorAll('.pub-item').forEach(function(pub) {
+          var pubTitle = pub.querySelector('.pub-title');
+          var pubVenue = pub.querySelector('.pub-venue');
+          var pubDate = pub.querySelector('.pub-date');
+          if (pubTitle) lines.push('  - ' + pubTitle.textContent.trim());
+          if (pubVenue) lines.push('    ' + pubVenue.textContent.trim() + (pubDate ? ', ' + pubDate.textContent.trim() : ''));
+        });
+
+        // Volunteer
+        section.querySelectorAll('.volunteer-card').forEach(function(vol) {
+          var volRole = vol.querySelector('.volunteer-role');
+          var volOrg = vol.querySelector('.volunteer-org');
+          var volDesc = vol.querySelector('.volunteer-desc');
+          if (volRole) lines.push('  - ' + volRole.textContent.trim());
+          if (volOrg) lines.push('    ' + volOrg.textContent.trim());
+          if (volDesc) lines.push('    ' + volDesc.textContent.trim());
+        });
+
+        // Endorsements
+        section.querySelectorAll('.endorsement-card').forEach(function(end) {
+          var quote = end.querySelector('.endorsement-quote');
+          var author = end.querySelector('.endorsement-name');
+          var role = end.querySelector('.endorsement-role');
+          if (quote) lines.push('  "' + quote.textContent.trim() + '"');
+          if (author) lines.push('  - ' + author.textContent.trim() + (role ? ', ' + role.textContent.trim() : ''));
+          lines.push('');
+        });
+
+        // Languages
+        section.querySelectorAll('.lang-card').forEach(function(lang) {
+          var langName = lang.querySelector('.lang-name');
+          var langLevel = lang.querySelector('.lang-level');
+          if (langName) lines.push('  - ' + langName.textContent.trim() + (langLevel ? ': ' + langLevel.textContent.trim() : ''));
+        });
+
+        // References
+        section.querySelectorAll('.ref-card').forEach(function(ref) {
+          var refName = ref.querySelector('.ref-name');
+          var refRole = ref.querySelector('.ref-role');
+          var refOrg = ref.querySelector('.ref-org');
+          if (refName) lines.push('  - ' + refName.textContent.trim());
+          if (refRole) lines.push('    ' + refRole.textContent.trim());
+          if (refOrg) lines.push('    ' + refOrg.textContent.trim());
+        });
+
+        // Availability
+        section.querySelectorAll('.availability-card').forEach(function(card) {
+          var lbl = card.querySelector('.availability-label');
+          var val = card.querySelector('.availability-value');
+          if (lbl && val) lines.push('  ' + lbl.textContent.trim() + ': ' + val.textContent.trim());
+        });
+
+        // Interests
+        section.querySelectorAll('.interest-tag').forEach(function(tag) {
+          lines.push('  - ' + tag.textContent.trim());
+        });
+
+        // Practice area
+        var practiceVal = section.querySelector('.practice-area-value');
+        var practiceDesc = section.querySelector('.practice-area-desc');
+        if (practiceVal) lines.push(practiceVal.textContent.trim());
+        if (practiceDesc) lines.push(practiceDesc.textContent.trim());
+
+        // Shift stats
+        section.querySelectorAll('.shift-card').forEach(function(card) {
+          var num = card.querySelector('.shift-number');
+          var unit = card.querySelector('.shift-unit');
+          if (num && unit) lines.push('  ' + num.textContent.trim() + ' ' + unit.textContent.trim());
+        });
+
+        // Edu
+        section.querySelectorAll('.edu-entry').forEach(function(edu) {
+          var eduRole = edu.querySelector('.edu-role');
+          var eduOrg = edu.querySelector('.edu-org');
+          var eduDesc = edu.querySelector('.edu-desc');
+          if (eduRole) lines.push(eduRole.textContent.trim());
+          if (eduOrg) lines.push(eduOrg.textContent.trim());
+          if (eduDesc) lines.push(eduDesc.textContent.trim());
+        });
+
+        lines.push('');
+      });
+
+      var txt = lines.join('\n');
+
+      document.getElementById('txtContent').value = txt;
+      document.getElementById('txtModal').classList.add('visible');
+    }
+
+    function closeTxtModal() {
+      document.getElementById('txtModal').classList.remove('visible');
+    }
+
+    function copyTxtToClipboard() {
+      var textarea = document.getElementById('txtContent');
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      try {
+        navigator.clipboard.writeText(textarea.value).then(function() {
+          showToast('Texto copiado!');
+        });
+      } catch (e) {
+        document.execCommand('copy');
+        showToast('Texto copiado!');
+      }
+    }
+
+    // Close modal on overlay click
+    document.getElementById('txtModal').addEventListener('click', function(e) {
+      if (e.target === this) closeTxtModal();
+    });
+
+    // ── Mobile Collapsible Sections ──
+    function setupMobileCollapsible() {
+      if (window.innerWidth > 640) return;
+
+      document.querySelectorAll('.cv-section[data-section]').forEach(function(section) {
+        var title = section.querySelector('.cv-section-title');
+        if (!title || section.querySelector('.mobile-section-header')) return;
+
+        // Wrap title in a clickable header
+        var wrapper = document.createElement('div');
+        wrapper.className = 'mobile-section-header';
+
+        var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('class', 'mobile-collapse-icon');
+        icon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        icon.setAttribute('fill', 'none');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('stroke-width', '1.5');
+        icon.setAttribute('stroke', 'currentColor');
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        path.setAttribute('d', 'm19.5 8.25-7.5 7.5-7.5-7.5');
+        icon.appendChild(path);
+
+        title.parentNode.insertBefore(wrapper, title);
+        wrapper.appendChild(title);
+        wrapper.appendChild(icon);
+
+        // Wrap remaining content
+        var body = document.createElement('div');
+        body.className = 'mobile-section-body';
+        var children = Array.prototype.slice.call(section.childNodes);
+        var afterHeader = false;
+        children.forEach(function(child) {
+          if (child === wrapper) {
+            afterHeader = true;
+            return;
+          }
+          if (afterHeader) {
+            body.appendChild(child);
+          }
+        });
+        section.appendChild(body);
+
+        // Set initial max-height
+        requestAnimationFrame(function() {
+          body.style.maxHeight = body.scrollHeight + 'px';
+        });
+
+        wrapper.addEventListener('click', function() {
+          var isCollapsed = wrapper.classList.contains('collapsed');
+          if (isCollapsed) {
+            wrapper.classList.remove('collapsed');
+            body.classList.remove('collapsed');
+            body.style.maxHeight = body.scrollHeight + 'px';
+          } else {
+            body.style.maxHeight = body.scrollHeight + 'px';
+            void body.offsetHeight;
+            wrapper.classList.add('collapsed');
+            body.classList.add('collapsed');
+            body.style.maxHeight = '0px';
+          }
+        });
+      });
+    }
+
+    // Re-setup on resize
+    var mobileSetupDone = false;
+    window.addEventListener('resize', function() {
+      if (window.innerWidth <= 640 && !mobileSetupDone) {
+        setupMobileCollapsible();
+        mobileSetupDone = true;
+      }
+    });
+
+    // ── Swipe Gestures for Template Switching (Mobile) ──
+    function setupSwipeGestures() {
+      var startX = 0;
+      var startY = 0;
+      var templateKeys = Object.keys(templateConfig);
+
+      document.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - startX;
+        var dy = e.changedTouches[0].clientY - startY;
+
+        // Only trigger if horizontal swipe is dominant and large enough
+        if (Math.abs(dx) < 80 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
+
+        var currentIdx = templateKeys.indexOf(state.template);
+        if (currentIdx < 0) return;
+
+        if (dx < 0) {
+          // Swipe left -> next template
+          var next = (currentIdx + 1) % templateKeys.length;
+          setTemplate(templateKeys[next]);
+        } else {
+          // Swipe right -> prev template
+          var prev = (currentIdx - 1 + templateKeys.length) % templateKeys.length;
+          setTemplate(templateKeys[prev]);
+        }
+      }, { passive: true });
+    }
+  </script>
 </body>
 </html>
