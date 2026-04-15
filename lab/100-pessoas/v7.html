@@ -1,26 +1,2162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>100 Pessoas — Version 7</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    :root {
+      --v7-bg-card:#fff;--v7-bg-hover:#f8fafc;--v7-bg-surface:#f1f5f9;
+      --v7-border-subtle:#f3f4f6;--v7-shadow-sm:0 1px 3px rgba(0,0,0,.06);
+      --v7-shadow-md:0 4px 12px rgba(0,0,0,.08);--v7-shadow-lg:0 8px 24px rgba(0,0,0,.12);
+      --v7-radius:10px;--v7-tr:0.15s ease;--v7-sidebar-w:230px;
+    }
+    body.dark-mode {
+      --color-text:#e2e8f0;--color-text-light:#94a3b8;--color-bg:#0f172a;
+      --color-bg-alt:#1e293b;--color-border:#334155;--v7-bg-card:#1e293b;
+      --v7-bg-hover:#334155;--v7-bg-surface:#0f172a;--v7-border-subtle:#334155;
+      --v7-shadow-sm:0 1px 3px rgba(0,0,0,.3);--v7-shadow-md:0 4px 12px rgba(0,0,0,.4);
+      --v7-shadow-lg:0 8px 24px rgba(0,0,0,.5);
+    }
+    body.dark-mode .nav{background:rgba(15,23,42,.95)}
+    body.dark-mode .badge-green{background:#052e16;color:#4ade80}
+    body.dark-mode .badge-amber{background:#451a03;color:#fbbf24}
+    body.dark-mode .badge-red{background:#450a0a;color:#f87171}
+    body.dark-mode .badge-blue{background:#172554;color:#60a5fa}
+    body.dark-mode .badge-gray{background:#1e293b;color:#94a3b8}
+    body.dark-mode .badge-purple{background:#2e1065;color:#a78bfa}
+    body.dark-mode .detail-card,.dark-mode .metric-card{background:var(--v7-bg-card)}
+    body.dark-mode .alert-card.alert-urgent{background:#450a0a;border-left-color:#dc2626;color:#fca5a5}
+    body.dark-mode .alert-card.alert-warn{background:#451a03;border-left-color:#d97706;color:#fcd34d}
+    body.dark-mode .alert-card.alert-info{background:#172554;border-left-color:#2563eb;color:#93c5fd}
+    body.dark-mode .data-table tbody tr:hover{background:var(--v7-bg-hover)}
+    body.dark-mode .modal-content{background:var(--v7-bg-card)}
+    body.dark-mode .sidebar{background:var(--v7-bg-card);border-color:var(--color-border)}
+    body.dark-mode .sidebar-item:hover,.dark-mode .sidebar-item.active{background:var(--v7-bg-hover)}
+    body.dark-mode .msg-bubble.sent{background:#1e40af}
+    body.dark-mode .msg-bubble.received{background:#334155}
+    body.dark-mode .onboard-item.done{background:#052e16;border-color:#166534}
+    body.dark-mode .rx-preview{background:var(--v7-bg-surface);border-color:var(--color-border)}
+    body.dark-mode .calc-card{background:var(--v7-bg-card)}
+    body.dark-mode .notif-item{background:var(--v7-bg-card)}
+    body.dark-mode .export-option{background:var(--v7-bg-card)}
+    body.dark-mode .interaction-warn{background:#451a03;border-color:#92400e}
+    body.dark-mode .care-goal,.dark-mode .referral-card,.dark-mode .family-node,.dark-mode .weight-chart-area{background:var(--v7-bg-card)}
+    body.dark-mode .adherence-day.taken{background:#052e16}
+    body.dark-mode .adherence-day.missed{background:#450a0a}
+    body.dark-mode .lab-result-row.abnormal{background:#450a0a}
+    body.dark-mode .agenda-slot{background:var(--v7-bg-card);border-color:var(--color-border)}
+    body.dark-mode .agenda-slot.occupied{background:var(--v7-bg-hover)}
+    body.dark-mode .timeline-event{border-color:var(--color-border)}
+    body.dark-mode .cost-card{background:var(--v7-bg-card)}
+    body.dark-mode .protocol-card{background:var(--v7-bg-card)}
+    body.dark-mode .survey-card{background:var(--v7-bg-card)}
+    body.dark-mode .screening-item{background:var(--v7-bg-card)}
+    body.dark-mode .kbd-shortcut kbd{background:var(--v7-bg-hover);border-color:var(--color-border);color:var(--color-text)}
+    body.dark-mode .telemed-card{background:var(--v7-bg-card);border-color:var(--color-border)}
+    body.dark-mode .family-tree-node{background:var(--v7-bg-card);border-color:var(--color-border)}
+    body.dark-mode .trend-card{background:var(--v7-bg-card)}
+    body.dark-mode .rx-history-card{background:var(--v7-bg-card)}
+    body.dark-mode .health-score-ring{filter:brightness(0.9)}
+    body.dark-mode .goal-card{background:var(--v7-bg-card);border-color:var(--color-border)}
+    body.dark-mode .badge-card{background:var(--v7-bg-card);border-color:var(--color-border)}
+    body.dark-mode .backup-card{background:var(--v7-bg-card)}
+
+    .lab-page{min-height:auto;display:block;padding:0}
+    .lab-page-inner{max-width:none}
+
+    /* Layout */
+    .app-layout{display:flex;min-height:calc(100vh - 60px)}
+    .sidebar{width:var(--v7-sidebar-w);border-right:1px solid var(--color-border);background:var(--v7-bg-card);padding:.75rem 0;flex-shrink:0;overflow-y:auto;position:sticky;top:60px;height:calc(100vh - 60px)}
+    .sidebar-group{margin-bottom:.25rem}
+    .sidebar-group-header{display:flex;align-items:center;justify-content:space-between;padding:.35rem .75rem;cursor:pointer;user-select:none}
+    .sidebar-group-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-light)}
+    .sidebar-group-toggle{font-size:.6rem;color:var(--color-text-light);transition:transform .2s}
+    .sidebar-group.collapsed .sidebar-group-toggle{transform:rotate(-90deg)}
+    .sidebar-group.collapsed .sidebar-group-items{display:none}
+    .sidebar-group-items{padding:0 .5rem}
+    .sidebar-item{display:flex;align-items:center;gap:.55rem;padding:.45rem .7rem;font-size:.78rem;border-radius:6px;cursor:pointer;color:var(--color-text-light);transition:all var(--v7-tr);border:none;background:none;width:100%;text-align:left;font-family:var(--font-body)}
+    .sidebar-item:hover{background:var(--v7-bg-hover);color:var(--color-text)}
+    .sidebar-item.active{background:rgba(37,99,235,.08);color:var(--color-accent);font-weight:600}
+    .sidebar-item .si-icon{width:18px;text-align:center;font-size:.82rem}
+    .sidebar-item .si-badge{margin-left:auto;font-size:.55rem;font-weight:700;background:#dc2626;color:#fff;padding:.05rem .3rem;border-radius:8px;min-width:16px;text-align:center}
+    .sidebar-item .si-badge.badge-count-blue{background:var(--color-accent)}
+    .sidebar-item .si-badge.badge-count-amber{background:#d97706}
+    .sidebar-item .si-badge.badge-count-green{background:#16a34a}
+    .sidebar-bottom{margin-top:auto;padding:.75rem;border-top:1px solid var(--color-border)}
+
+    .main-content{flex:1;min-width:0;padding:1.5rem 2rem 3rem}
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .main-content{padding:1rem}
+      .metrics-row{grid-template-columns:1fr 1fr!important}
+      .detail-grid{grid-template-columns:1fr!important}
+      .form-row{grid-template-columns:1fr!important}
+    }
+
+    /* Dark toggle */
+    .dark-toggle{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--color-text-light);background:var(--color-bg-alt);border:1px solid var(--color-border);padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-family:var(--font-body);transition:all var(--v7-tr);white-space:nowrap}
+    .dark-toggle:hover{border-color:#bbb;color:var(--color-text)}
+
+    /* Header */
+    .dash-header{margin-bottom:1.5rem}
+    .dash-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .dash-header h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.2rem}
+    .dash-header p{color:var(--color-text-light);font-size:.88rem;max-width:560px}
+    .dash-header-right{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+    .dash-date{font-size:.73rem;color:var(--color-text-light);background:var(--color-bg-alt);border:1px solid var(--color-border);padding:.3rem .65rem;border-radius:6px;white-space:nowrap;font-weight:500}
+    .persist-badge{font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:.15rem .4rem;border-radius:4px;background:#f0fdf4;color:#16a34a;display:inline-flex;align-items:center;gap:.3rem}
+
+    /* Metrics */
+    .metrics-row{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:1.2rem}
+    .metric-card{background:var(--v7-bg-card);border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:.9rem;position:relative;overflow:hidden}
+    .metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .metric-card.mc-blue::before{background:var(--color-accent)}
+    .metric-card.mc-green::before{background:#16a34a}
+    .metric-card.mc-amber::before{background:#d97706}
+    .metric-card.mc-red::before{background:#dc2626}
+    .metric-card.mc-purple::before{background:#7c3aed}
+    .metric-label{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-light);margin-bottom:.25rem}
+    .metric-value{font-size:1.4rem;font-weight:700;line-height:1.15}
+    .metric-value.blue{color:var(--color-accent)}.metric-value.green{color:#16a34a}.metric-value.amber{color:#d97706}.metric-value.red{color:#dc2626}
+    .metric-sub{font-size:.68rem;color:var(--color-text-light);margin-top:.1rem}
+
+    /* Sections */
+    .dash-section{display:none;animation:fadeIn .25s ease}
+    .dash-section.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .section-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem}
+    .section-title{font-size:1.1rem;font-weight:700}
+    .section-subtitle{font-size:.83rem;color:var(--color-text-light);margin-bottom:1rem}
+
+    /* Search & filters */
+    .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap}
+    .search-input{font-family:var(--font-body);font-size:.78rem;padding:.4rem .65rem .4rem 1.8rem;border:1px solid var(--color-border);border-radius:6px;background:var(--v7-bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='6' cy='6' r='5'/%3E%3Cline x1='13' y1='13' x2='9.5' y2='9.5'/%3E%3C/svg%3E") no-repeat .6rem center;color:var(--color-text);width:200px;outline:none}
+    .search-input:focus{border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .filter-btn{font-family:var(--font-body);font-size:.7rem;font-weight:500;padding:.35rem .65rem;border:1px solid var(--color-border);border-radius:6px;background:var(--v7-bg-card);color:var(--color-text-light);cursor:pointer;transition:all var(--v7-tr)}
+    .filter-btn:hover{border-color:#bbb;color:var(--color-text)}
+    .filter-btn.active{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+
+    /* Table */
+    .table-wrap{border:1px solid var(--color-border);border-radius:var(--v7-radius);overflow:hidden;margin-bottom:1rem;overflow-x:auto}
+    .data-table{width:100%;border-collapse:collapse;font-size:.8rem}
+    .data-table th{text-align:left;font-size:.63rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-light);padding:.55rem .8rem;border-bottom:2px solid var(--color-border);background:var(--color-bg-alt);white-space:nowrap;cursor:pointer;user-select:none}
+    .data-table th:hover{color:var(--color-text)}
+    .data-table th.sorted-asc::after{content:' \2191';color:var(--color-accent)}
+    .data-table th.sorted-desc::after{content:' \2193';color:var(--color-accent)}
+    .data-table td{padding:.6rem .8rem;border-bottom:1px solid var(--color-border);vertical-align:middle}
+    .data-table tbody tr{transition:background .1s;cursor:pointer}
+    .data-table tbody tr:hover{background:var(--v7-bg-hover)}
+    .data-table tbody tr:last-child td{border-bottom:none}
+    .data-table .name-cell{font-weight:600;color:var(--color-text)}
+    .data-table tbody tr.hidden-row{display:none}
+
+    /* Badges */
+    .badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.63rem;font-weight:600;padding:.15rem .45rem;border-radius:4px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+    .badge-green{background:#f0fdf4;color:#16a34a}.badge-amber{background:#fffbeb;color:#d97706}
+    .badge-red{background:#fef2f2;color:#dc2626}.badge-blue{background:#eff6ff;color:#2563eb}
+    .badge-gray{background:#f3f4f6;color:#6b7280}.badge-purple{background:#f5f3ff;color:#7c3aed}
+    .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:.3rem}
+    .dot-green{background:#16a34a}.dot-amber{background:#d97706}.dot-red{background:#dc2626}
+
+    /* Alerts */
+    .alert-strip{display:flex;gap:.6rem;margin-bottom:1rem;overflow-x:auto;padding-bottom:.2rem}
+    .alert-card{flex:0 0 auto;min-width:220px;border-radius:8px;padding:.7rem .85rem;font-size:.76rem;line-height:1.5;border-left:3px solid}
+    .alert-card.alert-urgent{background:#fef2f2;border-left-color:#dc2626;color:#991b1b}
+    .alert-card.alert-warn{background:#fffbeb;border-left-color:#d97706;color:#92400e}
+    .alert-card.alert-info{background:#eff6ff;border-left-color:#2563eb;color:#1e40af}
+    .alert-card strong{display:block;font-size:.63rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.1rem}
+
+    /* Detail grid */
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem}
+    .detail-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:.9rem;background:var(--v7-bg-card)}
+    .detail-card h4{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-light);margin-bottom:.6rem}
+    .detail-card p,.detail-card li{font-size:.8rem;line-height:1.6}
+    .detail-card ul{list-style:none}
+    .detail-card ul li{padding:.25rem 0;border-bottom:1px solid var(--v7-border-subtle);display:flex;align-items:flex-start;gap:.5rem}
+    .detail-card ul li:last-child{border-bottom:none}
+    .detail-card-full{grid-column:1/-1}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;justify-content:center;align-items:flex-start;padding:2rem;overflow-y:auto}
+    .modal-overlay.open{display:flex}
+    .modal-content{background:var(--v7-bg-card);border-radius:12px;width:100%;max-width:850px;padding:1.5rem;box-shadow:var(--v7-shadow-lg);animation:fadeIn .2s ease;max-height:90vh;overflow-y:auto;margin:auto}
+    .modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+    .modal-header h2{font-size:1.15rem;font-weight:700}
+    .modal-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--color-text-light);padding:.25rem;line-height:1}
+    .modal-close:hover{color:var(--color-text)}
+
+    /* Panel tabs */
+    .panel-tabs{display:flex;gap:0;border-bottom:2px solid var(--color-border);margin-bottom:.85rem;overflow-x:auto}
+    .panel-tab{padding:.4rem .75rem;font-size:.72rem;font-weight:500;color:var(--color-text-light);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;font-family:var(--font-body);white-space:nowrap}
+    .panel-tab:hover{color:var(--color-text)}
+    .panel-tab.active{color:var(--color-accent);border-bottom-color:var(--color-accent);font-weight:600}
+    .panel-section{display:none;animation:fadeIn .2s ease}
+    .panel-section.active{display:block}
+
+    /* Info rows */
+    .info-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--v7-border-subtle);font-size:.8rem}
+    .info-row:last-child{border-bottom:none}
+    .info-row .label{color:var(--color-text-light)}.info-row .value{font-weight:600}
+
+    /* Buttons */
+    .btn{font-family:var(--font-body);font-size:.76rem;font-weight:500;padding:.4rem .85rem;border-radius:6px;cursor:pointer;transition:all var(--v7-tr);border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem}
+    .btn-primary{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+    .btn-primary:hover{background:var(--color-accent-hover)}
+    .btn-secondary{background:var(--v7-bg-card);color:var(--color-text);border-color:var(--color-border)}
+    .btn-secondary:hover{background:var(--v7-bg-hover)}
+    .btn-sm{font-size:.68rem;padding:.25rem .5rem}
+    .btn-danger{background:#dc2626;color:#fff;border-color:#dc2626}
+    .btn-danger:hover{background:#b91c1c}
+    .btn-success{background:#16a34a;color:#fff;border-color:#16a34a}
+    .btn-success:hover{background:#15803d}
+
+    /* Forms */
+    .form-group{margin-bottom:.8rem}
+    .form-label{display:block;font-size:.68rem;font-weight:600;color:var(--color-text-light);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.04em}
+    .form-input,.form-select,.form-textarea{font-family:var(--font-body);font-size:.8rem;padding:.4rem .65rem;border:1px solid var(--color-border);border-radius:6px;background:var(--v7-bg-card);color:var(--color-text);width:100%;outline:none;box-sizing:border-box}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .form-textarea{resize:vertical;min-height:70px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+
+    /* Notification */
+    .notif-item{display:flex;gap:.7rem;padding:.7rem;border:1px solid var(--color-border);border-radius:8px;margin-bottom:.5rem;align-items:flex-start;background:var(--v7-bg-card)}
+    .notif-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+    .notif-icon.urgent{background:#fef2f2;color:#dc2626}
+    .notif-icon.warn{background:#fffbeb;color:#d97706}
+    .notif-icon.info{background:#eff6ff;color:#2563eb}
+    .notif-icon.green{background:#f0fdf4;color:#16a34a}
+    .notif-body{flex:1;font-size:.8rem}
+    .notif-time{font-size:.65rem;color:var(--color-text-light);margin-top:.15rem}
+
+    /* Calculators */
+    .calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+    .calc-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:1rem;background:var(--v7-bg-card)}
+    .calc-card h4{font-size:.82rem;font-weight:600;margin-bottom:.6rem}
+    .calc-result{font-size:1.1rem;font-weight:700;margin-top:.5rem;padding:.4rem;background:var(--v7-bg-surface);border-radius:6px;text-align:center}
+
+    /* Export */
+    .export-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    .export-option{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:1.2rem;background:var(--v7-bg-card);text-align:center;cursor:pointer;transition:all var(--v7-tr)}
+    .export-option:hover{border-color:var(--color-accent);box-shadow:var(--v7-shadow-sm)}
+    .export-option .exp-icon{font-size:1.8rem;margin-bottom:.4rem}
+    .export-option h4{font-size:.85rem;font-weight:600;margin-bottom:.2rem}
+    .export-option p{font-size:.72rem;color:var(--color-text-light)}
+
+    /* Messages */
+    .msg-container{display:flex;flex-direction:column;gap:.4rem;max-height:300px;overflow-y:auto;padding:.5rem;margin-bottom:.75rem;border:1px solid var(--color-border);border-radius:8px}
+    .msg-bubble{max-width:75%;padding:.5rem .75rem;border-radius:12px;font-size:.78rem;line-height:1.5}
+    .msg-bubble.sent{background:var(--color-accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+    .msg-bubble.received{background:var(--v7-bg-surface);align-self:flex-start;border-bottom-left-radius:4px}
+    .msg-time{font-size:.58rem;opacity:.7;margin-top:.15rem}
+    .msg-input-row{display:flex;gap:.5rem}
+    .msg-input-row input{flex:1}
+
+    /* Care plans */
+    .care-goal{border:1px solid var(--color-border);border-radius:8px;padding:.85rem;margin-bottom:.65rem;background:var(--v7-bg-card)}
+    .care-goal h4{font-size:.82rem;font-weight:600;margin-bottom:.4rem}
+    .care-milestone{display:flex;align-items:center;gap:.5rem;font-size:.78rem;padding:.25rem 0}
+    .care-milestone input[type="checkbox"]{accent-color:var(--color-accent)}
+
+    /* Weight chart */
+    .weight-chart-area{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:1rem;margin-bottom:.75rem;background:var(--v7-bg-card)}
+    .weight-chart{width:100%;height:140px;position:relative}
+    .weight-svg{width:100%;height:100%}
+
+    /* Onboarding */
+    .onboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+    .onboard-item{border:1px solid var(--color-border);border-radius:6px;padding:.5rem .65rem;font-size:.76rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;transition:all var(--v7-tr)}
+    .onboard-item.done{background:#f0fdf4;border-color:#86efac}
+
+    /* Referrals */
+    .referral-card{border:1px solid var(--color-border);border-radius:8px;padding:.8rem;margin-bottom:.5rem;background:var(--v7-bg-card)}
+    .referral-card h4{font-size:.8rem;font-weight:600;margin-bottom:.25rem}
+    .referral-card p{font-size:.74rem;color:var(--color-text-light)}
+
+    /* Adherence */
+    .adherence-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:.5rem}
+    .adherence-day{width:100%;aspect-ratio:1;border-radius:3px;background:var(--v7-bg-surface);cursor:pointer;transition:all .1s;position:relative}
+    .adherence-day.taken{background:#dcfce7}
+    .adherence-day.missed{background:#fecaca}
+    .adherence-day-label{font-size:.5rem;text-align:center;color:var(--color-text-light)}
+
+    /* Family history */
+    .family-node{border:1px solid var(--color-border);border-radius:8px;padding:.65rem;margin-bottom:.4rem;background:var(--v7-bg-card);display:flex;align-items:center;gap:.6rem}
+    .family-node .fn-rel{font-weight:600;font-size:.78rem;min-width:90px}
+    .family-node .fn-cond{font-size:.74rem;color:var(--color-text-light)}
+
+    /* Lab results */
+    .lab-result-row{display:flex;align-items:center;gap:.65rem;padding:.45rem 0;border-bottom:1px solid var(--v7-border-subtle);font-size:.78rem}
+    .lab-result-row:last-child{border-bottom:none}
+    .lab-result-row.abnormal{background:#fef2f2;padding:.45rem .5rem;border-radius:4px;margin:0 -.5rem}
+
+    /* Agenda */
+    .agenda-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+    .agenda-nav{display:flex;gap:.3rem;align-items:center}
+    .agenda-nav button{background:none;border:1px solid var(--color-border);border-radius:4px;padding:.25rem .5rem;font-size:.75rem;cursor:pointer;color:var(--color-text);font-family:var(--font-body)}
+    .agenda-nav span{font-size:.85rem;font-weight:600;min-width:150px;text-align:center}
+    .agenda-grid{display:grid;gap:.35rem}
+    .agenda-slot{border:1px solid var(--color-border);border-radius:6px;padding:.5rem .75rem;display:flex;align-items:center;gap:.75rem;background:var(--v7-bg-card);font-size:.78rem;min-height:44px;transition:all .15s}
+    .agenda-slot.occupied{border-left:3px solid var(--color-accent);background:var(--v7-bg-hover)}
+    .agenda-slot .slot-time{font-weight:600;min-width:45px;color:var(--color-text-light)}
+    .agenda-slot .slot-info{flex:1}
+    .agenda-slot .slot-actions{display:flex;gap:.25rem}
+
+    /* EHR Timeline */
+    .timeline-container{position:relative;padding-left:24px}
+    .timeline-container::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--color-border)}
+    .timeline-event{position:relative;margin-bottom:.85rem;padding:.65rem .85rem;border:1px solid var(--color-border);border-radius:8px;background:var(--v7-bg-card);font-size:.78rem}
+    .timeline-event::before{content:'';position:absolute;left:-20px;top:.85rem;width:10px;height:10px;border-radius:50%;background:var(--color-accent);border:2px solid var(--v7-bg-card)}
+    .timeline-event .te-date{font-size:.63rem;color:var(--color-text-light);font-weight:600;text-transform:uppercase;margin-bottom:.2rem}
+
+    /* Costs */
+    .cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
+    .cost-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:1rem;background:var(--v7-bg-card)}
+    .cost-card h4{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-light);margin-bottom:.5rem}
+    .cost-bar{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;font-size:.76rem}
+    .cost-bar-fill{height:20px;border-radius:3px;background:var(--color-accent);transition:width .3s}
+
+    /* Screening */
+    .screening-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+    .screening-item{border:1px solid var(--color-border);border-radius:8px;padding:.8rem;background:var(--v7-bg-card)}
+    .screening-item h4{font-size:.8rem;font-weight:600;margin-bottom:.2rem}
+    .screening-item p{font-size:.72rem;color:var(--color-text-light)}
+
+    /* Satisfaction */
+    .survey-card{border:1px solid var(--color-border);border-radius:8px;padding:.75rem;margin-bottom:.5rem;background:var(--v7-bg-card)}
+    .survey-stars{color:#d97706;font-size:.85rem;margin-bottom:.15rem}
+    .survey-comment{font-size:.78rem;font-style:italic;color:var(--color-text-light)}
+
+    /* Protocol */
+    .protocol-card{border:1px solid var(--color-border);border-radius:8px;padding:.85rem;margin-bottom:.65rem;background:var(--v7-bg-card)}
+    .protocol-card h4{font-size:.85rem;font-weight:600;margin-bottom:.3rem}
+    .protocol-step{display:flex;gap:.5rem;font-size:.76rem;padding:.25rem 0;align-items:flex-start}
+    .protocol-step-num{width:20px;height:20px;border-radius:50%;background:var(--color-accent);color:#fff;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+    /* Rx Preview */
+    .rx-preview{border:2px dashed var(--color-border);border-radius:var(--v7-radius);padding:1.2rem;margin-top:.75rem;background:var(--v7-bg-surface);font-size:.78rem;line-height:1.7}
+    .rx-preview h3{font-size:.95rem;font-weight:700;text-align:center;margin-bottom:.5rem}
+    .rx-preview .rx-footer{margin-top:1rem;text-align:center;border-top:1px solid var(--color-border);padding-top:.75rem;font-size:.72rem;color:var(--color-text-light)}
+
+    /* Interaction warnings */
+    .interaction-warn{border:1px solid #d97706;background:#fffbeb;border-radius:8px;padding:.65rem;margin-bottom:.5rem;font-size:.76rem}
+    .interaction-warn strong{color:#92400e}
+
+    /* Keyboard shortcuts */
+    .kbd-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+    .kbd-shortcut{display:flex;justify-content:space-between;align-items:center;padding:.4rem .6rem;font-size:.78rem;border-bottom:1px solid var(--v7-border-subtle)}
+    .kbd-shortcut kbd{background:var(--color-bg-alt);border:1px solid var(--color-border);padding:.1rem .35rem;border-radius:3px;font-size:.7rem;font-family:monospace}
+
+    /* SOAP */
+    .soap-section{margin-bottom:.65rem}
+    .soap-section label{font-size:.72rem;font-weight:700;color:var(--color-accent);display:block;margin-bottom:.2rem}
+
+    /* ==== v7 NEW STYLES ==== */
+
+    /* Telemedicina */
+    .telemed-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
+    .telemed-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:1rem;background:var(--v7-bg-card);transition:all var(--v7-tr)}
+    .telemed-card:hover{box-shadow:var(--v7-shadow-sm)}
+    .telemed-card h4{font-size:.82rem;font-weight:600;margin-bottom:.35rem}
+    .telemed-card p{font-size:.74rem;color:var(--color-text-light)}
+    .telemed-status{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:600;padding:.15rem .4rem;border-radius:4px}
+    .telemed-status.scheduled{background:#eff6ff;color:#2563eb}
+    .telemed-status.completed{background:#f0fdf4;color:#16a34a}
+    .telemed-status.cancelled{background:#fef2f2;color:#dc2626}
+    .video-placeholder{width:100%;aspect-ratio:16/9;background:#1e293b;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:2rem;margin-bottom:.75rem}
+    .consult-notes{border:1px solid var(--color-border);border-radius:8px;padding:.75rem;margin-top:.5rem;background:var(--v7-bg-surface);font-size:.78rem}
+
+    /* Grupo Familiar */
+    .family-tree{display:flex;flex-direction:column;gap:1rem;align-items:center;padding:1.5rem}
+    .family-tree-row{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+    .family-tree-node{border:2px solid var(--color-border);border-radius:12px;padding:.85rem 1.2rem;background:var(--v7-bg-card);text-align:center;min-width:120px;cursor:pointer;transition:all var(--v7-tr)}
+    .family-tree-node:hover{border-color:var(--color-accent);box-shadow:var(--v7-shadow-md)}
+    .family-tree-node.ft-male{border-top:3px solid #2563eb}
+    .family-tree-node.ft-female{border-top:3px solid #db2777}
+    .family-tree-node .ft-name{font-weight:700;font-size:.85rem;margin-bottom:.15rem}
+    .family-tree-node .ft-age{font-size:.7rem;color:var(--color-text-light)}
+    .family-tree-node .ft-conditions{font-size:.65rem;color:var(--color-text-light);margin-top:.25rem}
+    .family-tree-connector{width:2px;height:24px;background:var(--color-border);margin:0 auto}
+    .family-tree-h-line{height:2px;background:var(--color-border);flex:1;min-width:30px;align-self:center}
+
+    /* Lab Trends */
+    .trend-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:.85rem;background:var(--v7-bg-card);margin-bottom:.65rem}
+    .trend-card h4{font-size:.8rem;font-weight:600;margin-bottom:.4rem}
+    .trend-row{display:flex;align-items:center;gap:.75rem;padding:.35rem 0;border-bottom:1px solid var(--v7-border-subtle);font-size:.78rem}
+    .trend-row:last-child{border-bottom:none}
+    .trend-arrow{font-size:.85rem;font-weight:700}
+    .trend-arrow.up{color:#dc2626}
+    .trend-arrow.down{color:#16a34a}
+    .trend-arrow.stable{color:#6b7280}
+    .trend-bar{flex:1;height:6px;background:var(--v7-bg-surface);border-radius:3px;overflow:hidden}
+    .trend-bar-fill{height:100%;border-radius:3px;transition:width .3s}
+
+    /* Receitas Anteriores */
+    .rx-history-card{border:1px solid var(--color-border);border-radius:8px;padding:.75rem;margin-bottom:.5rem;background:var(--v7-bg-card)}
+    .rx-history-card h4{font-size:.8rem;font-weight:600;margin-bottom:.2rem}
+    .rx-history-card .rx-h-date{font-size:.65rem;color:var(--color-text-light);margin-bottom:.35rem}
+    .rx-history-card ul{list-style:none;font-size:.76rem}
+    .rx-history-card ul li{padding:.15rem 0}
+    .rx-history-card ul li::before{content:'\2022';color:var(--color-accent);margin-right:.4rem}
+
+    /* Health Score */
+    .health-score-container{display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap}
+    .health-score-ring{position:relative;width:120px;height:120px}
+    .health-score-ring svg{transform:rotate(-90deg)}
+    .health-score-ring .score-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .health-score-ring .score-number{font-size:1.6rem;font-weight:800}
+    .health-score-ring .score-label{font-size:.6rem;color:var(--color-text-light);text-transform:uppercase;letter-spacing:.05em}
+    .score-factors{flex:1;min-width:200px}
+    .score-factor{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;font-size:.76rem}
+    .score-factor-bar{flex:1;height:6px;background:var(--v7-bg-surface);border-radius:3px;overflow:hidden}
+    .score-factor-fill{height:100%;border-radius:3px}
+
+    /* Health Goals / Gamification */
+    .goals-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
+    .goal-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:.85rem;background:var(--v7-bg-card)}
+    .goal-card h4{font-size:.82rem;font-weight:600;margin-bottom:.3rem}
+    .goal-card p{font-size:.72rem;color:var(--color-text-light);margin-bottom:.5rem}
+    .goal-progress{width:100%;height:8px;background:var(--v7-bg-surface);border-radius:4px;overflow:hidden;margin-bottom:.35rem}
+    .goal-progress-fill{height:100%;border-radius:4px;transition:width .3s}
+    .goal-progress-text{font-size:.65rem;color:var(--color-text-light);text-align:right}
+    .badges-row{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1rem}
+    .badge-card{border:1px solid var(--color-border);border-radius:10px;padding:.7rem;text-align:center;min-width:90px;background:var(--v7-bg-card);transition:all var(--v7-tr)}
+    .badge-card.earned{border-color:#d97706;box-shadow:0 0 0 2px rgba(217,119,6,.15)}
+    .badge-card .badge-icon{font-size:1.5rem;margin-bottom:.2rem}
+    .badge-card .badge-name{font-size:.65rem;font-weight:600}
+    .badge-card.locked{opacity:.45}
+
+    /* Backup */
+    .backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .backup-card{border:1px solid var(--color-border);border-radius:var(--v7-radius);padding:1.5rem;background:var(--v7-bg-card);text-align:center}
+    .backup-card .backup-icon{font-size:2rem;margin-bottom:.5rem}
+    .backup-card h4{font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+    .backup-card p{font-size:.74rem;color:var(--color-text-light);margin-bottom:.85rem}
+  </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../100-pessoas.html">&larr; Back</a>
+        <a href="../100-pessoas.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
+
   <main class="lab-page">
-    <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>100 Pessoas — Version 7</h1>
+    <div class="lab-page-inner">
+      <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+          <div class="sidebar-group" data-group="principal">
+            <div class="sidebar-group-header" onclick="toggleSidebarGroup(this)">
+              <span class="sidebar-group-label">Principal</span>
+              <span class="sidebar-group-toggle">&#9660;</span>
+            </div>
+            <div class="sidebar-group-items">
+              <button class="sidebar-item active" data-nav="dashboard" onclick="navTo('dashboard',this)">
+                <span class="si-icon">&#9632;</span> Painel
+              </button>
+              <button class="sidebar-item" data-nav="patients" onclick="navTo('patients',this)">
+                <span class="si-icon">&#9775;</span> Pacientes <span class="si-badge badge-count-blue" id="badgePat">6</span>
+              </button>
+              <button class="sidebar-item" data-nav="familia" onclick="navTo('familia',this)">
+                <span class="si-icon">&#9825;</span> Grupo Familiar
+              </button>
+              <button class="sidebar-item" data-nav="agenda" onclick="navTo('agenda',this)">
+                <span class="si-icon">&#9998;</span> Agenda
+              </button>
+            </div>
+          </div>
+
+          <div class="sidebar-group" data-group="clinico">
+            <div class="sidebar-group-header" onclick="toggleSidebarGroup(this)">
+              <span class="sidebar-group-label">Clinico</span>
+              <span class="sidebar-group-toggle">&#9660;</span>
+            </div>
+            <div class="sidebar-group-items">
+              <button class="sidebar-item" data-nav="prontuario" onclick="navTo('prontuario',this)">
+                <span class="si-icon">&#9997;</span> Prontuario
+              </button>
+              <button class="sidebar-item" data-nav="medications" onclick="navTo('medications',this)">
+                <span class="si-icon">&#9883;</span> Medicacoes
+              </button>
+              <button class="sidebar-item" data-nav="soap" onclick="navTo('soap',this)">
+                <span class="si-icon">&#9998;</span> SOAP
+              </button>
+              <button class="sidebar-item" data-nav="prescriptions" onclick="navTo('prescriptions',this)">
+                <span class="si-icon">&#8478;</span> Receitas
+              </button>
+              <button class="sidebar-item" data-nav="rxhistory" onclick="navTo('rxhistory',this)">
+                <span class="si-icon">&#8634;</span> Receitas Anteriores
+              </button>
+              <button class="sidebar-item" data-nav="protocols" onclick="navTo('protocols',this)">
+                <span class="si-icon">&#9745;</span> Protocolos
+              </button>
+              <button class="sidebar-item" data-nav="screening" onclick="navTo('screening',this)">
+                <span class="si-icon">&#9888;</span> Rastreio
+              </button>
+              <button class="sidebar-item" data-nav="labtrends" onclick="navTo('labtrends',this)">
+                <span class="si-icon">&#9650;</span> Tendencias Lab
+              </button>
+            </div>
+          </div>
+
+          <div class="sidebar-group" data-group="acompanhamento">
+            <div class="sidebar-group-header" onclick="toggleSidebarGroup(this)">
+              <span class="sidebar-group-label">Acompanhamento</span>
+              <span class="sidebar-group-toggle">&#9660;</span>
+            </div>
+            <div class="sidebar-group-items">
+              <button class="sidebar-item" data-nav="healthscore" onclick="navTo('healthscore',this)">
+                <span class="si-icon">&#9829;</span> Indice de Saude
+              </button>
+              <button class="sidebar-item" data-nav="goals" onclick="navTo('goals',this)">
+                <span class="si-icon">&#9733;</span> Metas de Saude
+              </button>
+              <button class="sidebar-item" data-nav="telemedicina" onclick="navTo('telemedicina',this)">
+                <span class="si-icon">&#9743;</span> Telemedicina
+              </button>
+              <button class="sidebar-item" data-nav="costs" onclick="navTo('costs',this)">
+                <span class="si-icon">&#36;</span> Custos
+              </button>
+              <button class="sidebar-item" data-nav="satisfaction" onclick="navTo('satisfaction',this)">
+                <span class="si-icon">&#9786;</span> Satisfacao
+              </button>
+            </div>
+          </div>
+
+          <div class="sidebar-group" data-group="ferramentas">
+            <div class="sidebar-group-header" onclick="toggleSidebarGroup(this)">
+              <span class="sidebar-group-label">Ferramentas</span>
+              <span class="sidebar-group-toggle">&#9660;</span>
+            </div>
+            <div class="sidebar-group-items">
+              <button class="sidebar-item" data-nav="notifications" onclick="navTo('notifications',this)">
+                <span class="si-icon">&#128276;</span> Notificacoes <span class="si-badge" id="badgeNotif">4</span>
+              </button>
+              <button class="sidebar-item" data-nav="calculators" onclick="navTo('calculators',this)">
+                <span class="si-icon">&#9874;</span> Calculadoras
+              </button>
+              <button class="sidebar-item" data-nav="export" onclick="navTo('export',this)">
+                <span class="si-icon">&#8681;</span> Exportar
+              </button>
+              <button class="sidebar-item" data-nav="backup" onclick="navTo('backup',this)">
+                <span class="si-icon">&#9729;</span> Backup
+              </button>
+              <button class="sidebar-item" data-nav="shortcuts" onclick="navTo('shortcuts',this)">
+                <span class="si-icon">&#9000;</span> Atalhos
+              </button>
+            </div>
+          </div>
+
+          <div class="sidebar-bottom">
+            <button class="dark-toggle" onclick="toggleDark()" style="width:100%">
+              <span id="darkIcon">&#9789;</span> Modo Escuro
+            </button>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Header -->
+          <div class="dash-header">
+            <div class="dash-header-top">
+              <div>
+                <h1>100 Pessoas <span style="font-size:.7rem;font-weight:400;color:var(--color-text-light)">v7</span></h1>
+                <p>Plataforma de gestao de pacientes com telemedicina, metas de saude e mais.</p>
+              </div>
+              <div class="dash-header-right">
+                <span class="persist-badge">&#9679; localStorage</span>
+                <span class="dash-date" id="dashDate"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======= DASHBOARD ======= -->
+          <div class="dash-section active" id="sec-dashboard">
+            <div class="metrics-row" id="metricsRow"></div>
+            <div class="alert-strip" id="alertStrip"></div>
+            <div class="section-header">
+              <div class="section-title">Proximas Consultas</div>
+            </div>
+            <div id="dashUpcoming"></div>
+          </div>
+
+          <!-- ======= PATIENTS ======= -->
+          <div class="dash-section" id="sec-patients">
+            <div class="section-header">
+              <div class="section-title">Pacientes</div>
+              <div class="filter-bar">
+                <input type="text" class="search-input" id="patSearch" placeholder="Buscar..." oninput="renderPatients()">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">Todos</button>
+                <button class="filter-btn" data-filter="alto" onclick="setFilter('alto',this)">Alto Risco</button>
+                <button class="filter-btn" data-filter="medio" onclick="setFilter('medio',this)">Medio</button>
+                <button class="filter-btn" data-filter="baixo" onclick="setFilter('baixo',this)">Baixo</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="patTable">
+                <thead>
+                  <tr>
+                    <th onclick="sortPatients('name')">Nome</th>
+                    <th onclick="sortPatients('age')">Idade</th>
+                    <th onclick="sortPatients('conditions')">Condicoes</th>
+                    <th onclick="sortPatients('risk')">Risco</th>
+                    <th onclick="sortPatients('nextAppt')">Prox. Consulta</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody id="patBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ======= GRUPO FAMILIAR ======= -->
+          <div class="dash-section" id="sec-familia">
+            <div class="section-header">
+              <div class="section-title">Grupo Familiar</div>
+            </div>
+            <p class="section-subtitle">Visualizacao das relacoes familiares entre pacientes cadastrados.</p>
+            <div id="familyTreeArea"></div>
+            <div class="detail-grid" id="familyRelations" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- ======= AGENDA ======= -->
+          <div class="dash-section" id="sec-agenda">
+            <div class="section-header">
+              <div class="section-title">Agenda</div>
+              <button class="btn btn-primary btn-sm" onclick="showApptForm()">+ Agendar</button>
+            </div>
+            <div class="agenda-header">
+              <div class="agenda-nav">
+                <button onclick="changeAgendaDay(-1)">&larr;</button>
+                <span id="agendaDateLabel"></span>
+                <button onclick="changeAgendaDay(1)">&rarr;</button>
+              </div>
+            </div>
+            <div id="apptFormArea" style="display:none;margin-bottom:1rem">
+              <div class="detail-card">
+                <h4>Novo Agendamento</h4>
+                <div class="form-row" style="margin-top:.5rem">
+                  <div class="form-group"><label class="form-label">Paciente</label><select class="form-select" id="apptPatient"></select></div>
+                  <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="apptDate"></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">Horario</label><select class="form-select" id="apptTime"></select></div>
+                  <div class="form-group"><label class="form-label">Tipo</label>
+                    <select class="form-select" id="apptType"><option>Consulta</option><option>Retorno</option><option>Exame</option><option>Telemedicina</option></select>
+                  </div>
+                </div>
+                <div class="form-group"><label class="form-label">Observacao</label><input type="text" class="form-input" id="apptNote" placeholder="Nota"></div>
+                <div style="display:flex;gap:.5rem">
+                  <button class="btn btn-primary btn-sm" onclick="saveAppt()">Salvar</button>
+                  <button class="btn btn-secondary btn-sm" onclick="hideApptForm()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+            <div class="agenda-grid" id="agendaGrid"></div>
+          </div>
+
+          <!-- ======= PRONTUARIO ======= -->
+          <div class="dash-section" id="sec-prontuario">
+            <div class="section-header">
+              <div class="section-title">Prontuario Eletronico</div>
+              <div class="filter-bar">
+                <select class="form-select" id="ehrPatientSelect" style="width:200px" onchange="renderEHR()">
+                  <option value="">Selecione paciente...</option>
+                </select>
+              </div>
+            </div>
+            <div id="ehrContent"></div>
+          </div>
+
+          <!-- ======= MEDICATIONS ======= -->
+          <div class="dash-section" id="sec-medications">
+            <div class="section-header"><div class="section-title">Medicacoes Ativas</div></div>
+            <div id="medsContent"></div>
+            <div id="interactionsArea" style="margin-top:1rem"></div>
+          </div>
+
+          <!-- ======= SOAP ======= -->
+          <div class="dash-section" id="sec-soap">
+            <div class="section-header"><div class="section-title">Registro SOAP</div></div>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div class="form-group"><label class="form-label">Paciente</label><select class="form-select" id="soapPatient"></select></div>
+              <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="soapDate"></div>
+            </div>
+            <div class="soap-section"><label>S - Subjetivo</label><textarea class="form-textarea" id="soapS" placeholder="Queixa do paciente..."></textarea></div>
+            <div class="soap-section"><label>O - Objetivo</label><textarea class="form-textarea" id="soapO" placeholder="Exame fisico, sinais vitais..."></textarea></div>
+            <div class="soap-section"><label>A - Avaliacao</label><textarea class="form-textarea" id="soapA" placeholder="Diagnostico / hipotese..."></textarea></div>
+            <div class="soap-section"><label>P - Plano</label><textarea class="form-textarea" id="soapP" placeholder="Conduta, receitas, retorno..."></textarea></div>
+            <button class="btn btn-primary" onclick="saveSOAP()">Salvar Consulta</button>
+          </div>
+
+          <!-- ======= PRESCRIPTIONS ======= -->
+          <div class="dash-section" id="sec-prescriptions">
+            <div class="section-header"><div class="section-title">Gerar Receita</div></div>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div class="form-group"><label class="form-label">Paciente</label><select class="form-select" id="rxPatient"></select></div>
+              <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="rxDate"></div>
+            </div>
+            <div id="rxMedsArea">
+              <div class="form-row" style="margin-bottom:.5rem">
+                <div class="form-group"><label class="form-label">Medicamento</label><input type="text" class="form-input" id="rxMed1" placeholder="Nome do medicamento"></div>
+                <div class="form-group"><label class="form-label">Posologia</label><input type="text" class="form-input" id="rxDose1" placeholder="Ex: 500mg 2x/dia"></div>
+              </div>
+              <div class="form-row" style="margin-bottom:.5rem">
+                <div class="form-group"><label class="form-label">Medicamento 2</label><input type="text" class="form-input" id="rxMed2" placeholder="(opcional)"></div>
+                <div class="form-group"><label class="form-label">Posologia</label><input type="text" class="form-input" id="rxDose2" placeholder="(opcional)"></div>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Observacoes</label><textarea class="form-textarea" id="rxNotes" placeholder="Instrucoes adicionais..."></textarea></div>
+            <button class="btn btn-primary" onclick="generateRx()">Gerar Receita</button>
+            <div id="rxPreviewArea"></div>
+          </div>
+
+          <!-- ======= RX HISTORY ======= -->
+          <div class="dash-section" id="sec-rxhistory">
+            <div class="section-header">
+              <div class="section-title">Receitas Anteriores</div>
+              <div class="filter-bar">
+                <select class="form-select" id="rxHistoryPatient" style="width:200px" onchange="renderRxHistory()">
+                  <option value="">Todos os pacientes</option>
+                </select>
+              </div>
+            </div>
+            <div id="rxHistoryContent"></div>
+          </div>
+
+          <!-- ======= PROTOCOLS ======= -->
+          <div class="dash-section" id="sec-protocols">
+            <div class="section-header"><div class="section-title">Protocolos Clinicos</div></div>
+            <div id="protocolsContent"></div>
+          </div>
+
+          <!-- ======= SCREENING ======= -->
+          <div class="dash-section" id="sec-screening">
+            <div class="section-header"><div class="section-title">Rastreio e Prevencao</div></div>
+            <div class="screening-grid" id="screeningContent"></div>
+          </div>
+
+          <!-- ======= LAB TRENDS ======= -->
+          <div class="dash-section" id="sec-labtrends">
+            <div class="section-header">
+              <div class="section-title">Tendencias Laboratoriais</div>
+              <div class="filter-bar">
+                <select class="form-select" id="labTrendsPatient" style="width:200px" onchange="renderLabTrends()">
+                  <option value="">Selecione paciente...</option>
+                </select>
+              </div>
+            </div>
+            <p class="section-subtitle">Comparacao automatica de resultados atuais versus anteriores.</p>
+            <div id="labTrendsContent"></div>
+          </div>
+
+          <!-- ======= HEALTH SCORE ======= -->
+          <div class="dash-section" id="sec-healthscore">
+            <div class="section-header">
+              <div class="section-title">Indice de Saude</div>
+              <div class="filter-bar">
+                <select class="form-select" id="healthScorePatient" style="width:200px" onchange="renderHealthScore()">
+                  <option value="">Selecione paciente...</option>
+                </select>
+              </div>
+            </div>
+            <p class="section-subtitle">Indice composto baseado em multiplos fatores de saude.</p>
+            <div id="healthScoreContent"></div>
+          </div>
+
+          <!-- ======= GOALS ======= -->
+          <div class="dash-section" id="sec-goals">
+            <div class="section-header">
+              <div class="section-title">Metas de Saude</div>
+              <div class="filter-bar">
+                <select class="form-select" id="goalsPatient" style="width:200px" onchange="renderGoals()">
+                  <option value="">Selecione paciente...</option>
+                </select>
+              </div>
+            </div>
+            <p class="section-subtitle">Gamificacao com progresso e conquistas.</p>
+            <div id="goalsContent"></div>
+            <div class="section-title" style="margin-top:1.5rem;margin-bottom:.75rem">Conquistas</div>
+            <div class="badges-row" id="badgesContent"></div>
+          </div>
+
+          <!-- ======= TELEMEDICINA ======= -->
+          <div class="dash-section" id="sec-telemedicina">
+            <div class="section-header">
+              <div class="section-title">Telemedicina</div>
+              <button class="btn btn-primary btn-sm" onclick="showTelemedForm()">+ Nova Teleconsulta</button>
+            </div>
+            <div id="telemedFormArea" style="display:none;margin-bottom:1rem">
+              <div class="detail-card">
+                <h4>Agendar Teleconsulta</h4>
+                <div class="form-row" style="margin-top:.5rem">
+                  <div class="form-group"><label class="form-label">Paciente</label><select class="form-select" id="telemedPatient"></select></div>
+                  <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="telemedDate"></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">Horario</label><input type="time" class="form-input" id="telemedTime" value="09:00"></div>
+                  <div class="form-group"><label class="form-label">Motivo</label><input type="text" class="form-input" id="telemedReason" placeholder="Motivo da consulta"></div>
+                </div>
+                <div style="display:flex;gap:.5rem">
+                  <button class="btn btn-primary btn-sm" onclick="saveTelemed()">Agendar</button>
+                  <button class="btn btn-secondary btn-sm" onclick="hideTelemedForm()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+            <div class="telemed-grid" id="telemedList"></div>
+            <div id="telemedDetail" style="display:none;margin-top:1rem"></div>
+          </div>
+
+          <!-- ======= COSTS ======= -->
+          <div class="dash-section" id="sec-costs">
+            <div class="section-header"><div class="section-title">Custos e Financeiro</div></div>
+            <div class="cost-grid" id="costsContent"></div>
+          </div>
+
+          <!-- ======= SATISFACTION ======= -->
+          <div class="dash-section" id="sec-satisfaction">
+            <div class="section-header">
+              <div class="section-title">Satisfacao do Paciente</div>
+              <button class="btn btn-primary btn-sm" onclick="showSurveyForm()">+ Nova Avaliacao</button>
+            </div>
+            <div id="surveyFormArea" style="display:none;margin-bottom:1rem">
+              <div class="detail-card">
+                <h4>Registrar Avaliacao</h4>
+                <div class="form-row" style="margin-top:.5rem">
+                  <div class="form-group"><label class="form-label">Paciente</label><select class="form-select" id="surveyPatient"></select></div>
+                  <div class="form-group">
+                    <label class="form-label">Nota</label>
+                    <div id="surveyStars" style="font-size:1.2rem;cursor:pointer">
+                      <span onclick="setSurveyRating(1)">&#9734;</span>
+                      <span onclick="setSurveyRating(2)">&#9734;</span>
+                      <span onclick="setSurveyRating(3)">&#9734;</span>
+                      <span onclick="setSurveyRating(4)">&#9734;</span>
+                      <span onclick="setSurveyRating(5)">&#9734;</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group"><label class="form-label">Comentario</label><textarea class="form-textarea" id="surveyComment" placeholder="Comentario do paciente..."></textarea></div>
+                <div style="display:flex;gap:.5rem">
+                  <button class="btn btn-primary btn-sm" onclick="saveSurvey()">Salvar</button>
+                  <button class="btn btn-secondary btn-sm" onclick="hideSurveyForm()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+            <div id="surveysContent"></div>
+          </div>
+
+          <!-- ======= NOTIFICATIONS ======= -->
+          <div class="dash-section" id="sec-notifications">
+            <div class="section-header"><div class="section-title">Notificacoes</div></div>
+            <div id="notifsContent"></div>
+          </div>
+
+          <!-- ======= CALCULATORS ======= -->
+          <div class="dash-section" id="sec-calculators">
+            <div class="section-header"><div class="section-title">Calculadoras Clinicas</div></div>
+            <div class="calc-grid">
+              <div class="calc-card">
+                <h4>IMC</h4>
+                <div class="form-group"><label class="form-label">Peso (kg)</label><input type="number" class="form-input" id="calcWeight" value="75"></div>
+                <div class="form-group"><label class="form-label">Altura (cm)</label><input type="number" class="form-input" id="calcHeight" value="178"></div>
+                <button class="btn btn-primary btn-sm" onclick="calcIMC()">Calcular</button>
+                <div class="calc-result" id="imcResult">--</div>
+              </div>
+              <div class="calc-card">
+                <h4>TFG (CKD-EPI)</h4>
+                <div class="form-group"><label class="form-label">Creatinina (mg/dL)</label><input type="number" class="form-input" id="calcCreat" value="1.0" step="0.1"></div>
+                <div class="form-group"><label class="form-label">Idade</label><input type="number" class="form-input" id="calcAge" value="60"></div>
+                <div class="form-group"><label class="form-label">Sexo</label><select class="form-select" id="calcSex"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+                <button class="btn btn-primary btn-sm" onclick="calcTFG()">Calcular</button>
+                <div class="calc-result" id="tfgResult">--</div>
+              </div>
+              <div class="calc-card">
+                <h4>Dose por Peso</h4>
+                <div class="form-group"><label class="form-label">Dose (mg/kg)</label><input type="number" class="form-input" id="calcDoseRate" value="10" step="0.5"></div>
+                <div class="form-group"><label class="form-label">Peso (kg)</label><input type="number" class="form-input" id="calcDoseWeight" value="75"></div>
+                <button class="btn btn-primary btn-sm" onclick="calcDose()">Calcular</button>
+                <div class="calc-result" id="doseResult">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======= EXPORT ======= -->
+          <div class="dash-section" id="sec-export">
+            <div class="section-header"><div class="section-title">Exportar Dados</div></div>
+            <div class="export-grid">
+              <div class="export-option" onclick="exportCSV()">
+                <div class="exp-icon">&#128196;</div>
+                <h4>CSV</h4>
+                <p>Tabela de pacientes em formato CSV</p>
+              </div>
+              <div class="export-option" onclick="exportJSON()">
+                <div class="exp-icon">&#123;&#125;</div>
+                <h4>JSON</h4>
+                <p>Todos os dados em formato JSON</p>
+              </div>
+              <div class="export-option" onclick="exportTxt()">
+                <div class="exp-icon">&#128221;</div>
+                <h4>Relatorio TXT</h4>
+                <p>Resumo geral em texto</p>
+              </div>
+              <div class="export-option" onclick="printReport()">
+                <div class="exp-icon">&#128424;</div>
+                <h4>Imprimir</h4>
+                <p>Gerar relatorio para impressao</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======= BACKUP ======= -->
+          <div class="dash-section" id="sec-backup">
+            <div class="section-header"><div class="section-title">Backup e Restauracao</div></div>
+            <p class="section-subtitle">Exporte todos os dados para um arquivo JSON ou restaure a partir de um backup anterior.</p>
+            <div class="backup-grid">
+              <div class="backup-card">
+                <div class="backup-icon">&#8681;</div>
+                <h4>Download Backup</h4>
+                <p>Salve todos os dados em um arquivo JSON no seu computador.</p>
+                <button class="btn btn-primary" onclick="downloadBackup()">Baixar Backup</button>
+                <div id="backupInfo" style="margin-top:.5rem;font-size:.7rem;color:var(--color-text-light)"></div>
+              </div>
+              <div class="backup-card">
+                <div class="backup-icon">&#8679;</div>
+                <h4>Restaurar Backup</h4>
+                <p>Carregue um arquivo JSON de backup para restaurar os dados.</p>
+                <input type="file" id="backupFile" accept=".json" style="display:none" onchange="restoreBackup(event)">
+                <button class="btn btn-secondary" onclick="document.getElementById('backupFile').click()">Selecionar Arquivo</button>
+                <div id="restoreInfo" style="margin-top:.5rem;font-size:.7rem;color:var(--color-text-light)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======= SHORTCUTS ======= -->
+          <div class="dash-section" id="sec-shortcuts">
+            <div class="section-header"><div class="section-title">Atalhos de Teclado</div></div>
+            <div class="kbd-grid">
+              <div class="kbd-shortcut"><span>Painel</span><kbd>Alt+1</kbd></div>
+              <div class="kbd-shortcut"><span>Pacientes</span><kbd>Alt+2</kbd></div>
+              <div class="kbd-shortcut"><span>Agenda</span><kbd>Alt+3</kbd></div>
+              <div class="kbd-shortcut"><span>Prontuario</span><kbd>Alt+4</kbd></div>
+              <div class="kbd-shortcut"><span>SOAP</span><kbd>Alt+5</kbd></div>
+              <div class="kbd-shortcut"><span>Receitas</span><kbd>Alt+6</kbd></div>
+              <div class="kbd-shortcut"><span>Telemedicina</span><kbd>Alt+7</kbd></div>
+              <div class="kbd-shortcut"><span>Metas</span><kbd>Alt+8</kbd></div>
+              <div class="kbd-shortcut"><span>Modo Escuro</span><kbd>Alt+D</kbd></div>
+              <div class="kbd-shortcut"><span>Buscar Paciente</span><kbd>Alt+B</kbd></div>
+              <div class="kbd-shortcut"><span>Backup</span><kbd>Alt+K</kbd></div>
+              <div class="kbd-shortcut"><span>Fechar Modal</span><kbd>Esc</kbd></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
+
+  <!-- Patient Detail Modal -->
+  <div class="modal-overlay" id="patientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalPatName"></h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="panel-tabs" id="modalTabs"></div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Telemedicine Consultation Modal -->
+  <div class="modal-overlay" id="telemedModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="telemedModalTitle">Teleconsulta</h2>
+        <button class="modal-close" onclick="closeTelemedModal()">&times;</button>
+      </div>
+      <div id="telemedModalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY='medstack_100p_v7';
+
+    // ===== DEFAULT DATA =====
+    function getDefaultData(){
+      const today=new Date().toISOString().slice(0,10);
+      return {
+        patients:[
+          {id:'hermano',name:'Eu (Hermano)',age:32,sex:'M',conditions:['Saudavel'],risk:'baixo',nextAppt:'2026-05-10',meds:[],allergies:['Nenhuma conhecida'],phone:'(11) 99999-0001',email:'hermano@email.com',weight:75,height:178},
+          {id:'pai',name:'Pai',age:60,sex:'M',conditions:['HAS','Dislipidemia'],risk:'medio',nextAppt:'2026-04-28',meds:[{name:'Losartana',dose:'50mg 1x/dia'},{name:'Sinvastatina',dose:'20mg 1x/noite'}],allergies:['AAS'],phone:'(11) 99999-0002',email:'',weight:82,height:174},
+          {id:'mae',name:'Mae',age:58,sex:'F',conditions:['Hipotireoidismo'],risk:'baixo',nextAppt:'2026-05-15',meds:[{name:'Levotiroxina',dose:'50mcg 1x/dia (jejum)'}],allergies:['Dipirona'],phone:'(11) 99999-0003',email:'',weight:65,height:162},
+          {id:'istelina',name:'Vo Istelina',age:84,sex:'F',conditions:['DM2','HAS','Hipotireoidismo'],risk:'alto',nextAppt:'2026-04-05',meds:[{name:'Metformina',dose:'850mg 2x/dia'},{name:'Losartana',dose:'50mg 1x/dia'},{name:'Levotiroxina',dose:'75mcg 1x/dia (jejum)'}],allergies:['Sulfa'],phone:'(11) 99999-0004',email:'',weight:68,height:155},
+          {id:'antonio',name:'Vo Antonio',age:86,sex:'M',conditions:['DPOC','ICC'],risk:'alto',nextAppt:'2026-04-20',meds:[{name:'Furosemida',dose:'40mg 1x/dia'},{name:'Carvedilol',dose:'6.25mg 2x/dia'},{name:'Salbutamol',dose:'Inalatorio SOS'}],allergies:['Penicilina'],phone:'(11) 99999-0005',email:'',weight:72,height:168},
+          {id:'marly',name:'Dona Marly',age:72,sex:'F',conditions:['Osteoporose','DRGE'],risk:'medio',nextAppt:'2026-04-22',meds:[{name:'Omeprazol',dose:'20mg 1x/dia (jejum)'},{name:'Calcio + Vit D',dose:'500mg/400UI 1x/dia'}],allergies:['Nenhuma conhecida'],phone:'(11) 99999-0006',email:'',weight:58,height:156}
+        ],
+        consultations:[
+          {patientId:'istelina',date:'2026-03-15',s:'Queixa de tontura matinal',o:'PA 160/95, FC 78, Glicemia 180',a:'HAS descompensada, DM2 controle inadequado',p:'Ajustar Losartana para 100mg, solicitar HbA1c'},
+          {patientId:'marly',date:'2026-03-20',s:'Dor epigastrica pos-prandial',o:'Abdome: dor a palpacao epigastrio',a:'DRGE persistente',p:'Manter Omeprazol, orientar dieta, EDA se nao melhorar'}
+        ],
+        labResults:[
+          {patientId:'istelina',date:'2026-03-10',test:'glicemia',value:180},
+          {patientId:'istelina',date:'2026-03-10',test:'hba1c',value:8.2},
+          {patientId:'istelina',date:'2026-03-10',test:'creatinina',value:1.1},
+          {patientId:'istelina',date:'2026-03-10',test:'tsh',value:3.5},
+          {patientId:'istelina',date:'2026-01-05',test:'glicemia',value:165},
+          {patientId:'istelina',date:'2026-01-05',test:'hba1c',value:7.9},
+          {patientId:'istelina',date:'2025-10-15',test:'glicemia',value:152},
+          {patientId:'istelina',date:'2025-10-15',test:'hba1c',value:7.5},
+          {patientId:'pai',date:'2026-02-20',test:'colesterol_total',value:235},
+          {patientId:'pai',date:'2026-02-20',test:'ldl',value:155},
+          {patientId:'pai',date:'2026-02-20',test:'hdl',value:38},
+          {patientId:'pai',date:'2026-02-20',test:'triglicerides',value:210},
+          {patientId:'pai',date:'2025-08-15',test:'colesterol_total',value:220},
+          {patientId:'pai',date:'2025-08-15',test:'ldl',value:142},
+          {patientId:'pai',date:'2025-08-15',test:'hdl',value:42},
+          {patientId:'marly',date:'2026-03-01',test:'hemoglobina',value:11.5},
+          {patientId:'marly',date:'2026-03-01',test:'creatinina',value:0.9},
+          {patientId:'marly',date:'2025-09-01',test:'hemoglobina',value:12.1},
+          {patientId:'mae',date:'2026-02-15',test:'tsh',value:2.8},
+          {patientId:'mae',date:'2026-02-15',test:'t4l',value:1.2},
+          {patientId:'mae',date:'2025-08-10',test:'tsh',value:4.5},
+          {patientId:'mae',date:'2025-08-10',test:'t4l',value:1.0},
+          {patientId:'antonio',date:'2026-03-05',test:'creatinina',value:1.4},
+          {patientId:'antonio',date:'2026-03-05',test:'potassio',value:5.2},
+          {patientId:'antonio',date:'2026-03-05',test:'sodio',value:133},
+          {patientId:'antonio',date:'2025-12-10',test:'creatinina',value:1.2},
+          {patientId:'antonio',date:'2025-12-10',test:'potassio',value:4.8},
+          {patientId:'hermano',date:'2026-03-01',test:'glicemia',value:88},
+          {patientId:'hermano',date:'2026-03-01',test:'colesterol_total',value:185}
+        ],
+        messages:[
+          {patientId:'istelina',date:'2026-04-10 09:30',from:'medico',text:'Dona Istelina, nao esqueca da Levotiroxina em jejum, 30min antes do cafe.'},
+          {patientId:'istelina',date:'2026-04-10 10:15',from:'paciente',text:'Ok doutor, estou tomando certinho. Mas ontem senti tontura de novo.'},
+          {patientId:'istelina',date:'2026-04-10 10:20',from:'medico',text:'Vamos antecipar sua consulta. Meca a pressao e me informe.'},
+          {patientId:'pai',date:'2026-04-08 14:00',from:'medico',text:'Pai, os resultados do colesterol vieram alterados. Precisamos conversar.'},
+          {patientId:'pai',date:'2026-04-08 16:30',from:'paciente',text:'Vi os resultados. Pode me explicar na proxima consulta?'},
+          {patientId:'marly',date:'2026-04-05 11:00',from:'medico',text:'Dona Marly, como esta a dor no estomago?'},
+          {patientId:'marly',date:'2026-04-05 13:00',from:'paciente',text:'Melhorou bastante, doutor. So sinto depois de fritura.'}
+        ],
+        carePlans:[
+          {patientId:'istelina',title:'Controle glicemico — HbA1c < 7%',milestones:[{text:'Ajustar dose Metformina',done:true},{text:'Orientacao nutricional',done:true},{text:'Caminhada 20min/dia',done:false},{text:'Reavaliar HbA1c em 3 meses',done:false}]},
+          {patientId:'istelina',title:'Controle PA — PA < 140/90',milestones:[{text:'Losartana 100mg',done:true},{text:'Reduzir sal',done:false},{text:'MAPA em 30 dias',done:false}]},
+          {patientId:'pai',title:'Reducao colesterol — LDL < 130',milestones:[{text:'Dieta mediteranea',done:false},{text:'Exercicio 3x/semana',done:false},{text:'Reavaliar lipidograma 3m',done:false}]},
+          {patientId:'antonio',title:'Controle ICC',milestones:[{text:'Manter Furosemida+Carvedilol',done:true},{text:'Restricao hidrica 1.5L/dia',done:true},{text:'Peso diario',done:false},{text:'Ecocardiograma controle',done:false}]}
+        ],
+        weightHistory:[
+          {patientId:'hermano',date:'2026-01-01',weight:76.2},{patientId:'hermano',date:'2026-02-01',weight:75.8},{patientId:'hermano',date:'2026-03-01',weight:75},{patientId:'hermano',date:'2026-04-01',weight:74.5},
+          {patientId:'istelina',date:'2026-01-01',weight:70},{patientId:'istelina',date:'2026-02-01',weight:69.2},{patientId:'istelina',date:'2026-03-01',weight:68.5},{patientId:'istelina',date:'2026-04-01',weight:68},
+          {patientId:'pai',date:'2026-01-01',weight:84},{patientId:'pai',date:'2026-02-01',weight:83.2},{patientId:'pai',date:'2026-03-01',weight:82.5},{patientId:'pai',date:'2026-04-01',weight:82},
+          {patientId:'marly',date:'2026-01-01',weight:59},{patientId:'marly',date:'2026-02-01',weight:58.5},{patientId:'marly',date:'2026-03-01',weight:58.2},{patientId:'marly',date:'2026-04-01',weight:58}
+        ],
+        onboarding:{
+          hermano:[1,1,1,1,0,1,1,1,0,1],pai:[1,1,1,1,0,0,1,1,0,1],mae:[1,1,1,1,0,0,1,0,0,1],
+          istelina:[1,1,1,1,1,1,1,1,1,1],antonio:[1,1,1,1,0,1,1,1,1,0],marly:[1,1,1,1,0,1,1,1,0,1]
+        },
+        referrals:[
+          {patientId:'istelina',specialty:'Endocrinologia',reason:'DM2 dificil controle',date:'2026-03-20',status:'agendado',apptDate:'2026-05-05'},
+          {patientId:'antonio',specialty:'Cardiologia',reason:'Avaliacao ICC — ecocardiograma',date:'2026-03-25',status:'pendente',apptDate:''},
+          {patientId:'pai',specialty:'Cardiologia',reason:'Dislipidemia — risco cardiovascular',date:'2026-04-01',status:'pendente',apptDate:''},
+          {patientId:'marly',specialty:'Gastroenterologia',reason:'DRGE — EDA',date:'2026-03-15',status:'concluido',apptDate:'2026-04-02'}
+        ],
+        adherence:{},
+        familyHistory:{
+          hermano:[{relation:'Pai',conditions:['HAS','Dislipidemia']},{relation:'Mae',conditions:['Hipotireoidismo']},{relation:'Avo Paterna',conditions:['DM2','HAS']},{relation:'Avo Paterno',conditions:['DPOC','ICC']}],
+          istelina:[{relation:'Mae',conditions:['DM2','HAS']},{relation:'Pai',conditions:['AVC']}],
+          pai:[{relation:'Mae',conditions:['DM2','HAS','Hipotireoidismo']},{relation:'Pai',conditions:['DPOC','ICC']}],
+          antonio:[{relation:'Pai',conditions:['Enfisema']},{relation:'Mae',conditions:['HAS']}],
+          marly:[{relation:'Mae',conditions:['Osteoporose','Fratura de femur']},{relation:'Pai',conditions:['Ulcera gastrica']}],
+          mae:[{relation:'Mae',conditions:['Hipotireoidismo']}]
+        },
+        notifications:[
+          {type:'urgent',icon:'!',text:'Vo Istelina — consulta vencida desde 05/04',time:'2 horas atras'},
+          {type:'warn',icon:'!',text:'Omeprazol de Dona Marly — uso prolongado',time:'1 dia atras'},
+          {type:'info',icon:'i',text:'Exames de Pai pendentes de revisao',time:'2 dias atras'},
+          {type:'green',icon:'+',text:'Consulta de Vo Antonio agendada 20/04',time:'3 dias atras'}
+        ],
+        appointments:[
+          {patientId:'antonio',date:'2026-04-20',time:'08:00',type:'Consulta',note:'Retorno ICC'},
+          {patientId:'marly',date:'2026-04-22',time:'09:00',type:'Retorno',note:'Revisao DRGE'},
+          {patientId:'pai',date:'2026-04-28',time:'10:00',type:'Consulta',note:'Lipidograma'},
+          {patientId:'istelina',date:'2026-04-14',time:'08:00',type:'Consulta',note:'Urgente — tontura'},
+          {patientId:'istelina',date:'2026-04-14',time:'14:00',type:'Exame',note:'Glicemia + HbA1c'},
+          {patientId:'hermano',date:'2026-05-10',time:'11:00',type:'Consulta',note:'Check-up anual'}
+        ],
+        surveys:[
+          {patientId:'marly',date:'2026-04-05',rating:5,comment:'Atendimento excelente, muito atencioso.'},
+          {patientId:'pai',date:'2026-04-08',rating:4,comment:'Bom atendimento, so demorou um pouco.'},
+          {patientId:'istelina',date:'2026-03-15',rating:5,comment:'Doutor muito dedicado, explica tudo direitinho.'},
+          {patientId:'antonio',date:'2026-03-25',rating:4,comment:'Gostei do atendimento.'},
+          {patientId:'mae',date:'2026-02-15',rating:5,comment:'Muito bom, consulta bem completa.'}
+        ],
+        costs:{
+          monthly:[
+            {month:'Nov/25',revenue:8500,expenses:3200},{month:'Dez/25',revenue:7800,expenses:3500},
+            {month:'Jan/26',revenue:9200,expenses:3100},{month:'Fev/26',revenue:8800,expenses:3400},
+            {month:'Mar/26',revenue:9500,expenses:3300},{month:'Abr/26',revenue:4200,expenses:1600}
+          ],
+          perPatient:{hermano:280,pai:650,mae:380,istelina:1850,antonio:1420,marly:720}
+        },
+        // v7 new data
+        teleconsultas:[
+          {id:'tc1',patientId:'istelina',date:'2026-04-12',time:'09:00',reason:'Acompanhamento tontura',status:'completed',notes:'Paciente relata melhora da tontura apos ajuste medicamentoso. PA aferida em casa: 145/88. Orientada a manter diario de PA.'},
+          {id:'tc2',patientId:'pai',date:'2026-04-18',time:'14:00',reason:'Revisao exames colesterol',status:'scheduled',notes:''},
+          {id:'tc3',patientId:'marly',date:'2026-04-25',time:'10:00',reason:'Retorno DRGE',status:'scheduled',notes:''},
+          {id:'tc4',patientId:'antonio',date:'2026-04-08',time:'11:00',reason:'Falta de ar episodica',status:'completed',notes:'Paciente com dispneia aos esforcos moderados. Orientado restricao hidrica rigorosa. Solicitado BNP e raio-X de torax.'}
+        ],
+        prescriptionHistory:[
+          {id:'rx1',patientId:'istelina',date:'2026-03-15',items:[{med:'Losartana 100mg',dose:'1x/dia'},{med:'Metformina 850mg',dose:'2x/dia'}],notes:'Ajuste de dose apos consulta.'},
+          {id:'rx2',patientId:'istelina',date:'2026-01-10',items:[{med:'Losartana 50mg',dose:'1x/dia'},{med:'Metformina 850mg',dose:'2x/dia'},{med:'Levotiroxina 75mcg',dose:'1x/dia jejum'}],notes:'Receita de manutencao.'},
+          {id:'rx3',patientId:'pai',date:'2026-02-25',items:[{med:'Losartana 50mg',dose:'1x/dia'},{med:'Sinvastatina 20mg',dose:'1x/noite'}],notes:'Manutencao.'},
+          {id:'rx4',patientId:'marly',date:'2026-03-20',items:[{med:'Omeprazol 20mg',dose:'1x/dia jejum'},{med:'Calcio + Vit D',dose:'500mg/400UI 1x/dia'}],notes:'Manter tratamento.'},
+          {id:'rx5',patientId:'antonio',date:'2026-03-10',items:[{med:'Furosemida 40mg',dose:'1x/dia'},{med:'Carvedilol 6.25mg',dose:'2x/dia'}],notes:'Controle ICC.'}
+        ],
+        healthGoals:[
+          {patientId:'istelina',title:'HbA1c abaixo de 7%',target:7,current:8.2,unit:'%',category:'lab',progress:40},
+          {patientId:'istelina',title:'PA < 140/90 por 30 dias',target:30,current:12,unit:'dias',category:'vitals',progress:40},
+          {patientId:'istelina',title:'Caminhada 20min/dia',target:30,current:10,unit:'dias/mes',category:'exercise',progress:33},
+          {patientId:'pai',title:'LDL abaixo de 130',target:130,current:155,unit:'mg/dL',category:'lab',progress:55},
+          {patientId:'pai',title:'Exercicio 3x/semana',target:12,current:4,unit:'sessoes/mes',category:'exercise',progress:33},
+          {patientId:'antonio',title:'Peso diario registrado',target:30,current:18,unit:'dias/mes',category:'monitoring',progress:60},
+          {patientId:'antonio',title:'Restricao hidrica 1.5L',target:30,current:22,unit:'dias/mes',category:'nutrition',progress:73},
+          {patientId:'marly',title:'Evitar frituras por 30 dias',target:30,current:20,unit:'dias',category:'nutrition',progress:67},
+          {patientId:'hermano',title:'Manter peso < 75kg',target:75,current:74.5,unit:'kg',category:'weight',progress:100},
+          {patientId:'mae',title:'Levotiroxina em jejum diario',target:30,current:28,unit:'dias/mes',category:'medication',progress:93}
+        ],
+        badges:[
+          {id:'b1',name:'Primeira Consulta',icon:'\u2605',description:'Completou a primeira teleconsulta',condition:'teleconsulta'},
+          {id:'b2',name:'Meta Atingida',icon:'\u2691',description:'Atingiu 100% em uma meta',condition:'goal100'},
+          {id:'b3',name:'7 Dias Seguidos',icon:'\u2600',description:'Tomou medicacao por 7 dias seguidos',condition:'adherence7'},
+          {id:'b4',name:'Exames em Dia',icon:'\u2714',description:'Todos os exames dentro da validade',condition:'labsOk'},
+          {id:'b5',name:'Peso Ideal',icon:'\u2764',description:'IMC dentro da faixa normal',condition:'bmiOk'},
+          {id:'b6',name:'Familia Unida',icon:'\u2302',description:'Todo grupo familiar cadastrado',condition:'family'}
+        ],
+        familyRelationships:{
+          hermano:{parents:['pai','mae'],grandparents:['istelina','antonio']},
+          pai:{parents:['istelina','antonio'],children:['hermano']},
+          mae:{children:['hermano']},
+          istelina:{children:['pai'],grandchildren:['hermano']},
+          antonio:{children:['pai'],grandchildren:['hermano']}
+        }
+      };
+    }
+
+    function generateAdherenceData(rate){
+      const days=[];for(let i=0;i<28;i++)days.push(Math.random()<rate?1:0);return days;
+    }
+
+    // ===== STATE =====
+    let data;
+    let currentPatientId=null;
+    let agendaDate=new Date();
+    let currentSurveyRating=0;
+    let editingApptIdx=-1;
+    let patSortCol='name';
+    let patSortDir='asc';
+    let patFilter='all';
+
+    // ===== LOAD / SAVE =====
+    function loadData(){
+      try{
+        const saved=localStorage.getItem(STORAGE_KEY);
+        if(saved){
+          data=JSON.parse(saved);
+          const def=getDefaultData();
+          ['messages','carePlans','weightHistory','onboarding','referrals','labResults','familyHistory','appointments','surveys','costs','teleconsultas','prescriptionHistory','healthGoals','badges','familyRelationships'].forEach(k=>{
+            if(!data[k]) data[k]=def[k];
+          });
+        } else { data=getDefaultData(); }
+      } catch(e){ data=getDefaultData(); }
+      if(!data.adherence||!Object.keys(data.adherence).length){
+        data.adherence={istelina:generateAdherenceData(.75),pai:generateAdherenceData(.85),mae:generateAdherenceData(.9),antonio:generateAdherenceData(.7),marly:generateAdherenceData(.8)};
+      }
+      saveData();
+    }
+    function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
+
+    // ===== DARK MODE =====
+    function toggleDark(){
+      document.body.classList.toggle('dark-mode');
+      const isDark=document.body.classList.contains('dark-mode');
+      localStorage.setItem('medstack_dark',isDark);
+      document.getElementById('darkIcon').textContent=isDark?'\u2600':'\u263D';
+    }
+    function initDark(){
+      if(localStorage.getItem('medstack_dark')==='true'){
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkIcon').textContent='\u2600';
+      }
+    }
+
+    // ===== NAVIGATION =====
+    function navTo(section,el){
+      document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+      document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+      if(el) el.classList.add('active');
+      else{const btn=document.querySelector(`[data-nav="${section}"]`);if(btn)btn.classList.add('active');}
+      const sec=document.getElementById('sec-'+section);
+      if(sec) sec.classList.add('active');
+    }
+
+    function toggleSidebarGroup(header){
+      header.closest('.sidebar-group').classList.toggle('collapsed');
+    }
+
+    // ===== DATE =====
+    function initDate(){
+      const d=new Date();
+      const opts={weekday:'long',day:'numeric',month:'long',year:'numeric'};
+      document.getElementById('dashDate').textContent=d.toLocaleDateString('pt-BR',opts);
+      const today=d.toISOString().slice(0,10);
+      document.getElementById('soapDate').value=today;
+      document.getElementById('rxDate').value=today;
+    }
+    function formatDate(d){if(!d)return'\u2014';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d}
+
+    // ===== SELECTS =====
+    function populateSelects(){
+      const sels=['soapPatient','rxPatient','ehrPatientSelect','apptPatient','surveyPatient','telemedPatient','rxHistoryPatient','labTrendsPatient','healthScorePatient','goalsPatient'];
+      sels.forEach(sid=>{
+        const sel=document.getElementById(sid);if(!sel)return;
+        const firstOpt=sel.querySelector('option');
+        sel.innerHTML='';if(firstOpt)sel.appendChild(firstOpt);
+        data.patients.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;sel.appendChild(o)});
+      });
+      const ts=document.getElementById('apptTime');
+      ts.innerHTML='';
+      for(let h=7;h<=18;h++){for(let m=0;m<60;m+=30){
+        const o=document.createElement('option');
+        const t=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+        o.value=t;o.textContent=t;ts.appendChild(o);
+      }}
+    }
+
+    // ===== METRICS =====
+    function renderMetrics(){
+      const row=document.getElementById('metricsRow');
+      const total=data.patients.length;
+      const alto=data.patients.filter(p=>p.risk==='alto').length;
+      const overdue=data.patients.filter(p=>new Date(p.nextAppt)<new Date()).length;
+      const todayAppts=data.appointments.filter(a=>a.date===new Date().toISOString().slice(0,10)).length;
+      const totalMeds=data.patients.reduce((s,p)=>s+p.meds.length,0);
+      row.innerHTML=`
+        <div class="metric-card mc-blue"><div class="metric-label">Pacientes</div><div class="metric-value blue">${total}</div><div class="metric-sub">${alto} alto risco</div></div>
+        <div class="metric-card mc-green"><div class="metric-label">Consultas Hoje</div><div class="metric-value green">${todayAppts}</div><div class="metric-sub">agendadas</div></div>
+        <div class="metric-card mc-amber"><div class="metric-label">Medicacoes</div><div class="metric-value amber">${totalMeds}</div><div class="metric-sub">ativas</div></div>
+        <div class="metric-card mc-red"><div class="metric-label">Vencidas</div><div class="metric-value red">${overdue}</div><div class="metric-sub">consultas atrasadas</div></div>
+        <div class="metric-card mc-purple"><div class="metric-label">Satisfacao</div><div class="metric-value" style="color:#7c3aed">${data.surveys.length?((data.surveys.reduce((s,v)=>s+v.rating,0)/data.surveys.length).toFixed(1)):'-'}</div><div class="metric-sub">media de ${data.surveys.length} avaliacoes</div></div>
+      `;
+    }
+
+    // ===== ALERTS =====
+    function renderAlerts(){
+      const strip=document.getElementById('alertStrip');
+      const overdue=data.patients.filter(p=>new Date(p.nextAppt)<new Date());
+      let html='';
+      overdue.forEach(p=>{html+=`<div class="alert-card alert-urgent"><strong>Urgente</strong>${p.name} — consulta vencida desde ${formatDate(p.nextAppt)}</div>`;});
+      data.patients.forEach(p=>{
+        p.meds.forEach(m=>{
+          if(m.name.toLowerCase().includes('omeprazol'))html+=`<div class="alert-card alert-warn"><strong>Atencao</strong>${m.name} (${p.name}) — uso prolongado, reavaliar</div>`;
+        });
+      });
+      const pending=data.referrals.filter(r=>r.status==='pendente');
+      if(pending.length)html+=`<div class="alert-card alert-info"><strong>Info</strong>${pending.length} encaminhamento(s) pendente(s)</div>`;
+      strip.innerHTML=html;
+    }
+
+    // ===== DASHBOARD UPCOMING =====
+    function renderDashUpcoming(){
+      const container=document.getElementById('dashUpcoming');
+      const today=new Date().toISOString().slice(0,10);
+      const upcoming=data.appointments.filter(a=>a.date>=today).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).slice(0,6);
+      if(!upcoming.length){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhuma consulta proxima.</p>';return;}
+      let html='<div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Tipo</th><th>Nota</th></tr></thead><tbody>';
+      upcoming.forEach(a=>{
+        const p=data.patients.find(pp=>pp.id===a.patientId);
+        html+=`<tr><td>${formatDate(a.date)}</td><td>${a.time}</td><td class="name-cell">${p?p.name:a.patientId}</td><td><span class="badge badge-blue">${a.type}</span></td><td style="color:var(--color-text-light)">${a.note||''}</td></tr>`;
+      });
+      html+='</tbody></table></div>';
+      container.innerHTML=html;
+    }
+
+    // ===== PATIENTS TABLE =====
+    function setFilter(f,btn){
+      patFilter=f;
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPatients();
+    }
+    function sortPatients(col){
+      if(patSortCol===col)patSortDir=patSortDir==='asc'?'desc':'asc';
+      else{patSortCol=col;patSortDir='asc';}
+      renderPatients();
+    }
+    function renderPatients(){
+      const tbody=document.getElementById('patBody');
+      const search=(document.getElementById('patSearch').value||'').toLowerCase();
+      let pts=[...data.patients];
+      if(patFilter!=='all')pts=pts.filter(p=>p.risk===patFilter);
+      if(search)pts=pts.filter(p=>p.name.toLowerCase().includes(search)||p.conditions.join(',').toLowerCase().includes(search));
+      pts.sort((a,b)=>{
+        let va,vb;
+        if(patSortCol==='name'){va=a.name;vb=b.name;}
+        else if(patSortCol==='age'){va=a.age;vb=b.age;}
+        else if(patSortCol==='conditions'){va=a.conditions.length;vb=b.conditions.length;}
+        else if(patSortCol==='risk'){const o={alto:3,medio:2,baixo:1};va=o[a.risk]||0;vb=o[b.risk]||0;}
+        else if(patSortCol==='nextAppt'){va=a.nextAppt;vb=b.nextAppt;}
+        else{va=a.name;vb=b.name;}
+        if(va<vb)return patSortDir==='asc'?-1:1;
+        if(va>vb)return patSortDir==='asc'?1:-1;
+        return 0;
+      });
+      document.querySelectorAll('#patTable th').forEach(th=>{th.classList.remove('sorted-asc','sorted-desc');});
+      const headers=document.querySelectorAll('#patTable th');
+      const colIdx={name:0,age:1,conditions:2,risk:3,nextAppt:4};
+      if(colIdx[patSortCol]!==undefined&&headers[colIdx[patSortCol]])headers[colIdx[patSortCol]].classList.add(patSortDir==='asc'?'sorted-asc':'sorted-desc');
+
+      tbody.innerHTML=pts.map(p=>{
+        const riskBadge=p.risk==='alto'?'badge-red':p.risk==='medio'?'badge-amber':'badge-green';
+        const score=computeHealthScore(p.id);
+        const scoreColor=score>=75?'#16a34a':score>=50?'#d97706':'#dc2626';
+        return `<tr onclick="openPatient('${p.id}')">
+          <td class="name-cell">${p.name}</td><td>${p.age}</td>
+          <td>${p.conditions.map(c=>`<span class="badge badge-gray">${c}</span>`).join(' ')}</td>
+          <td><span class="badge ${riskBadge}">${p.risk}</span></td>
+          <td>${formatDate(p.nextAppt)}</td>
+          <td><span style="font-weight:700;color:${scoreColor}">${score}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ===== PATIENT MODAL =====
+    function openPatient(id){
+      currentPatientId=id;
+      const p=data.patients.find(pp=>pp.id===id);if(!p)return;
+      document.getElementById('modalPatName').textContent=p.name;
+      const tabs=['Resumo','Medicacoes','Mensagens','Plano de Cuidado','Peso','Checklist','Encaminhamentos','Lab','Hist. Familiar','Aderencia','Receitas Ant.'];
+      document.getElementById('modalTabs').innerHTML=tabs.map((t,i)=>`<button class="panel-tab${i===0?' active':''}" onclick="switchModalTab(${i},this)">${t}</button>`).join('');
+      renderModalTab(0);
+      document.getElementById('patientModal').classList.add('open');
+    }
+    function closeModal(){document.getElementById('patientModal').classList.remove('open');currentPatientId=null;}
+    function switchModalTab(idx,btn){
+      document.querySelectorAll('#modalTabs .panel-tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      renderModalTab(idx);
+    }
+    function renderModalTab(idx){
+      const body=document.getElementById('modalBody');
+      const p=data.patients.find(pp=>pp.id===currentPatientId);if(!p){body.innerHTML='';return;}
+      if(idx===0) renderModalSummary(body,p);
+      else if(idx===1) renderModalMeds(body,p);
+      else if(idx===2) renderModalMessages(body,p);
+      else if(idx===3) renderModalCarePlan(body,p);
+      else if(idx===4) renderModalWeight(body,p);
+      else if(idx===5) renderModalOnboarding(body,p);
+      else if(idx===6) renderModalReferrals(body,p);
+      else if(idx===7) renderModalLab(body,p);
+      else if(idx===8) renderModalFamilyHistory(body,p);
+      else if(idx===9) renderModalAdherence(body,p);
+      else if(idx===10) renderModalRxHistory(body,p);
+    }
+    function renderModalSummary(body,p){
+      const score=computeHealthScore(p.id);
+      const scoreColor=score>=75?'#16a34a':score>=50?'#d97706':'#dc2626';
+      body.innerHTML=`
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+          <div style="font-size:2rem;font-weight:800;color:${scoreColor}">${score}</div>
+          <div><div style="font-size:.65rem;text-transform:uppercase;color:var(--color-text-light);font-weight:600">Indice de Saude</div><div style="font-size:.78rem">${score>=75?'Bom':score>=50?'Moderado':'Atenção'}</div></div>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-card"><h4>Dados Pessoais</h4>
+            <div class="info-row"><span class="label">Idade</span><span class="value">${p.age} anos</span></div>
+            <div class="info-row"><span class="label">Sexo</span><span class="value">${p.sex==='M'?'Masculino':'Feminino'}</span></div>
+            <div class="info-row"><span class="label">Telefone</span><span class="value">${p.phone}</span></div>
+            <div class="info-row"><span class="label">Email</span><span class="value">${p.email||'\u2014'}</span></div>
+            <div class="info-row"><span class="label">Peso</span><span class="value">${p.weight} kg</span></div>
+            <div class="info-row"><span class="label">Altura</span><span class="value">${p.height} cm</span></div>
+            <div class="info-row"><span class="label">IMC</span><span class="value">${(p.weight/((p.height/100)**2)).toFixed(1)}</span></div>
+          </div>
+          <div class="detail-card"><h4>Condicoes e Risco</h4>
+            <div class="info-row"><span class="label">Condicoes</span><span class="value">${p.conditions.join(', ')}</span></div>
+            <div class="info-row"><span class="label">Risco</span><span class="value"><span class="badge ${p.risk==='alto'?'badge-red':p.risk==='medio'?'badge-amber':'badge-green'}">${p.risk}</span></span></div>
+            <div class="info-row"><span class="label">Prox. Consulta</span><span class="value">${formatDate(p.nextAppt)}</span></div>
+            <div class="info-row"><span class="label">Alergias</span><span class="value">${p.allergies.join(', ')}</span></div>
+          </div>
+        </div>`;
+    }
+    function renderModalMeds(body,p){
+      if(!p.meds.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhuma medicacao ativa.</p>';return;}
+      body.innerHTML='<div class="detail-card"><h4>Medicacoes Ativas</h4><ul>'+p.meds.map(m=>`<li><span style="font-weight:600">${m.name}</span> — ${m.dose}</li>`).join('')+'</ul></div>';
+    }
+    function renderModalMessages(body,p){
+      const msgs=data.messages.filter(m=>m.patientId===p.id);
+      let html='<div class="msg-container" id="modalMsgContainer">';
+      msgs.forEach(m=>{html+=`<div class="msg-bubble ${m.from==='medico'?'sent':'received'}"><div>${m.text}</div><div class="msg-time">${m.date}</div></div>`;});
+      html+='</div><div class="msg-input-row"><input type="text" class="form-input" id="modalMsgInput" placeholder="Enviar mensagem..."><button class="btn btn-primary btn-sm" onclick="sendModalMsg()">Enviar</button></div>';
+      body.innerHTML=html;
+      const c=document.getElementById('modalMsgContainer');c.scrollTop=c.scrollHeight;
+    }
+    function sendModalMsg(){
+      const input=document.getElementById('modalMsgInput');
+      if(!input.value.trim())return;
+      const now=new Date();
+      const dt=now.toISOString().slice(0,10)+' '+now.toTimeString().slice(0,5);
+      data.messages.push({patientId:currentPatientId,date:dt,from:'medico',text:input.value.trim()});
+      saveData();input.value='';
+      renderModalTab(2);
+    }
+    function renderModalCarePlan(body,p){
+      const plans=data.carePlans.filter(c=>c.patientId===p.id);
+      if(!plans.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhum plano de cuidado.</p>';return;}
+      body.innerHTML=plans.map((plan,pi)=>`<div class="care-goal"><h4>${plan.title}</h4>${plan.milestones.map((m,mi)=>`<div class="care-milestone"><input type="checkbox" ${m.done?'checked':''} onchange="toggleMilestone(${pi},${mi})"> ${m.text}</div>`).join('')}</div>`).join('');
+    }
+    function toggleMilestone(pi,mi){
+      const plans=data.carePlans.filter(c=>c.patientId===currentPatientId);
+      plans[pi].milestones[mi].done=!plans[pi].milestones[mi].done;
+      saveData();
+    }
+    function renderModalWeight(body,p){
+      const wh=data.weightHistory.filter(w=>w.patientId===p.id).sort((a,b)=>a.date.localeCompare(b.date));
+      if(!wh.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Sem historico de peso.</p>';return;}
+      const min=Math.min(...wh.map(w=>w.weight))-2;
+      const max=Math.max(...wh.map(w=>w.weight))+2;
+      const range=max-min||1;
+      const W=400,H=120;
+      const points=wh.map((w,i)=>{
+        const x=wh.length>1?(i/(wh.length-1))*W:W/2;
+        const y=H-((w.weight-min)/range)*H;
+        return `${x},${y}`;
+      });
+      body.innerHTML=`<div class="weight-chart-area"><h4 style="font-size:.72rem;font-weight:600;color:var(--color-text-light);text-transform:uppercase;margin-bottom:.5rem">Historico de Peso</h4>
+        <svg viewBox="0 0 ${W} ${H}" class="weight-svg"><polyline points="${points.join(' ')}" fill="none" stroke="var(--color-accent)" stroke-width="2"/>${wh.map((w,i)=>{const x=wh.length>1?(i/(wh.length-1))*W:W/2;const y=H-((w.weight-min)/range)*H;return `<circle cx="${x}" cy="${y}" r="3" fill="var(--color-accent)"/><text x="${x}" y="${y-8}" text-anchor="middle" font-size="9" fill="var(--color-text-light)">${w.weight}</text>`;}).join('')}</svg>
+        <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--color-text-light)">${wh.map(w=>`<span>${formatDate(w.date)}</span>`).join('')}</div></div>`;
+    }
+    function renderModalOnboarding(body,p){
+      const labels=['Cadastro completo','Contato verificado','Historico coletado','Alergias registradas','Exames importados','Medicacoes atualizadas','Plano de cuidado','Orientacoes entregues','Agendamento feito','Termo assinado'];
+      const ob=data.onboarding[p.id]||new Array(10).fill(0);
+      const done=ob.reduce((s,v)=>s+v,0);
+      body.innerHTML=`<p style="font-size:.82rem;margin-bottom:.75rem;color:var(--color-text-light)">${done}/10 itens concluidos</p><div class="onboard-grid">${labels.map((l,i)=>`<div class="onboard-item ${ob[i]?'done':''}" onclick="toggleOnboard('${p.id}',${i})">${ob[i]?'\u2714':'\u25CB'} ${l}</div>`).join('')}</div>`;
+    }
+    function toggleOnboard(pid,idx){
+      if(!data.onboarding[pid])data.onboarding[pid]=new Array(10).fill(0);
+      data.onboarding[pid][idx]=data.onboarding[pid][idx]?0:1;
+      saveData();
+      renderModalTab(5);
+    }
+    function renderModalReferrals(body,p){
+      const refs=data.referrals.filter(r=>r.patientId===p.id);
+      if(!refs.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhum encaminhamento.</p>';return;}
+      body.innerHTML=refs.map(r=>{
+        const stBadge=r.status==='concluido'?'badge-green':r.status==='agendado'?'badge-blue':'badge-amber';
+        return `<div class="referral-card"><h4>${r.specialty}</h4><p>${r.reason}</p><div style="margin-top:.35rem;display:flex;gap:.5rem;align-items:center"><span class="badge ${stBadge}">${r.status}</span><span style="font-size:.7rem;color:var(--color-text-light)">${formatDate(r.date)}${r.apptDate?' \u2192 '+formatDate(r.apptDate):''}</span></div></div>`;
+      }).join('');
+    }
+    function renderModalLab(body,p){
+      const labs=data.labResults.filter(l=>l.patientId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
+      if(!labs.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Sem resultados laboratoriais.</p>';return;}
+      const refs={glicemia:{min:70,max:99,unit:'mg/dL',label:'Glicemia'},hba1c:{min:0,max:5.7,unit:'%',label:'HbA1c'},creatinina:{min:0.6,max:1.2,unit:'mg/dL',label:'Creatinina'},tsh:{min:0.4,max:4.0,unit:'mUI/L',label:'TSH'},t4l:{min:0.9,max:1.8,unit:'ng/dL',label:'T4 Livre'},colesterol_total:{min:0,max:200,unit:'mg/dL',label:'Colesterol Total'},ldl:{min:0,max:130,unit:'mg/dL',label:'LDL'},hdl:{min:40,max:999,unit:'mg/dL',label:'HDL'},triglicerides:{min:0,max:150,unit:'mg/dL',label:'Triglicerides'},hemoglobina:{min:12,max:17,unit:'g/dL',label:'Hemoglobina'},potassio:{min:3.5,max:5.0,unit:'mEq/L',label:'Potassio'},sodio:{min:136,max:145,unit:'mEq/L',label:'Sodio'}};
+      body.innerHTML='<div class="detail-card"><h4>Resultados Laboratoriais</h4>'+labs.map(l=>{
+        const ref=refs[l.test]||{min:0,max:999,unit:'',label:l.test};
+        const abnormal=l.value<ref.min||l.value>ref.max;
+        return `<div class="lab-result-row${abnormal?' abnormal':''}"><span style="min-width:120px;font-weight:600">${ref.label}</span><span style="min-width:70px">${l.value} ${ref.unit}</span><span style="font-size:.7rem;color:var(--color-text-light)">${formatDate(l.date)}</span>${abnormal?'<span class="badge badge-red">Alterado</span>':''}</div>`;
+      }).join('')+'</div>';
+    }
+    function renderModalFamilyHistory(body,p){
+      const fh=data.familyHistory[p.id]||[];
+      if(!fh.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Sem historico familiar.</p>';return;}
+      body.innerHTML=fh.map(f=>`<div class="family-node"><span class="fn-rel">${f.relation}</span><span class="fn-cond">${f.conditions.join(', ')}</span></div>`).join('');
+    }
+    function renderModalAdherence(body,p){
+      const ad=data.adherence[p.id];
+      if(!ad){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Sem dados de aderencia.</p>';return;}
+      const taken=ad.filter(d=>d===1).length;
+      const pct=((taken/ad.length)*100).toFixed(0);
+      const dayLabels=['D','S','T','Q','Q','S','S'];
+      body.innerHTML=`<p style="font-size:.82rem;margin-bottom:.5rem">Aderencia nos ultimos 28 dias: <strong>${pct}%</strong> (${taken}/${ad.length})</p>
+        <div style="display:flex;gap:2px;margin-bottom:.2rem">${dayLabels.map(d=>`<div class="adherence-day-label" style="flex:1;text-align:center">${d}</div>`).join('')}</div>
+        <div class="adherence-grid">${ad.map((d,i)=>`<div class="adherence-day ${d?'taken':'missed'}" title="Dia ${i+1}: ${d?'Tomou':'Faltou'}"></div>`).join('')}</div>`;
+    }
+    function renderModalRxHistory(body,p){
+      const rxs=(data.prescriptionHistory||[]).filter(r=>r.patientId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
+      if(!rxs.length){body.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Sem receitas anteriores.</p>';return;}
+      body.innerHTML=rxs.map(r=>`<div class="rx-history-card"><h4>Receita de ${formatDate(r.date)}</h4><ul>${r.items.map(it=>`<li>${it.med} — ${it.dose}</li>`).join('')}</ul>${r.notes?`<p style="font-size:.72rem;color:var(--color-text-light);margin-top:.3rem">${r.notes}</p>`:''}</div>`).join('');
+    }
+
+    // ===== GRUPO FAMILIAR =====
+    function renderFamilyTree(){
+      const area=document.getElementById('familyTreeArea');
+      const rels=data.familyRelationships||{};
+      // Build visual tree: grandparents -> parents -> children
+      const grandparents=data.patients.filter(p=>p.id==='istelina'||p.id==='antonio');
+      const parents=data.patients.filter(p=>p.id==='pai'||p.id==='mae');
+      const children=data.patients.filter(p=>p.id==='hermano');
+      const others=data.patients.filter(p=>!['istelina','antonio','pai','mae','hermano'].includes(p.id));
+
+      function nodeHtml(p){
+        const cls=p.sex==='M'?'ft-male':'ft-female';
+        return `<div class="family-tree-node ${cls}" onclick="openPatient('${p.id}')"><div class="ft-name">${p.name}</div><div class="ft-age">${p.age} anos — ${p.sex==='M'?'Masc':'Fem'}</div><div class="ft-conditions">${p.conditions.join(', ')}</div></div>`;
+      }
+
+      let html='<div class="family-tree">';
+      if(grandparents.length){
+        html+='<div style="font-size:.65rem;font-weight:600;text-transform:uppercase;color:var(--color-text-light);letter-spacing:.04em;margin-bottom:.3rem">Avos</div>';
+        html+='<div class="family-tree-row">'+grandparents.map(nodeHtml).join('<div class="family-tree-h-line"></div>')+'</div>';
+        html+='<div class="family-tree-connector"></div>';
+      }
+      if(parents.length){
+        html+='<div style="font-size:.65rem;font-weight:600;text-transform:uppercase;color:var(--color-text-light);letter-spacing:.04em;margin-bottom:.3rem">Pais</div>';
+        html+='<div class="family-tree-row">'+parents.map(nodeHtml).join('<div class="family-tree-h-line"></div>')+'</div>';
+        html+='<div class="family-tree-connector"></div>';
+      }
+      if(children.length){
+        html+='<div style="font-size:.65rem;font-weight:600;text-transform:uppercase;color:var(--color-text-light);letter-spacing:.04em;margin-bottom:.3rem">Filhos</div>';
+        html+='<div class="family-tree-row">'+children.map(nodeHtml).join('')+'</div>';
+      }
+      if(others.length){
+        html+='<div style="margin-top:1rem;font-size:.65rem;font-weight:600;text-transform:uppercase;color:var(--color-text-light);letter-spacing:.04em;margin-bottom:.3rem">Outros Pacientes</div>';
+        html+='<div class="family-tree-row">'+others.map(nodeHtml).join('')+'</div>';
+      }
+      html+='</div>';
+      area.innerHTML=html;
+
+      // Shared conditions
+      const relArea=document.getElementById('familyRelations');
+      const condMap={};
+      data.patients.forEach(p=>p.conditions.forEach(c=>{if(c!=='Saudavel'){if(!condMap[c])condMap[c]=[];condMap[c].push(p.name);}}));
+      const shared=Object.entries(condMap).filter(([,v])=>v.length>1);
+      if(shared.length){
+        relArea.innerHTML=`<div class="detail-card detail-card-full"><h4>Condicoes Compartilhadas na Familia</h4><ul>${shared.map(([c,names])=>`<li><span style="font-weight:600">${c}</span> — ${names.join(', ')}</li>`).join('')}</ul></div>`;
+      } else { relArea.innerHTML=''; }
+    }
+
+    // ===== AGENDA =====
+    function changeAgendaDay(d){agendaDate.setDate(agendaDate.getDate()+d);renderAgenda();}
+    function showApptForm(){document.getElementById('apptFormArea').style.display='block';document.getElementById('apptDate').value=agendaDate.toISOString().slice(0,10);editingApptIdx=-1;}
+    function hideApptForm(){document.getElementById('apptFormArea').style.display='none';}
+    function saveAppt(){
+      const pid=document.getElementById('apptPatient').value;
+      const date=document.getElementById('apptDate').value;
+      const time=document.getElementById('apptTime').value;
+      const type=document.getElementById('apptType').value;
+      const note=document.getElementById('apptNote').value;
+      if(!pid||!date||!time)return;
+      if(editingApptIdx>=0){data.appointments[editingApptIdx]={patientId:pid,date,time,type,note};}
+      else{data.appointments.push({patientId:pid,date,time,type,note});}
+      saveData();hideApptForm();renderAgenda();renderMetrics();renderDashUpcoming();
+    }
+    function deleteAppt(idx){data.appointments.splice(idx,1);saveData();renderAgenda();}
+    function editAppt(idx){
+      const a=data.appointments[idx];
+      showApptForm();editingApptIdx=idx;
+      document.getElementById('apptPatient').value=a.patientId;
+      document.getElementById('apptDate').value=a.date;
+      document.getElementById('apptTime').value=a.time;
+      document.getElementById('apptType').value=a.type;
+      document.getElementById('apptNote').value=a.note||'';
+    }
+    function renderAgenda(){
+      const ds=agendaDate.toISOString().slice(0,10);
+      const opts={weekday:'long',day:'numeric',month:'long',year:'numeric'};
+      document.getElementById('agendaDateLabel').textContent=agendaDate.toLocaleDateString('pt-BR',opts);
+      const grid=document.getElementById('agendaGrid');
+      let html='';
+      for(let h=7;h<=18;h++){for(let m=0;m<60;m+=30){
+        const ts=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+        const appts=data.appointments.map((a,i)=>({...a,_idx:i})).filter(a=>a.date===ds&&a.time===ts);
+        if(appts.length){
+          appts.forEach(a=>{
+            const p=data.patients.find(pp=>pp.id===a.patientId);
+            html+=`<div class="agenda-slot occupied" draggable="true" ondragstart="dragAppt(event,${a._idx})" ondrop="dropAppt(event,'${ts}')" ondragover="event.preventDefault()"><span class="slot-time">${ts}</span><div class="slot-info"><strong>${p?p.name:a.patientId}</strong> — ${a.type}${a.note?' \u2022 '+a.note:''}</div><div class="slot-actions"><button class="btn btn-sm btn-secondary" onclick="editAppt(${a._idx})">&#9998;</button><button class="btn btn-sm btn-danger" onclick="deleteAppt(${a._idx})">&times;</button></div></div>`;
+          });
+        } else {
+          html+=`<div class="agenda-slot" ondrop="dropAppt(event,'${ts}')" ondragover="event.preventDefault()"><span class="slot-time">${ts}</span><span style="color:var(--color-text-light);font-size:.72rem">Disponivel</span></div>`;
+        }
+      }}
+      grid.innerHTML=html;
+    }
+    let dragApptIdx=-1;
+    function dragAppt(e,idx){dragApptIdx=idx;e.dataTransfer.effectAllowed='move';}
+    function dropAppt(e,time){
+      e.preventDefault();
+      if(dragApptIdx>=0){data.appointments[dragApptIdx].time=time;saveData();renderAgenda();dragApptIdx=-1;}
+    }
+
+    // ===== EHR TIMELINE =====
+    function renderEHR(){
+      const pid=document.getElementById('ehrPatientSelect').value;
+      const container=document.getElementById('ehrContent');
+      if(!pid){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Selecione um paciente para ver o prontuario.</p>';return;}
+      const events=[];
+      data.consultations.filter(c=>c.patientId===pid).forEach(c=>events.push({date:c.date,type:'Consulta',detail:`S: ${c.s}<br>O: ${c.o}<br>A: ${c.a}<br>P: ${c.p}`}));
+      data.labResults.filter(l=>l.patientId===pid).forEach(l=>events.push({date:l.date,type:'Exame',detail:`${getLabLabel(l.test)}: ${l.value}`}));
+      data.referrals.filter(r=>r.patientId===pid).forEach(r=>events.push({date:r.date,type:'Encaminhamento',detail:`${r.specialty}: ${r.reason} (${r.status})`}));
+      (data.prescriptionHistory||[]).filter(r=>r.patientId===pid).forEach(r=>events.push({date:r.date,type:'Receita',detail:r.items.map(it=>it.med+' '+it.dose).join(', ')}));
+      (data.teleconsultas||[]).filter(t=>t.patientId===pid).forEach(t=>events.push({date:t.date,type:'Teleconsulta',detail:t.reason+(t.notes?' — '+t.notes:'')}));
+      events.sort((a,b)=>b.date.localeCompare(a.date));
+      if(!events.length){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhum registro encontrado.</p>';return;}
+      container.innerHTML='<div class="timeline-container">'+events.map(e=>`<div class="timeline-event"><div class="te-date">${formatDate(e.date)} \u2022 ${e.type}</div><div>${e.detail}</div></div>`).join('')+'</div>';
+    }
+
+    // ===== MEDICATIONS =====
+    function renderMedications(){
+      const container=document.getElementById('medsContent');
+      let html='<div class="table-wrap"><table class="data-table"><thead><tr><th>Paciente</th><th>Medicamento</th><th>Posologia</th></tr></thead><tbody>';
+      data.patients.forEach(p=>{p.meds.forEach(m=>{
+        html+=`<tr onclick="openPatient('${p.id}')"><td class="name-cell">${p.name}</td><td>${m.name}</td><td>${m.dose}</td></tr>`;
+      });});
+      html+='</tbody></table></div>';
+      container.innerHTML=html;
+
+      // Interactions
+      const interactions=[];
+      const allMeds=[];
+      data.patients.forEach(p=>p.meds.forEach(m=>allMeds.push({name:m.name.toLowerCase(),patient:p.name,pid:p.id})));
+      const knownInteractions=[
+        {a:'losartana',b:'furosemida',warn:'Risco de hipotensao e hipercalemia'},
+        {a:'metformina',b:'furosemida',warn:'Furosemida pode aumentar glicemia'},
+        {a:'omeprazol',b:'levotiroxina',warn:'Omeprazol reduz absorcao de Levotiroxina'},
+        {a:'sinvastatina',b:'losartana',warn:'Monitorar funcao hepatica'}
+      ];
+      knownInteractions.forEach(int=>{
+        const hasMedA=allMeds.filter(m=>m.name.includes(int.a));
+        const hasMedB=allMeds.filter(m=>m.name.includes(int.b));
+        if(hasMedA.length&&hasMedB.length){
+          const pats=new Set([...hasMedA.map(m=>m.patient),...hasMedB.map(m=>m.patient)]);
+          interactions.push({meds:`${int.a} + ${int.b}`,warn:int.warn,patients:[...pats].join(', ')});
+        }
+      });
+      const intArea=document.getElementById('interactionsArea');
+      if(interactions.length){
+        intArea.innerHTML='<div class="section-title" style="margin-bottom:.75rem">Interacoes Medicamentosas</div>'+interactions.map(i=>`<div class="interaction-warn"><strong>${i.meds}</strong><br>${i.warn}<br><span style="font-size:.7rem;color:var(--color-text-light)">Pacientes: ${i.patients}</span></div>`).join('');
+      } else { intArea.innerHTML=''; }
+    }
+
+    // ===== SOAP =====
+    function saveSOAP(){
+      const pid=document.getElementById('soapPatient').value;
+      const date=document.getElementById('soapDate').value;
+      const s=document.getElementById('soapS').value;
+      const o=document.getElementById('soapO').value;
+      const a=document.getElementById('soapA').value;
+      const p=document.getElementById('soapP').value;
+      if(!pid||!s)return;
+      data.consultations.push({patientId:pid,date,s,o,a,p});
+      saveData();
+      document.getElementById('soapS').value='';document.getElementById('soapO').value='';
+      document.getElementById('soapA').value='';document.getElementById('soapP').value='';
+      alert('Consulta SOAP salva com sucesso!');
+    }
+
+    // ===== PRESCRIPTIONS =====
+    function generateRx(){
+      const pid=document.getElementById('rxPatient').value;
+      const date=document.getElementById('rxDate').value;
+      const p=data.patients.find(pp=>pp.id===pid);if(!p)return;
+      const items=[];
+      const m1=document.getElementById('rxMed1').value;
+      const d1=document.getElementById('rxDose1').value;
+      if(m1)items.push({med:m1,dose:d1});
+      const m2=document.getElementById('rxMed2').value;
+      const d2=document.getElementById('rxDose2').value;
+      if(m2)items.push({med:m2,dose:d2});
+      if(!items.length)return;
+      const notes=document.getElementById('rxNotes').value;
+
+      // Save to prescription history
+      data.prescriptionHistory.push({id:'rx'+Date.now(),patientId:pid,date,items,notes});
+      saveData();
+
+      const preview=document.getElementById('rxPreviewArea');
+      preview.innerHTML=`<div class="rx-preview"><h3>Receituario</h3><p><strong>Paciente:</strong> ${p.name}<br><strong>Data:</strong> ${formatDate(date)}</p><hr style="margin:.5rem 0;border:none;border-top:1px solid var(--color-border)"><ol style="padding-left:1.2rem">${items.map(it=>`<li><strong>${it.med}</strong> — ${it.dose}</li>`).join('')}</ol>${notes?`<p style="margin-top:.5rem"><strong>Obs:</strong> ${notes}</p>`:''}<div class="rx-footer">Dr. Hermano | CRM 00000 | ${formatDate(date)}</div></div>`;
+    }
+
+    // ===== RX HISTORY =====
+    function renderRxHistory(){
+      const pid=document.getElementById('rxHistoryPatient').value;
+      const container=document.getElementById('rxHistoryContent');
+      let rxs=(data.prescriptionHistory||[]);
+      if(pid)rxs=rxs.filter(r=>r.patientId===pid);
+      rxs=rxs.sort((a,b)=>b.date.localeCompare(a.date));
+      if(!rxs.length){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhuma receita encontrada.</p>';return;}
+      container.innerHTML=rxs.map(r=>{
+        const p=data.patients.find(pp=>pp.id===r.patientId);
+        return `<div class="rx-history-card"><div style="display:flex;justify-content:space-between;align-items:center"><h4>${p?p.name:r.patientId}</h4><span class="rx-h-date">${formatDate(r.date)}</span></div><ul>${r.items.map(it=>`<li>${it.med} — ${it.dose}</li>`).join('')}</ul>${r.notes?`<p style="font-size:.72rem;color:var(--color-text-light);margin-top:.25rem">${r.notes}</p>`:''}</div>`;
+      }).join('');
+    }
+
+    // ===== PROTOCOLS =====
+    function renderProtocols(){
+      const protocols=[
+        {title:'HAS — Hipertensao Arterial',steps:['Aferir PA em 2 consultas','MAPA se PA 130-139/85-89','Iniciar IECA ou BRA','Meta: PA < 140/90','Reavaliar em 4-6 semanas']},
+        {title:'DM2 — Diabetes Mellitus',steps:['Solicitar HbA1c e glicemia de jejum','MEV: dieta + exercicio','Metformina 500mg — titular ate 2g/dia','Meta: HbA1c < 7%','Reavaliar em 3 meses']},
+        {title:'Dislipidemia',steps:['Lipidograma completo','Calcular risco cardiovascular','Orientar dieta e exercicio','Estatina se indicado','Reavaliar em 3 meses']},
+        {title:'Hipotireoidismo',steps:['TSH + T4L a cada consulta','Levotiroxina em jejum, 30min antes cafe','Ajustar dose a cada 6-8 semanas','Meta: TSH 0.4-4.0','Reavaliar funcao tireoidiana 6/6 meses']}
+      ];
+      document.getElementById('protocolsContent').innerHTML=protocols.map(p=>`<div class="protocol-card"><h4>${p.title}</h4>${p.steps.map((s,i)=>`<div class="protocol-step"><span class="protocol-step-num">${i+1}</span><span>${s}</span></div>`).join('')}</div>`).join('');
+    }
+
+    // ===== SCREENING =====
+    function renderScreening(){
+      const screenings=[
+        {title:'Mamografia',who:'Mulheres 50-69 anos',freq:'A cada 2 anos',patients:data.patients.filter(p=>p.sex==='F'&&p.age>=50&&p.age<=69).map(p=>p.name)},
+        {title:'Papanicolaou',who:'Mulheres 25-64 anos',freq:'A cada 3 anos',patients:data.patients.filter(p=>p.sex==='F'&&p.age>=25&&p.age<=64).map(p=>p.name)},
+        {title:'Colesterol (Lipidograma)',who:'Homens > 35, Mulheres > 45',freq:'A cada 5 anos',patients:data.patients.filter(p=>(p.sex==='M'&&p.age>35)||(p.sex==='F'&&p.age>45)).map(p=>p.name)},
+        {title:'Glicemia de Jejum',who:'Adultos > 45 ou com fatores de risco',freq:'A cada 3 anos',patients:data.patients.filter(p=>p.age>45).map(p=>p.name)},
+        {title:'Densitometria Ossea',who:'Mulheres > 65 anos',freq:'A cada 2 anos',patients:data.patients.filter(p=>p.sex==='F'&&p.age>65).map(p=>p.name)},
+        {title:'PSA',who:'Homens > 50 anos',freq:'Anual (discutir risco/beneficio)',patients:data.patients.filter(p=>p.sex==='M'&&p.age>50).map(p=>p.name)}
+      ];
+      document.getElementById('screeningContent').innerHTML=screenings.map(s=>`<div class="screening-item"><h4>${s.title}</h4><p>${s.who} \u2022 ${s.freq}</p>${s.patients.length?`<div style="margin-top:.4rem">${s.patients.map(n=>`<span class="badge badge-blue" style="margin-right:.2rem">${n}</span>`).join('')}</div>`:'<p style="margin-top:.3rem"><span class="badge badge-gray">Nenhum paciente elegivel</span></p>'}</div>`).join('');
+    }
+
+    // ===== LAB TRENDS =====
+    function getLabLabel(test){
+      const labels={glicemia:'Glicemia',hba1c:'HbA1c',creatinina:'Creatinina',tsh:'TSH',t4l:'T4 Livre',colesterol_total:'Colesterol Total',ldl:'LDL',hdl:'HDL',triglicerides:'Triglicerides',hemoglobina:'Hemoglobina',potassio:'Potassio',sodio:'Sodio'};
+      return labels[test]||test;
+    }
+    function getLabRef(test){
+      const refs={glicemia:{min:70,max:99,unit:'mg/dL'},hba1c:{min:0,max:5.7,unit:'%'},creatinina:{min:0.6,max:1.2,unit:'mg/dL'},tsh:{min:0.4,max:4.0,unit:'mUI/L'},t4l:{min:0.9,max:1.8,unit:'ng/dL'},colesterol_total:{min:0,max:200,unit:'mg/dL'},ldl:{min:0,max:130,unit:'mg/dL'},hdl:{min:40,max:999,unit:'mg/dL'},triglicerides:{min:0,max:150,unit:'mg/dL'},hemoglobina:{min:12,max:17,unit:'g/dL'},potassio:{min:3.5,max:5.0,unit:'mEq/L'},sodio:{min:136,max:145,unit:'mEq/L'}};
+      return refs[test]||{min:0,max:999,unit:''};
+    }
+    function renderLabTrends(){
+      const pid=document.getElementById('labTrendsPatient').value;
+      const container=document.getElementById('labTrendsContent');
+      if(!pid){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Selecione um paciente.</p>';return;}
+      const labs=data.labResults.filter(l=>l.patientId===pid).sort((a,b)=>b.date.localeCompare(a.date));
+      if(!labs.length){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Sem resultados para este paciente.</p>';return;}
+
+      // Group by test
+      const groups={};
+      labs.forEach(l=>{if(!groups[l.test])groups[l.test]=[];groups[l.test].push(l);});
+
+      let html='';
+      Object.entries(groups).forEach(([test,results])=>{
+        const ref=getLabRef(test);
+        const label=getLabLabel(test);
+        const latest=results[0];
+        const prev=results[1];
+        let arrow='stable',arrowChar='\u2192',changeText='Estavel';
+        if(prev){
+          const diff=latest.value-prev.value;
+          const pctChange=((diff/prev.value)*100).toFixed(1);
+          if(diff>0){arrow='up';arrowChar='\u2191';changeText=`+${pctChange}%`;}
+          else if(diff<0){arrow='down';arrowChar='\u2193';changeText=`${pctChange}%`;}
+        }
+        const abnormal=latest.value<ref.min||latest.value>ref.max;
+        const barMax=ref.max*1.5||300;
+        const barPct=Math.min((latest.value/barMax)*100,100);
+        const barColor=abnormal?'#dc2626':'#16a34a';
+
+        html+=`<div class="trend-card"><h4>${label}</h4>
+          <div class="trend-row">
+            <span style="min-width:80px;font-weight:600">${latest.value} ${ref.unit}</span>
+            <span class="trend-arrow ${arrow}">${arrowChar} ${changeText}</span>
+            <div class="trend-bar"><div class="trend-bar-fill" style="width:${barPct}%;background:${barColor}"></div></div>
+            ${abnormal?'<span class="badge badge-red">Alterado</span>':'<span class="badge badge-green">Normal</span>'}
+          </div>
+          ${prev?`<div style="font-size:.7rem;color:var(--color-text-light);margin-top:.3rem">Anterior: ${prev.value} ${ref.unit} (${formatDate(prev.date)}) \u2192 Atual: ${latest.value} ${ref.unit} (${formatDate(latest.date)})</div>`:'<div style="font-size:.7rem;color:var(--color-text-light);margin-top:.3rem">Sem valor anterior para comparacao.</div>'}
+          ${results.length>2?`<div style="font-size:.68rem;color:var(--color-text-light);margin-top:.2rem">Historico: ${results.map(r=>r.value).join(' \u2192 ')}</div>`:''}
+        </div>`;
+      });
+      container.innerHTML=html;
+    }
+
+    // ===== HEALTH SCORE =====
+    function computeHealthScore(pid){
+      const p=data.patients.find(pp=>pp.id===pid);if(!p)return 0;
+      let score=100;
+      // Risk penalty
+      if(p.risk==='alto')score-=20;else if(p.risk==='medio')score-=10;
+      // Conditions penalty
+      score-=Math.min(p.conditions.filter(c=>c!=='Saudavel').length*5,25);
+      // Overdue appointment
+      if(new Date(p.nextAppt)<new Date())score-=10;
+      // Lab abnormals
+      const labs=data.labResults.filter(l=>l.patientId===pid);
+      const latestLabs={};
+      labs.sort((a,b)=>b.date.localeCompare(a.date)).forEach(l=>{if(!latestLabs[l.test])latestLabs[l.test]=l;});
+      Object.values(latestLabs).forEach(l=>{
+        const ref=getLabRef(l.test);
+        if(l.value<ref.min||l.value>ref.max)score-=5;
+      });
+      // Adherence
+      const ad=data.adherence[pid];
+      if(ad){const pct=ad.filter(d=>d===1).length/ad.length;if(pct<0.7)score-=10;else if(pct<0.85)score-=5;}
+      // BMI
+      const bmi=p.weight/((p.height/100)**2);
+      if(bmi>30)score-=10;else if(bmi>25)score-=5;else if(bmi<18.5)score-=5;
+      // Goals progress
+      const goals=data.healthGoals.filter(g=>g.patientId===pid);
+      if(goals.length){const avgProg=goals.reduce((s,g)=>s+g.progress,0)/goals.length;score+=Math.floor(avgProg/10);}
+      return Math.max(0,Math.min(100,Math.round(score)));
+    }
+    function renderHealthScore(){
+      const pid=document.getElementById('healthScorePatient').value;
+      const container=document.getElementById('healthScoreContent');
+      if(!pid){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Selecione um paciente.</p>';return;}
+      const p=data.patients.find(pp=>pp.id===pid);if(!p)return;
+      const score=computeHealthScore(pid);
+      const scoreColor=score>=75?'#16a34a':score>=50?'#d97706':'#dc2626';
+      const circumference=2*Math.PI*50;
+      const offset=circumference-(score/100)*circumference;
+
+      // Compute factors
+      const bmi=p.weight/((p.height/100)**2);
+      const bmiScore=bmi>=18.5&&bmi<=25?100:bmi<=30?70:40;
+      const ad=data.adherence[pid];
+      const adherenceScore=ad?Math.round((ad.filter(d=>d===1).length/ad.length)*100):50;
+      const labs=data.labResults.filter(l=>l.patientId===pid);
+      const latestLabs={};
+      labs.sort((a,b)=>b.date.localeCompare(a.date)).forEach(l=>{if(!latestLabs[l.test])latestLabs[l.test]=l;});
+      const totalLabs=Object.keys(latestLabs).length;
+      const normalLabs=Object.values(latestLabs).filter(l=>{const ref=getLabRef(l.test);return l.value>=ref.min&&l.value<=ref.max;}).length;
+      const labScore=totalLabs?Math.round((normalLabs/totalLabs)*100):50;
+      const riskScore=p.risk==='baixo'?100:p.risk==='medio'?60:30;
+      const goals=data.healthGoals.filter(g=>g.patientId===pid);
+      const goalsScore=goals.length?Math.round(goals.reduce((s,g)=>s+g.progress,0)/goals.length):50;
+
+      const factors=[
+        {label:'IMC',value:bmiScore,color:'#2563eb'},
+        {label:'Aderencia',value:adherenceScore,color:'#16a34a'},
+        {label:'Exames',value:labScore,color:'#7c3aed'},
+        {label:'Risco',value:riskScore,color:'#d97706'},
+        {label:'Metas',value:goalsScore,color:'#db2777'}
+      ];
+
+      container.innerHTML=`
+        <div class="health-score-container">
+          <div class="health-score-ring">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="var(--v7-bg-surface)" stroke-width="10"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="${scoreColor}" stroke-width="10" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+            </svg>
+            <div class="score-text"><span class="score-number" style="color:${scoreColor}">${score}</span><span class="score-label">de 100</span></div>
+          </div>
+          <div class="score-factors">
+            ${factors.map(f=>`<div class="score-factor"><span style="min-width:70px;font-weight:500">${f.label}</span><div class="score-factor-bar"><div class="score-factor-fill" style="width:${f.value}%;background:${f.color}"></div></div><span style="min-width:35px;text-align:right;font-weight:600">${f.value}%</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="detail-card" style="margin-top:1rem"><h4>Interpretacao</h4>
+          <p style="font-size:.8rem;line-height:1.6">${score>=75?'Paciente com bom indice geral de saude. Manter acompanhamento de rotina e incentivar habitos saudaveis.':score>=50?'Indice moderado. Ha pontos que necessitam atencao — verificar exames alterados, aderencia medicamentosa e metas pendentes.':'Indice baixo requer atencao prioritaria. Revisar medicacoes, exames e agendar consulta de acompanhamento o quanto antes.'}</p>
+        </div>`;
+    }
+
+    // ===== HEALTH GOALS / GAMIFICATION =====
+    function renderGoals(){
+      const pid=document.getElementById('goalsPatient').value;
+      const container=document.getElementById('goalsContent');
+      const badgesContainer=document.getElementById('badgesContent');
+      if(!pid){
+        container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Selecione um paciente.</p>';
+        badgesContainer.innerHTML='';
+        return;
+      }
+      const goals=data.healthGoals.filter(g=>g.patientId===pid);
+      if(!goals.length){container.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhuma meta definida.</p>';badgesContainer.innerHTML='';return;}
+
+      const catIcons={lab:'\u2697',vitals:'\u2764',exercise:'\u26A1',monitoring:'\u2316',nutrition:'\u2615',weight:'\u2696',medication:'\u2695'};
+      const catColors={lab:'#7c3aed',vitals:'#dc2626',exercise:'#d97706',monitoring:'#2563eb',nutrition:'#16a34a',weight:'#db2777',medication:'#0891b2'};
+
+      container.innerHTML='<div class="goals-grid">'+goals.map((g,i)=>{
+        const icon=catIcons[g.category]||'\u2605';
+        const color=catColors[g.category]||'var(--color-accent)';
+        return `<div class="goal-card">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem"><span style="font-size:1.1rem">${icon}</span><h4>${g.title}</h4></div>
+          <p>Atual: ${g.current} ${g.unit} / Meta: ${g.target} ${g.unit}</p>
+          <div class="goal-progress"><div class="goal-progress-fill" style="width:${Math.min(g.progress,100)}%;background:${color}"></div></div>
+          <div class="goal-progress-text">${g.progress}%</div>
+          <div style="display:flex;gap:.3rem;margin-top:.35rem">
+            <button class="btn btn-sm btn-secondary" onclick="adjustGoalProgress(${i},-10)">-10%</button>
+            <button class="btn btn-sm btn-primary" onclick="adjustGoalProgress(${i},10)">+10%</button>
+          </div>
+        </div>`;
+      }).join('')+'</div>';
+
+      // Badges
+      const earnedBadges=computeEarnedBadges(pid);
+      badgesContainer.innerHTML=data.badges.map(b=>{
+        const earned=earnedBadges.includes(b.id);
+        return `<div class="badge-card ${earned?'earned':'locked'}"><div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div><div style="font-size:.55rem;color:var(--color-text-light);margin-top:.1rem">${earned?'Conquistado':b.description}</div></div>`;
+      }).join('');
+    }
+    function adjustGoalProgress(goalIdx,delta){
+      const pid=document.getElementById('goalsPatient').value;
+      const goals=data.healthGoals.filter(g=>g.patientId===pid);
+      if(!goals[goalIdx])return;
+      goals[goalIdx].progress=Math.max(0,Math.min(100,goals[goalIdx].progress+delta));
+      saveData();renderGoals();
+    }
+    function computeEarnedBadges(pid){
+      const earned=[];
+      const teleconsultas=(data.teleconsultas||[]).filter(t=>t.patientId===pid&&t.status==='completed');
+      if(teleconsultas.length>=1)earned.push('b1');
+      const goals=data.healthGoals.filter(g=>g.patientId===pid);
+      if(goals.some(g=>g.progress>=100))earned.push('b2');
+      const ad=data.adherence[pid];
+      if(ad){let streak=0;for(let i=0;i<ad.length;i++){if(ad[i])streak++;else streak=0;if(streak>=7){earned.push('b3');break;}}}
+      const labs=data.labResults.filter(l=>l.patientId===pid);
+      if(labs.length){
+        const latest={};labs.sort((a,b)=>b.date.localeCompare(a.date)).forEach(l=>{if(!latest[l.test])latest[l.test]=l;});
+        const allNormal=Object.values(latest).every(l=>{const ref=getLabRef(l.test);return l.value>=ref.min&&l.value<=ref.max;});
+        if(allNormal)earned.push('b4');
+      }
+      const p=data.patients.find(pp=>pp.id===pid);
+      if(p){const bmi=p.weight/((p.height/100)**2);if(bmi>=18.5&&bmi<25)earned.push('b5');}
+      if(data.patients.length>=5)earned.push('b6');
+      return earned;
+    }
+
+    // ===== TELEMEDICINA =====
+    function showTelemedForm(){document.getElementById('telemedFormArea').style.display='block';document.getElementById('telemedDate').value=new Date().toISOString().slice(0,10);}
+    function hideTelemedForm(){document.getElementById('telemedFormArea').style.display='none';}
+    function saveTelemed(){
+      const pid=document.getElementById('telemedPatient').value;
+      const date=document.getElementById('telemedDate').value;
+      const time=document.getElementById('telemedTime').value;
+      const reason=document.getElementById('telemedReason').value;
+      if(!pid||!date)return;
+      data.teleconsultas.push({id:'tc'+Date.now(),patientId:pid,date,time,reason,status:'scheduled',notes:''});
+      saveData();hideTelemedForm();renderTelemedicina();
+    }
+    function renderTelemedicina(){
+      const list=document.getElementById('telemedList');
+      const teleconsultas=(data.teleconsultas||[]).sort((a,b)=>b.date.localeCompare(a.date));
+      if(!teleconsultas.length){list.innerHTML='<p style="color:var(--color-text-light);font-size:.82rem">Nenhuma teleconsulta agendada.</p>';return;}
+      list.innerHTML=teleconsultas.map(t=>{
+        const p=data.patients.find(pp=>pp.id===t.patientId);
+        const stClass=t.status==='completed'?'completed':t.status==='cancelled'?'cancelled':'scheduled';
+        const stLabel=t.status==='completed'?'Concluida':t.status==='cancelled'?'Cancelada':'Agendada';
+        return `<div class="telemed-card" style="cursor:pointer" onclick="openTelemedConsult('${t.id}')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+            <h4>${p?p.name:t.patientId}</h4>
+            <span class="telemed-status ${stClass}">${stLabel}</span>
+          </div>
+          <p>${formatDate(t.date)} as ${t.time} \u2022 ${t.reason}</p>
+          ${t.notes?`<div class="consult-notes" style="margin-top:.4rem"><strong>Notas:</strong> ${t.notes.substring(0,100)}${t.notes.length>100?'...':''}</div>`:''}
+        </div>`;
+      }).join('');
+    }
+    function openTelemedConsult(id){
+      const t=data.teleconsultas.find(tc=>tc.id===id);if(!t)return;
+      const p=data.patients.find(pp=>pp.id===t.patientId);
+      const stClass=t.status==='completed'?'completed':t.status==='cancelled'?'cancelled':'scheduled';
+      const stLabel=t.status==='completed'?'Concluida':t.status==='cancelled'?'Cancelada':'Agendada';
+      document.getElementById('telemedModalTitle').textContent=`Teleconsulta — ${p?p.name:t.patientId}`;
+      document.getElementById('telemedModalBody').innerHTML=`
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+          <span class="telemed-status ${stClass}">${stLabel}</span>
+          <span style="font-size:.78rem;color:var(--color-text-light)">${formatDate(t.date)} as ${t.time}</span>
+        </div>
+        <div class="video-placeholder">\u25B6 Video</div>
+        <div class="detail-card" style="margin-bottom:.75rem"><h4>Motivo</h4><p>${t.reason}</p></div>
+        <div class="form-group"><label class="form-label">Notas da Consulta</label><textarea class="form-textarea" id="telemedNotes" rows="4">${t.notes||''}</textarea></div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn btn-primary" onclick="saveTelemedNotes('${id}')">Salvar Notas</button>
+          ${t.status==='scheduled'?`<button class="btn btn-success" onclick="completeTelemed('${id}')">Marcar como Concluida</button><button class="btn btn-danger" onclick="cancelTelemed('${id}')">Cancelar</button>`:''}
+        </div>`;
+      document.getElementById('telemedModal').classList.add('open');
+    }
+    function closeTelemedModal(){document.getElementById('telemedModal').classList.remove('open');}
+    function saveTelemedNotes(id){
+      const t=data.teleconsultas.find(tc=>tc.id===id);if(!t)return;
+      t.notes=document.getElementById('telemedNotes').value;
+      saveData();alert('Notas salvas!');renderTelemedicina();
+    }
+    function completeTelemed(id){
+      const t=data.teleconsultas.find(tc=>tc.id===id);if(!t)return;
+      t.status='completed';t.notes=document.getElementById('telemedNotes').value;
+      saveData();closeTelemedModal();renderTelemedicina();
+    }
+    function cancelTelemed(id){
+      const t=data.teleconsultas.find(tc=>tc.id===id);if(!t)return;
+      t.status='cancelled';saveData();closeTelemedModal();renderTelemedicina();
+    }
+
+    // ===== COSTS =====
+    function renderCosts(){
+      const container=document.getElementById('costsContent');
+      const monthly=data.costs.monthly;
+      const maxRev=Math.max(...monthly.map(m=>m.revenue));
+      let html=`<div class="cost-card"><h4>Receita vs Despesa Mensal</h4>`;
+      monthly.forEach(m=>{
+        html+=`<div class="cost-bar"><span style="min-width:50px;font-weight:500;font-size:.72rem">${m.month}</span><div style="flex:1"><div style="display:flex;gap:2px;height:20px"><div style="width:${(m.revenue/maxRev)*100}%;background:var(--color-accent);border-radius:3px" title="Receita: R$ ${m.revenue.toLocaleString()}"></div><div style="width:${(m.expenses/maxRev)*100}%;background:#dc2626;border-radius:3px;opacity:.7" title="Despesa: R$ ${m.expenses.toLocaleString()}"></div></div></div><span style="min-width:80px;text-align:right;font-size:.72rem">R$ ${(m.revenue-m.expenses).toLocaleString()}</span></div>`;
+      });
+      html+='</div>';
+
+      html+=`<div class="cost-card"><h4>Custo por Paciente</h4>`;
+      const maxCost=Math.max(...Object.values(data.costs.perPatient));
+      data.patients.forEach(p=>{
+        const cost=data.costs.perPatient[p.id]||0;
+        html+=`<div class="cost-bar"><span style="min-width:100px;font-weight:500;font-size:.72rem">${p.name}</span><div style="flex:1;height:16px;background:var(--v7-bg-surface);border-radius:3px;overflow:hidden"><div style="width:${(cost/maxCost)*100}%;height:100%;background:var(--color-accent);border-radius:3px"></div></div><span style="min-width:70px;text-align:right;font-size:.72rem">R$ ${cost.toLocaleString()}</span></div>`;
+      });
+      html+='</div>';
+      container.innerHTML=html;
+    }
+
+    // ===== SATISFACTION =====
+    function showSurveyForm(){document.getElementById('surveyFormArea').style.display='block';currentSurveyRating=0;updateStars();}
+    function hideSurveyForm(){document.getElementById('surveyFormArea').style.display='none';}
+    function setSurveyRating(n){currentSurveyRating=n;updateStars();}
+    function updateStars(){
+      const spans=document.querySelectorAll('#surveyStars span');
+      spans.forEach((s,i)=>{s.innerHTML=i<currentSurveyRating?'&#9733;':'&#9734;';s.style.color=i<currentSurveyRating?'#d97706':'var(--color-text-light)';});
+    }
+    function saveSurvey(){
+      const pid=document.getElementById('surveyPatient').value;
+      const comment=document.getElementById('surveyComment').value;
+      if(!pid||!currentSurveyRating)return;
+      data.surveys.push({patientId:pid,date:new Date().toISOString().slice(0,10),rating:currentSurveyRating,comment});
+      saveData();hideSurveyForm();renderSatisfaction();renderMetrics();
+    }
+    function renderSatisfaction(){
+      const container=document.getElementById('surveysContent');
+      const sorted=[...data.surveys].sort((a,b)=>b.date.localeCompare(a.date));
+      container.innerHTML=sorted.map(s=>{
+        const p=data.patients.find(pp=>pp.id===s.patientId);
+        return `<div class="survey-card"><div style="display:flex;justify-content:space-between"><strong style="font-size:.82rem">${p?p.name:s.patientId}</strong><span style="font-size:.7rem;color:var(--color-text-light)">${formatDate(s.date)}</span></div><div class="survey-stars">${'&#9733;'.repeat(s.rating)}${'&#9734;'.repeat(5-s.rating)}</div>${s.comment?`<div class="survey-comment">"${s.comment}"</div>`:''}</div>`;
+      }).join('');
+    }
+
+    // ===== NOTIFICATIONS =====
+    function renderNotifications(){
+      const container=document.getElementById('notifsContent');
+      document.getElementById('badgeNotif').textContent=data.notifications.length;
+      container.innerHTML=data.notifications.map(n=>`<div class="notif-item"><div class="notif-icon ${n.type}">${n.icon}</div><div class="notif-body"><div>${n.text}</div><div class="notif-time">${n.time}</div></div></div>`).join('');
+    }
+
+    // ===== CALCULATORS =====
+    function calcIMC(){
+      const w=parseFloat(document.getElementById('calcWeight').value);
+      const h=parseFloat(document.getElementById('calcHeight').value)/100;
+      if(!w||!h)return;
+      const imc=(w/(h*h)).toFixed(1);
+      let cat='Normal';
+      if(imc<18.5)cat='Abaixo do peso';else if(imc<25)cat='Normal';else if(imc<30)cat='Sobrepeso';else cat='Obesidade';
+      document.getElementById('imcResult').innerHTML=`${imc} <span style="font-size:.75rem;font-weight:400">${cat}</span>`;
+    }
+    function calcTFG(){
+      const cr=parseFloat(document.getElementById('calcCreat').value);
+      const age=parseInt(document.getElementById('calcAge').value);
+      const sex=document.getElementById('calcSex').value;
+      if(!cr||!age)return;
+      let tfg;
+      if(sex==='F'){
+        tfg=cr<=0.7?144*Math.pow(cr/0.7,-0.329)*Math.pow(0.993,age):144*Math.pow(cr/0.7,-1.209)*Math.pow(0.993,age);
+      } else {
+        tfg=cr<=0.9?141*Math.pow(cr/0.9,-0.411)*Math.pow(0.993,age):141*Math.pow(cr/0.9,-1.209)*Math.pow(0.993,age);
+      }
+      let cat='Normal';
+      if(tfg>=90)cat='G1 — Normal';else if(tfg>=60)cat='G2 — Leve';else if(tfg>=30)cat='G3 — Moderada';else if(tfg>=15)cat='G4 — Grave';else cat='G5 — Falencia';
+      document.getElementById('tfgResult').innerHTML=`${tfg.toFixed(0)} mL/min <span style="font-size:.72rem;font-weight:400">${cat}</span>`;
+    }
+    function calcDose(){
+      const rate=parseFloat(document.getElementById('calcDoseRate').value);
+      const w=parseFloat(document.getElementById('calcDoseWeight').value);
+      if(!rate||!w)return;
+      document.getElementById('doseResult').textContent=`${(rate*w).toFixed(1)} mg`;
+    }
+
+    // ===== EXPORT =====
+    function downloadFile(name,content,type){
+      const blob=new Blob([content],{type});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download=name;a.click();
+      URL.revokeObjectURL(url);
+    }
+    function exportCSV(){
+      let csv='Nome,Idade,Sexo,Condicoes,Risco,Prox Consulta,Medicacoes,Alergias,Telefone,Score\n';
+      data.patients.forEach(p=>{
+        csv+=`"${p.name}",${p.age},${p.sex},"${p.conditions.join('; ')}",${p.risk},${p.nextAppt},"${p.meds.map(m=>m.name+' '+m.dose).join('; ')}","${p.allergies.join('; ')}",${p.phone},${computeHealthScore(p.id)}\n`;
+      });
+      downloadFile('pacientes.csv',csv,'text/csv');
+    }
+    function exportJSON(){downloadFile('dados_completos.json',JSON.stringify(data,null,2),'application/json');}
+    function exportTxt(){
+      let txt='=== RELATORIO 100 PESSOAS v7 ===\n\n';
+      txt+=`Data: ${new Date().toLocaleDateString('pt-BR')}\nTotal pacientes: ${data.patients.length}\n\n`;
+      data.patients.forEach(p=>{
+        txt+=`--- ${p.name} ---\nIdade: ${p.age} | Sexo: ${p.sex} | Risco: ${p.risk}\nCondicoes: ${p.conditions.join(', ')}\nMedicacoes: ${p.meds.map(m=>m.name+' '+m.dose).join(', ')||'Nenhuma'}\nScore: ${computeHealthScore(p.id)}\n\n`;
+      });
+      downloadFile('relatorio.txt',txt,'text/plain');
+    }
+    function printReport(){window.print();}
+
+    // ===== BACKUP / RESTORE =====
+    function downloadBackup(){
+      const backup={version:'v7',date:new Date().toISOString(),data:data};
+      downloadFile(`backup_100pessoas_${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(backup,null,2),'application/json');
+      document.getElementById('backupInfo').textContent=`Backup realizado em ${new Date().toLocaleString('pt-BR')}`;
+    }
+    function restoreBackup(event){
+      const file=event.target.files[0];if(!file)return;
+      const reader=new FileReader();
+      reader.onload=function(e){
+        try{
+          const backup=JSON.parse(e.target.result);
+          if(backup.data&&backup.data.patients){
+            data=backup.data;
+            saveData();
+            document.getElementById('restoreInfo').textContent=`Restaurado com sucesso! (${backup.date?'De '+new Date(backup.date).toLocaleDateString('pt-BR'):''}). Recarregando...`;
+            setTimeout(()=>location.reload(),1500);
+          } else if(backup.patients){
+            // Direct data format
+            data=backup;
+            saveData();
+            document.getElementById('restoreInfo').textContent='Restaurado com sucesso! Recarregando...';
+            setTimeout(()=>location.reload(),1500);
+          } else {
+            document.getElementById('restoreInfo').textContent='Formato de arquivo invalido.';
+          }
+        } catch(err){
+          document.getElementById('restoreInfo').textContent='Erro ao ler arquivo: '+err.message;
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ===== KEYBOARD SHORTCUTS =====
+    function initShortcuts(){
+      document.addEventListener('keydown',e=>{
+        if(e.altKey){
+          const map={'1':'dashboard','2':'patients','3':'agenda','4':'prontuario','5':'soap','6':'prescriptions','7':'telemedicina','8':'goals'};
+          if(map[e.key]){e.preventDefault();navTo(map[e.key]);}
+          if(e.key.toLowerCase()==='d'){e.preventDefault();toggleDark();}
+          if(e.key.toLowerCase()==='b'){e.preventDefault();navTo('patients');setTimeout(()=>document.getElementById('patSearch').focus(),100);}
+          if(e.key.toLowerCase()==='k'){e.preventDefault();navTo('backup');}
+        }
+        if(e.key==='Escape'){closeModal();closeTelemedModal();}
+      });
+    }
+
+    // ===== INIT =====
+    function init(){
+      loadData();
+      initDark();
+      initDate();
+      populateSelects();
+      renderMetrics();
+      renderAlerts();
+      renderDashUpcoming();
+      renderPatients();
+      renderFamilyTree();
+      renderAgenda();
+      renderMedications();
+      renderProtocols();
+      renderScreening();
+      renderRxHistory();
+      renderTelemedicina();
+      renderCosts();
+      renderSatisfaction();
+      renderNotifications();
+      initShortcuts();
+      document.getElementById('badgePat').textContent=data.patients.length;
+    }
+    init();
+  </script>
 </body>
 </html>

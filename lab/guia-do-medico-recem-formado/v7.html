@@ -1,26 +1,2032 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guia do Médico Recém-Formado — Version 7</title>
+  <title>Guia do Medico Recem-Formado — v7 | MedStack</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* ===== V7 THEME & FOUNDATIONS ===== */
+    :root {
+      --v7-bg: #ffffff;
+      --v7-bg-alt: #f7f8fa;
+      --v7-bg-card: #ffffff;
+      --v7-text: #1a1a2e;
+      --v7-text-light: #5a5f7a;
+      --v7-text-muted: #8b90a5;
+      --v7-accent: #2563eb;
+      --v7-accent-hover: #1d4ed8;
+      --v7-accent-soft: #eff4ff;
+      --v7-border: #e4e7ef;
+      --v7-border-light: #f0f1f5;
+      --v7-success: #059669;
+      --v7-success-soft: #ecfdf5;
+      --v7-warning: #d97706;
+      --v7-warning-soft: #fffbeb;
+      --v7-danger: #dc2626;
+      --v7-danger-soft: #fef2f2;
+      --v7-purple: #7c3aed;
+      --v7-purple-soft: #f5f3ff;
+      --v7-teal: #0d9488;
+      --v7-teal-soft: #f0fdfa;
+      --v7-amber: #d97706;
+      --v7-amber-soft: #fffbeb;
+      --v7-rose: #e11d48;
+      --v7-rose-soft: #fff1f2;
+      --v7-radius: 10px;
+      --v7-radius-sm: 6px;
+      --v7-radius-lg: 14px;
+      --v7-shadow-sm: 0 1px 3px rgba(0,0,0,.06);
+      --v7-shadow-md: 0 4px 12px rgba(0,0,0,.08);
+      --v7-shadow-lg: 0 8px 30px rgba(0,0,0,.1);
+      --v7-transition: .2s ease;
+      --v7-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --v7-bg: #0f1117;
+      --v7-bg-alt: #181b25;
+      --v7-bg-card: #1e2130;
+      --v7-text: #e4e6f0;
+      --v7-text-light: #a0a4b8;
+      --v7-text-muted: #6b6f85;
+      --v7-accent: #6699ff;
+      --v7-accent-hover: #88b1ff;
+      --v7-accent-soft: #1a2440;
+      --v7-border: #2a2e3f;
+      --v7-border-light: #22263a;
+      --v7-success: #34d399;
+      --v7-success-soft: #0d2818;
+      --v7-warning: #fbbf24;
+      --v7-warning-soft: #2a2010;
+      --v7-danger: #f87171;
+      --v7-danger-soft: #2a1010;
+      --v7-purple: #a78bfa;
+      --v7-purple-soft: #1e1635;
+      --v7-teal: #5eead4;
+      --v7-teal-soft: #0d2a28;
+      --v7-amber: #fbbf24;
+      --v7-amber-soft: #2a2010;
+      --v7-rose: #fb7185;
+      --v7-rose-soft: #2a1018;
+      --v7-shadow-sm: 0 1px 3px rgba(0,0,0,.2);
+      --v7-shadow-md: 0 4px 12px rgba(0,0,0,.3);
+      --v7-shadow-lg: 0 8px 30px rgba(0,0,0,.4);
+    }
+
+    [data-theme="dark"] .nav { background: rgba(15,17,23,.95) !important; border-bottom-color: var(--v7-border); }
+    [data-theme="dark"] body { background: var(--v7-bg); color: var(--v7-text); }
+
+    /* ===== LAYOUT ===== */
+    .v7-app { font-family: var(--v7-font); color: var(--v7-text); background: var(--v7-bg); min-height: 100vh; }
+    .v7-container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* Page header */
+    .v7-header { padding: 2.5rem 0 1.5rem; }
+    .v7-header .lab-tag { display: inline-block; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--v7-accent); background: var(--v7-accent-soft); padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem; }
+    .v7-header h1 { font-size: 1.75rem; font-weight: 700; color: var(--v7-text); margin-bottom: .5rem; line-height: 1.3; }
+    .v7-header p { color: var(--v7-text-light); font-size: 1rem; line-height: 1.6; max-width: 720px; }
+
+    /* Breadcrumb */
+    .v7-breadcrumb { display: flex; align-items: center; gap: .5rem; font-size: .85rem; color: var(--v7-text-muted); margin-bottom: 1rem; }
+    .v7-breadcrumb a { color: var(--v7-text-muted); }
+    .v7-breadcrumb a:hover { color: var(--v7-accent); }
+
+    /* ===== TOOLBAR ===== */
+    .v7-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+    .v7-toolbar-btn { display: inline-flex; align-items: center; gap: .4rem; padding: .5rem .9rem; border: 1px solid var(--v7-border); background: var(--v7-bg-card); color: var(--v7-text-light); border-radius: var(--v7-radius); font-size: .82rem; cursor: pointer; transition: all var(--v7-transition); font-family: inherit; }
+    .v7-toolbar-btn:hover { border-color: var(--v7-accent); color: var(--v7-accent); background: var(--v7-accent-soft); }
+    .v7-toolbar-btn.active { border-color: var(--v7-accent); color: var(--v7-accent); background: var(--v7-accent-soft); }
+    .v7-toolbar-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .v7-badge { font-size: .7rem; background: var(--v7-accent); color: #fff; padding: .1rem .4rem; border-radius: 10px; margin-left: .2rem; min-width: 18px; text-align: center; }
+
+    /* ===== PANELS ===== */
+    .v7-panel { display: none; background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--v7-shadow-sm); }
+    .v7-panel.open { display: block; animation: v7-slideDown .25s ease; }
+    @keyframes v7-slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .v7-panel h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: .75rem; color: var(--v7-text); }
+    .v7-panel-subtitle { font-size: .87rem; color: var(--v7-text-light); margin-bottom: 1rem; }
+
+    /* Profile panel */
+    .v7-profile-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .75rem; margin-bottom: 1rem; }
+    .v7-profile-option { border: 2px solid var(--v7-border); border-radius: var(--v7-radius); padding: 1rem; cursor: pointer; transition: all var(--v7-transition); background: var(--v7-bg); text-align: left; font-family: inherit; }
+    .v7-profile-option:hover { border-color: var(--v7-accent); }
+    .v7-profile-option.selected { border-color: var(--v7-accent); background: var(--v7-accent-soft); }
+    .v7-profile-option-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+    .v7-profile-option-title { font-weight: 600; font-size: .9rem; margin-bottom: .25rem; }
+    .v7-profile-option-desc { font-size: .8rem; color: var(--v7-text-light); }
+    .v7-profile-rec { margin-top: .75rem; padding: .75rem; background: var(--v7-success-soft); border-radius: var(--v7-radius-sm); font-size: .85rem; color: var(--v7-success); display: none; }
+    .v7-profile-clear { background: none; border: none; color: var(--v7-text-muted); font-size: .8rem; cursor: pointer; padding: .25rem 0; font-family: inherit; }
+    .v7-profile-clear:hover { color: var(--v7-danger); }
+
+    /* Stats panel */
+    .v7-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .75rem; }
+    .v7-stat-card { background: var(--v7-bg-alt); border-radius: var(--v7-radius); padding: 1rem; text-align: center; }
+    .v7-stat-number { font-size: 1.5rem; font-weight: 700; color: var(--v7-accent); }
+    .v7-stat-label { font-size: .75rem; color: var(--v7-text-muted); margin-top: .25rem; }
+
+    /* Favorites panel */
+    .v7-fav-list { list-style: none; padding: 0; }
+    .v7-fav-list li { display: flex; justify-content: space-between; align-items: center; padding: .5rem 0; border-bottom: 1px solid var(--v7-border-light); font-size: .87rem; }
+    .v7-fav-list li:last-child { border-bottom: none; }
+    .v7-fav-remove { background: none; border: none; color: var(--v7-text-muted); cursor: pointer; font-size: 1rem; padding: .25rem; }
+    .v7-fav-remove:hover { color: var(--v7-danger); }
+    .v7-fav-empty { color: var(--v7-text-muted); font-size: .85rem; }
+    .v7-clear-all-btn { background: none; border: none; color: var(--v7-text-muted); font-size: .8rem; cursor: pointer; padding: .25rem 0; margin-top: .5rem; font-family: inherit; }
+    .v7-clear-all-btn:hover { color: var(--v7-danger); }
+
+    /* ===== SEARCH ===== */
+    .v7-search { position: relative; margin-bottom: 1.5rem; }
+    .v7-search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--v7-text-muted); pointer-events: none; }
+    .v7-search input { width: 100%; padding: .75rem 2.5rem .75rem 2.75rem; border: 1px solid var(--v7-border); border-radius: var(--v7-radius); font-size: .92rem; background: var(--v7-bg-card); color: var(--v7-text); font-family: inherit; transition: border-color var(--v7-transition); }
+    .v7-search input:focus { outline: none; border-color: var(--v7-accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .v7-search-clear { position: absolute; right: .75rem; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; color: var(--v7-text-muted); cursor: pointer; display: none; }
+    .v7-search-count { font-size: .8rem; color: var(--v7-text-muted); margin-top: -.75rem; margin-bottom: 1rem; }
+
+    /* ===== ROADMAP ===== */
+    .v7-roadmap { margin-bottom: 2rem; }
+    .v7-section-label { display: flex; align-items: center; gap: .5rem; font-size: .85rem; font-weight: 600; color: var(--v7-text-light); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 1rem; }
+    .v7-section-label svg { width: 16px; height: 16px; }
+    .v7-roadmap-timeline { display: flex; flex-direction: column; gap: .5rem; }
+    .v7-roadmap-step { display: flex; gap: 1rem; }
+    .v7-roadmap-marker { display: flex; flex-direction: column; align-items: center; }
+    .v7-roadmap-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .v7-roadmap-dot.s1 { background: var(--v7-accent); }
+    .v7-roadmap-dot.s2 { background: var(--v7-success); }
+    .v7-roadmap-dot.s3 { background: var(--v7-teal); }
+    .v7-roadmap-dot.s4 { background: var(--v7-warning); }
+    .v7-roadmap-dot.s5 { background: var(--v7-purple); }
+    .v7-roadmap-line { width: 2px; flex: 1; background: var(--v7-border); min-height: 16px; }
+    .v7-roadmap-content { padding-bottom: 1rem; }
+    .v7-roadmap-when { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--v7-text-muted); margin-bottom: .15rem; }
+    .v7-roadmap-content h4 { font-size: .92rem; font-weight: 600; margin-bottom: .2rem; }
+    .v7-roadmap-content p { font-size: .82rem; color: var(--v7-text-light); line-height: 1.5; }
+    .v7-roadmap-links { display: flex; gap: .5rem; margin-top: .35rem; }
+    .v7-roadmap-links a { font-size: .78rem; color: var(--v7-accent); }
+
+    /* ===== HIGHLIGHTS ===== */
+    .v7-highlights { margin-bottom: 2rem; }
+    .v7-highlights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .75rem; }
+    .v7-highlight-card { display: flex; align-items: flex-start; gap: .75rem; padding: .85rem; background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); transition: all var(--v7-transition); text-decoration: none; color: var(--v7-text); }
+    .v7-highlight-card:hover { border-color: var(--v7-accent); box-shadow: var(--v7-shadow-sm); transform: translateY(-1px); color: var(--v7-text); }
+    .v7-highlight-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .v7-highlight-icon.blue { background: var(--v7-accent-soft); color: var(--v7-accent); }
+    .v7-highlight-icon.green { background: var(--v7-success-soft); color: var(--v7-success); }
+    .v7-highlight-icon.teal { background: var(--v7-teal-soft); color: var(--v7-teal); }
+    .v7-highlight-icon.amber { background: var(--v7-amber-soft); color: var(--v7-amber); }
+    .v7-highlight-icon.purple { background: var(--v7-purple-soft); color: var(--v7-purple); }
+    .v7-highlight-icon.rose { background: var(--v7-rose-soft); color: var(--v7-rose); }
+    .v7-highlight-icon svg { width: 18px; height: 18px; }
+    .v7-highlight-text h4 { font-size: .85rem; font-weight: 600; margin-bottom: .15rem; }
+    .v7-highlight-text p { font-size: .75rem; color: var(--v7-text-light); line-height: 1.4; }
+
+    /* ===== SECTION NAV ===== */
+    .v7-section-nav { position: sticky; top: 60px; z-index: 50; background: var(--v7-bg); border-bottom: 1px solid var(--v7-border); margin: 0 -1.5rem; padding: 0 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .v7-section-nav-inner { display: flex; gap: 0; white-space: nowrap; }
+    .v7-section-nav a { display: inline-block; padding: .65rem .85rem; font-size: .78rem; font-weight: 500; color: var(--v7-text-muted); text-decoration: none; border-bottom: 2px solid transparent; transition: all var(--v7-transition); }
+    .v7-section-nav a:hover { color: var(--v7-text); }
+    .v7-section-nav a.active { color: var(--v7-accent); border-bottom-color: var(--v7-accent); }
+    [data-theme="dark"] .v7-section-nav { background: var(--v7-bg); }
+
+    /* ===== FOCUS INDICATOR ===== */
+    .v7-focus-bar { display: none; position: sticky; top: 100px; z-index: 40; background: var(--v7-accent-soft); border: 1px solid var(--v7-accent); border-radius: var(--v7-radius); padding: .6rem 1rem; margin-bottom: 1rem; font-size: .82rem; color: var(--v7-accent); align-items: center; gap: .5rem; }
+    .v7-focus-bar.visible { display: flex; }
+    .v7-focus-bar button { margin-left: auto; background: var(--v7-accent); color: #fff; border: none; padding: .3rem .75rem; border-radius: var(--v7-radius-sm); cursor: pointer; font-size: .78rem; font-family: inherit; }
+
+    /* ===== SECTIONS ===== */
+    .v7-sections { padding: 1.5rem 0 3rem; }
+    .v7-section { margin-bottom: 2.5rem; }
+    .v7-section-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .5rem; }
+    .v7-section-num { font-size: .72rem; font-weight: 700; color: var(--v7-accent); background: var(--v7-accent-soft); padding: .25rem .5rem; border-radius: var(--v7-radius-sm); min-width: 28px; text-align: center; }
+    .v7-section-head h2 { font-size: 1.2rem; font-weight: 700; margin: 0; }
+    .v7-section-share { background: none; border: none; color: var(--v7-text-muted); cursor: pointer; margin-left: auto; padding: .25rem; }
+    .v7-section-share:hover { color: var(--v7-accent); }
+    .v7-section-share svg { width: 16px; height: 16px; }
+    .v7-section-desc { font-size: .87rem; color: var(--v7-text-light); margin-bottom: 1rem; line-height: 1.5; }
+
+    /* Resource cards */
+    .v7-resources { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .75rem; }
+    .v7-card { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: 1rem; transition: all var(--v7-transition); position: relative; }
+    .v7-card:hover { border-color: var(--v7-accent); box-shadow: var(--v7-shadow-sm); }
+    .v7-card-badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .5rem; }
+    .v7-card-type { display: inline-flex; align-items: center; gap: .25rem; font-size: .68rem; font-weight: 600; padding: .2rem .5rem; border-radius: 4px; background: var(--v7-bg-alt); color: var(--v7-text-light); }
+    .v7-card-type svg { width: 12px; height: 12px; }
+    .v7-card-price { font-size: .68rem; font-weight: 600; padding: .2rem .5rem; border-radius: 4px; }
+    .v7-card-price.free { background: var(--v7-success-soft); color: var(--v7-success); }
+    .v7-card-price.paid { background: var(--v7-warning-soft); color: var(--v7-warning); }
+    .v7-card-rec { font-size: .65rem; font-weight: 600; padding: .2rem .5rem; border-radius: 4px; background: var(--v7-accent-soft); color: var(--v7-accent); }
+    .v7-card h3 { font-size: .95rem; font-weight: 600; margin-bottom: .35rem; }
+    .v7-card h3 a { color: var(--v7-text); text-decoration: none; }
+    .v7-card h3 a:hover { color: var(--v7-accent); }
+    .v7-card > p { font-size: .82rem; color: var(--v7-text-light); line-height: 1.5; margin-bottom: .5rem; }
+    .v7-card-review { font-size: .78rem; color: var(--v7-text-muted); font-style: italic; margin-bottom: .5rem; padding-left: .75rem; border-left: 2px solid var(--v7-border); }
+    .v7-card-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .5rem; }
+    .v7-card-tag { font-size: .68rem; padding: .15rem .45rem; border-radius: 4px; background: var(--v7-bg-alt); color: var(--v7-text-muted); }
+    .v7-card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .v7-card-link { font-size: .78rem; color: var(--v7-accent); }
+    .v7-card-arrow { width: 16px; height: 16px; color: var(--v7-text-muted); }
+    .v7-card-bookmark { position: absolute; top: .75rem; right: .75rem; background: none; border: none; color: var(--v7-text-muted); cursor: pointer; padding: .25rem; }
+    .v7-card-bookmark:hover { color: var(--v7-accent); }
+    .v7-card-bookmark svg { width: 16px; height: 16px; }
+    .v7-card-bookmark .bk-filled { display: none; }
+    .v7-card-bookmark.saved .bk-outline { display: none; }
+    .v7-card-bookmark.saved .bk-filled { display: block; color: var(--v7-accent); }
+    .v7-card-rating { display: flex; gap: .1rem; margin-bottom: .4rem; }
+    .v7-card-rating .star { width: 12px; height: 12px; color: var(--v7-warning); }
+    .v7-card-rating .star.empty { color: var(--v7-border); }
+
+    /* Subsection heading */
+    .v7-subsection-title { display: flex; align-items: center; gap: .5rem; font-size: .95rem; font-weight: 600; margin: 1.25rem 0 .75rem; color: var(--v7-text); }
+    .v7-subsection-title svg { width: 18px; height: 18px; color: var(--v7-accent); }
+
+    /* Section divider */
+    .v7-divider { border: none; border-top: 1px solid var(--v7-border-light); margin: 0; }
+
+    /* ===== NO RESULTS ===== */
+    .v7-no-results { display: none; text-align: center; padding: 3rem 1rem; color: var(--v7-text-muted); font-size: .92rem; }
+
+    /* ===== COMPARE TABLE ===== */
+    .v7-compare-wrap { overflow-x: auto; margin-top: .75rem; }
+    .v7-compare-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .v7-compare-table th, .v7-compare-table td { padding: .6rem .75rem; text-align: left; border-bottom: 1px solid var(--v7-border-light); }
+    .v7-compare-table th { font-weight: 600; color: var(--v7-text); background: var(--v7-bg-alt); position: sticky; top: 0; }
+    .v7-compare-table td { color: var(--v7-text-light); }
+    .v7-compare-table tr:hover td { background: var(--v7-accent-soft); }
+    .v7-compare-tabs { display: flex; gap: .25rem; margin-bottom: .75rem; }
+    .v7-compare-tab { padding: .4rem .75rem; font-size: .8rem; border: 1px solid var(--v7-border); background: var(--v7-bg); color: var(--v7-text-light); border-radius: var(--v7-radius-sm); cursor: pointer; font-family: inherit; transition: all var(--v7-transition); }
+    .v7-compare-tab.active { background: var(--v7-accent); color: #fff; border-color: var(--v7-accent); }
+
+    /* ===== QUIZ / QUESTION BANK ===== */
+    .v7-quiz-controls { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+    .v7-quiz-filter { padding: .4rem .7rem; font-size: .78rem; border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); background: var(--v7-bg); color: var(--v7-text-light); cursor: pointer; font-family: inherit; transition: all var(--v7-transition); }
+    .v7-quiz-filter.active { background: var(--v7-accent); color: #fff; border-color: var(--v7-accent); }
+    .v7-quiz-area { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: 1.25rem; }
+    .v7-quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+    .v7-quiz-counter { font-size: .82rem; font-weight: 600; color: var(--v7-text-light); }
+    .v7-quiz-timer { font-size: .82rem; font-weight: 600; color: var(--v7-warning); font-variant-numeric: tabular-nums; }
+    .v7-quiz-difficulty { font-size: .7rem; font-weight: 600; padding: .15rem .45rem; border-radius: 4px; }
+    .v7-quiz-difficulty.easy { background: var(--v7-success-soft); color: var(--v7-success); }
+    .v7-quiz-difficulty.medium { background: var(--v7-warning-soft); color: var(--v7-warning); }
+    .v7-quiz-difficulty.hard { background: var(--v7-danger-soft); color: var(--v7-danger); }
+    .v7-quiz-question { font-size: .92rem; font-weight: 500; margin-bottom: .75rem; line-height: 1.5; }
+    .v7-quiz-specialty { font-size: .72rem; color: var(--v7-text-muted); margin-bottom: .5rem; }
+    .v7-quiz-options { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+    .v7-quiz-option { padding: .65rem .85rem; border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); cursor: pointer; font-size: .85rem; transition: all var(--v7-transition); background: var(--v7-bg); text-align: left; font-family: inherit; color: var(--v7-text); }
+    .v7-quiz-option:hover:not(.correct):not(.wrong) { border-color: var(--v7-accent); background: var(--v7-accent-soft); }
+    .v7-quiz-option.correct { border-color: var(--v7-success); background: var(--v7-success-soft); color: var(--v7-success); }
+    .v7-quiz-option.wrong { border-color: var(--v7-danger); background: var(--v7-danger-soft); color: var(--v7-danger); }
+    .v7-quiz-option.disabled { pointer-events: none; opacity: .7; }
+    .v7-quiz-explanation { display: none; padding: .75rem; background: var(--v7-bg-alt); border-radius: var(--v7-radius-sm); font-size: .82rem; color: var(--v7-text-light); line-height: 1.5; margin-bottom: .75rem; }
+    .v7-quiz-actions { display: flex; gap: .5rem; }
+    .v7-btn { display: inline-flex; align-items: center; gap: .35rem; padding: .5rem 1rem; border: none; border-radius: var(--v7-radius-sm); font-size: .82rem; font-weight: 500; cursor: pointer; transition: all var(--v7-transition); font-family: inherit; }
+    .v7-btn-primary { background: var(--v7-accent); color: #fff; }
+    .v7-btn-primary:hover { background: var(--v7-accent-hover); }
+    .v7-btn-secondary { background: var(--v7-bg-alt); color: var(--v7-text-light); border: 1px solid var(--v7-border); }
+    .v7-btn-secondary:hover { border-color: var(--v7-accent); color: var(--v7-accent); }
+    .v7-quiz-score { text-align: center; padding: 1.5rem; }
+    .v7-quiz-score h3 { font-size: 1.2rem; margin-bottom: .5rem; }
+    .v7-quiz-score .score-big { font-size: 2.5rem; font-weight: 700; color: var(--v7-accent); }
+
+    /* ===== FLASHCARDS ===== */
+    .v7-flashcard-area { display: flex; flex-direction: column; align-items: center; gap: .75rem; }
+    .v7-flashcard { width: 100%; max-width: 480px; min-height: 200px; background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius-lg); display: flex; align-items: center; justify-content: center; padding: 2rem; text-align: center; cursor: pointer; transition: all .3s ease; position: relative; user-select: none; }
+    .v7-flashcard:hover { box-shadow: var(--v7-shadow-md); }
+    .v7-flashcard-label { position: absolute; top: .75rem; left: .75rem; font-size: .68rem; font-weight: 600; text-transform: uppercase; color: var(--v7-text-muted); }
+    .v7-flashcard-text { font-size: 1.05rem; line-height: 1.5; }
+    .v7-flashcard.flipped { background: var(--v7-accent-soft); border-color: var(--v7-accent); }
+    .v7-flashcard-nav { display: flex; gap: .5rem; }
+    .v7-flashcard-count { font-size: .82rem; color: var(--v7-text-muted); }
+
+    /* ===== PLANNER ===== */
+    .v7-planner-week { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .5rem; margin-bottom: 1rem; }
+    .v7-planner-day { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: .75rem; }
+    .v7-planner-day-name { font-size: .78rem; font-weight: 600; margin-bottom: .5rem; color: var(--v7-text); }
+    .v7-planner-item { font-size: .75rem; color: var(--v7-text-light); padding: .3rem .5rem; background: var(--v7-bg-alt); border-radius: 4px; margin-bottom: .25rem; display: flex; justify-content: space-between; align-items: center; }
+    .v7-planner-item .remove-item { background: none; border: none; color: var(--v7-text-muted); cursor: pointer; font-size: .7rem; padding: 0; }
+    .v7-planner-add { width: 100%; border: 1px dashed var(--v7-border); background: none; color: var(--v7-text-muted); padding: .35rem; border-radius: 4px; font-size: .72rem; cursor: pointer; font-family: inherit; margin-top: .25rem; }
+    .v7-planner-add:hover { border-color: var(--v7-accent); color: var(--v7-accent); }
+    .v7-planner-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+    /* ===== POMODORO ===== */
+    .v7-pomodoro { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius-lg); padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
+    .v7-pomodoro-display { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--v7-accent); margin: .75rem 0; }
+    .v7-pomodoro-label { font-size: .82rem; color: var(--v7-text-muted); margin-bottom: .75rem; }
+    .v7-pomodoro-controls { display: flex; justify-content: center; gap: .5rem; margin-bottom: .75rem; }
+    .v7-pomodoro-stats { display: flex; justify-content: center; gap: 1.5rem; font-size: .78rem; color: var(--v7-text-light); }
+    .v7-pomodoro-stat strong { color: var(--v7-accent); }
+    .v7-pomodoro-modes { display: flex; justify-content: center; gap: .3rem; margin-bottom: .75rem; }
+    .v7-pomodoro-mode { padding: .35rem .65rem; font-size: .75rem; border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); background: var(--v7-bg); color: var(--v7-text-light); cursor: pointer; font-family: inherit; }
+    .v7-pomodoro-mode.active { background: var(--v7-accent); color: #fff; border-color: var(--v7-accent); }
+
+    /* ===== NOTES ===== */
+    .v7-notes-area textarea { width: 100%; min-height: 150px; border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: .75rem; font-family: inherit; font-size: .87rem; color: var(--v7-text); background: var(--v7-bg); resize: vertical; }
+    .v7-notes-area textarea:focus { outline: none; border-color: var(--v7-accent); }
+    .v7-notes-saved { font-size: .78rem; color: var(--v7-success); margin-top: .35rem; display: none; }
+
+    /* ===== DIARY ===== */
+    .v7-diary-form { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
+    .v7-diary-form input, .v7-diary-form textarea { border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); padding: .6rem .75rem; font-family: inherit; font-size: .85rem; color: var(--v7-text); background: var(--v7-bg); }
+    .v7-diary-form textarea { min-height: 80px; resize: vertical; }
+    .v7-diary-form input:focus, .v7-diary-form textarea:focus { outline: none; border-color: var(--v7-accent); }
+    .v7-diary-streak { display: inline-flex; align-items: center; gap: .4rem; padding: .4rem .8rem; background: var(--v7-warning-soft); color: var(--v7-warning); border-radius: var(--v7-radius); font-size: .82rem; font-weight: 600; margin-bottom: 1rem; }
+    .v7-diary-entries { display: flex; flex-direction: column; gap: .5rem; }
+    .v7-diary-entry { background: var(--v7-bg-alt); border-radius: var(--v7-radius-sm); padding: .75rem; }
+    .v7-diary-entry-date { font-size: .72rem; font-weight: 600; color: var(--v7-text-muted); margin-bottom: .25rem; }
+    .v7-diary-entry-hours { font-size: .72rem; color: var(--v7-accent); margin-bottom: .25rem; }
+    .v7-diary-entry-text { font-size: .82rem; color: var(--v7-text-light); line-height: 1.4; }
+    .v7-diary-entry-remove { background: none; border: none; color: var(--v7-text-muted); cursor: pointer; font-size: .72rem; float: right; }
+
+    /* ===== ANALYTICS ===== */
+    .v7-analytics { margin-top: 1rem; }
+    .v7-analytics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .75rem; margin-bottom: 1rem; }
+    .v7-analytics-card { background: var(--v7-bg-alt); border-radius: var(--v7-radius); padding: 1rem; }
+    .v7-analytics-card h4 { font-size: .78rem; color: var(--v7-text-muted); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .03em; }
+    .v7-analytics-big { font-size: 1.75rem; font-weight: 700; color: var(--v7-accent); }
+    .v7-analytics-chart { width: 100%; height: 120px; display: flex; align-items: flex-end; gap: 3px; }
+    .v7-analytics-bar { flex: 1; background: var(--v7-accent-soft); border-radius: 3px 3px 0 0; min-height: 4px; position: relative; transition: all .3s ease; }
+    .v7-analytics-bar:hover { background: var(--v7-accent); }
+    .v7-analytics-bar-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: .6rem; color: var(--v7-text-muted); white-space: nowrap; }
+
+    /* ===== MENTORIA ===== */
+    .v7-mentors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: .75rem; }
+    .v7-mentor-card { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: 1rem; }
+    .v7-mentor-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--v7-accent-soft); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: .5rem; }
+    .v7-mentor-name { font-size: .95rem; font-weight: 600; margin-bottom: .15rem; }
+    .v7-mentor-specialty { font-size: .78rem; color: var(--v7-accent); margin-bottom: .35rem; }
+    .v7-mentor-bio { font-size: .8rem; color: var(--v7-text-light); line-height: 1.4; margin-bottom: .5rem; }
+    .v7-mentor-tags { display: flex; flex-wrap: wrap; gap: .25rem; }
+    .v7-mentor-tag { font-size: .68rem; padding: .15rem .4rem; background: var(--v7-bg-alt); border-radius: 4px; color: var(--v7-text-muted); }
+    .v7-mentoria-tips { background: var(--v7-bg-alt); border-radius: var(--v7-radius); padding: 1rem; margin-bottom: 1rem; }
+    .v7-mentoria-tips h4 { font-size: .9rem; font-weight: 600; margin-bottom: .5rem; }
+    .v7-mentoria-tips ul { list-style: none; padding: 0; }
+    .v7-mentoria-tips li { font-size: .82rem; color: var(--v7-text-light); padding: .3rem 0; padding-left: 1.2rem; position: relative; }
+    .v7-mentoria-tips li::before { content: ""; position: absolute; left: 0; top: .55rem; width: 6px; height: 6px; border-radius: 50%; background: var(--v7-accent); }
+
+    /* ===== CALENDAR ===== */
+    .v7-calendar { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; }
+    .v7-calendar-item { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: .85rem; display: flex; gap: .75rem; }
+    .v7-calendar-date { min-width: 48px; text-align: center; }
+    .v7-calendar-month { font-size: .65rem; font-weight: 600; text-transform: uppercase; color: var(--v7-accent); }
+    .v7-calendar-day { font-size: 1.25rem; font-weight: 700; color: var(--v7-text); }
+    .v7-calendar-info h4 { font-size: .85rem; font-weight: 600; margin-bottom: .15rem; }
+    .v7-calendar-info p { font-size: .75rem; color: var(--v7-text-light); }
+
+    /* ===== CALCULATOR ===== */
+    .v7-calc { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: 1.25rem; }
+    .v7-calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+    .v7-calc-field label { display: block; font-size: .78rem; font-weight: 500; color: var(--v7-text-light); margin-bottom: .25rem; }
+    .v7-calc-field input, .v7-calc-field select { width: 100%; padding: .5rem .65rem; border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); font-size: .85rem; font-family: inherit; color: var(--v7-text); background: var(--v7-bg); }
+    .v7-calc-field input:focus, .v7-calc-field select:focus { outline: none; border-color: var(--v7-accent); }
+    .v7-calc-result { background: var(--v7-accent-soft); border-radius: var(--v7-radius); padding: 1rem; text-align: center; }
+    .v7-calc-result .big { font-size: 1.5rem; font-weight: 700; color: var(--v7-accent); }
+    .v7-calc-result .detail { font-size: .78rem; color: var(--v7-text-light); margin-top: .25rem; }
+
+    /* ===== MAP ===== */
+    .v7-map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .5rem; }
+    .v7-map-state { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); padding: .6rem; text-align: center; transition: all var(--v7-transition); cursor: default; }
+    .v7-map-state:hover { border-color: var(--v7-accent); }
+    .v7-map-state-name { font-size: .82rem; font-weight: 600; }
+    .v7-map-state-count { font-size: .72rem; color: var(--v7-text-muted); }
+
+    /* ===== CHECKLIST ===== */
+    .v7-checklist { display: flex; flex-direction: column; gap: .35rem; }
+    .v7-checklist-item { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius-sm); font-size: .85rem; cursor: pointer; transition: all var(--v7-transition); user-select: none; }
+    .v7-checklist-item:hover { border-color: var(--v7-accent); }
+    .v7-checklist-item.done { background: var(--v7-success-soft); border-color: var(--v7-success); }
+    .v7-checklist-item.done .check-box { background: var(--v7-success); border-color: var(--v7-success); }
+    .v7-checklist-item.done .check-box::after { content: ""; display: block; width: 6px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin: -1px 0 0 1px; }
+    .check-box { width: 18px; height: 18px; border: 2px solid var(--v7-border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .v7-checklist-progress { margin-top: .75rem; }
+    .v7-progress-bar { height: 6px; background: var(--v7-bg-alt); border-radius: 3px; overflow: hidden; }
+    .v7-progress-fill { height: 100%; background: var(--v7-success); border-radius: 3px; transition: width .3s ease; }
+    .v7-progress-text { font-size: .78rem; color: var(--v7-text-muted); margin-top: .3rem; }
+
+    /* ===== COMMUNITIES ===== */
+    .v7-communities { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; }
+    .v7-community-card { background: var(--v7-bg-card); border: 1px solid var(--v7-border); border-radius: var(--v7-radius); padding: 1rem; }
+    .v7-community-card h4 { font-size: .92rem; font-weight: 600; margin-bottom: .25rem; }
+    .v7-community-card p { font-size: .8rem; color: var(--v7-text-light); line-height: 1.4; margin-bottom: .5rem; }
+    .v7-community-platform { font-size: .72rem; font-weight: 600; color: var(--v7-accent); }
+
+    /* ===== PRINT ===== */
+    @media print {
+      .nav, .v7-toolbar, .v7-section-nav, .v7-search, .v7-focus-bar, .v7-section-share, .v7-card-bookmark, .v7-quiz-controls, .v7-quiz-actions, .v7-pomodoro-controls, .v7-planner-add, .v7-planner-actions, .v7-diary-form, button { display: none !important; }
+      .v7-panel { display: block !important; border: 1px solid #ccc; }
+      .v7-card, .v7-section { break-inside: avoid; }
+      body, .v7-app { background: #fff !important; color: #000 !important; }
+      .v7-section-nav { display: none !important; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .v7-header h1 { font-size: 1.35rem; }
+      .v7-resources { grid-template-columns: 1fr; }
+      .v7-highlights-grid { grid-template-columns: repeat(2, 1fr); }
+      .v7-calc-grid { grid-template-columns: 1fr; }
+      .v7-planner-week { grid-template-columns: repeat(2, 1fr); }
+      .v7-analytics-row { grid-template-columns: 1fr; }
+      .v7-toolbar { gap: .35rem; }
+      .v7-toolbar-btn { padding: .4rem .65rem; font-size: .75rem; }
+    }
+    @media (max-width: 480px) {
+      .v7-highlights-grid { grid-template-columns: 1fr; }
+      .v7-planner-week { grid-template-columns: 1fr; }
+    }
+
+    /* ===== KEYBOARD NAV ===== */
+    .v7-card:focus-within { outline: 2px solid var(--v7-accent); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--v7-accent); outline-offset: 2px; }
+
+    /* ===== TOOLTIP ===== */
+    .v7-tooltip { position: relative; }
+    .v7-tooltip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--v7-text); color: var(--v7-bg); padding: .35rem .6rem; border-radius: 4px; font-size: .7rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 100; max-width: 250px; white-space: normal; text-align: center; }
+    .v7-tooltip:hover::after { opacity: 1; }
+
+    /* Skip link */
+    .v7-skip { position: absolute; left: -9999px; top: 0; background: var(--v7-accent); color: #fff; padding: .5rem 1rem; z-index: 200; font-size: .85rem; border-radius: 0 0 var(--v7-radius-sm) var(--v7-radius-sm); }
+    .v7-skip:focus { left: 50%; transform: translateX(-50%); }
+  </style>
 </head>
 <body>
+  <a href="#main-content" class="v7-skip">Pular para conteudo principal</a>
+
   <nav class="nav">
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../guia-do-medico-recem-formado.html">&larr; Back</a>
+        <a href="../guia-do-medico-recem-formado.html">&larr; Voltar</a>
+        <button id="darkToggle" style="background:none;border:1px solid var(--v7-border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.78rem;color:var(--v7-text-light);font-family:inherit;" aria-label="Alternar tema escuro">Escuro</button>
       </div>
     </div>
   </nav>
-  <main class="lab-page">
-    <div class="container lab-page-inner">
-      <span class="lab-tag">In progress</span>
-      <h1>Guia do Médico Recém-Formado — Version 7</h1>
-    </div>
-  </main>
+
+  <div class="v7-app" id="app">
+    <main class="lab-page" id="main-content" role="main">
+      <div class="v7-container">
+
+        <!-- Breadcrumb -->
+        <div class="v7-breadcrumb" aria-label="Breadcrumb">
+          <a href="../../">MedStack</a><span aria-hidden="true">/</span>
+          <a href="../guia-do-medico-recem-formado.html">Guia do Medico</a><span aria-hidden="true">/</span>
+          <span aria-current="page">v7</span>
+        </div>
+
+        <!-- Header -->
+        <div class="v7-header">
+          <span class="lab-tag">Version 7</span>
+          <h1>Guia do Medico Recem-Formado</h1>
+          <p>Tudo que voce precisa ao sair da faculdade: trabalho, residencia, certificacoes, ferramentas, comunidades, mentoria e mais. Um hub completo com planejador de estudos, banco de questoes e acompanhamento de progresso.</p>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="v7-toolbar" role="toolbar" aria-label="Acoes rapidas">
+          <button class="v7-toolbar-btn" id="profileToggle" aria-label="Meu Perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Perfil</button>
+          <button class="v7-toolbar-btn" id="favToggle" aria-label="Favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> Favoritos <span class="v7-badge" id="favCount" style="display:none">0</span></button>
+          <button class="v7-toolbar-btn" id="focusToggle" aria-label="Modo Foco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> Foco</button>
+          <button class="v7-toolbar-btn" id="statsToggle" aria-label="Estatisticas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Analytics</button>
+        </div>
+
+        <!-- Profile Panel -->
+        <div class="v7-panel" id="profilePanel" role="region" aria-label="Selecao de perfil">
+          <h3>Qual e a sua fase?</h3>
+          <p class="v7-panel-subtitle">Selecione para recomendacoes personalizadas de recursos.</p>
+          <div class="v7-profile-options">
+            <button class="v7-profile-option" data-profile="recem-formado" type="button">
+              <div class="v7-profile-option-icon">&#127891;</div>
+              <div class="v7-profile-option-title">Recem-formado</div>
+              <div class="v7-profile-option-desc">Acabei de me formar e preciso comecar a trabalhar.</div>
+            </button>
+            <button class="v7-profile-option" data-profile="preparando-residencia" type="button">
+              <div class="v7-profile-option-icon">&#128218;</div>
+              <div class="v7-profile-option-title">Preparando Residencia</div>
+              <div class="v7-profile-option-desc">Estudando para as provas de residencia medica.</div>
+            </button>
+            <button class="v7-profile-option" data-profile="ja-trabalhando" type="button">
+              <div class="v7-profile-option-icon">&#129657;</div>
+              <div class="v7-profile-option-title">Ja Trabalhando</div>
+              <div class="v7-profile-option-desc">Atuando como plantonista ou na APS.</div>
+            </button>
+          </div>
+          <div class="v7-profile-rec" id="profileRec"></div>
+          <button class="v7-profile-clear" id="profileClear" type="button">Limpar selecao</button>
+        </div>
+
+        <!-- Favorites Panel -->
+        <div class="v7-panel" id="favPanel" role="region" aria-label="Favoritos">
+          <h3>Meus Favoritos</h3>
+          <ul class="v7-fav-list" id="favList"></ul>
+          <p class="v7-fav-empty" id="favEmpty">Nenhum favorito salvo ainda. Clique no icone de marcador nos cards.</p>
+          <button class="v7-clear-all-btn" id="favClearAll" type="button">Limpar todos</button>
+        </div>
+
+        <!-- Stats / Analytics Panel -->
+        <div class="v7-panel" id="statsPanel" role="region" aria-label="Analytics de progresso">
+          <h3>Dashboard de Progresso</h3>
+          <div class="v7-analytics">
+            <div class="v7-analytics-row">
+              <div class="v7-analytics-card">
+                <h4>Horas de Estudo</h4>
+                <div class="v7-analytics-big" id="analyticsHours">0h</div>
+              </div>
+              <div class="v7-analytics-card">
+                <h4>Questoes Respondidas</h4>
+                <div class="v7-analytics-big" id="analyticsQuestions">0</div>
+              </div>
+              <div class="v7-analytics-card">
+                <h4>Acertos no Quiz</h4>
+                <div class="v7-analytics-big" id="analyticsAccuracy">0%</div>
+              </div>
+              <div class="v7-analytics-card">
+                <h4>Sequencia Diaria</h4>
+                <div class="v7-analytics-big" id="analyticsStreak">0 dias</div>
+              </div>
+            </div>
+            <div class="v7-analytics-card" style="margin-bottom:.75rem">
+              <h4>Desempenho no Quiz (ultimas 14 sessoes)</h4>
+              <div class="v7-analytics-chart" id="analyticsChart"></div>
+            </div>
+            <div class="v7-analytics-card">
+              <h4>Recursos mais acessados</h4>
+              <div id="analyticsTopResources" style="font-size:.82rem;color:var(--v7-text-light)">Nenhum dado ainda.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Focus indicator -->
+        <div class="v7-focus-bar" id="focusBar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+          <span>Modo Foco ativo: <strong id="focusName"></strong></span>
+          <button id="focusExit">Sair do Foco</button>
+        </div>
+
+        <!-- Search -->
+        <div class="v7-search" role="search" aria-label="Buscar recursos">
+          <svg class="v7-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="Buscar recursos (ex: Whitebook, ACLS, plantao...)" id="searchInput" autocomplete="off" aria-label="Campo de busca">
+          <button class="v7-search-clear" id="searchClear" aria-label="Limpar busca">&times;</button>
+        </div>
+        <div class="v7-search-count" id="searchCount" aria-live="polite"></div>
+
+        <!-- Roadmap -->
+        <div class="v7-roadmap">
+          <div class="v7-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg> O que fazer primeiro</div>
+          <div class="v7-roadmap-timeline">
+            <div class="v7-roadmap-step"><div class="v7-roadmap-marker"><div class="v7-roadmap-dot s1">1</div><div class="v7-roadmap-line"></div></div><div class="v7-roadmap-content"><div class="v7-roadmap-when">Semana 1-2</div><h4>Documentacao e registro</h4><p>CRM do seu estado, RQE se necessario, cadastro no CNES.</p></div></div>
+            <div class="v7-roadmap-step"><div class="v7-roadmap-marker"><div class="v7-roadmap-dot s2">2</div><div class="v7-roadmap-line"></div></div><div class="v7-roadmap-content"><div class="v7-roadmap-when">Semana 2-4</div><h4>Certificacoes essenciais</h4><p>BLS primeiro, depois ACLS. Se trauma, ATLS.</p><div class="v7-roadmap-links"><a href="#certificacoes">Ver certificacoes</a></div></div></div>
+            <div class="v7-roadmap-step"><div class="v7-roadmap-marker"><div class="v7-roadmap-dot s3">3</div><div class="v7-roadmap-line"></div></div><div class="v7-roadmap-content"><div class="v7-roadmap-when">Mes 1</div><h4>Ferramentas do dia a dia</h4><p>Whitebook, MDCalc e Medscape no celular.</p><div class="v7-roadmap-links"><a href="#stack-plantao">Stack Plantao</a> <a href="#stack-postinho">Stack Postinho</a></div></div></div>
+            <div class="v7-roadmap-step"><div class="v7-roadmap-marker"><div class="v7-roadmap-dot s4">4</div><div class="v7-roadmap-line"></div></div><div class="v7-roadmap-content"><div class="v7-roadmap-when">Mes 1-2</div><h4>Primeiros plantoes</h4><p>Cadastre-se em plataformas de vagas.</p><div class="v7-roadmap-links"><a href="#trabalho">Vagas e trabalho</a></div></div></div>
+            <div class="v7-roadmap-step"><div class="v7-roadmap-marker"><div class="v7-roadmap-dot s5">5</div></div><div class="v7-roadmap-content"><div class="v7-roadmap-when">Mes 2+</div><h4>Planeje a residencia</h4><p>Escolha preparatorio, Anki + banco de questoes.</p><div class="v7-roadmap-links"><a href="#residencia">Preparatorios</a> <a href="#comparativo">Comparar</a></div></div></div>
+          </div>
+        </div>
+
+        <!-- Highlights -->
+        <div class="v7-highlights">
+          <div class="v7-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Destaques</div>
+          <div class="v7-highlights-grid">
+            <a href="#stack-plantao" class="v7-highlight-card"><div class="v7-highlight-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="12" y1="17" x2="12" y2="21"></line></svg></div><div class="v7-highlight-text"><h4>Whitebook</h4><p>App #1 dos medicos no plantao.</p></div></a>
+            <a href="#certificacoes" class="v7-highlight-card"><div class="v7-highlight-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div><div class="v7-highlight-text"><h4>ACLS + ATLS</h4><p>Certificacoes para pronto-socorro.</p></div></a>
+            <a href="#banco-questoes" class="v7-highlight-card"><div class="v7-highlight-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><div class="v7-highlight-text"><h4>Banco de Questoes</h4><p>20+ questoes por especialidade.</p></div></a>
+            <a href="#cronograma" class="v7-highlight-card"><div class="v7-highlight-icon amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div><div class="v7-highlight-text"><h4>Planner + Pomodoro</h4><p>Cronograma com timer integrado.</p></div></a>
+            <a href="#mentoria" class="v7-highlight-card"><div class="v7-highlight-icon teal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div><div class="v7-highlight-text"><h4>Mentoria</h4><p>Encontre um mentor na sua area.</p></div></a>
+            <a href="#diario" class="v7-highlight-card"><div class="v7-highlight-icon rose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div><div class="v7-highlight-text"><h4>Diario de Estudos</h4><p>Registre seu progresso diario.</p></div></a>
+          </div>
+        </div>
+
+        <!-- Section nav -->
+        <div class="v7-section-nav" id="sectionNav" role="navigation" aria-label="Navegacao por secoes">
+          <div class="v7-section-nav-inner">
+            <a href="#trabalho" data-section="trabalho">Trabalho</a>
+            <a href="#residencia" data-section="residencia">Residencia</a>
+            <a href="#comparativo" data-section="comparativo">Comparar</a>
+            <a href="#certificacoes" data-section="certificacoes">Certificacoes</a>
+            <a href="#stack-plantao" data-section="stack-plantao">Plantao</a>
+            <a href="#stack-postinho" data-section="stack-postinho">Postinho</a>
+            <a href="#referencias" data-section="referencias">Referencias</a>
+            <a href="#comunidades" data-section="comunidades">Comunidades</a>
+            <a href="#mentoria" data-section="mentoria">Mentoria</a>
+            <a href="#banco-questoes" data-section="banco-questoes">Questoes</a>
+            <a href="#flashcards" data-section="flashcards">Flashcards</a>
+            <a href="#cronograma" data-section="cronograma">Planner</a>
+            <a href="#diario" data-section="diario">Diario</a>
+            <a href="#notas" data-section="notas">Notas</a>
+            <a href="#calendario" data-section="calendario">Calendario</a>
+            <a href="#calculadora" data-section="calculadora">Custos</a>
+            <a href="#mapa" data-section="mapa">Mapa</a>
+            <a href="#checklist" data-section="checklist">Checklist</a>
+          </div>
+        </div>
+
+        <div class="v7-no-results" id="noResults">Nenhum recurso encontrado. Tente outra busca.</div>
+
+        <div class="v7-sections">
+
+          <!-- S01: Trabalho -->
+          <section class="v7-section" id="trabalho" data-searchable aria-labelledby="trabalho-h">
+            <div class="v7-section-head"><span class="v7-section-num">01</span><h2 id="trabalho-h">Como Conseguir Trabalho</h2><button class="v7-section-share" data-share="trabalho" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Principais canais para encontrar vagas como generalista, plantonista ou via concursos.</p>
+            <div class="v7-resources">
+              <div class="v7-card" data-searchable data-id="mediconointerior" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="mediconointerior" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Site</span><span class="v7-card-price free">Gratis</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">MedicoNoInterior</a></h3>
+                <p>Vagas medicas no interior do Brasil. Remuneracao competitiva fora dos grandes centros.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Interior</span><span class="v7-card-tag">Salarios altos</span><span class="v7-card-tag">Vagas rapidas</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://mediconointerior.com" target="_blank" rel="noopener noreferrer">mediconointerior.com</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="empregamed" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="empregamed" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Site</span><span class="v7-card-price free">Gratis</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">EmpregaMed</a></h3>
+                <p>Plataforma abrangente de vagas medicas. Filtre por contrato, especialidade e localizacao.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">CLT / PJ / Plantao</span><span class="v7-card-tag">Filtros avancados</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://empregamed.com.br" target="_blank" rel="noopener noreferrer">empregamed.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="plantaoja" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="plantaoja" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">App</span><span class="v7-card-price free">Gratis</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">Plantao Ja</a></h3>
+                <p>App para encontrar plantoes na sua regiao com notificacoes em tempo real.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Push notifications</span><span class="v7-card-tag">Plantoes 12h/24h</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://plantaoja.com.br" target="_blank" rel="noopener noreferrer">plantaoja.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="pciconcursos" data-profiles="recem-formado,ja-trabalhando" data-rating="3">
+                <button class="v7-card-bookmark" data-bookmark="pciconcursos" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Site</span><span class="v7-card-price free">Gratis</span></div>
+                <h3><a href="https://pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">PCI Concursos</a></h3>
+                <p>Concursos publicos para medicos. Estabilidade e bons salarios em hospitais e UBS.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Concursos</span><span class="v7-card-tag">Estabilidade</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://pciconcursos.com.br/concursos/medico/" target="_blank" rel="noopener noreferrer">pciconcursos.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="trabalhasusb" data-profiles="recem-formado,ja-trabalhando" data-rating="3">
+                <button class="v7-card-bookmark" data-bookmark="trabalhasusb" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Site</span><span class="v7-card-price free">Gratis</span></div>
+                <h3><a href="https://trabalhasusbrasil.com.br" target="_blank" rel="noopener noreferrer">Trabalha SUS Brasil</a></h3>
+                <p>Vagas no SUS. Filtra por municipio, especialidade e tipo de contrato.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">SUS</span><span class="v7-card-tag">Mais Medicos</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://trabalhasusbrasil.com.br" target="_blank" rel="noopener noreferrer">trabalhasusbrasil.com.br</a></div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S02: Residencia -->
+          <section class="v7-section" id="residencia" data-searchable aria-labelledby="residencia-h">
+            <div class="v7-section-head"><span class="v7-section-num">02</span><h2 id="residencia-h">Estudar para Residencia</h2><button class="v7-section-share" data-share="residencia" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Principais cursos preparatorios para residencia medica.</p>
+            <div class="v7-resources">
+              <div class="v7-card" data-searchable data-id="medcurso" data-profiles="preparando-residencia" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="medcurso" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Curso</span><span class="v7-card-price paid">Pago</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">Medcurso</a></h3>
+                <p>O mais tradicional do Brasil. Apostilas densas e extensivas. Referencia para provas do RJ.</p>
+                <div class="v7-card-review">"Material denso mas completo. Se voce gosta de ler, e imbativel." -- R3 Clinica Medica UERJ</div>
+                <div class="v7-card-tags"><span class="v7-card-tag">Apostilas extensivas</span><span class="v7-card-tag">Foco RJ</span><span class="v7-card-tag">~R$6.000/ano</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.medcurso.com.br" target="_blank" rel="noopener noreferrer">medcurso.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="estrategiamed" data-profiles="preparando-residencia" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="estrategiamed" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Curso</span><span class="v7-card-price paid">Pago</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">Estrategia Med</a></h3>
+                <p>Videoaulas organizadas e banco de questoes robusto. Plano de estudo adaptativo.</p>
+                <div class="v7-card-review">"A plataforma mais organizada que ja usei." -- Aprovada USP 2025</div>
+                <div class="v7-card-tags"><span class="v7-card-tag">Videoaulas</span><span class="v7-card-tag">Plano adaptativo</span><span class="v7-card-tag">~R$4.000/ano</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.estrategiamed.com.br" target="_blank" rel="noopener noreferrer">estrategiamed.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="medway" data-profiles="preparando-residencia" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="medway" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Curso</span><span class="v7-card-price paid">Pago</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">Medway</a></h3>
+                <p>Focado em provas de SP. Banco de questoes comentadas e simulados periodicos.</p>
+                <div class="v7-card-review">"Os simulados sao muito proximos da prova real." -- R1 Cirurgia Unifesp</div>
+                <div class="v7-card-tags"><span class="v7-card-tag">Foco SP</span><span class="v7-card-tag">Banco de questoes</span><span class="v7-card-tag">Blog gratis</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.medway.com.br" target="_blank" rel="noopener noreferrer">medway.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="medcel" data-profiles="preparando-residencia" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="medcel" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Curso</span><span class="v7-card-price paid">Pago</span></div>
+                <h3><a href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">Medcel</a></h3>
+                <p>Preparatorio completo com videoaulas e apostilas. Melhor custo-beneficio.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Custo-beneficio</span><span class="v7-card-tag">~R$3.000/ano</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.medcel.com.br" target="_blank" rel="noopener noreferrer">medcel.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="hardwork" data-profiles="preparando-residencia" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="hardwork" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Curso</span><span class="v7-card-price paid">Pago</span></div>
+                <h3><a href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">Hardwork Medicina</a></h3>
+                <p>Metodologia de repeticao espacada e revisao ativa. Alto rendimento.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Repeticao espacada</span><span class="v7-card-tag">~R$4.000/ano</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.hardworkmedicina.com.br" target="_blank" rel="noopener noreferrer">hardworkmedicina.com.br</a></div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S03: Comparativo (expanded) -->
+          <section class="v7-section" id="comparativo" data-searchable aria-labelledby="comparativo-h">
+            <div class="v7-section-head"><span class="v7-section-num">03</span><h2 id="comparativo-h">Comparativo de Recursos</h2><button class="v7-section-share" data-share="comparativo" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Compare cursinhos, apps e programas de certificacao lado a lado.</p>
+            <div class="v7-compare-tabs" id="compareTabs">
+              <button class="v7-compare-tab active" data-tab="cursos">Cursinhos</button>
+              <button class="v7-compare-tab" data-tab="apps">Apps Medicos</button>
+              <button class="v7-compare-tab" data-tab="certs">Certificacoes</button>
+            </div>
+            <div class="v7-compare-wrap">
+              <table class="v7-compare-table" id="compareTable">
+                <thead id="compareHead"></thead>
+                <tbody id="compareBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S04: Certificacoes -->
+          <section class="v7-section" id="certificacoes" data-searchable aria-labelledby="certificacoes-h">
+            <div class="v7-section-head"><span class="v7-section-num">04</span><h2 id="certificacoes-h">Certificacoes Essenciais</h2><button class="v7-section-share" data-share="certificacoes" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Certificacoes que abrem portas em pronto-socorro e UTI.</p>
+            <div class="v7-resources">
+              <div class="v7-card" data-searchable data-id="bls" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="bls" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Certificacao</span><span class="v7-card-price paid">~R$800</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3>BLS (Basic Life Support)</h3>
+                <p>Suporte basico de vida. Pre-requisito para ACLS. Curso de 1 dia pela AHA.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">1 dia</span><span class="v7-card-tag">AHA</span><span class="v7-card-tag">Validade 2 anos</span></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="acls" data-profiles="recem-formado,preparando-residencia,ja-trabalhando" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="acls" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Certificacao</span><span class="v7-card-price paid">~R$1.500</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3>ACLS (Advanced Cardiac Life Support)</h3>
+                <p>Suporte avancado de vida em cardiologia. Essencial para PS e UTI. 2 dias.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">2 dias</span><span class="v7-card-tag">AHA</span><span class="v7-card-tag">Obrigatorio em muitos PS</span></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="atls" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="atls" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Certificacao</span><span class="v7-card-price paid">~R$3.000</span></div>
+                <h3>ATLS (Advanced Trauma Life Support)</h3>
+                <p>Atendimento ao trauma. Valorizado em PS cirurgico e SAMU.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">2.5 dias</span><span class="v7-card-tag">ACS</span><span class="v7-card-tag">Trauma</span></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="pals" data-profiles="preparando-residencia,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="pals" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Certificacao</span><span class="v7-card-price paid">~R$1.500</span></div>
+                <h3>PALS (Pediatric Advanced Life Support)</h3>
+                <p>Suporte avancado em pediatria. Ideal para quem atua em PS infantil.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">2 dias</span><span class="v7-card-tag">AHA</span><span class="v7-card-tag">Pediatria</span></div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S05: Stack Plantao -->
+          <section class="v7-section" id="stack-plantao" data-searchable aria-labelledby="stack-plantao-h">
+            <div class="v7-section-head"><span class="v7-section-num">05</span><h2 id="stack-plantao-h">Stack do Plantao</h2><button class="v7-section-share" data-share="stack-plantao" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Apps e ferramentas essenciais para o dia a dia do pronto-socorro.</p>
+            <div class="v7-resources">
+              <div class="v7-card" data-searchable data-id="whitebook" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="whitebook" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">App</span><span class="v7-card-price paid">Pago</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">Whitebook</a></h3>
+                <p>App #1 dos medicos brasileiros. Condutas, prescricoes, CIDs e calculadoras no plantao.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Condutas</span><span class="v7-card-tag">Prescricoes</span><span class="v7-card-tag">~R$50/mes</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.whitebook.com.br" target="_blank" rel="noopener noreferrer">whitebook.com.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="mdcalc" data-profiles="recem-formado,ja-trabalhando" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="mdcalc" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">App</span><span class="v7-card-price free">Gratis</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">MDCalc</a></h3>
+                <p>Calculadoras medicas validadas. Scores, escalas e criterios diagnosticos.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Calculadoras</span><span class="v7-card-tag">Scores</span><span class="v7-card-tag">Offline</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.mdcalc.com" target="_blank" rel="noopener noreferrer">mdcalc.com</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="medscape" data-profiles="recem-formado,preparando-residencia,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="medscape" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">App</span><span class="v7-card-price free">Gratis</span></div>
+                <h3><a href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">Medscape</a></h3>
+                <p>Noticias medicas, drug interactions, protocolos e educacao continuada.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Drug checker</span><span class="v7-card-tag">CME gratis</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.medscape.com" target="_blank" rel="noopener noreferrer">medscape.com</a></div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S06: Stack Postinho -->
+          <section class="v7-section" id="stack-postinho" data-searchable aria-labelledby="stack-postinho-h">
+            <div class="v7-section-head"><span class="v7-section-num">06</span><h2 id="stack-postinho-h">Stack do Postinho (APS)</h2><button class="v7-section-share" data-share="stack-postinho" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Ferramentas para atencao primaria e ESF.</p>
+            <div class="v7-resources">
+              <div class="v7-card" data-searchable data-id="telessaude" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="telessaude" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Servico</span><span class="v7-card-price free">Gratis</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">TeleSaude UFMG</a></h3>
+                <p>Teleconsultoria gratuita para profissionais da APS. Tire duvidas com especialistas.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Teleconsultoria</span><span class="v7-card-tag">APS</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://telessaude.hc.ufmg.br" target="_blank" rel="noopener noreferrer">telessaude.hc.ufmg.br</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="gusso" data-profiles="recem-formado,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="gusso" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Livro</span><span class="v7-card-price paid">Pago</span></div>
+                <h3>Tratado de MFC (Gusso & Lopes)</h3>
+                <p>Referencia brasileira em Medicina de Familia e Comunidade.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">MFC</span><span class="v7-card-tag">Referencia</span></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="uptodate" data-profiles="recem-formado,preparando-residencia,ja-trabalhando" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="uptodate" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">App</span><span class="v7-card-price paid">Pago</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">UpToDate</a></h3>
+                <p>Maior base de evidencias clinicas do mundo. Busque qualquer condicao medica.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Evidencias</span><span class="v7-card-tag">Global</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.uptodate.com" target="_blank" rel="noopener noreferrer">uptodate.com</a></div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S07: Referencias -->
+          <section class="v7-section" id="referencias" data-searchable aria-labelledby="referencias-h">
+            <div class="v7-section-head"><span class="v7-section-num">07</span><h2 id="referencias-h">Referencias e Estudo</h2><button class="v7-section-share" data-share="referencias" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Materiais de referencia, bases de dados e conteudo para estudo continuo.</p>
+            <div class="v7-resources">
+              <div class="v7-card" data-searchable data-id="ankimed" data-profiles="preparando-residencia" data-rating="5">
+                <button class="v7-card-bookmark" data-bookmark="ankimed" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">App</span><span class="v7-card-price free">Gratis</span><span class="v7-card-rec">Recomendado</span></div>
+                <h3><a href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">Anki</a></h3>
+                <p>Repeticao espacada comprovada. Crie ou baixe decks prontos de medicina.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Repeticao espacada</span><span class="v7-card-tag">Decks prontos</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://apps.ankiweb.net" target="_blank" rel="noopener noreferrer">ankiweb.net</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="sanarflix" data-profiles="preparando-residencia" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="sanarflix" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Plataforma</span><span class="v7-card-price paid">Pago</span></div>
+                <h3><a href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">SanarFlix</a></h3>
+                <p>Videoaulas e resumos organizados por tema. Bom complemento ao cursinho.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Videoaulas</span><span class="v7-card-tag">Resumos</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://www.sanarmed.com" target="_blank" rel="noopener noreferrer">sanarmed.com</a></div>
+              </div>
+              <div class="v7-card" data-searchable data-id="pubmed" data-profiles="preparando-residencia,ja-trabalhando" data-rating="4">
+                <button class="v7-card-bookmark" data-bookmark="pubmed" aria-label="Salvar"><svg class="bk-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><svg class="bk-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                <div class="v7-card-badges"><span class="v7-card-type">Site</span><span class="v7-card-price free">Gratis</span></div>
+                <h3><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">PubMed</a></h3>
+                <p>Maior base de artigos cientificos em medicina do mundo.</p>
+                <div class="v7-card-tags"><span class="v7-card-tag">Artigos</span><span class="v7-card-tag">Pesquisa</span></div>
+                <div class="v7-card-footer"><a class="v7-card-link" href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer">pubmed.ncbi.nlm.nih.gov</a></div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S08: Comunidades -->
+          <section class="v7-section" id="comunidades" data-searchable aria-labelledby="comunidades-h">
+            <div class="v7-section-head"><span class="v7-section-num">08</span><h2 id="comunidades-h">Comunidades</h2><button class="v7-section-share" data-share="comunidades" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Grupos e comunidades para trocar experiencias e duvidas.</p>
+            <div class="v7-communities">
+              <div class="v7-community-card" data-searchable><h4>Medicos Recem-Formados (Telegram)</h4><p>Grupo com milhares de membros discutindo vagas, plantoes e dicas do dia a dia.</p><span class="v7-community-platform">Telegram</span></div>
+              <div class="v7-community-card" data-searchable><h4>r/MedicinaBrasil (Reddit)</h4><p>Subreddit em portugues para discussao de carreira medica, residencia e especializacao.</p><span class="v7-community-platform">Reddit</span></div>
+              <div class="v7-community-card" data-searchable><h4>Residencia Medica (Facebook)</h4><p>Grupos de residencia medica com dicas de estudo e experiencias de aprovados.</p><span class="v7-community-platform">Facebook</span></div>
+              <div class="v7-community-card" data-searchable><h4>MedTwitter Brasil</h4><p>Comunidade no X (Twitter) com medicos compartilhando casos, dicas e noticias.</p><span class="v7-community-platform">X (Twitter)</span></div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S09: Mentoria (NEW) -->
+          <section class="v7-section" id="mentoria" data-searchable aria-labelledby="mentoria-h">
+            <div class="v7-section-head"><span class="v7-section-num">09</span><h2 id="mentoria-h">Mentoria</h2><button class="v7-section-share" data-share="mentoria" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Dicas para encontrar mentores e perfis de exemplo para inspirar sua busca.</p>
+            <div class="v7-mentoria-tips">
+              <h4>Como encontrar um mentor</h4>
+              <ul>
+                <li>Procure preceptores durante os estagios e internatos que demonstrem didatica e disponibilidade.</li>
+                <li>Participe de ligas academicas e eventos da sua especialidade de interesse.</li>
+                <li>Envie mensagens educadas a profissionais no LinkedIn explicando seus objetivos.</li>
+                <li>Pergunte a residentes atuais sobre seus orientadores e experiencias.</li>
+                <li>Programe encontros mensais curtos (30 min) para manter o relacionamento ativo.</li>
+                <li>Considere mentorias formais oferecidas por sociedades medicas (SBCM, SBP, ABP).</li>
+              </ul>
+            </div>
+            <h3 class="v7-subsection-title">Perfis de Mentores (Exemplo)</h3>
+            <div class="v7-mentors-grid" id="mentorsGrid">
+              <!-- Populated by JS -->
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S10: Banco de Questoes (NEW/EXPANDED) -->
+          <section class="v7-section" id="banco-questoes" data-searchable aria-labelledby="banco-questoes-h">
+            <div class="v7-section-head"><span class="v7-section-num">10</span><h2 id="banco-questoes-h">Banco de Questoes</h2><button class="v7-section-share" data-share="banco-questoes" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Pratique com questoes organizadas por especialidade e dificuldade. Timer opcional.</p>
+            <div class="v7-quiz-controls" id="quizControls">
+              <button class="v7-quiz-filter active" data-specialty="todas">Todas</button>
+              <button class="v7-quiz-filter" data-specialty="clinica">Clinica Medica</button>
+              <button class="v7-quiz-filter" data-specialty="cirurgia">Cirurgia</button>
+              <button class="v7-quiz-filter" data-specialty="pediatria">Pediatria</button>
+              <button class="v7-quiz-filter" data-specialty="go">GO</button>
+              <button class="v7-quiz-filter" data-specialty="preventiva">Preventiva</button>
+              <button class="v7-quiz-filter" data-specialty="emergencia">Emergencia</button>
+            </div>
+            <div class="v7-quiz-area" id="quizArea">
+              <div class="v7-quiz-header">
+                <span class="v7-quiz-counter" id="quizCounter">Questao 1 / 1</span>
+                <span class="v7-quiz-difficulty" id="quizDifficulty"></span>
+                <span class="v7-quiz-timer" id="quizTimer">--:--</span>
+              </div>
+              <div class="v7-quiz-specialty" id="quizSpecialty"></div>
+              <div class="v7-quiz-question" id="quizQuestion"></div>
+              <div class="v7-quiz-options" id="quizOptions"></div>
+              <div class="v7-quiz-explanation" id="quizExplanation"></div>
+              <div class="v7-quiz-actions">
+                <button class="v7-btn v7-btn-primary" id="quizNext">Proxima</button>
+                <button class="v7-btn v7-btn-secondary" id="quizTimerToggle">Timer: OFF</button>
+                <button class="v7-btn v7-btn-secondary" id="quizRestart">Reiniciar</button>
+              </div>
+              <div class="v7-quiz-score" id="quizScore" style="display:none"></div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S11: Flashcards -->
+          <section class="v7-section" id="flashcards" data-searchable aria-labelledby="flashcards-h">
+            <div class="v7-section-head"><span class="v7-section-num">11</span><h2 id="flashcards-h">Flashcards</h2><button class="v7-section-share" data-share="flashcards" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Clique no card para revelar a resposta. Estude com repeticao ativa.</p>
+            <div class="v7-flashcard-area" id="flashcardArea">
+              <div class="v7-flashcard" id="flashcard">
+                <span class="v7-flashcard-label" id="flashcardLabel">Pergunta</span>
+                <div class="v7-flashcard-text" id="flashcardText"></div>
+              </div>
+              <div class="v7-flashcard-count" id="flashcardCount"></div>
+              <div class="v7-flashcard-nav">
+                <button class="v7-btn v7-btn-secondary" id="flashcardPrev">Anterior</button>
+                <button class="v7-btn v7-btn-primary" id="flashcardNext">Proxima</button>
+                <button class="v7-btn v7-btn-secondary" id="flashcardShuffle">Embaralhar</button>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S12: Cronograma + Pomodoro -->
+          <section class="v7-section" id="cronograma" data-searchable aria-labelledby="cronograma-h">
+            <div class="v7-section-head"><span class="v7-section-num">12</span><h2 id="cronograma-h">Plano de Estudos + Pomodoro</h2><button class="v7-section-share" data-share="cronograma" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Monte seu cronograma semanal e use o Pomodoro integrado para manter o foco.</p>
+
+            <!-- Pomodoro Timer -->
+            <div class="v7-pomodoro" id="pomodoroSection">
+              <div class="v7-pomodoro-modes">
+                <button class="v7-pomodoro-mode active" data-pomo="work">Foco (25 min)</button>
+                <button class="v7-pomodoro-mode" data-pomo="short">Pausa Curta (5 min)</button>
+                <button class="v7-pomodoro-mode" data-pomo="long">Pausa Longa (15 min)</button>
+              </div>
+              <div class="v7-pomodoro-display" id="pomoDisplay">25:00</div>
+              <div class="v7-pomodoro-label" id="pomoLabel">Pronto para comecar</div>
+              <div class="v7-pomodoro-controls">
+                <button class="v7-btn v7-btn-primary" id="pomoStart">Iniciar</button>
+                <button class="v7-btn v7-btn-secondary" id="pomoReset">Resetar</button>
+              </div>
+              <div class="v7-pomodoro-stats">
+                <span>Sessoes hoje: <strong id="pomoSessions">0</strong></span>
+                <span>Tempo total: <strong id="pomoTotal">0 min</strong></span>
+              </div>
+            </div>
+
+            <!-- Weekly Planner -->
+            <h3 class="v7-subsection-title">Cronograma Semanal</h3>
+            <div class="v7-planner-week" id="plannerWeek"></div>
+            <div class="v7-planner-actions">
+              <button class="v7-btn v7-btn-secondary" id="plannerExport">Exportar para Impressao</button>
+              <button class="v7-btn v7-btn-secondary" id="plannerClear">Limpar Planner</button>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S13: Diario de Estudos (NEW) -->
+          <section class="v7-section" id="diario" data-searchable aria-labelledby="diario-h">
+            <div class="v7-section-head"><span class="v7-section-num">13</span><h2 id="diario-h">Diario de Estudos</h2><button class="v7-section-share" data-share="diario" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Registre o que estudou a cada dia. Mantenha uma sequencia (streak) para manter a disciplina.</p>
+            <div class="v7-diary-streak" id="diaryStreak">Sequencia: <strong id="diaryStreakCount">0</strong> dias consecutivos</div>
+            <div class="v7-diary-form" id="diaryForm">
+              <input type="date" id="diaryDate" value="">
+              <input type="number" id="diaryHours" placeholder="Horas estudadas (ex: 3)" min="0" max="24" step="0.5">
+              <textarea id="diaryText" placeholder="O que voce estudou hoje? (ex: Revisao de cardiologia, 50 questoes de clinica medica...)"></textarea>
+              <button class="v7-btn v7-btn-primary" id="diaryAdd">Adicionar Registro</button>
+            </div>
+            <div class="v7-diary-entries" id="diaryEntries"></div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S14: Notas -->
+          <section class="v7-section" id="notas" data-searchable aria-labelledby="notas-h">
+            <div class="v7-section-head"><span class="v7-section-num">14</span><h2 id="notas-h">Anotacoes Pessoais</h2><button class="v7-section-share" data-share="notas" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Suas anotacoes ficam salvas no navegador (localStorage).</p>
+            <div class="v7-notes-area">
+              <textarea id="notesArea" placeholder="Escreva suas anotacoes aqui..."></textarea>
+              <div class="v7-notes-saved" id="notesSaved">Salvo automaticamente.</div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S15: Calendario -->
+          <section class="v7-section" id="calendario" data-searchable aria-labelledby="calendario-h">
+            <div class="v7-section-head"><span class="v7-section-num">15</span><h2 id="calendario-h">Calendario de Provas 2026</h2><button class="v7-section-share" data-share="calendario" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Datas estimadas das principais provas de residencia.</p>
+            <div class="v7-calendar">
+              <div class="v7-calendar-item"><div class="v7-calendar-date"><div class="v7-calendar-month">JUN</div><div class="v7-calendar-day">15</div></div><div class="v7-calendar-info"><h4>ENARE 2026</h4><p>Exame Nacional de Residencia. Inscricao: Abr-Mai.</p></div></div>
+              <div class="v7-calendar-item"><div class="v7-calendar-date"><div class="v7-calendar-month">SET</div><div class="v7-calendar-day">22</div></div><div class="v7-calendar-info"><h4>USP (FMUSP)</h4><p>Prova de residencia da USP. Uma das mais concorridas.</p></div></div>
+              <div class="v7-calendar-item"><div class="v7-calendar-date"><div class="v7-calendar-month">OUT</div><div class="v7-calendar-day">06</div></div><div class="v7-calendar-info"><h4>Unifesp</h4><p>Prova da Universidade Federal de Sao Paulo.</p></div></div>
+              <div class="v7-calendar-item"><div class="v7-calendar-date"><div class="v7-calendar-month">OUT</div><div class="v7-calendar-day">27</div></div><div class="v7-calendar-info"><h4>UERJ</h4><p>Prova da Universidade do Estado do Rio de Janeiro.</p></div></div>
+              <div class="v7-calendar-item"><div class="v7-calendar-date"><div class="v7-calendar-month">NOV</div><div class="v7-calendar-day">10</div></div><div class="v7-calendar-info"><h4>Santa Casa SP</h4><p>Prova da Santa Casa de Misericordia de SP.</p></div></div>
+              <div class="v7-calendar-item"><div class="v7-calendar-date"><div class="v7-calendar-month">NOV</div><div class="v7-calendar-day">24</div></div><div class="v7-calendar-info"><h4>SUS-SP</h4><p>Prova unificada do SUS no estado de Sao Paulo.</p></div></div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S16: Calculadora -->
+          <section class="v7-section" id="calculadora" data-searchable aria-labelledby="calculadora-h">
+            <div class="v7-section-head"><span class="v7-section-num">16</span><h2 id="calculadora-h">Calculadora de Custos</h2><button class="v7-section-share" data-share="calculadora" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Estime o investimento total para se preparar para a residencia.</p>
+            <div class="v7-calc">
+              <div class="v7-calc-grid">
+                <div class="v7-calc-field"><label for="calcCurso">Cursinho preparatorio (R$/ano)</label><input type="number" id="calcCurso" value="4000" min="0"></div>
+                <div class="v7-calc-field"><label for="calcCerts">Certificacoes (BLS+ACLS+ATLS)</label><input type="number" id="calcCerts" value="5300" min="0"></div>
+                <div class="v7-calc-field"><label for="calcApps">Apps e assinaturas (R$/ano)</label><input type="number" id="calcApps" value="1200" min="0"></div>
+                <div class="v7-calc-field"><label for="calcLivros">Livros e materiais (R$/ano)</label><input type="number" id="calcLivros" value="800" min="0"></div>
+              </div>
+              <div class="v7-calc-result" id="calcResult">
+                <div class="big" id="calcTotal">R$ 11.300</div>
+                <div class="detail">Investimento estimado no primeiro ano</div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S17: Mapa -->
+          <section class="v7-section" id="mapa" data-searchable aria-labelledby="mapa-h">
+            <div class="v7-section-head"><span class="v7-section-num">17</span><h2 id="mapa-h">Mapa da Residencia</h2><button class="v7-section-share" data-share="mapa" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Vagas de residencia por estado (dados estimados).</p>
+            <div class="v7-map-grid" id="mapGrid"></div>
+          </section>
+
+          <hr class="v7-divider">
+
+          <!-- S18: Checklist -->
+          <section class="v7-section" id="checklist" data-searchable aria-labelledby="checklist-h">
+            <div class="v7-section-head"><span class="v7-section-num">18</span><h2 id="checklist-h">Checklist Pre-Residencia</h2><button class="v7-section-share" data-share="checklist" title="Copiar link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></button></div>
+            <p class="v7-section-desc">Marque cada item conforme for concluindo. O progresso e salvo.</p>
+            <div class="v7-checklist" id="checklistArea"></div>
+            <div class="v7-checklist-progress">
+              <div class="v7-progress-bar"><div class="v7-progress-fill" id="checklistFill" style="width:0%"></div></div>
+              <div class="v7-progress-text" id="checklistText">0 de 0 concluidos</div>
+            </div>
+          </section>
+
+        </div><!-- .v7-sections -->
+
+      </div><!-- .v7-container -->
+    </main>
+  </div><!-- .v7-app -->
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ========== DATA ==========
+
+    const COMPARE_DATA = {
+      cursos: {
+        headers: ['Cursinho', 'Preco/ano', 'Formato', 'Banco de Questoes', 'Foco Regional', 'Nota'],
+        rows: [
+          ['Medcurso', '~R$6.000', 'Apostilas + Video', 'Sim', 'RJ', '5/5'],
+          ['Estrategia Med', '~R$4.000', 'Video + Adaptativo', 'Robusto', 'Nacional', '5/5'],
+          ['Medway', '~R$4.500', 'Video + Simulados', 'Excelente', 'SP', '5/5'],
+          ['Medcel', '~R$3.000', 'Video + Apostilas', 'Sim', 'Nacional', '4/5'],
+          ['Hardwork', '~R$4.000', 'Questoes + Revisao', 'Sim', 'Nacional', '4/5'],
+          ['SanarFlix', '~R$2.000', 'Video + Resumos', 'Basico', 'Nacional', '3.5/5']
+        ]
+      },
+      apps: {
+        headers: ['App', 'Preco', 'Funcao Principal', 'Offline', 'Plataforma', 'Nota'],
+        rows: [
+          ['Whitebook', '~R$50/mes', 'Condutas e prescricoes', 'Sim', 'iOS/Android', '5/5'],
+          ['MDCalc', 'Gratis', 'Calculadoras medicas', 'Sim', 'iOS/Android/Web', '5/5'],
+          ['Medscape', 'Gratis', 'Drug checker + CME', 'Parcial', 'iOS/Android/Web', '4/5'],
+          ['UpToDate', '~R$200/mes', 'Base de evidencias', 'Nao', 'Web/App', '5/5'],
+          ['Anki', 'Gratis*', 'Repeticao espacada', 'Sim', 'Multi', '5/5'],
+          ['SanarFlix', '~R$100/mes', 'Videoaulas', 'Parcial', 'Web/App', '4/5']
+        ]
+      },
+      certs: {
+        headers: ['Certificacao', 'Preco', 'Duracao', 'Entidade', 'Validade', 'Essencial para'],
+        rows: [
+          ['BLS', '~R$800', '1 dia', 'AHA', '2 anos', 'Todos'],
+          ['ACLS', '~R$1.500', '2 dias', 'AHA', '2 anos', 'PS / UTI'],
+          ['ATLS', '~R$3.000', '2.5 dias', 'ACS', '4 anos', 'Trauma / SAMU'],
+          ['PALS', '~R$1.500', '2 dias', 'AHA', '2 anos', 'Pediatria'],
+          ['ALSO', '~R$2.000', '2 dias', 'AAFP', '5 anos', 'Obstetricia'],
+          ['NRP', '~R$800', '1 dia', 'AAP', '2 anos', 'Neonatologia']
+        ]
+      }
+    };
+
+    const QUESTION_BANK = [
+      { q: "Qual e o antidoto para intoxicacao por benzodiazepinicos?", opts: ["Naloxona", "Flumazenil", "N-acetilcisteina", "Atropina"], correct: 1, explanation: "Flumazenil e o antagonista especifico dos receptores benzodiazepinico GABA-A.", specialty: "emergencia", difficulty: "easy" },
+      { q: "Qual o primeiro exame a solicitar na suspeita de TEP?", opts: ["Angio-TC de torax", "D-dimero", "Ecocardiograma", "Gasometria arterial"], correct: 1, explanation: "O D-dimero e utilizado como triagem. Se alto, prossegue com angio-TC.", specialty: "clinica", difficulty: "medium" },
+      { q: "Qual antibiotico e primeira escolha para faringite estreptococica?", opts: ["Azitromicina", "Amoxicilina", "Cefalexina", "Clindamicina"], correct: 1, explanation: "Amoxicilina ou penicilina benzatina sao primeira escolha para S. pyogenes.", specialty: "clinica", difficulty: "easy" },
+      { q: "Qual e o sinal clinico mais precoce de hipertensao intracraniana?", opts: ["Bradicardia", "Cefaleia", "Vomitos em jato", "Papiledema"], correct: 1, explanation: "A cefaleia e tipicamente o primeiro sintoma, pior pela manha.", specialty: "clinica", difficulty: "medium" },
+      { q: "Na classificacao de Forrest, IIa corresponde a:", opts: ["Sangramento ativo em jato", "Vaso visivel sem sangramento", "Coagulo aderido", "Base limpa"], correct: 1, explanation: "Forrest IIa = vaso visivel nao sangrante. Alto risco de ressangramento.", specialty: "cirurgia", difficulty: "hard" },
+      { q: "Qual a principal causa de abdome agudo cirurgico?", opts: ["Apendicite aguda", "Colecistite aguda", "Obstrucao intestinal", "Ulcera perfurada"], correct: 0, explanation: "Apendicite aguda e a causa mais comum de abdome agudo cirurgico.", specialty: "cirurgia", difficulty: "easy" },
+      { q: "Qual vacina e contraindicada em gestantes?", opts: ["Influenza", "Triplice viral (SCR)", "dTpa", "Hepatite B"], correct: 1, explanation: "SCR e vacina de virus vivo atenuado, contraindicada na gravidez.", specialty: "go", difficulty: "easy" },
+      { q: "Qual o marco do desenvolvimento esperado aos 2 meses?", opts: ["Sentar sem apoio", "Sorriso social", "Pincar fino", "Falar palavras"], correct: 1, explanation: "O sorriso social e esperado entre 1.5 e 2 meses de vida.", specialty: "pediatria", difficulty: "easy" },
+      { q: "Qual e a dose de adrenalina na PCR em adultos?", opts: ["0,5 mg IV", "1 mg IV a cada 3-5 min", "0,1 mg IV", "2 mg IV a cada 5 min"], correct: 1, explanation: "Adrenalina 1 mg IV a cada 3-5 minutos na PCR conforme ACLS.", specialty: "emergencia", difficulty: "medium" },
+      { q: "Qual e o principal fator de risco para cancer de colo de utero?", opts: ["Tabagismo", "HPV persistente", "Uso de ACO", "Nuliparidade"], correct: 1, explanation: "Infeccao persistente por HPV oncogenico (16, 18) e o principal fator.", specialty: "go", difficulty: "easy" },
+      { q: "Qual e a triade de Cushing?", opts: ["Hipertensao, bradicardia, respiracao irregular", "Febre, ictericia, dor em HCD", "Hipotensao, taquicardia, sudorese", "Cefaleia, vomito, convulsao"], correct: 0, explanation: "Triade de Cushing: HAS, bradicardia e alteracao respiratoria. Sinal de hipertensao intracraniana.", specialty: "emergencia", difficulty: "medium" },
+      { q: "Qual vitamina esta deficiente no beriberi?", opts: ["B12", "B1 (Tiamina)", "B6", "Acido folico"], correct: 1, explanation: "Beriberi e causado por deficiencia de tiamina (vitamina B1).", specialty: "clinica", difficulty: "easy" },
+      { q: "Criterio de Light para exsudato: proteina liquido/soro >", opts: ["0.3", "0.5", "0.7", "0.1"], correct: 1, explanation: "Criterios de Light: proteina liquido/soro >0.5, LDH liq/soro >0.6, LDH liq >2/3 LSN.", specialty: "clinica", difficulty: "hard" },
+      { q: "Qual e a conduta inicial no volvulo de sigmoide sem sinais de peritonite?", opts: ["Cirurgia de emergencia", "Descompressao endoscopica", "Antibioticoterapia", "Observacao clinica"], correct: 1, explanation: "Descompressao colonoscopica e primeira linha se nao ha peritonite/necrose.", specialty: "cirurgia", difficulty: "medium" },
+      { q: "Ictericia fisiologica do RN aparece tipicamente:", opts: ["Primeiras 24h", "Apos 24-48h", "Apos 7 dias", "Apos 14 dias"], correct: 1, explanation: "A ictericia fisiologica inicia apos 24h (geralmente 2-3 dia). Antes de 24h e patologica.", specialty: "pediatria", difficulty: "easy" },
+      { q: "Qual o screening recomendado para cancer colorretal a partir dos 45 anos?", opts: ["TC de abdome anual", "Colonoscopia a cada 10 anos", "Retossigmoidoscopia anual", "CEA semestral"], correct: 1, explanation: "Colonoscopia a cada 10 anos e o padrao-ouro para rastreamento.", specialty: "preventiva", difficulty: "easy" },
+      { q: "Na eclampsia, qual e a droga de escolha para prevenir convulsoes?", opts: ["Diazepam", "Sulfato de magnesio", "Fenitoina", "Fenobarbital"], correct: 1, explanation: "Sulfato de magnesio (esquema Zuspan ou Pritchard) e padrao-ouro.", specialty: "go", difficulty: "medium" },
+      { q: "Qual escore avalia gravidade na pancreatite aguda?", opts: ["APACHE II", "Glasgow-Imrie / Ranson", "CURB-65", "Wells"], correct: 1, explanation: "Ranson e Glasgow-Imrie sao classicos. APACHE II tambem pode ser usado.", specialty: "cirurgia", difficulty: "medium" },
+      { q: "Qual e o agente mais comum de meningite bacteriana em neonatos?", opts: ["Neisseria meningitidis", "Streptococcus do grupo B (agalactiae)", "Haemophilus influenzae", "Listeria monocytogenes"], correct: 1, explanation: "GBS (S. agalactiae) e o mais comum em RN, seguido por E. coli e Listeria.", specialty: "pediatria", difficulty: "medium" },
+      { q: "Qual indicador avalia a cobertura vacinal de uma populacao?", opts: ["Taxa de mortalidade infantil", "Proporcao de doses aplicadas/populacao-alvo", "Incidencia de doencas infectocontagiosas", "IDH municipal"], correct: 1, explanation: "Cobertura vacinal = doses aplicadas / populacao-alvo x 100.", specialty: "preventiva", difficulty: "easy" },
+      { q: "Qual e o ritmo chocavel na PCR?", opts: ["Assistolia", "AESP", "Fibrilacao ventricular", "Bloqueio AV total"], correct: 2, explanation: "FV e TV sem pulso sao os ritmos chovaveis. Assistolia e AESP nao sao chovaveis.", specialty: "emergencia", difficulty: "easy" },
+      { q: "Sinal de Blumberg positivo sugere:", opts: ["Derrame pleural", "Irritacao peritoneal", "Obstrucao intestinal", "Hepatomegalia"], correct: 1, explanation: "Blumberg: dor a descompressao subita - sinal de irritacao peritoneal.", specialty: "cirurgia", difficulty: "easy" },
+      { q: "Qual e a principal causa de hipotireoidismo no Brasil?", opts: ["Tireoidite de Hashimoto", "Deficiencia de iodo", "Pos-tireoidectomia", "Uso de amiodarona"], correct: 0, explanation: "Hashimoto e a causa mais comum em areas iodo-suficientes como o Brasil.", specialty: "clinica", difficulty: "medium" },
+      { q: "Qual exame confirma o diagnostico de doenca celiaca?", opts: ["Anticorpo anti-transglutaminase IgA + biopsia", "Teste de hidrogenio expirado", "Colonoscopia", "Teste de Schilling"], correct: 0, explanation: "Anti-tTG IgA com confirmacao por biopsia duodenal (atrofia vilositaria).", specialty: "clinica", difficulty: "hard" }
+    ];
+
+    const FLASHCARDS_DATA = [
+      { q: "Quais sao os criterios de SIRS?", a: "Temp >38 ou <36; FC >90; FR >20 ou PaCO2 <32; Leucocitos >12.000 ou <4.000 ou >10% bastonetes. Precisa de 2+ criterios." },
+      { q: "Qual a diferenca entre sepse e choque septico?", a: "Sepse: infeccao + disfuncao organica (SOFA>=2). Choque septico: sepse + necessidade de vasopressor para PAM>=65 + lactato >2 apos reposicao volemica." },
+      { q: "Quais sao as indicacoes de IOT na emergencia?", a: "Glasgow <=8, insuficiencia respiratoria refrataria, protecao de via aerea (vomitos, sangramento), anafilaxia grave com edema de glote." },
+      { q: "Qual a sequencia do ATLS (ABCDE)?", a: "A: Via aerea com protecao cervical. B: Ventilacao. C: Circulacao com controle de hemorragia. D: Disfuncao neurologica. E: Exposicao." },
+      { q: "Quando usar cristaloide vs coloide na reposicao volemica?", a: "Cristaloide (SF 0.9% ou Ringer Lactato) e primeira escolha. Coloides nao mostraram beneficio em mortalidade e custam mais." },
+      { q: "Quais drogas vasoativas usar no choque septico?", a: "1a linha: Noradrenalina. 2a linha: adicionar vasopressina. Se disfuncao miocardica: dobutamina." },
+      { q: "Qual a diferenca entre IECA e BRA?", a: "IECA inibe a ECA (tosse seca como efeito colateral). BRA bloqueia receptor AT1 da angiotensina II (sem tosse). Ambos contraindicados na gravidez." },
+      { q: "Como calcular a osmolaridade serica?", a: "2xNa + Glicose/18 + Ureia/6. Normal: 275-295 mOsm/kg." },
+      { q: "Quais sao os sinais de alarme na dengue?", a: "Dor abdominal intensa, vomitos persistentes, sangramento mucoso, letargia, hepatomegalia >2cm, hematocrito subindo com plaquetas caindo." },
+      { q: "Qual a classificacao de risco de TEP pelo escore de Wells?", a: "Clinica de TVP (3pts), diagnostico alternativo improvavel (3pts), FC>100 (1.5), imobilizacao/cirurgia (1.5), TEP/TVP previo (1.5), hemoptise (1), cancer (1). >4pts = alta probabilidade." }
+    ];
+
+    const MENTORS_DATA = [
+      { name: "Dra. Ana Beatriz", specialty: "Clinica Medica - FMUSP", bio: "R3 que passou em primeiro lugar. Foco em organizacao e metodo de estudo.", tags: ["Estudo ativo", "Organizacao", "USP"] },
+      { name: "Dr. Carlos Eduardo", specialty: "Cirurgia Geral - Unifesp", bio: "Cirurgiao com experiencia em PS de trauma. Mentor de ligas academicas.", tags: ["Trauma", "Pratica cirurgica", "Liga"] },
+      { name: "Dra. Fernanda Lima", specialty: "Pediatria - UERJ", bio: "Pediatra com atuacao em emergencia infantil. Criadora de conteudo educativo.", tags: ["Emergencia pediatrica", "Redes sociais", "Conteudo"] },
+      { name: "Dr. Rafael Mendes", specialty: "MFC - SBMFC", bio: "Medico de familia no interior de MG. Experiencia com ESF e gestao.", tags: ["APS", "Interior", "Gestao"] },
+      { name: "Dra. Juliana Torres", specialty: "GO - Santa Casa SP", bio: "Obstetra com foco em gestacao de alto risco. Mentora ativa no LinkedIn.", tags: ["Alto risco", "Mentoria online", "LinkedIn"] },
+      { name: "Dr. Pedro Vasconcelos", specialty: "Emergencia - HCFMUSP", bio: "Emergencista com ACLS instructor. Foco em simulacao e ensino.", tags: ["Simulacao", "ACLS", "Ensino"] }
+    ];
+
+    const CHECKLIST_ITEMS = [
+      "Registrar CRM no estado",
+      "Cadastrar no CNES",
+      "Tirar BLS",
+      "Tirar ACLS",
+      "Instalar Whitebook",
+      "Instalar MDCalc",
+      "Escolher cursinho preparatorio",
+      "Montar cronograma de estudos",
+      "Fazer 1o simulado diagnostico",
+      "Cadastrar em plataformas de vagas",
+      "Definir especialidade alvo",
+      "Verificar datas de inscricao das provas",
+      "Separar documentos para inscricao",
+      "Completar 1000 questoes no banco",
+      "Encontrar um mentor na area desejada"
+    ];
+
+    const MAP_DATA = [
+      { uf: "SP", vagas: 4200 }, { uf: "RJ", vagas: 2100 }, { uf: "MG", vagas: 1800 },
+      { uf: "RS", vagas: 1100 }, { uf: "PR", vagas: 950 }, { uf: "BA", vagas: 850 },
+      { uf: "PE", vagas: 700 }, { uf: "CE", vagas: 650 }, { uf: "DF", vagas: 600 },
+      { uf: "SC", vagas: 550 }, { uf: "GO", vagas: 500 }, { uf: "PA", vagas: 450 },
+      { uf: "ES", vagas: 350 }, { uf: "MA", vagas: 300 }, { uf: "AM", vagas: 280 },
+      { uf: "PB", vagas: 250 }, { uf: "RN", vagas: 230 }, { uf: "AL", vagas: 200 },
+      { uf: "PI", vagas: 180 }, { uf: "MT", vagas: 170 }, { uf: "MS", vagas: 160 },
+      { uf: "SE", vagas: 140 }, { uf: "TO", vagas: 100 }, { uf: "RO", vagas: 90 },
+      { uf: "AC", vagas: 60 }, { uf: "AP", vagas: 50 }, { uf: "RR", vagas: 40 }
+    ];
+
+    const PLANNER_DAYS = ['Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado', 'Domingo'];
+
+    const PROFILE_RECS = {
+      'recem-formado': 'Foque primeiro em CRM, certificacoes (BLS/ACLS) e plataformas de vagas. Depois pense em residencia.',
+      'preparando-residencia': 'Seu foco e o cursinho, banco de questoes e cronograma. Use o Pomodoro para manter a disciplina.',
+      'ja-trabalhando': 'Otimize seu dia a dia com Whitebook, MDCalc e Medscape. Considere certificacoes adicionais.'
+    };
+
+    // ========== STATE ==========
+    let state = {
+      profile: localStorage.getItem('v7_profile') || '',
+      bookmarks: JSON.parse(localStorage.getItem('v7_bookmarks') || '[]'),
+      notes: localStorage.getItem('v7_notes') || '',
+      checklist: JSON.parse(localStorage.getItem('v7_checklist') || '{}'),
+      planner: JSON.parse(localStorage.getItem('v7_planner') || '{}'),
+      diary: JSON.parse(localStorage.getItem('v7_diary') || '[]'),
+      quizScores: JSON.parse(localStorage.getItem('v7_quizScores') || '[]'),
+      clicks: JSON.parse(localStorage.getItem('v7_clicks') || '{}'),
+      pomoSessionsToday: parseInt(localStorage.getItem('v7_pomoToday') || '0'),
+      pomoTotalMin: parseInt(localStorage.getItem('v7_pomoTotal') || '0'),
+      pomoDate: localStorage.getItem('v7_pomoDate') || '',
+      darkMode: localStorage.getItem('v7_dark') === 'true',
+      focusSection: null,
+      quizFilter: 'todas',
+      quizIndex: 0,
+      quizCorrect: 0,
+      quizAnswered: 0,
+      quizTimerOn: false,
+      quizTimerSec: 0,
+      quizTimerInterval: null,
+      filteredQuestions: [],
+      flashcardIndex: 0,
+      flashcardFlipped: false,
+      pomoState: 'idle', // idle, running, paused
+      pomoMode: 'work',
+      pomoSeconds: 25 * 60,
+      pomoInterval: null
+    };
+
+    // ========== HELPERS ==========
+    const $ = (s, p) => (p || document).querySelector(s);
+    const $$ = (s, p) => [...(p || document).querySelectorAll(s)];
+    const save = (k, v) => localStorage.setItem('v7_' + k, typeof v === 'string' ? v : JSON.stringify(v));
+
+    // ========== DARK MODE ==========
+    function applyDark() {
+      document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
+      $('#darkToggle').textContent = state.darkMode ? 'Claro' : 'Escuro';
+    }
+    $('#darkToggle').addEventListener('click', () => { state.darkMode = !state.darkMode; save('dark', state.darkMode); applyDark(); });
+    applyDark();
+
+    // ========== PANEL TOGGLES ==========
+    function togglePanel(id) {
+      const panel = $('#' + id);
+      const isOpen = panel.classList.contains('open');
+      $$('.v7-panel').forEach(p => p.classList.remove('open'));
+      if (!isOpen) panel.classList.add('open');
+    }
+    $('#profileToggle').addEventListener('click', () => togglePanel('profilePanel'));
+    $('#favToggle').addEventListener('click', () => togglePanel('favPanel'));
+    $('#statsToggle').addEventListener('click', () => { togglePanel('statsPanel'); renderAnalytics(); });
+
+    // ========== PROFILE ==========
+    function renderProfile() {
+      $$('.v7-profile-option').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.profile === state.profile);
+      });
+      const rec = $('#profileRec');
+      if (state.profile && PROFILE_RECS[state.profile]) {
+        rec.textContent = PROFILE_RECS[state.profile];
+        rec.style.display = 'block';
+      } else {
+        rec.style.display = 'none';
+      }
+    }
+    $$('.v7-profile-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.profile = btn.dataset.profile;
+        save('profile', state.profile);
+        renderProfile();
+      });
+    });
+    $('#profileClear').addEventListener('click', () => { state.profile = ''; save('profile', ''); renderProfile(); });
+    renderProfile();
+
+    // ========== BOOKMARKS ==========
+    function renderBookmarks() {
+      const list = $('#favList');
+      const empty = $('#favEmpty');
+      const count = $('#favCount');
+      list.innerHTML = '';
+      if (state.bookmarks.length === 0) {
+        empty.style.display = 'block';
+        count.style.display = 'none';
+      } else {
+        empty.style.display = 'none';
+        count.style.display = 'inline';
+        count.textContent = state.bookmarks.length;
+        state.bookmarks.forEach(id => {
+          const card = $(`[data-id="${id}"]`);
+          const name = card ? (card.querySelector('h3 a') || card.querySelector('h3')).textContent : id;
+          const li = document.createElement('li');
+          li.innerHTML = `<span>${name}</span><button class="v7-fav-remove" data-remove="${id}">&times;</button>`;
+          list.appendChild(li);
+        });
+      }
+      $$('.v7-card-bookmark').forEach(btn => {
+        btn.classList.toggle('saved', state.bookmarks.includes(btn.dataset.bookmark));
+      });
+    }
+    document.addEventListener('click', (e) => {
+      const bm = e.target.closest('.v7-card-bookmark');
+      if (bm) {
+        const id = bm.dataset.bookmark;
+        if (state.bookmarks.includes(id)) {
+          state.bookmarks = state.bookmarks.filter(b => b !== id);
+        } else {
+          state.bookmarks.push(id);
+        }
+        save('bookmarks', state.bookmarks);
+        renderBookmarks();
+        return;
+      }
+      const rm = e.target.closest('.v7-fav-remove');
+      if (rm) {
+        state.bookmarks = state.bookmarks.filter(b => b !== rm.dataset.remove);
+        save('bookmarks', state.bookmarks);
+        renderBookmarks();
+      }
+    });
+    $('#favClearAll').addEventListener('click', () => { state.bookmarks = []; save('bookmarks', state.bookmarks); renderBookmarks(); });
+    renderBookmarks();
+
+    // ========== SEARCH ==========
+    const searchInput = $('#searchInput');
+    const searchClear = $('#searchClear');
+    const searchCount = $('#searchCount');
+    const noResults = $('#noResults');
+
+    function doSearch() {
+      const q = searchInput.value.toLowerCase().trim();
+      searchClear.style.display = q ? 'block' : 'none';
+      const cards = $$('[data-searchable]');
+      let visible = 0;
+      if (!q) {
+        cards.forEach(c => c.style.display = '');
+        $$('.v7-section').forEach(s => s.style.display = '');
+        $$('.v7-divider').forEach(d => d.style.display = '');
+        searchCount.textContent = '';
+        noResults.style.display = 'none';
+        return;
+      }
+      cards.forEach(c => {
+        const text = c.textContent.toLowerCase();
+        const match = text.includes(q);
+        c.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      $$('.v7-section').forEach(s => {
+        const hasVisible = $$('[data-searchable]', s).some(c => c.style.display !== 'none');
+        s.style.display = hasVisible ? '' : 'none';
+      });
+      $$('.v7-divider').forEach(d => {
+        const next = d.nextElementSibling;
+        d.style.display = (next && next.style.display === 'none') ? 'none' : '';
+      });
+      searchCount.textContent = `${visible} resultado${visible !== 1 ? 's' : ''} encontrado${visible !== 1 ? 's' : ''}`;
+      noResults.style.display = visible === 0 ? 'block' : 'none';
+    }
+    searchInput.addEventListener('input', doSearch);
+    searchClear.addEventListener('click', () => { searchInput.value = ''; doSearch(); searchInput.focus(); });
+
+    // ========== FOCUS MODE ==========
+    $('#focusToggle').addEventListener('click', () => {
+      if (state.focusSection) { exitFocus(); return; }
+      const sections = $$('.v7-section-nav a');
+      const names = sections.map(a => a.textContent);
+      const choice = prompt('Digite o nome da secao para focar:\n' + names.join(', '));
+      if (!choice) return;
+      const target = sections.find(a => a.textContent.toLowerCase().includes(choice.toLowerCase()));
+      if (target) {
+        state.focusSection = target.dataset.section;
+        applyFocus();
+      }
+    });
+
+    function applyFocus() {
+      if (!state.focusSection) return;
+      $$('.v7-section').forEach(s => { s.style.display = s.id === state.focusSection ? '' : 'none'; });
+      $$('.v7-divider').forEach(d => d.style.display = 'none');
+      $('#focusBar').classList.add('visible');
+      const navLink = $(`.v7-section-nav a[data-section="${state.focusSection}"]`);
+      $('#focusName').textContent = navLink ? navLink.textContent : state.focusSection;
+      $('#focusToggle').classList.add('active');
+    }
+
+    function exitFocus() {
+      state.focusSection = null;
+      $$('.v7-section').forEach(s => s.style.display = '');
+      $$('.v7-divider').forEach(d => d.style.display = '');
+      $('#focusBar').classList.remove('visible');
+      $('#focusToggle').classList.remove('active');
+    }
+    $('#focusExit').addEventListener('click', exitFocus);
+
+    // ========== SECTION NAV ==========
+    const navLinks = $$('.v7-section-nav a');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const link = $(`.v7-section-nav a[data-section="${entry.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-100px 0px -60% 0px' });
+    $$('.v7-section').forEach(s => observer.observe(s));
+
+    // ========== SHARE ==========
+    document.addEventListener('click', (e) => {
+      const shareBtn = e.target.closest('.v7-section-share');
+      if (shareBtn) {
+        const id = shareBtn.dataset.share;
+        const url = location.origin + location.pathname + '#' + id;
+        navigator.clipboard.writeText(url).then(() => {
+          shareBtn.style.color = 'var(--v7-success)';
+          setTimeout(() => { shareBtn.style.color = ''; }, 1500);
+        }).catch(() => {});
+      }
+    });
+
+    // ========== CLICK TRACKING ==========
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('.v7-card-link, .v7-card h3 a');
+      if (link) {
+        const card = link.closest('.v7-card');
+        if (card && card.dataset.id) {
+          state.clicks[card.dataset.id] = (state.clicks[card.dataset.id] || 0) + 1;
+          save('clicks', state.clicks);
+        }
+      }
+    });
+
+    // ========== COMPARE TABLE ==========
+    function renderCompare(tab) {
+      const data = COMPARE_DATA[tab];
+      if (!data) return;
+      $('#compareHead').innerHTML = '<tr>' + data.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+      $('#compareBody').innerHTML = data.rows.map(row => '<tr>' + row.map(c => `<td>${c}</td>`).join('') + '</tr>').join('');
+    }
+    $$('.v7-compare-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        $$('.v7-compare-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderCompare(tab.dataset.tab);
+      });
+    });
+    renderCompare('cursos');
+
+    // ========== QUIZ / QUESTION BANK ==========
+    function filterQuestions() {
+      if (state.quizFilter === 'todas') {
+        state.filteredQuestions = [...QUESTION_BANK];
+      } else {
+        state.filteredQuestions = QUESTION_BANK.filter(q => q.specialty === state.quizFilter);
+      }
+      // Shuffle
+      for (let i = state.filteredQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.filteredQuestions[i], state.filteredQuestions[j]] = [state.filteredQuestions[j], state.filteredQuestions[i]];
+      }
+      state.quizIndex = 0;
+      state.quizCorrect = 0;
+      state.quizAnswered = 0;
+    }
+
+    function renderQuiz() {
+      const q = state.filteredQuestions[state.quizIndex];
+      if (!q) { showQuizScore(); return; }
+      $('#quizScore').style.display = 'none';
+      $('#quizArea').querySelector('.v7-quiz-header').style.display = '';
+      $('#quizQuestion').style.display = '';
+      $('#quizOptions').style.display = '';
+      $('#quizSpecialty').style.display = '';
+      const total = state.filteredQuestions.length;
+      $('#quizCounter').textContent = `Questao ${state.quizIndex + 1} / ${total}`;
+      const diffMap = { easy: 'Facil', medium: 'Media', hard: 'Dificil' };
+      const diffEl = $('#quizDifficulty');
+      diffEl.textContent = diffMap[q.difficulty] || '';
+      diffEl.className = 'v7-quiz-difficulty ' + q.difficulty;
+      const specMap = { clinica: 'Clinica Medica', cirurgia: 'Cirurgia', pediatria: 'Pediatria', go: 'Ginecologia e Obstetricia', preventiva: 'Med. Preventiva', emergencia: 'Emergencia' };
+      $('#quizSpecialty').textContent = specMap[q.specialty] || q.specialty;
+      $('#quizQuestion').textContent = q.q;
+      $('#quizExplanation').style.display = 'none';
+      const optsEl = $('#quizOptions');
+      optsEl.innerHTML = '';
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'v7-quiz-option';
+        btn.textContent = String.fromCharCode(65 + i) + ') ' + opt;
+        btn.addEventListener('click', () => answerQuiz(i));
+        optsEl.appendChild(btn);
+      });
+      if (state.quizTimerOn) startQuizTimer();
+    }
+
+    function answerQuiz(idx) {
+      const q = state.filteredQuestions[state.quizIndex];
+      if (!q) return;
+      const opts = $$('.v7-quiz-option');
+      if (opts[0].classList.contains('correct') || opts[0].classList.contains('wrong') || opts[0].classList.contains('disabled')) return;
+      opts.forEach((o, i) => {
+        if (i === q.correct) o.classList.add('correct');
+        else if (i === idx) o.classList.add('wrong');
+        o.classList.add('disabled');
+      });
+      if (idx === q.correct) state.quizCorrect++;
+      state.quizAnswered++;
+      $('#quizExplanation').textContent = q.explanation;
+      $('#quizExplanation').style.display = 'block';
+      stopQuizTimer();
+    }
+
+    function showQuizScore() {
+      const area = $('#quizArea');
+      area.querySelector('.v7-quiz-header').style.display = 'none';
+      $('#quizQuestion').style.display = 'none';
+      $('#quizOptions').style.display = 'none';
+      $('#quizExplanation').style.display = 'none';
+      $('#quizSpecialty').style.display = 'none';
+      const scoreEl = $('#quizScore');
+      const pct = state.quizAnswered > 0 ? Math.round((state.quizCorrect / state.quizAnswered) * 100) : 0;
+      scoreEl.innerHTML = `<h3>Resultado Final</h3><div class="score-big">${pct}%</div><p>${state.quizCorrect} de ${state.quizAnswered} corretas</p>`;
+      scoreEl.style.display = 'block';
+      // Save score
+      state.quizScores.push({ date: new Date().toISOString().slice(0, 10), pct, total: state.quizAnswered, correct: state.quizCorrect });
+      if (state.quizScores.length > 30) state.quizScores = state.quizScores.slice(-30);
+      save('quizScores', state.quizScores);
+    }
+
+    $('#quizNext').addEventListener('click', () => { state.quizIndex++; renderQuiz(); });
+    $('#quizRestart').addEventListener('click', () => { filterQuestions(); renderQuiz(); });
+
+    let quizTimerInterval = null;
+    function startQuizTimer() {
+      stopQuizTimer();
+      state.quizTimerSec = 0;
+      quizTimerInterval = setInterval(() => {
+        state.quizTimerSec++;
+        const m = Math.floor(state.quizTimerSec / 60);
+        const s = state.quizTimerSec % 60;
+        $('#quizTimer').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }, 1000);
+    }
+    function stopQuizTimer() {
+      if (quizTimerInterval) clearInterval(quizTimerInterval);
+      quizTimerInterval = null;
+    }
+    $('#quizTimerToggle').addEventListener('click', () => {
+      state.quizTimerOn = !state.quizTimerOn;
+      $('#quizTimerToggle').textContent = state.quizTimerOn ? 'Timer: ON' : 'Timer: OFF';
+      if (!state.quizTimerOn) { stopQuizTimer(); $('#quizTimer').textContent = '--:--'; }
+    });
+
+    $$('.v7-quiz-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.v7-quiz-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.quizFilter = btn.dataset.specialty;
+        filterQuestions();
+        renderQuiz();
+      });
+    });
+
+    filterQuestions();
+    renderQuiz();
+
+    // ========== FLASHCARDS ==========
+    let flashcards = [...FLASHCARDS_DATA];
+
+    function renderFlashcard() {
+      const fc = flashcards[state.flashcardIndex];
+      if (!fc) return;
+      state.flashcardFlipped = false;
+      const el = $('#flashcard');
+      el.classList.remove('flipped');
+      $('#flashcardLabel').textContent = 'Pergunta';
+      $('#flashcardText').textContent = fc.q;
+      $('#flashcardCount').textContent = `${state.flashcardIndex + 1} / ${flashcards.length}`;
+    }
+
+    $('#flashcard').addEventListener('click', () => {
+      const fc = flashcards[state.flashcardIndex];
+      if (!fc) return;
+      state.flashcardFlipped = !state.flashcardFlipped;
+      const el = $('#flashcard');
+      el.classList.toggle('flipped', state.flashcardFlipped);
+      $('#flashcardLabel').textContent = state.flashcardFlipped ? 'Resposta' : 'Pergunta';
+      $('#flashcardText').textContent = state.flashcardFlipped ? fc.a : fc.q;
+    });
+
+    $('#flashcardPrev').addEventListener('click', () => { state.flashcardIndex = Math.max(0, state.flashcardIndex - 1); renderFlashcard(); });
+    $('#flashcardNext').addEventListener('click', () => { state.flashcardIndex = Math.min(flashcards.length - 1, state.flashcardIndex + 1); renderFlashcard(); });
+    $('#flashcardShuffle').addEventListener('click', () => {
+      for (let i = flashcards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+      }
+      state.flashcardIndex = 0;
+      renderFlashcard();
+    });
+    renderFlashcard();
+
+    // ========== PLANNER ==========
+    function renderPlanner() {
+      const week = $('#plannerWeek');
+      week.innerHTML = '';
+      PLANNER_DAYS.forEach(day => {
+        const items = state.planner[day] || [];
+        const col = document.createElement('div');
+        col.className = 'v7-planner-day';
+        col.innerHTML = `<div class="v7-planner-day-name">${day}</div>`;
+        items.forEach((item, i) => {
+          const div = document.createElement('div');
+          div.className = 'v7-planner-item';
+          div.innerHTML = `<span>${item}</span><button class="remove-item" data-day="${day}" data-idx="${i}">&times;</button>`;
+          col.appendChild(div);
+        });
+        const addBtn = document.createElement('button');
+        addBtn.className = 'v7-planner-add';
+        addBtn.textContent = '+ Adicionar';
+        addBtn.addEventListener('click', () => {
+          const text = prompt(`Adicionar em ${day}:`);
+          if (text && text.trim()) {
+            if (!state.planner[day]) state.planner[day] = [];
+            state.planner[day].push(text.trim());
+            save('planner', state.planner);
+            renderPlanner();
+          }
+        });
+        col.appendChild(addBtn);
+        week.appendChild(col);
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const rm = e.target.closest('.remove-item');
+      if (rm) {
+        const day = rm.dataset.day;
+        const idx = parseInt(rm.dataset.idx);
+        state.planner[day].splice(idx, 1);
+        save('planner', state.planner);
+        renderPlanner();
+      }
+    });
+
+    $('#plannerClear').addEventListener('click', () => {
+      if (confirm('Limpar todo o planner?')) {
+        state.planner = {};
+        save('planner', state.planner);
+        renderPlanner();
+      }
+    });
+
+    $('#plannerExport').addEventListener('click', () => {
+      let text = '=== PLANO DE ESTUDOS SEMANAL ===\n\n';
+      PLANNER_DAYS.forEach(day => {
+        text += day.toUpperCase() + ':\n';
+        const items = state.planner[day] || [];
+        if (items.length === 0) text += '  (vazio)\n';
+        else items.forEach(item => { text += '  - ' + item + '\n'; });
+        text += '\n';
+      });
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'plano-estudos.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    renderPlanner();
+
+    // ========== POMODORO ==========
+    const POMO_DURATIONS = { work: 25 * 60, short: 5 * 60, long: 15 * 60 };
+
+    function updatePomoDisplay() {
+      const m = Math.floor(state.pomoSeconds / 60);
+      const s = state.pomoSeconds % 60;
+      $('#pomoDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function checkPomoDate() {
+      const today = new Date().toISOString().slice(0, 10);
+      if (state.pomoDate !== today) {
+        state.pomoSessionsToday = 0;
+        state.pomoDate = today;
+        save('pomoToday', '0');
+        save('pomoDate', today);
+      }
+    }
+
+    function updatePomoStats() {
+      checkPomoDate();
+      $('#pomoSessions').textContent = state.pomoSessionsToday;
+      $('#pomoTotal').textContent = state.pomoTotalMin + ' min';
+    }
+
+    $$('.v7-pomodoro-mode').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.v7-pomodoro-mode').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.pomoMode = btn.dataset.pomo;
+        state.pomoSeconds = POMO_DURATIONS[state.pomoMode];
+        state.pomoState = 'idle';
+        if (state.pomoInterval) clearInterval(state.pomoInterval);
+        updatePomoDisplay();
+        $('#pomoLabel').textContent = 'Pronto para comecar';
+        $('#pomoStart').textContent = 'Iniciar';
+      });
+    });
+
+    $('#pomoStart').addEventListener('click', () => {
+      if (state.pomoState === 'running') {
+        state.pomoState = 'paused';
+        clearInterval(state.pomoInterval);
+        $('#pomoStart').textContent = 'Continuar';
+        $('#pomoLabel').textContent = 'Pausado';
+      } else {
+        state.pomoState = 'running';
+        $('#pomoStart').textContent = 'Pausar';
+        const modeLabels = { work: 'Focando...', short: 'Pausa curta...', long: 'Pausa longa...' };
+        $('#pomoLabel').textContent = modeLabels[state.pomoMode];
+        state.pomoInterval = setInterval(() => {
+          state.pomoSeconds--;
+          updatePomoDisplay();
+          if (state.pomoSeconds <= 0) {
+            clearInterval(state.pomoInterval);
+            state.pomoState = 'idle';
+            $('#pomoStart').textContent = 'Iniciar';
+            if (state.pomoMode === 'work') {
+              state.pomoSessionsToday++;
+              state.pomoTotalMin += 25;
+              save('pomoToday', state.pomoSessionsToday);
+              save('pomoTotal', state.pomoTotalMin);
+              save('pomoDate', new Date().toISOString().slice(0, 10));
+              updatePomoStats();
+              $('#pomoLabel').textContent = 'Sessao completa! Hora da pausa.';
+            } else {
+              $('#pomoLabel').textContent = 'Pausa encerrada! Volte ao foco.';
+            }
+            state.pomoSeconds = POMO_DURATIONS[state.pomoMode];
+            updatePomoDisplay();
+          }
+        }, 1000);
+      }
+    });
+
+    $('#pomoReset').addEventListener('click', () => {
+      if (state.pomoInterval) clearInterval(state.pomoInterval);
+      state.pomoState = 'idle';
+      state.pomoSeconds = POMO_DURATIONS[state.pomoMode];
+      updatePomoDisplay();
+      $('#pomoStart').textContent = 'Iniciar';
+      $('#pomoLabel').textContent = 'Pronto para comecar';
+    });
+
+    updatePomoDisplay();
+    updatePomoStats();
+
+    // ========== DIARY ==========
+    function getDiaryStreak() {
+      if (state.diary.length === 0) return 0;
+      const sorted = [...state.diary].sort((a, b) => b.date.localeCompare(a.date));
+      let streak = 0;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      let checkDate = new Date(today);
+
+      // Check if today or yesterday has an entry
+      const todayStr = checkDate.toISOString().slice(0, 10);
+      const yesterdayDate = new Date(checkDate);
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const yesterdayStr = yesterdayDate.toISOString().slice(0, 10);
+
+      const hasTodayEntry = sorted.some(e => e.date === todayStr);
+      const hasYesterdayEntry = sorted.some(e => e.date === yesterdayStr);
+
+      if (!hasTodayEntry && !hasYesterdayEntry) return 0;
+      if (!hasTodayEntry) checkDate = yesterdayDate;
+
+      for (let i = 0; i < 365; i++) {
+        const ds = checkDate.toISOString().slice(0, 10);
+        if (sorted.some(e => e.date === ds)) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function renderDiary() {
+      const streak = getDiaryStreak();
+      $('#diaryStreakCount').textContent = streak;
+      const entries = $('#diaryEntries');
+      entries.innerHTML = '';
+      const sorted = [...state.diary].sort((a, b) => b.date.localeCompare(a.date));
+      if (sorted.length === 0) {
+        entries.innerHTML = '<p style="font-size:.82rem;color:var(--v7-text-muted)">Nenhum registro ainda. Comece hoje!</p>';
+        return;
+      }
+      sorted.forEach((entry, i) => {
+        const div = document.createElement('div');
+        div.className = 'v7-diary-entry';
+        const dateObj = new Date(entry.date + 'T12:00:00');
+        const dateStr = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        div.innerHTML = `
+          <button class="v7-diary-entry-remove" data-diary-idx="${i}">&times;</button>
+          <div class="v7-diary-entry-date">${dateStr}</div>
+          ${entry.hours ? `<div class="v7-diary-entry-hours">${entry.hours}h estudadas</div>` : ''}
+          <div class="v7-diary-entry-text">${entry.text}</div>
+        `;
+        entries.appendChild(div);
+      });
+    }
+
+    // Set today's date as default
+    $('#diaryDate').value = new Date().toISOString().slice(0, 10);
+
+    $('#diaryAdd').addEventListener('click', () => {
+      const date = $('#diaryDate').value;
+      const hours = parseFloat($('#diaryHours').value) || 0;
+      const text = $('#diaryText').value.trim();
+      if (!date || !text) { alert('Preencha a data e o texto.'); return; }
+      state.diary.push({ date, hours, text });
+      save('diary', state.diary);
+      $('#diaryHours').value = '';
+      $('#diaryText').value = '';
+      renderDiary();
+    });
+
+    document.addEventListener('click', (e) => {
+      const rm = e.target.closest('.v7-diary-entry-remove');
+      if (rm) {
+        const sorted = [...state.diary].sort((a, b) => b.date.localeCompare(a.date));
+        const idx = parseInt(rm.dataset.diaryIdx);
+        const entry = sorted[idx];
+        const realIdx = state.diary.indexOf(entry);
+        if (realIdx !== -1) state.diary.splice(realIdx, 1);
+        save('diary', state.diary);
+        renderDiary();
+      }
+    });
+
+    renderDiary();
+
+    // ========== NOTES ==========
+    const notesArea = $('#notesArea');
+    notesArea.value = state.notes;
+    let notesTimeout;
+    notesArea.addEventListener('input', () => {
+      clearTimeout(notesTimeout);
+      notesTimeout = setTimeout(() => {
+        state.notes = notesArea.value;
+        save('notes', state.notes);
+        const saved = $('#notesSaved');
+        saved.style.display = 'block';
+        setTimeout(() => { saved.style.display = 'none'; }, 2000);
+      }, 500);
+    });
+
+    // ========== CALCULATOR ==========
+    function updateCalc() {
+      const curso = parseFloat($('#calcCurso').value) || 0;
+      const certs = parseFloat($('#calcCerts').value) || 0;
+      const apps = parseFloat($('#calcApps').value) || 0;
+      const livros = parseFloat($('#calcLivros').value) || 0;
+      const total = curso + certs + apps + livros;
+      $('#calcTotal').textContent = 'R$ ' + total.toLocaleString('pt-BR');
+    }
+    $$('.v7-calc-field input').forEach(input => input.addEventListener('input', updateCalc));
+    updateCalc();
+
+    // ========== MAP ==========
+    function renderMap() {
+      const grid = $('#mapGrid');
+      grid.innerHTML = '';
+      MAP_DATA.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'v7-map-state';
+        div.innerHTML = `<div class="v7-map-state-name">${s.uf}</div><div class="v7-map-state-count">${s.vagas.toLocaleString()} vagas</div>`;
+        grid.appendChild(div);
+      });
+    }
+    renderMap();
+
+    // ========== CHECKLIST ==========
+    function renderChecklist() {
+      const area = $('#checklistArea');
+      area.innerHTML = '';
+      let done = 0;
+      CHECKLIST_ITEMS.forEach((item, i) => {
+        const checked = state.checklist[i] || false;
+        if (checked) done++;
+        const div = document.createElement('div');
+        div.className = 'v7-checklist-item' + (checked ? ' done' : '');
+        div.innerHTML = `<div class="check-box"></div><span>${item}</span>`;
+        div.addEventListener('click', () => {
+          state.checklist[i] = !state.checklist[i];
+          save('checklist', state.checklist);
+          renderChecklist();
+        });
+        area.appendChild(div);
+      });
+      const total = CHECKLIST_ITEMS.length;
+      const pct = Math.round((done / total) * 100);
+      $('#checklistFill').style.width = pct + '%';
+      $('#checklistText').textContent = `${done} de ${total} concluidos (${pct}%)`;
+    }
+    renderChecklist();
+
+    // ========== MENTORS ==========
+    function renderMentors() {
+      const grid = $('#mentorsGrid');
+      grid.innerHTML = '';
+      MENTORS_DATA.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'v7-mentor-card';
+        card.innerHTML = `
+          <div class="v7-mentor-avatar">${m.name.charAt(0).toUpperCase() + m.name.split(' ').pop().charAt(0).toUpperCase()}</div>
+          <div class="v7-mentor-name">${m.name}</div>
+          <div class="v7-mentor-specialty">${m.specialty}</div>
+          <div class="v7-mentor-bio">${m.bio}</div>
+          <div class="v7-mentor-tags">${m.tags.map(t => `<span class="v7-mentor-tag">${t}</span>`).join('')}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+    renderMentors();
+
+    // ========== ANALYTICS DASHBOARD ==========
+    function renderAnalytics() {
+      // Study hours from diary
+      const totalHours = state.diary.reduce((sum, e) => sum + (e.hours || 0), 0);
+      $('#analyticsHours').textContent = totalHours.toFixed(1) + 'h';
+
+      // Questions
+      const totalQ = state.quizScores.reduce((sum, s) => sum + s.total, 0);
+      $('#analyticsQuestions').textContent = totalQ;
+
+      // Accuracy
+      const totalCorrect = state.quizScores.reduce((sum, s) => sum + s.correct, 0);
+      const accuracy = totalQ > 0 ? Math.round((totalCorrect / totalQ) * 100) : 0;
+      $('#analyticsAccuracy').textContent = accuracy + '%';
+
+      // Streak
+      const streak = getDiaryStreak();
+      $('#analyticsStreak').textContent = streak + ' dias';
+
+      // Chart (last 14 quiz sessions)
+      const chartEl = $('#analyticsChart');
+      chartEl.innerHTML = '';
+      const recent = state.quizScores.slice(-14);
+      if (recent.length === 0) {
+        chartEl.innerHTML = '<span style="font-size:.78rem;color:var(--v7-text-muted)">Complete quizzes para ver o grafico.</span>';
+      } else {
+        recent.forEach((s, i) => {
+          const bar = document.createElement('div');
+          bar.className = 'v7-analytics-bar';
+          bar.style.height = Math.max(4, s.pct) + '%';
+          bar.title = `${s.date}: ${s.pct}% (${s.correct}/${s.total})`;
+          chartEl.appendChild(bar);
+        });
+      }
+
+      // Top resources
+      const topEl = $('#analyticsTopResources');
+      const sorted = Object.entries(state.clicks).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      if (sorted.length === 0) {
+        topEl.textContent = 'Nenhum dado ainda.';
+      } else {
+        topEl.innerHTML = sorted.map(([id, count]) => {
+          const card = $(`[data-id="${id}"]`);
+          const name = card ? (card.querySelector('h3 a') || card.querySelector('h3')).textContent : id;
+          return `<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--v7-border-light)"><span>${name}</span><span style="color:var(--v7-accent);font-weight:600">${count}x</span></div>`;
+        }).join('');
+      }
+    }
+
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+K for search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      // Escape to clear search or exit focus
+      if (e.key === 'Escape') {
+        if (searchInput.value) { searchInput.value = ''; doSearch(); }
+        else if (state.focusSection) exitFocus();
+      }
+    });
+
+  })();
+  </script>
 </body>
 </html>
