@@ -1,0 +1,1574 @@
+<!-- VERSION: 4 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Animais Peconhentos - Avaliacao de Envenenamento</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+  header{background:linear-gradient(135deg,#1e293b 0%,#334155 60%,#1e293b 100%);width:100%;padding:1.5rem;text-align:center;border-bottom:2px solid #3b82f6;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+  header h1{font-size:1.5rem;font-weight:600;color:#f1f5f9}
+  header p{font-size:.875rem;color:#94a3b8;margin-top:.25rem}
+  .back-link{position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);color:#94a3b8;text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s;display:flex;align-items:center;gap:.3rem}
+  .back-link:hover{color:#f1f5f9}
+  .timer-badge{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);background:#0f172a;border:1px solid #334155;border-radius:2rem;padding:.3rem .75rem;font-size:.7rem;color:#64748b;font-family:'SF Mono','Fira Code',monospace;display:flex;align-items:center;gap:.35rem}
+  .timer-badge .timer-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:timer-pulse 2s ease-in-out infinite}
+  @keyframes timer-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .container{max-width:720px;width:100%;padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;padding-bottom:2rem}
+  .progress-bar{display:flex;align-items:center;gap:.35rem;padding:0 .5rem}
+  .progress-step{flex:1;height:6px;border-radius:3px;background:#1e293b;transition:background .4s ease, box-shadow .4s ease}
+  .progress-step.done{background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.3)}.progress-step.active{background:#60a5fa;animation:pulse-bar 1.5s infinite}
+  @keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.5}}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.6rem;color:#64748b;padding:0 .5rem}
+  .progress-labels span{transition:color .3s}
+  .progress-labels span.active-label{color:#93c5fd;font-weight:600}.progress-labels span.done-label{color:#3b82f6}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:1rem;padding:2rem;animation:fadeSlideIn .35s ease}
+  @keyframes fadeSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.15rem;color:#f8fafc;margin-bottom:.35rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+  .card h2 .step-badge{background:#3b82f6;color:#fff;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:9999px;white-space:nowrap}
+  .card .subtitle{font-size:.8rem;color:#94a3b8;margin-bottom:1.25rem;line-height:1.5}
+  .search-box{width:100%;padding:.7rem 1rem .7rem 2.4rem;border-radius:.75rem;border:1.5px solid #334155;background:#0f172a;color:#e2e8f0;font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:.75rem}
+  .search-box:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+  .search-wrap{position:relative}
+  .search-wrap .search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:#475569;font-size:.9rem;pointer-events:none}
+  .options{display:flex;flex-direction:column;gap:.6rem}
+  .option-group-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-top:.75rem;margin-bottom:0;padding-left:.25rem}
+  .option-group-label:first-child{margin-top:0}
+  .option-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.85rem 1rem;color:#cbd5e1;font-size:.92rem;cursor:pointer;transition:all .2s ease;text-align:left;display:flex;align-items:center;gap:.75rem;-webkit-user-select:none;user-select:none}
+  .option-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9;transform:translateX(2px)}
+  .option-btn:active{transform:scale(.98);transition-duration:.1s}
+  .option-btn.selected{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9;box-shadow:0 0 0 1px rgba(59,130,246,.2), 0 4px 12px rgba(59,130,246,.15)}
+  .option-btn.hidden-animal{display:none}
+  .option-btn .icon{font-size:1.25rem;flex-shrink:0;width:2rem;text-align:center}
+  .option-btn .label{flex:1;min-width:0}
+  .option-btn .label small{display:block;font-size:.7rem;color:#64748b;margin-top:.15rem;font-weight:400;line-height:1.4}
+  .option-btn.selected .label small{color:#93c5fd}
+  .option-btn .tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:9999px;font-weight:600;flex-shrink:0;white-space:nowrap}
+  .tag-serpente{background:#7f1d1d;color:#fca5a5}
+  .tag-aranha{background:#4c1d95;color:#c4b5fd}
+  .tag-escorpiao{background:#92400e;color:#fcd34d}
+  .tag-outro{background:#374151;color:#d1d5db}
+  .check-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.7rem 1rem;color:#cbd5e1;font-size:.88rem;cursor:pointer;transition:all .2s ease;text-align:left;display:flex;align-items:center;gap:.75rem;-webkit-user-select:none;user-select:none}
+  .check-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .check-btn:active{transform:scale(.98);transition-duration:.1s}
+  .check-btn.checked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}
+  .check-btn.checked-warn{border-color:#f59e0b;background:#451a03;color:#fef3c7}
+  .check-box{width:20px;height:20px;border:2px solid #475569;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.75rem}
+  .check-btn.checked .check-box{background:#3b82f6;border-color:#3b82f6}
+  .check-btn.checked-warn .check-box{background:#f59e0b;border-color:#f59e0b}
+  .symptom-counter{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;background:#0f172a;border:1px solid #334155;border-radius:.75rem;margin-bottom:.5rem}
+  .symptom-counter .sc-item{display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:#94a3b8}
+  .symptom-counter .sc-num{font-weight:700;font-size:.9rem;color:#f1f5f9;font-family:'SF Mono','Fira Code',monospace}
+  .symptom-counter .sc-divider{width:1px;height:1.2rem;background:#334155;margin:0 .25rem}
+  .nav-row{display:flex;gap:.75rem;margin-top:1.25rem}
+  .nav-btn{flex:1;padding:.85rem;border-radius:.75rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s ease;border:none;-webkit-user-select:none;user-select:none}
+  .nav-btn.secondary{background:#334155;color:#cbd5e1}.nav-btn.secondary:hover{background:#475569}
+  .nav-btn.primary{background:#3b82f6;color:#fff}.nav-btn.primary:hover{background:#2563eb;transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,130,246,.3)}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+  .nav-btn.danger{background:#991b1b;color:#fca5a5}.nav-btn.danger:hover{background:#7f1d1d}
+  .nav-btn:active:not(:disabled){transform:scale(.97);transition-duration:.1s}
+  .result-card{text-align:center;padding:2rem 1.5rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:5rem;height:5rem;border-radius:50%;font-size:2rem;font-weight:800;margin-bottom:1rem;animation:badge-pop .5s ease}
+  @keyframes badge-pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+  .badge-leve{background:#166534;color:#86efac;border:3px solid #22c55e}
+  .badge-moderado{background:#92400e;color:#fcd34d;border:3px solid #f59e0b}
+  .badge-grave{background:#991b1b;color:#fca5a5;border:3px solid #ef4444}
+  .result-title{font-size:1.3rem;font-weight:700;margin-bottom:.25rem}
+  .result-desc{color:#94a3b8;font-size:.9rem;margin-bottom:1.5rem}
+  .dark-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1rem}
+  .dark-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid #1e293b;font-size:.85rem}
+  .summary-row:last-child{border-bottom:none}.summary-row .criteria{color:#94a3b8}
+  .summary-row .value{font-weight:600;display:flex;align-items:center;gap:.4rem}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot-leve{background:#22c55e}.dot-moderado{background:#f59e0b}.dot-grave{background:#ef4444}
+  .conduta-box{border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1rem}
+  .conduta-box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .conduta-box.grave-box{background:#450a0a;border:1.5px solid #991b1b}.conduta-box.grave-box h3{color:#fca5a5}
+  .conduta-box.moderado-box{background:#451a03;border:1.5px solid #78350f}.conduta-box.moderado-box h3{color:#fcd34d}
+  .conduta-box.leve-box{background:#052e16;border:1.5px solid #14532d}.conduta-box.leve-box h3{color:#86efac}
+  .conduta-item{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem 0;font-size:.85rem;color:#cbd5e1;line-height:1.5}
+  .conduta-icon{flex-shrink:0;width:1.2rem;text-align:center}
+  .red-flag-box{background:#450a0a;border:1.5px solid #991b1b;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1rem}
+  .red-flag-box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem;color:#fca5a5}
+  .red-flag-item{display:flex;align-items:flex-start;gap:.5rem;padding:.35rem 0;font-size:.85rem;color:#fca5a5}
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.15rem 0;-webkit-tap-highlight-color:transparent}
+  .collapse-header:hover h3{color:#cbd5e1}
+  .collapse-header h3{margin-bottom:0;transition:color .2s}
+  .collapse-arrow{font-size:.8rem;color:#64748b;transition:transform .3s ease}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .35s ease, opacity .3s ease}
+  .collapse-body.hidden{max-height:0!important;padding-top:0;margin-top:0;opacity:0}
+  .collapse-body.visible{max-height:5000px;opacity:1}
+  .note-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1rem}
+  .note-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .note-text{background:#020617;border:1px solid #1e293b;border-radius:.5rem;padding:1rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.72rem;color:#94a3b8;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.75rem;padding:.7rem;border-radius:.5rem;border:1.5px solid #334155;background:#1e293b;color:#cbd5e1;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .copy-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .copy-btn:active{transform:scale(.97)}
+  .copy-btn.copied{border-color:#22c55e;background:#052e16;color:#86efac}
+  .flow-connector{display:flex;justify-content:center;padding:.15rem 0}
+  .flow-connector .arrow{width:2px;height:20px;background:#334155;position:relative}
+  .flow-connector .arrow::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #334155}
+  .score-opt{flex:1;padding:.5rem .3rem;border-radius:.5rem;font-size:.72rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s;line-height:1.3}
+  .score-opt:hover{border-color:#3b82f6;color:#cbd5e1}
+  .score-opt.picked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9;font-weight:600}
+  .info-banner{background:#172554;border:1px solid #1e40af;border-radius:.75rem;padding:1rem 1.15rem;font-size:.8rem;color:#93c5fd;line-height:1.6;margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.6rem}
+  .info-banner .info-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+  .info-banner strong{color:#bfdbfe}
+  .warn-banner{background:#451a03;border:1px solid #78350f;border-radius:.75rem;padding:1rem 1.15rem;font-size:.8rem;color:#fcd34d;line-height:1.6;margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.6rem}
+  .warn-banner .warn-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+  .warn-banner strong{color:#fef3c7}
+  .danger-banner{background:#450a0a;border:1px solid #991b1b;border-radius:.75rem;padding:1rem 1.15rem;font-size:.8rem;color:#fca5a5;line-height:1.6;margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.6rem}
+  .danger-banner .danger-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+  .danger-banner strong{color:#fecaca}
+  .vial-display{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1.25rem;margin:.75rem 0;background:#0f172a;border-radius:.75rem;border:1px solid #334155}
+  .vial-number{font-size:3rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;color:#f59e0b}
+  .vial-label{text-align:left}
+  .vial-label .vial-title{font-size:1rem;font-weight:700;color:#f1f5f9}
+  .vial-label .vial-sub{font-size:.75rem;color:#94a3b8;margin-top:.15rem;line-height:1.4}
+  .lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+  .lab-item{background:#0f172a;border:1px solid #334155;border-radius:.5rem;padding:.6rem .8rem;font-size:.8rem;color:#cbd5e1;transition:border-color .2s}
+  .lab-item .lab-name{font-weight:600;color:#f1f5f9;display:block;margin-bottom:.15rem}
+  .lab-item .lab-reason{font-size:.7rem;color:#64748b}
+  .lab-item.lab-urgent{border-color:#991b1b;background:#1a0505}
+  .lab-item.lab-urgent .lab-name{color:#fca5a5}
+  .severity-cards{display:flex;gap:.65rem;margin-top:.5rem}
+  .sev-card{flex:1;border-radius:.75rem;padding:1rem .75rem;cursor:pointer;transition:all .25s ease;text-align:center;border:1.5px solid #334155;background:#0f172a;-webkit-user-select:none;user-select:none}
+  .sev-card:hover{border-color:#3b82f6;background:#172040;transform:translateY(-2px)}
+  .sev-card:active{transform:scale(.97);transition-duration:.1s}
+  .sev-card.selected{border-width:2px;transform:translateY(-2px)}
+  .sev-card.sel-leve{border-color:#22c55e;background:#052e16;box-shadow:0 4px 16px rgba(34,197,94,.15)}
+  .sev-card.sel-moderado{border-color:#f59e0b;background:#451a03;box-shadow:0 4px 16px rgba(245,158,11,.15)}
+  .sev-card.sel-grave{border-color:#ef4444;background:#450a0a;box-shadow:0 4px 16px rgba(239,68,68,.15)}
+  .sev-card .sev-icon{font-size:1.5rem;margin-bottom:.35rem}
+  .sev-card .sev-title{font-size:.85rem;font-weight:700;color:#f1f5f9;margin-bottom:.25rem}
+  .sev-card .sev-desc{font-size:.65rem;color:#94a3b8;line-height:1.4}
+  .sev-card.sel-leve .sev-desc{color:#86efac}
+  .sev-card.sel-moderado .sev-desc{color:#fcd34d}
+  .sev-card.sel-grave .sev-desc{color:#fca5a5}
+  .first-aid-box{background:#172554;border:1px solid #1e40af;border-radius:.75rem;padding:1.15rem;text-align:left;margin-top:1rem}
+  .first-aid-box h4{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+  .first-aid-item{font-size:.8rem;color:#bfdbfe;padding:.25rem 0;padding-left:1.2rem;position:relative;line-height:1.5}
+  .first-aid-item::before{content:'';position:absolute;left:.2rem;top:.55rem;width:5px;height:5px;border-radius:50%;background:#3b82f6}
+  .obs-time-box{background:#0f172a;border:1px solid #334155;border-radius:.75rem;padding:1rem;margin-top:1rem}
+  .obs-time-box h4{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+  .obs-time-item{font-size:.8rem;color:#cbd5e1;padding:.3rem 0;line-height:1.5}
+  .ped-alert{background:#4c1d95;border:1px solid #6d28d9;border-radius:.75rem;padding:1rem 1.15rem;font-size:.8rem;color:#c4b5fd;line-height:1.6;margin-top:.75rem;display:flex;align-items:flex-start;gap:.6rem}
+  .ped-alert strong{color:#ddd6fe}
+  .ped-alert .ped-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fade-overlay .2s ease}
+  @keyframes fade-overlay{from{opacity:0}to{opacity:1}}
+  .confirm-dialog{background:#1e293b;border:1px solid #475569;border-radius:1rem;padding:2rem;max-width:360px;width:90%;text-align:center;animation:dialog-pop .3s ease}
+  @keyframes dialog-pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+  .confirm-dialog h3{color:#f1f5f9;font-size:1.05rem;margin-bottom:.5rem}
+  .confirm-dialog p{color:#94a3b8;font-size:.85rem;margin-bottom:1.25rem}
+  .confirm-dialog .dialog-btns{display:flex;gap:.75rem}
+  .confirm-dialog .dialog-btns button{flex:1;padding:.7rem;border-radius:.5rem;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+  .section-divider{border:none;border-top:1px solid #1e293b;margin:0}
+  .urgency-strip{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;margin-bottom:.75rem;font-size:.75rem;font-weight:600;line-height:1.5}
+  .urgency-strip.urgency-alta{background:#450a0a;border:1px solid #991b1b;color:#fca5a5}
+  .urgency-strip.urgency-media{background:#451a03;border:1px solid #78350f;color:#fcd34d}
+  .urgency-strip.urgency-baixa{background:#052e16;border:1px solid #14532d;color:#86efac}
+  .antivenom-reaction{background:#1e293b;border:1px solid #475569;border-radius:.75rem;padding:1rem;margin-top:.75rem}
+  .antivenom-reaction h4{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:.5rem}
+  .antivenom-reaction p{font-size:.78rem;color:#94a3b8;line-height:1.6}
+  .empty-search{text-align:center;padding:2rem 1rem;color:#475569;font-size:.85rem}
+  .cid-badge{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:.35rem;padding:.15rem .45rem;font-size:.65rem;color:#94a3b8;font-family:'SF Mono','Fira Code',monospace;margin-left:.5rem;vertical-align:middle}
+  .result-cid{display:inline-block;background:#0f172a;border:1px solid #334155;border-radius:.5rem;padding:.3rem .65rem;font-size:.75rem;color:#94a3b8;font-family:'SF Mono','Fira Code',monospace;margin-top:.5rem}
+  .sinan-banner{background:#172554;border:1px solid #1e40af;border-radius:.75rem;padding:.85rem 1rem;font-size:.78rem;color:#93c5fd;line-height:1.5;display:flex;align-items:flex-start;gap:.5rem;margin-top:.75rem}
+  .sinan-banner strong{color:#bfdbfe}
+  .sev-card-disabled{opacity:.4;pointer-events:none;position:relative}
+  .sev-card-disabled::after{content:'N/A';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.7rem;color:#64748b;font-weight:700;background:#0f172a;padding:.15rem .4rem;border-radius:.25rem}
+  /* Time since accident input */
+  .time-input-row{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+  .time-input-row label{font-size:.8rem;color:#94a3b8;white-space:nowrap}
+  .time-input{background:#0f172a;border:1.5px solid #334155;border-radius:.5rem;padding:.5rem .75rem;color:#e2e8f0;font-size:.85rem;font-family:inherit;outline:none;transition:border-color .2s;width:5rem;text-align:center}
+  .time-input:focus{border-color:#3b82f6}
+  .time-input-unit{font-size:.75rem;color:#64748b}
+  .time-since-banner{background:#0f172a;border:1px solid #334155;border-radius:.75rem;padding:.75rem 1rem;font-size:.78rem;color:#94a3b8;line-height:1.5;display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.75rem}
+  .time-since-banner strong{color:#f1f5f9}
+  .time-since-banner.time-urgent{border-color:#991b1b;background:#450a0a;color:#fca5a5}
+  .time-since-banner.time-urgent strong{color:#fecaca}
+  /* Dry bite banner */
+  .dry-bite-banner{background:#0f172a;border:1px solid #334155;border-radius:.75rem;padding:.85rem 1rem;font-size:.78rem;color:#94a3b8;line-height:1.5;display:flex;align-items:flex-start;gap:.5rem;margin-top:.75rem}
+  .dry-bite-banner strong{color:#e2e8f0}
+  /* Patient type toggle */
+  .patient-toggle{display:flex;gap:.5rem;margin-bottom:1rem}
+  .patient-toggle-btn{flex:1;padding:.6rem .5rem;border-radius:.5rem;font-size:.78rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s;font-weight:600;-webkit-user-select:none;user-select:none}
+  .patient-toggle-btn:hover{border-color:#3b82f6;color:#cbd5e1}
+  .patient-toggle-btn.active{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}
+  .patient-toggle-btn.active-child{border-color:#8b5cf6;background:#2e1065;color:#c4b5fd}
+  .patient-toggle-btn.active-pregnant{border-color:#ec4899;background:#4a0d2d;color:#f9a8d4}
+  @media(max-width:500px){
+    .container{padding:1rem}.card{padding:1.25rem}
+    .option-btn{padding:.75rem .9rem;font-size:.85rem}.check-btn{padding:.6rem .85rem;font-size:.82rem}
+    header h1{font-size:1.15rem}.progress-labels{font-size:.5rem}
+    .severity-cards{flex-direction:column}.lab-grid{grid-template-columns:1fr}
+    .score-opt{font-size:.6rem;padding:.4rem .15rem}
+    .vial-number{font-size:2.5rem}
+    .timer-badge{font-size:.6rem;padding:.2rem .5rem;right:.75rem}
+    .back-link{left:.75rem;font-size:.75rem}
+    header{padding:1.25rem .75rem}
+    header h1{padding:0 3rem}
+    .symptom-counter{flex-wrap:wrap;gap:.5rem}
+    .nav-btn{font-size:.85rem;padding:.75rem}
+    .result-desc{font-size:.8rem}
+    .cid-badge{margin-left:.25rem;font-size:.6rem}
+    .sev-card .sev-desc{font-size:.72rem}
+    .patient-toggle{flex-wrap:wrap}
+    .time-input-row{flex-wrap:wrap}
+  }
+  @media(max-width:360px){
+    header h1{font-size:1rem;padding:0 2.5rem}
+    header p{font-size:.75rem}
+    .card h2{font-size:1rem}
+    .option-btn{padding:.65rem .75rem;font-size:.82rem}
+    .option-btn .icon{font-size:1.1rem;width:1.5rem}
+    .option-btn .tag{font-size:.55rem;padding:.15rem .35rem}
+    .patient-toggle-btn{font-size:.7rem;padding:.5rem .3rem}
+  }
+  /* Safe area for notched phones */
+  @supports(padding-bottom: env(safe-area-inset-bottom)){
+    .container{padding-bottom:calc(2rem + env(safe-area-inset-bottom))}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../animais-peconhentos.html" class="back-link">&larr; Voltar</a>
+  <h1>Animais Peconhentos</h1>
+  <p>Avaliacao de Envenenamento no PS</p>
+  <div class="timer-badge"><span class="timer-dot"></span><span id="timerDisplay">00:00</span></div>
+</header>
+<div class="container" id="app"></div>
+<div id="confirmOverlay"></div>
+<script>
+// =============================================
+// DATA - ANIMALS & CLINICAL PROTOCOLS
+// =============================================
+const STEP_LABELS = ['Animal','Sintomas','Gravidade','Conduta','Resultado'];
+const TOTAL_STEPS = 5;
+
+const ANIMAL_GROUPS = [
+  {
+    groupLabel: 'Serpentes',
+    tag: 'tag-serpente', tagText: 'Serpente',
+    animals: [
+      {id:'botropico', icon:'\u{1F40D}', name:'Botr\u00f3pico (Jararaca)', desc:'Bothrops spp. \u2014 Mais comum no Brasil (~90% dos ofidismos)'},
+      {id:'crotalico', icon:'\u{1F40D}', name:'Crot\u00e1lico (Cascavel)', desc:'Crotalus durissus \u2014 Neurotoxicidade + miotoxicidade'},
+      {id:'elapidico', icon:'\u{1F40D}', name:'Elap\u00eddico (Coral verdadeira)', desc:'Micrurus spp. \u2014 S\u00edndrome neurot\u00f3xico-paral\u00edtica'},
+      {id:'laquetico', icon:'\u{1F40D}', name:'Laqu\u00e9tico (Surucucu)', desc:'Lachesis muta \u2014 Proteol\u00edtico + coagulop\u00e1tico + vagal'},
+    ]
+  },
+  {
+    groupLabel: 'Aranhas',
+    tag: 'tag-aranha', tagText: 'Aranha',
+    animals: [
+      {id:'phoneutria', icon:'\u{1F577}\u{FE0F}', name:'Phoneutria (Armadeira)', desc:'Dor local intensa, neurotoxicidade'},
+      {id:'loxosceles', icon:'\u{1F577}\u{FE0F}', name:'Loxosceles (Aranha-marrom)', desc:'Dermonecrose e/ou hem\u00f3lise'},
+      {id:'latrodectus', icon:'\u{1F577}\u{FE0F}', name:'Latrodectus (Vi\u00fava-negra)', desc:'Dor, contraturas, s\u00edndrome vagal'},
+    ]
+  },
+  {
+    groupLabel: 'Escorpi\u00f5es',
+    tag: 'tag-escorpiao', tagText: 'Escorpi\u00e3o',
+    animals: [
+      {id:'tityus', icon:'\u{1F982}', name:'Tityus (Escorpi\u00e3o-amarelo)', desc:'Tityus serrulatus / bahiensis \u2014 Mais grave em crian\u00e7as'},
+    ]
+  },
+  {
+    groupLabel: 'Outros',
+    tag: 'tag-outro', tagText: 'Outro',
+    animals: [
+      {id:'abelha', icon:'\u{1F41D}', name:'Abelhas / Vespas', desc:'Rea\u00e7\u00e3o local ou anafilaxia; m\u00faltiplas picadas podem causar rabdomi\u00f3lise'},
+      {id:'lonomia', icon:'\u{1F41B}', name:'Lonomia (Lagarta)', desc:'Lonomia obliqua \u2014 S\u00edndrome hemorr\u00e1gica por fibrin\u00f3lise'},
+      {id:'marinho', icon:'\u{1F41A}', name:'Animais Marinhos', desc:'\u00c1gua-viva, caravela, peixe-escorpi\u00e3o, arraia \u2014 Dor intensa'},
+    ]
+  }
+];
+
+// CID-10 codes for SINAN notification
+const CID10 = {
+  botropico: {code:'T63.0', desc:'Veneno de serpente (Botr\u00f3pico)'},
+  crotalico: {code:'T63.0', desc:'Veneno de serpente (Crot\u00e1lico)'},
+  elapidico: {code:'T63.0', desc:'Veneno de serpente (Elap\u00eddico)'},
+  laquetico: {code:'T63.0', desc:'Veneno de serpente (Laqu\u00e9tico)'},
+  phoneutria: {code:'T63.3', desc:'Veneno de aranha (Phoneutria)'},
+  loxosceles: {code:'T63.3', desc:'Veneno de aranha (Loxosceles)'},
+  latrodectus: {code:'T63.3', desc:'Veneno de aranha (Latrodectus)'},
+  tityus: {code:'T63.2', desc:'Veneno de escorpi\u00e3o (Tityus)'},
+  abelha: {code:'T63.4', desc:'Veneno de inseto (himen\u00f3ptero)'},
+  lonomia: {code:'T63.8', desc:'Contato com animal pe\u00e7onhento (Lonomia)'},
+  marinho: {code:'T63.5', desc:'Contato com animal marinho venenoso'},
+};
+
+// Symptom profiles per animal
+const SYMPTOMS = {
+  botropico: {
+    local: ['Dor imediata no local da picada','Edema endurado progressivo','Equimose / sangramento no local','Bolhas / necrose perilesional'],
+    sistemico: ['Gengivorragia / epistaxe','Sangramento por feridas','Hemat\u00faria','Incoagulabilidade sangu\u00ednea','Olig\u00faria / an\u00faria','Choque hipovol\u00eamico'],
+  },
+  crotalico: {
+    local: ['Dor leve ou ausente','Parestesia local','Pouco ou nenhum edema'],
+    sistemico: ['F\u00e1cies miast\u00eanica (ptose palpebral bilateral)','Diplopia / vis\u00e3o turva','Oftalmoplegia','Mialgia generalizada','Urina escura (mioglobin\u00faria)','Olig\u00faria / insufici\u00eancia renal','Incoagulabilidade sangu\u00ednea'],
+  },
+  elapidico: {
+    local: ['Dor leve no local','Parestesia perioral e no membro'],
+    sistemico: ['Ptose palpebral bilateral','Diplopia','Disfagia / dificuldade de deglutir','Insufici\u00eancia respirat\u00f3ria aguda','Paralisia fl\u00e1cida descendente','Fascicula\u00e7\u00f5es musculares'],
+  },
+  laquetico: {
+    local: ['Dor intensa no local','Edema extenso','Equimose / sangramento local','Bolhas / necrose'],
+    sistemico: ['Incoagulabilidade sangu\u00ednea','Sangramento sist\u00eamico','Bradicardia / hipotens\u00e3o','Diarreia / dor abdominal (s\u00edndrome vagal)','Choque'],
+  },
+  phoneutria: {
+    local: ['Dor intensa irradiada','Edema / eritema local','Marcas de inocula\u00e7\u00e3o'],
+    sistemico: ['Sudorese','Sialorreia','Taquicardia / bradicardia','Hipertens\u00e3o arterial','Priapismo','V\u00f4mitos','Agita\u00e7\u00e3o','Edema pulmonar agudo (grave)','Choque'],
+  },
+  loxosceles: {
+    local: ['Dor com sensa\u00e7\u00e3o de queimadura (6-12h)','Les\u00e3o incaracter\u00edstica inicial','Placa marm\u00f3rea (livedoide)','Necrose com escara seca'],
+    sistemico: ['Anemia hemol\u00edtica','Icter\u00edcia','Hemoglobin\u00faria (urina escura)','Insufici\u00eancia renal aguda','CIVD'],
+  },
+  latrodectus: {
+    local: ['Dor local em pontada','P\u00e1pula eritematosa / sudorese local'],
+    sistemico: ['Contraturas musculares dolorosas','Dor abdominal (abdome agudo-like)','Tremores / fascicula\u00e7\u00f5es','Bradicardia','Hipertens\u00e3o','Sudorese generalizada','Agita\u00e7\u00e3o / ansiedade'],
+  },
+  tityus: {
+    local: ['Dor intensa no local (em queima\u00e7\u00e3o)','Parestesia local','Eritema'],
+    sistemico: ['N\u00e1useas / v\u00f4mitos','Sudorese profusa','Sialorreia','Taquicardia ou bradicardia','Hipertens\u00e3o ou hipotens\u00e3o','Agita\u00e7\u00e3o / sonol\u00eancia','Priapismo','Espasmos musculares','Dispneia / edema pulmonar','Choque cardiog\u00eanico'],
+  },
+  abelha: {
+    local: ['Dor aguda com ferroada','Eritema / edema local','P\u00e1pula pruriginosa'],
+    sistemico: ['Urtic\u00e1ria generalizada','Angioedema','Broncoespasmo','Hipotens\u00e3o / choque anafil\u00e1tico','Mialgia difusa (m\u00faltiplas picadas)','Hem\u00f3lise (m\u00faltiplas picadas)','Rabdomi\u00f3lise (m\u00faltiplas picadas)','Insufici\u00eancia renal'],
+  },
+  lonomia: {
+    local: ['Dor em queima\u00e7\u00e3o no local','Eritema / edema local','Adenopatia regional'],
+    sistemico: ['Cefaleia','Sangramento no local do contato','Gengivorragia','Epistaxe','Equimoses espont\u00e2neas','Hemat\u00faria','Sangramento por feridas','Hemorragia intracraniana (grave)','Insufici\u00eancia renal'],
+  },
+  marinho: {
+    local: ['Dor intensa desproporcional','Edema local','Marcas lineares ou punctiformes','Necrose local (em casos graves)'],
+    sistemico: ['N\u00e1useas / v\u00f4mitos','Sudorese','Mal-estar','Hipotens\u00e3o (raro)','Paralisia muscular (raro \u2014 peixe-pedra)'],
+  },
+};
+
+// Severity criteria per animal
+const SEVERITY = {
+  botropico: {
+    leve: {desc:'Dor e edema local discreto, at\u00e9 2 segmentos, sem coagulopatia significativa', vials:4, antivenom:'SAB (Soro Antibotr\u00f3pico)', route:'IV'},
+    moderado: {desc:'Edema moderado (3-4 segmentos), sangramento local, coagulopatia sem sangramento grave', vials:8, antivenom:'SAB', route:'IV'},
+    grave: {desc:'Edema extenso/membro todo, hemorragia grave, choque, an\u00faria, necrose extensa', vials:12, antivenom:'SAB', route:'IV'},
+  },
+  crotalico: {
+    leve: {desc:'F\u00e1cies miast\u00eanica discreta, mialgia leve, sem altera\u00e7\u00e3o da cor da urina', vials:5, antivenom:'SAC (Soro Anticrot\u00e1lico)', route:'IV'},
+    moderado: {desc:'F\u00e1cies miast\u00eanica evidente, mialgia, urina escura', vials:10, antivenom:'SAC', route:'IV'},
+    grave: {desc:'Insufici\u00eancia respirat\u00f3ria, an\u00faria, mialgia intensa, urina marrom', vials:20, antivenom:'SAC', route:'IV'},
+  },
+  elapidico: {
+    leve: {desc:'Parestesia local, sem sinais neurot\u00f3xicos sist\u00eamicos', vials:10, antivenom:'SAE (Soro Antielap\u00eddico)', route:'IV'},
+    moderado: {desc:'Ptose palpebral, diplopia, sem insufici\u00eancia respirat\u00f3ria', vials:10, antivenom:'SAE', route:'IV'},
+    grave: {desc:'Paralisia respirat\u00f3ria, disfagia, oftalmoplegia completa', vials:10, antivenom:'SAE', route:'IV'},
+  },
+  laquetico: {
+    leve: null, // No leve classification exists for laquetico
+    moderado: {desc:'Edema moderado, coagulopatia sem hemorragia grave, sinais vagais leves', vials:10, antivenom:'SAL (Soro Antilaqu\u00e9tico) ou SABL', route:'IV'},
+    grave: {desc:'Hemorragia grave, choque, s\u00edndrome vagal intensa, edema extenso', vials:20, antivenom:'SAL ou SABL', route:'IV'},
+  },
+  phoneutria: {
+    leve: {desc:'Dor local, edema discreto, sem manifesta\u00e7\u00f5es sist\u00eamicas', vials:0, antivenom:'N\u00e3o indicado', route:'-'},
+    moderado: {desc:'Sudorese, agita\u00e7\u00e3o, taquicardia, v\u00f4mitos, hipertens\u00e3o (frequente em crian\u00e7as)', vials:5, antivenom:'SAAr (Soro Antiaracn\u00eddico)', route:'IV'},
+    grave: {desc:'Edema pulmonar, choque, arritmias (raro, mais em crian\u00e7as < 7 anos)', vials:10, antivenom:'SAAr', route:'IV'},
+  },
+  loxosceles: {
+    leve: {desc:'Les\u00e3o incaracter\u00edstica, eritema, dor local, sem hem\u00f3lise', vials:0, antivenom:'N\u00e3o indicado', route:'-'},
+    moderado: {desc:'Les\u00e3o sugestiva de loxoscelismo (placa marm\u00f3rea, necrose) sem hem\u00f3lise', vials:5, antivenom:'SALox (Soro Antiloxosc\u00e9lico) ou SAAr', route:'IV'},
+    grave: {desc:'Hem\u00f3lise, anemia, icter\u00edcia, hemoglobin\u00faria, insufici\u00eancia renal', vials:10, antivenom:'SALox ou SAAr', route:'IV'},
+  },
+  latrodectus: {
+    leve: {desc:'Dor local, eritema, sem manifesta\u00e7\u00f5es sist\u00eamicas', vials:0, antivenom:'N\u00e3o indicado', route:'-'},
+    moderado: {desc:'Dor local intensa, contraturas musculares, sudorese', vials:1, antivenom:'SALatr (Soro Antilatrod\u00e9ctico)', route:'IM/IV'},
+    grave: {desc:'Contraturas generalizadas, hipertens\u00e3o grave, dor abdominal intensa, choque', vials:2, antivenom:'SALatr', route:'IM/IV'},
+  },
+  tityus: {
+    leve: {desc:'Dor local intensa apenas, sem manifesta\u00e7\u00f5es sist\u00eamicas', vials:0, antivenom:'N\u00e3o indicado', route:'-'},
+    moderado: {desc:'N\u00e1useas, v\u00f4mitos, sudorese, agita\u00e7\u00e3o, taquicardia (mais comum em crian\u00e7as)', vials:3, antivenom:'SAEsc (Soro Antiescorpi\u00f4nico) ou SAAr', route:'IV'},
+    grave: {desc:'Edema pulmonar, choque, arritmia, insufici\u00eancia card\u00edaca (especialmente crian\u00e7as)', vials:6, antivenom:'SAEsc ou SAAr', route:'IV'},
+  },
+  abelha: {
+    leve: {desc:'Rea\u00e7\u00e3o local: dor, eritema, edema no local da picada', vials:0, antivenom:'N\u00e3o h\u00e1 soro espec\u00edfico', route:'-'},
+    moderado: {desc:'Rea\u00e7\u00e3o al\u00e9rgica sist\u00eamica: urtic\u00e1ria, angioedema, broncoespasmo', vials:0, antivenom:'N\u00e3o h\u00e1 soro espec\u00edfico', route:'-'},
+    grave: {desc:'Anafilaxia / choque; ou m\u00faltiplas picadas (>20 adultos, >5 crian\u00e7as) com rabdomi\u00f3lise/hem\u00f3lise', vials:0, antivenom:'N\u00e3o h\u00e1 soro espec\u00edfico', route:'-'},
+  },
+  lonomia: {
+    leve: {desc:'Dor local, eritema, cefaleia, sem sangramento', vials:0, antivenom:'N\u00e3o indicado', route:'-'},
+    moderado: {desc:'Sangramento local, gengivorragia, equimoses, coagulopatia', vials:5, antivenom:'SALon (Soro Antilon\u00f4mico)', route:'IV'},
+    grave: {desc:'Hemorragias viscerais, hemorragia intracraniana, insufici\u00eancia renal aguda', vials:10, antivenom:'SALon', route:'IV'},
+  },
+  marinho: {
+    leve: {desc:'Dor local control\u00e1vel, sem manifesta\u00e7\u00f5es sist\u00eamicas', vials:0, antivenom:'N\u00e3o h\u00e1 soro dispon\u00edvel no Brasil', route:'-'},
+    moderado: {desc:'Dor intensa refrat\u00e1ria, edema extenso, n\u00e1useas', vials:0, antivenom:'N\u00e3o h\u00e1 soro dispon\u00edvel no Brasil', route:'-'},
+    grave: {desc:'Necrose extensa, manifesta\u00e7\u00f5es sist\u00eamicas, choque (raro)', vials:0, antivenom:'N\u00e3o h\u00e1 soro dispon\u00edvel no Brasil', route:'-'},
+  },
+};
+
+// Red flags per animal
+const RED_FLAGS = {
+  botropico: ['Incoagulabilidade sangu\u00ednea (TAP/TTPA alargados)','Hemorragia ativa (SNG, hemat\u00faria, hemoptise)','Choque hipovol\u00eamico','Edema progressivo r\u00e1pido (>2 segmentos/hora)','S\u00edndrome compartimental','Olig\u00faria / an\u00faria','Necrose extensa'],
+  crotalico: ['Insufici\u00eancia respirat\u00f3ria','Urina marrom escura (rabdomi\u00f3lise)','An\u00faria / olig\u00faria','F\u00e1cies miast\u00eanica intensa','Incoagulabilidade'],
+  elapidico: ['Insufici\u00eancia respirat\u00f3ria AGUDA','Dificuldade de deglutir/proteger via a\u00e9rea','Paralisia progressiva','Necessidade de ventila\u00e7\u00e3o mec\u00e2nica'],
+  laquetico: ['Choque','Hemorragia grave','S\u00edndrome vagal intensa (bradicardia + hipotens\u00e3o + diarreia)','Incoagulabilidade','Necrose extensa'],
+  phoneutria: ['Edema pulmonar agudo','Choque','Crian\u00e7a < 7 anos com manifesta\u00e7\u00f5es sist\u00eamicas','Bradicardia sintom\u00e1tica','Arritmias'],
+  loxosceles: ['Hem\u00f3lise (icter\u00edcia, urina escura)','Insufici\u00eancia renal aguda','CIVD','Les\u00e3o necr\u00f3tica extensa (>3 cm evolu\u00e7\u00e3o r\u00e1pida)'],
+  latrodectus: ['Contraturas musculares generalizadas','Hipertens\u00e3o grave','Abdome agudo cir\u00fargico-like','Insufici\u00eancia respirat\u00f3ria'],
+  tityus: ['Crian\u00e7a < 7 anos','Edema pulmonar agudo','Choque cardiog\u00eanico','Arritmias','Rebaixamento de consci\u00eancia','V\u00f4mitos incoerciv\u00e9is com sudorese profusa'],
+  abelha: ['Anafilaxia / choque anafil\u00e1tico','> 20 picadas (adulto) ou > 5 (crian\u00e7a)','Edema de glote','Broncoespasmo grave','Rabdomi\u00f3lise / urina escura','Insufici\u00eancia renal'],
+  lonomia: ['Hemorragia intracraniana','Hemorragias viscerais','Insufici\u00eancia renal aguda','Sangramento incoerc\u00edvel','TAP / TTPA alargados com fibrinog\u00eanio baixo'],
+  marinho: ['Dor refrat\u00e1ria a analg\u00e9sicos comuns','Necrose extensa','Manifesta\u00e7\u00f5es sist\u00eamicas (hipotens\u00e3o, paralisia)','Infec\u00e7\u00e3o secund\u00e1ria com celulite extensa'],
+};
+
+// Lab workup per animal
+const LABS = {
+  botropico: {labs:['TAP / INR','TTPA','Fibrinog\u00eanio','Hemograma completo','Creatinina / Ureia','EAS (urina)','CPK (se necrose extensa)','Tipagem sangu\u00ednea (hemorragias)'], urgent:['TAP / INR','TTPA','Fibrinog\u00eanio','Hemograma completo']},
+  crotalico: {labs:['CPK / CK-MB','Creatinina / Ureia','EAS + mioglobin\u00faria','TAP / INR','TTPA','Fibrinog\u00eanio','Hemograma','Eletr\u00f3litos (K+)'], urgent:['CPK / CK-MB','Creatinina / Ureia','EAS + mioglobin\u00faria']},
+  elapidico: {labs:['Gasometria arterial','Hemograma','Creatinina / Ureia','CPK','Eletr\u00f3litos'], urgent:['Gasometria arterial']},
+  laquetico: {labs:['TAP / INR','TTPA','Fibrinog\u00eanio','Hemograma','Creatinina / Ureia','EAS','Tipagem sangu\u00ednea'], urgent:['TAP / INR','TTPA','Fibrinog\u00eanio']},
+  phoneutria: {labs:['Hemograma','Glicemia','Amilase (crian\u00e7as)','ECG','Radiografia de t\u00f3rax (se grave)','Creatinina / Ureia'], urgent:['ECG','Radiografia de t\u00f3rax (se grave)']},
+  loxosceles: {labs:['Hemograma + reticulocitos','Bilirrubinas','LDH','Haptoglobina','Creatinina / Ureia','EAS + hemoglobin\u00faria','TAP / TTPA (se CIVD)','Coombs direto'], urgent:['Hemograma + reticulocitos','LDH','Creatinina / Ureia']},
+  latrodectus: {labs:['Hemograma','CPK','Creatinina / Ureia','ECG','Glicemia'], urgent:['ECG']},
+  tityus: {labs:['ECG','Troponina / CK-MB','Radiografia de t\u00f3rax','Glicemia','Amilase','Hemograma','Eletr\u00f3litos','Gasometria (se grave)'], urgent:['ECG','Troponina / CK-MB','Radiografia de t\u00f3rax']},
+  abelha: {labs:['Hemograma','CPK / Mioglobina','Creatinina / Ureia','EAS','LDH / Bilirrubinas (hem\u00f3lise)','Gasometria (se grave)','IgE espec\u00edfica (ambulatorial)','Triptase s\u00e9rica (anafilaxia)'], urgent:['Hemograma','CPK / Mioglobina','Gasometria (se grave)']},
+  lonomia: {labs:['TAP / INR','TTPA','Fibrinog\u00eanio','PDF / D-d\u00edmero','Hemograma + plaquetas','Creatinina / Ureia','EAS','Tempo de coagula\u00e7\u00e3o (TC)'], urgent:['TAP / INR','TTPA','Fibrinog\u00eanio','PDF / D-d\u00edmero']},
+  marinho: {labs:['Hemograma','Creatinina / Ureia','ECG (se grave)','Cultura de ferida (se infec\u00e7\u00e3o)'], urgent:[]},
+};
+
+// Supportive care
+const SUPPORT_COMMON = [
+  {icon:'\u{1F489}', text:'Profilaxia antitet\u00e2nica (verificar cart\u00e3o vacinal)'},
+  {icon:'\u{1F4A7}', text:'Hidrata\u00e7\u00e3o venosa: SF 0,9% para manter diurese > 1 mL/kg/h'},
+  {icon:'\u{1F48A}', text:'Analgesia: dipirona ou tramadol conforme dor; evitar AINEs se coagulopatia'},
+  {icon:'\u{1F6CF}\u{FE0F}', text:'Elevar membro acometido; N\u00c3O usar torniquete'},
+  {icon:'\u{1FA79}', text:'Cuidados locais da ferida: limpeza com SF 0,9%, n\u00e3o fazer incis\u00e3o'},
+  {icon:'\u{23F0}', text:'Monitorizar sinais vitais a cada 1-2h nas primeiras 12h'},
+  {icon:'\u{1F4CB}', text:'Notifica\u00e7\u00e3o compuls\u00f3ria: preencher ficha SINAN'},
+];
+
+const SUPPORT_SPECIFIC = {
+  botropico: [
+    {icon:'\u{1FA78}', text:'Monitorar coagula\u00e7\u00e3o (TAP) de 12/12h at\u00e9 normalizar'},
+    {icon:'\u{1F6A8}', text:'Se s\u00edndrome compartimental: fasciotomia AP\u00d3S corre\u00e7\u00e3o da coagulopatia'},
+    {icon:'\u{1F4A7}', text:'Manitol 20% se olig\u00faria (ap\u00f3s hidrata\u00e7\u00e3o adequada)'},
+    {icon:'\u{1F52C}', text:'Reavaliar per\u00edmetro do membro de 4/4h (marcar com caneta)'},
+  ],
+  crotalico: [
+    {icon:'\u{1F4A7}', text:'Hidrata\u00e7\u00e3o vigorosa para prevenir IRA por mioglobin\u00faria'},
+    {icon:'\u{1F4A7}', text:'Alcalinizar urina (NaHCO3 na hidrata\u00e7\u00e3o) para prote\u00e7\u00e3o renal'},
+    {icon:'\u{1F52C}', text:'Monitorar CPK e creatinina de 12/12h'},
+    {icon:'\u{1F6A8}', text:'Ventila\u00e7\u00e3o mec\u00e2nica se insufici\u00eancia respirat\u00f3ria'},
+    {icon:'\u{23F0}', text:'Manter paciente em observa\u00e7\u00e3o m\u00ednima de 24h (mesmo se leve)'},
+  ],
+  elapidico: [
+    {icon:'\u{1F6A8}', text:'PRIORIDADE: Garantir via a\u00e9rea! Intubar se necess\u00e1rio'},
+    {icon:'\u{1F48A}', text:'Neostigmina 0,05 mg/kg IV + Atropina 0,5 mg IV como teste terap\u00eautico'},
+    {icon:'\u{1F3E5}', text:'Observa\u00e7\u00e3o em UTI por pelo menos 24-48h'},
+    {icon:'\u{1F52C}', text:'Monitorar fun\u00e7\u00e3o respirat\u00f3ria continuamente (oximetria + gasometria)'},
+  ],
+  laquetico: [
+    {icon:'\u{1FA78}', text:'Monitorar coagula\u00e7\u00e3o (TAP) de 12/12h'},
+    {icon:'\u{1F48A}', text:'Atropina 0,5-1 mg IV se bradicardia sintom\u00e1tica'},
+    {icon:'\u{1F4A7}', text:'Hidrata\u00e7\u00e3o vigorosa; monitorar diurese'},
+  ],
+  phoneutria: [
+    {icon:'\u{1F48A}', text:'Analgesia: lidoca\u00edna 2% sem vasoconstritor (bloqueio local) ou tramadol IV'},
+    {icon:'\u{1F6A8}', text:'Crian\u00e7as < 7 anos: observa\u00e7\u00e3o m\u00ednima 6-12h mesmo se caso leve'},
+    {icon:'\u{1F3E5}', text:'Se edema pulmonar: dobutamina + ventila\u00e7\u00e3o mec\u00e2nica'},
+  ],
+  loxosceles: [
+    {icon:'\u{1F48A}', text:'Prednisona 1 mg/kg/dia VO por 5-7 dias (forma cut\u00e2nea)'},
+    {icon:'\u{1F48A}', text:'Dapsona 50-100 mg/dia (adultos) se necrose cut\u00e2nea, ap\u00f3s excluir defici\u00eancia de G6PD'},
+    {icon:'\u{1F4A7}', text:'Hidrata\u00e7\u00e3o vigorosa se hem\u00f3lise/hemoglobin\u00faria'},
+    {icon:'\u{23F0}', text:'Monitorar fun\u00e7\u00e3o renal e hemoglobina diariamente'},
+    {icon:'\u{1F52C}', text:'Fotografar les\u00e3o diariamente para acompanhar evolu\u00e7\u00e3o'},
+  ],
+  latrodectus: [
+    {icon:'\u{1F48A}', text:'Gluconato de c\u00e1lcio 10% IV para contraturas (efeito vari\u00e1vel)'},
+    {icon:'\u{1F48A}', text:'Benzodiazep\u00ednicos (diazepam 5-10 mg IV) para espasmos musculares'},
+    {icon:'\u{1F48A}', text:'Analgesia potente (morfina se necess\u00e1rio)'},
+  ],
+  tityus: [
+    {icon:'\u{1F6A8}', text:'Crian\u00e7as < 7 anos: avaliar UTI independente da gravidade inicial'},
+    {icon:'\u{1F3E5}', text:'ECG e monitoriza\u00e7\u00e3o card\u00edaca cont\u00ednua'},
+    {icon:'\u{1F48A}', text:'Se edema pulmonar: dobutamina + ventila\u00e7\u00e3o; N\u00c3O usar diur\u00e9tico'},
+    {icon:'\u{1F48A}', text:'Atropina se bradicardia sintom\u00e1tica'},
+    {icon:'\u{1F48A}', text:'Analgesia local: lidoca\u00edna 2% sem vasoconstritor ou infiltra\u00e7\u00e3o'},
+  ],
+  abelha: [
+    {icon:'\u{1F489}', text:'Adrenalina IM 0,3-0,5 mg (adulto) / 0,01 mg/kg (crian\u00e7a) se anafilaxia \u2014 COXA anterolateral'},
+    {icon:'\u{1F48A}', text:'Anti-histam\u00ednicos: difenidramina 25-50 mg IV + ranitidina 50 mg IV'},
+    {icon:'\u{1F48A}', text:'Corticoide: metilprednisolona 1-2 mg/kg IV'},
+    {icon:'\u{1FA79}', text:'Remover ferr\u00e3o por raspagem (n\u00e3o pin\u00e7ar)'},
+    {icon:'\u{1F4A7}', text:'Se m\u00faltiplas picadas: hidratar vigorosamente + monitorar CPK e fun\u00e7\u00e3o renal'},
+    {icon:'\u{23F0}', text:'Observar por no m\u00ednimo 6-8h mesmo ap\u00f3s melhora (risco de anafilaxia bif\u00e1sica)'},
+  ],
+  lonomia: [
+    {icon:'\u{1FA78}', text:'Monitorar coagula\u00e7\u00e3o (TC, TAP, TTPA, fibrinog\u00eanio) de 12/12h'},
+    {icon:'\u{1F489}', text:'\u00c1cido tranex\u00e2mico 250 mg IV se sangramento ativo e sem soro dispon\u00edvel'},
+    {icon:'\u{1F4A7}', text:'Hidrata\u00e7\u00e3o vigorosa; monitorar diurese e fun\u00e7\u00e3o renal'},
+    {icon:'\u{1F6A8}', text:'TC de cr\u00e2nio se cefaleia s\u00fabita ou rebaixamento de consci\u00eancia'},
+  ],
+  marinho: [
+    {icon:'\u{2668}\u{FE0F}', text:'Imers\u00e3o em \u00e1gua quente (45\u00b0C) por 30-90 min (desativa toxinas termol\u00e1beis)'},
+    {icon:'\u{1F48A}', text:'Analgesia potente: bloqueio local ou opioide se refrat\u00e1rio'},
+    {icon:'\u{1FA79}', text:'Remover fragmentos de espinhos/tent\u00e1culos; lavar com SF 0,9%'},
+    {icon:'\u{1F48A}', text:'Antibioticoterapia se infec\u00e7\u00e3o secund\u00e1ria (ciprofloxacino + doxiciclina)'},
+    {icon:'\u{26A0}\u{FE0F}', text:'\u00c1gua-viva: N\u00c3O usar \u00e1gua doce (piora descarga de nematocistos); usar \u00e1cido ac\u00e9tico (vinagre) 5%'},
+  ],
+};
+
+// First aid instructions (pre-hospital)
+const FIRST_AID = {
+  botropico: ['Manter calmo, repouso do membro acometido','Remover an\u00e9is, pulseiras, roupas apertadas','N\u00c3O fazer garrote ou torniquete','N\u00c3O sugar nem cortar o local','Lavar com \u00e1gua e sab\u00e3o','Encaminhar ao hospital mais pr\u00f3ximo com soroterapia'],
+  crotalico: ['Manter paciente em repouso absoluto','N\u00e3o manipular o local da picada','Hidrata\u00e7\u00e3o oral abundante se poss\u00edvel','Encaminhar com URG\u00caNCIA ao hospital com soroterapia'],
+  elapidico: ['URG\u00caNCIA M\u00c1XIMA \u2014 risco de parada respirat\u00f3ria','Monitorar respira\u00e7\u00e3o continuamente durante transporte','Posi\u00e7\u00e3o de recupera\u00e7\u00e3o se rebaixamento de consci\u00eancia','Encaminhar IMEDIATAMENTE ao hospital com UTI'],
+  laquetico: ['Mesmos cuidados do acidente botr\u00f3pico','Transporte r\u00e1pido \u2014 acidentes em \u00e1reas remotas','Manter repouso e membro elevado'],
+  phoneutria: ['Compressas mornas no local (al\u00edvio da dor)','N\u00c3O aplicar gelo','Encaminhar ao PS se dor intensa ou crian\u00e7a'],
+  loxosceles: ['Lavar com \u00e1gua e sab\u00e3o','Compressas frias no local nas primeiras horas','N\u00c3O apertar a les\u00e3o','Capturar a aranha se poss\u00edvel (ajuda na identifica\u00e7\u00e3o)'],
+  latrodectus: ['Compressas frias no local','Repouso','Encaminhar ao PS se sintomas sist\u00eamicos'],
+  tityus: ['Compressas mornas no local','N\u00c3O aplicar torniquete','Encaminhar CRIAN\u00c7AS ao PS mesmo se poucos sintomas','Capturar o escorpi\u00e3o se poss\u00edvel'],
+  abelha: ['Remover ferr\u00e3o por raspagem (cart\u00e3o r\u00edgido)','N\u00c3O usar pin\u00e7a para remover ferr\u00e3o','Se anafilaxia: adrenalina auto-injet\u00e1vel se dispon\u00edvel','Posi\u00e7\u00e3o de Trendelenburg se hipotens\u00e3o'],
+  lonomia: ['N\u00c3O co\u00e7ar nem esfregar a regi\u00e3o de contato','Lavar com \u00e1gua corrente abundante','Encaminhar ao PS se m\u00faltiplas lagartas ou grande \u00e1rea de contato'],
+  marinho: ['\u00c1gua-viva/caravela: aplicar vinagre 5% sobre a regi\u00e3o','Peixe/arraia: imers\u00e3o em \u00e1gua quente (45\u00b0C) imediatamente','Remover fragmentos vis\u00edveis com pin\u00e7a','N\u00c3O usar \u00e1gua doce em queimaduras de cnid\u00e1rios'],
+};
+
+// Observation time per severity per animal
+const OBS_TIME = {
+  botropico: {leve:'24h em enfermaria',moderado:'48-72h; repetir coagulograma de 12/12h',grave:'UTI; m\u00ednimo 72h ou at\u00e9 estabiliza\u00e7\u00e3o'},
+  crotalico: {leve:'24h; monitorar CPK e fun\u00e7\u00e3o renal',moderado:'48h em enfermaria; controle rigoroso de diurese',grave:'UTI; monitorar at\u00e9 normaliza\u00e7\u00e3o de CPK e creatinina'},
+  elapidico: {leve:'24h com monitoriza\u00e7\u00e3o respirat\u00f3ria',moderado:'24-48h em UTI ou semi-intensiva',grave:'UTI at\u00e9 desmame ventilat\u00f3rio + 24h est\u00e1vel'},
+  laquetico: {moderado:'48-72h; monitorar coagula\u00e7\u00e3o e sinais vagais',grave:'UTI; m\u00ednimo 72h'},
+  phoneutria: {leve:'6h de observa\u00e7\u00e3o (crian\u00e7as: 12h)',moderado:'12-24h em observa\u00e7\u00e3o',grave:'UTI at\u00e9 estabiliza\u00e7\u00e3o hemodin\u00e2mica'},
+  loxosceles: {leve:'Ambulatorial com retorno em 48-72h',moderado:'24-48h; reavaliar les\u00e3o diariamente',grave:'Interna\u00e7\u00e3o at\u00e9 resolu\u00e7\u00e3o da hem\u00f3lise e fun\u00e7\u00e3o renal est\u00e1vel'},
+  latrodectus: {leve:'6h de observa\u00e7\u00e3o',moderado:'24h em observa\u00e7\u00e3o',grave:'48h; UTI se instabilidade'},
+  tityus: {leve:'6h (crian\u00e7as: 12h de observa\u00e7\u00e3o)',moderado:'24h (crian\u00e7as: UTI)',grave:'UTI at\u00e9 estabiliza\u00e7\u00e3o cardiorrespirat\u00f3ria'},
+  abelha: {leve:'2-4h de observa\u00e7\u00e3o',moderado:'12-24h (risco de anafilaxia bif\u00e1sica)',grave:'UTI se anafilaxia grave ou m\u00faltiplas picadas'},
+  lonomia: {leve:'24h; repetir coagulograma em 12h',moderado:'48-72h; monitorar coagula\u00e7\u00e3o',grave:'UTI; m\u00ednimo 72h ou at\u00e9 resolu\u00e7\u00e3o da coagulopatia'},
+  marinho: {leve:'4-6h de observa\u00e7\u00e3o',moderado:'12-24h',grave:'24-48h; monitorar fun\u00e7\u00e3o renal'},
+};
+
+// Pediatric alerts
+const PED_ALERTS = {
+  phoneutria: 'Crian\u00e7as < 7 anos t\u00eam MAIOR risco de forma grave. Casos aparentemente leves podem evoluir rapidamente para edema pulmonar e choque. Manter observa\u00e7\u00e3o prolongada e baixo limiar para soroterapia.',
+  tityus: 'Escorpionismo em crian\u00e7as < 7 anos \u00e9 a principal causa de \u00f3bito por animais pe\u00e7onhentos no Brasil. Mesmo com quadro inicial leve, pode evoluir em minutos para edema pulmonar e choque cardiog\u00eanico. UTI precoce.',
+  abelha: 'Em crian\u00e7as, o limiar para m\u00faltiplas picadas graves \u00e9 menor (>5 picadas). Considerar maior risco de anafilaxia e rabdomi\u00f3lise. Peso corporal menor aumenta a concentra\u00e7\u00e3o relativa de veneno.',
+  loxosceles: 'Forma cut\u00e2neo-visceral (hemol\u00edtica) \u00e9 mais frequente em crian\u00e7as. Monitorar hem\u00f3lise mesmo em les\u00f5es cut\u00e2neas aparentemente moderadas.',
+  botropico: 'Em crian\u00e7as, a rela\u00e7\u00e3o veneno/peso corporal \u00e9 maior, aumentando o risco de gravidade. Edema tende a ser mais extenso proporcionalmente.',
+  crotalico: 'Crian\u00e7as podem apresentar insufici\u00eancia renal mais precocemente. Monitorar diurese e CPK com rigor.',
+};
+
+// Pregnant patient alerts
+const GESTANTE_ALERTS = {
+  botropico: 'Risco de hemorragia grave e DPP (descolamento prematuro de placenta). Monitorar BCF. Coagulopatia pode ser agravada pela coagula\u00e7\u00e3o fisiol\u00f3gica da gesta\u00e7\u00e3o. Soroterapia N\u00c3O \u00e9 contraindicada na gravidez.',
+  crotalico: 'Risco de IRA pode ser potencializado. Monitorar fun\u00e7\u00e3o renal e hidrata\u00e7\u00e3o com rigor. Soroterapia indicada normalmente.',
+  elapidico: 'Insufici\u00eancia respirat\u00f3ria pode comprometer oxigena\u00e7\u00e3o fetal. Monitorar BCF continuamente. Intubar precocemente se sinais de paralisia.',
+  tityus: 'Manifesta\u00e7\u00f5es cardiovasculares podem comprometer perfus\u00e3o placentar. Monitorizar BCF. Soroterapia indicada normalmente.',
+  abelha: 'Anafilaxia na gestante: adrenalina IM na mesma dose. Posicionar em dec\u00fabito lateral esquerdo. Risco de sofrimento fetal agudo.',
+};
+
+// Antivenom reaction management
+const ANTIVENOM_REACTION = {
+  premedication: 'Pr\u00e9-medica\u00e7\u00e3o de rotina N\u00c3O \u00e9 recomendada pelo Minist\u00e9rio da Sa\u00fade. Manter material de emerg\u00eancia preparado.',
+  earlyReaction: 'Rea\u00e7\u00e3o precoce (anafil\u00e1tica): Parar infus\u00e3o. Adrenalina 0,3-0,5 mg IM. Anti-H1 (difenidramina 50 mg IV). Corticoide (hidrocortisona 500 mg IV). Retomar infus\u00e3o lentamente ap\u00f3s estabiliza\u00e7\u00e3o.',
+  lateReaction: 'Doen\u00e7a do soro (7-14 dias): Prednisona 1 mg/kg/dia VO por 5-7 dias. Orientar sinais de alarme na alta.',
+};
+
+// Time since accident context (hours) - when antivenom is most effective
+const ANTIVENOM_TIME_WINDOW = {
+  botropico: {ideal: 6, acceptable: 12, text_ideal: 'Soroterapia mais eficaz nas primeiras 6h.', text_late: 'Soroterapia ainda indicada, mas efic\u00e1cia reduzida ap\u00f3s 12h. Manter indica\u00e7\u00e3o se coagulopatia persistente.'},
+  crotalico: {ideal: 6, acceptable: 12, text_ideal: 'Soroterapia mais eficaz nas primeiras 6h.', text_late: 'Administrar independente do tempo se sintom\u00e1tico. Hidrata\u00e7\u00e3o agressiva para prote\u00e7\u00e3o renal.'},
+  elapidico: {ideal: 2, acceptable: 6, text_ideal: 'URG\u00caNCIA: SAE deve ser administrado o mais r\u00e1pido poss\u00edvel.', text_late: 'Administrar mesmo tardiamente se sinais neurot\u00f3xicos presentes.'},
+  laquetico: {ideal: 6, acceptable: 12, text_ideal: 'Soroterapia mais eficaz nas primeiras 6h.', text_late: 'Administrar se coagulopatia ou sinais vagais persistentes.'},
+  phoneutria: {ideal: 3, acceptable: 6, text_ideal: 'Soroterapia nas primeiras 3h quando indicada.', text_late: 'Tratar de acordo com gravidade cl\u00ednica independente do tempo.'},
+  loxosceles: {ideal: 36, acceptable: 72, text_ideal: 'SALox mais eficaz nas primeiras 36h.', text_late: 'Ap\u00f3s 36h, soro tem menor efic\u00e1cia. Priorizar corticoterapia e suporte.'},
+  tityus: {ideal: 3, acceptable: 6, text_ideal: 'Soroterapia mais eficaz nas primeiras 3h.', text_late: 'Administrar se sinais sist\u00eamicos persistentes.'},
+  lonomia: {ideal: 12, acceptable: 24, text_ideal: 'SALon mais eficaz nas primeiras 12h.', text_late: 'Administrar se coagulopatia persistente.'},
+};
+
+// Dry bite rates (approximate percentages)
+const DRY_BITE_INFO = {
+  botropico: {rate: '10-15%', text: 'Acidentes botr\u00f3picos sem inocula\u00e7\u00e3o de veneno (picada seca) ocorrem em ~10-15% dos casos. Observar por 12-24h com exames de coagula\u00e7\u00e3o seriados antes de descartar envenenamento.'},
+  crotalico: {rate: '~10%', text: 'Picada seca ocorre em ~10%. Mesmo sem sintomas iniciais, monitorar CPK e fun\u00e7\u00e3o renal por 24h.'},
+  elapidico: {rate: '~50%', text: 'At\u00e9 50% dos acidentes elap\u00eddicos podem ser picadas secas. Por\u00e9m, se houve inocula\u00e7\u00e3o, a evolu\u00e7\u00e3o pode ser r\u00e1pida. Observar por 24h em ambiente com suporte ventilat\u00f3rio.'},
+  laquetico: {rate: 'Raro', text: 'Picada seca \u00e9 incomum no acidente laqu\u00e9tico. Tratar como envenenamento at\u00e9 prova contr\u00e1ria.'},
+  phoneutria: {rate: '~30%', text: 'At\u00e9 30% das picadas de Phoneutria podem ser secas. Observar por 6h (crian\u00e7as: 12h).'},
+  tityus: {rate: 'Raro', text: 'Picada seca \u00e9 rara em escorpionismo. Presumir envenenamento e monitorar.'},
+};
+
+// Animal display names
+const ANIMAL_NAMES = {};
+for(const g of ANIMAL_GROUPS) for(const a of g.animals) ANIMAL_NAMES[a.id] = a.name;
+
+// =============================================
+// STATE
+// =============================================
+let step = 0;
+let selectedAnimal = null;
+let checkedSymptoms = {local: new Set(), sistemico: new Set()};
+let severity = null; // 'leve','moderado','grave'
+let checkedSupport = new Set();
+let sections = {symptoms:true, severity:true, antivenom:true, redflags:true, labs:true, support:true, note:true, firstaid:false, obstime:true, avreaction:false};
+let searchFilter = '';
+let evalStartTime = Date.now();
+let patientType = 'adulto'; // 'adulto', 'crianca', 'gestante'
+let timeSinceAccidentHours = null; // null = not informed
+const app = document.getElementById('app');
+
+// =============================================
+// TIMER
+// =============================================
+function updateTimer(){
+  const elapsed = Math.floor((Date.now() - evalStartTime) / 1000);
+  const mm = String(Math.floor(elapsed / 60)).padStart(2,'0');
+  const ss = String(elapsed % 60).padStart(2,'0');
+  const el = document.getElementById('timerDisplay');
+  if(el) el.textContent = mm + ':' + ss;
+}
+setInterval(updateTimer, 1000);
+
+// =============================================
+// PROGRESS BAR
+// =============================================
+function progHTML(idx, allDone){
+  let h='<div class="progress-bar">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done':i===idx?'active':'';h+=`<div class="progress-step ${c}"></div>`}
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done-label':i===idx?'active-label':'';h+=`<span class="${c}">${STEP_LABELS[i]}</span>`}
+  h+='</div><div class="flow-connector"><div class="arrow"></div></div>';
+  return h;
+}
+
+// =============================================
+// COLLAPSIBLE
+// =============================================
+function collapsible(id, title, contentFn, customClass){
+  const open = sections[id];
+  let h = customClass ? `<div class="${customClass}">` : '<div class="dark-box">';
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.75rem':'0'}">`;
+  h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// PATIENT TYPE TOGGLE
+// =============================================
+function patientToggleHTML(){
+  let h = '<div class="patient-toggle">';
+  const opts = [
+    {val:'adulto', label:'Adulto', cls:'active'},
+    {val:'crianca', label:'Crian\u00e7a (<14a)', cls:'active-child'},
+    {val:'gestante', label:'Gestante', cls:'active-pregnant'},
+  ];
+  for(const o of opts){
+    const isActive = patientType === o.val;
+    h += `<button class="patient-toggle-btn ${isActive ? o.cls : ''}" onclick="setPatientType('${o.val}')">${o.label}</button>`;
+  }
+  h += '</div>';
+  return h;
+}
+
+// =============================================
+// TIME SINCE ACCIDENT INPUT
+// =============================================
+function timeSinceHTML(){
+  const val = timeSinceAccidentHours !== null ? timeSinceAccidentHours : '';
+  let h = '<div class="time-input-row">';
+  h += `<label>Tempo desde o acidente:</label>`;
+  h += `<input class="time-input" type="number" min="0" max="720" step="0.5" value="${val}" placeholder="\u2014" oninput="setTimeSince(this.value)" id="timeSinceInput">`;
+  h += '<span class="time-input-unit">horas</span>';
+  h += '</div>';
+
+  // Show time context banner if time provided
+  if(timeSinceAccidentHours !== null && selectedAnimal && ANTIVENOM_TIME_WINDOW[selectedAnimal]){
+    const tw = ANTIVENOM_TIME_WINDOW[selectedAnimal];
+    const isLate = timeSinceAccidentHours > tw.acceptable;
+    const isDelayed = timeSinceAccidentHours > tw.ideal && timeSinceAccidentHours <= tw.acceptable;
+    if(isLate){
+      h += `<div class="time-since-banner time-urgent"><span>\u{26A0}\u{FE0F}</span><span><strong>${timeSinceAccidentHours}h desde o acidente.</strong> ${tw.text_late}</span></div>`;
+    } else if(isDelayed){
+      h += `<div class="time-since-banner" style="border-color:#78350f;color:#fcd34d"><span>\u{1F7E1}</span><span><strong>${timeSinceAccidentHours}h desde o acidente.</strong> Janela ideal j\u00e1 passou (${tw.ideal}h). ${tw.text_ideal}</span></div>`;
+    } else {
+      h += `<div class="time-since-banner" style="border-color:#14532d;color:#86efac"><span>\u{1F7E2}</span><span><strong>${timeSinceAccidentHours}h desde o acidente.</strong> Dentro da janela ideal. ${tw.text_ideal}</span></div>`;
+    }
+  }
+  return h;
+}
+
+// =============================================
+// RENDER ROUTER
+// =============================================
+function render(){
+  if(step===0) renderAnimalSelect();
+  else if(step===1) renderSymptoms();
+  else if(step===2) renderSeverity();
+  else if(step===3) renderSupportCare();
+  else renderResult();
+}
+
+// =============================================
+// STEP 0: ANIMAL SELECTION
+// =============================================
+function renderAnimalSelect(){
+  let h = progHTML(0, false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">1/'+TOTAL_STEPS+'</span> Qual animal causou o acidente?</h2>';
+  h+='<p class="subtitle">Selecione com base na identifica\u00e7\u00e3o do animal ou s\u00edndrome cl\u00ednica.</p>';
+
+  // Patient type
+  h += patientToggleHTML();
+
+  // Time since accident
+  h += timeSinceHTML();
+
+  // Search
+  h+='<div class="search-wrap"><span class="search-icon">\u{1F50D}</span>';
+  h+=`<input class="search-box" type="text" placeholder="Filtrar animais..." value="${escAttr(searchFilter)}" oninput="filterAnimals(this.value)" id="animalSearch" autocomplete="off"></div>`;
+
+  h+='<div class="options" id="animalOptions">';
+  let visibleCount = 0;
+  const filter = normalizeSearch(searchFilter);
+  for(const g of ANIMAL_GROUPS){
+    let groupHasVisible = false;
+    let groupButtons = '';
+    for(const a of g.animals){
+      const searchText = normalizeSearch(a.name + ' ' + a.desc + ' ' + g.groupLabel);
+      const visible = !filter || searchText.includes(filter);
+      if(visible) {groupHasVisible = true; visibleCount++;}
+      groupButtons+=`<button class="option-btn ${selectedAnimal===a.id?'selected':''} ${visible?'':'hidden-animal'}" onclick="selectAnimal('${a.id}')">`;
+      groupButtons+=`<span class="icon">${a.icon}</span>`;
+      groupButtons+=`<span class="label">${a.name}<small>${a.desc}</small></span>`;
+      groupButtons+=`<span class="tag ${g.tag}">${g.tagText}</span>`;
+      groupButtons+='</button>';
+    }
+    if(groupHasVisible || !filter){
+      h+=`<div class="option-group-label" ${groupHasVisible?'':'style="display:none"'}>${g.groupLabel}</div>`;
+      h+=groupButtons;
+    }
+  }
+  if(visibleCount === 0 && filter){
+    h+='<div class="empty-search">Nenhum animal encontrado para "'+escHTML(searchFilter)+'"</div>';
+  }
+  h+='</div>';
+
+  // SINAN info
+  h+='<div class="sinan-banner"><span>\u{1F4CB}</span><span><strong>Lembrete:</strong> Acidentes por animais pe\u00e7onhentos s\u00e3o de notifica\u00e7\u00e3o compuls\u00f3ria no SINAN.</span></div>';
+
+  h+='<div class="nav-row">';
+  h+=`<button class="nav-btn primary" ${selectedAnimal?'':'disabled'} onclick="next()">Pr\u00f3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML = h;
+
+  // Keep focus on search if was typing
+  if(searchFilter){
+    const searchEl = document.getElementById('animalSearch');
+    if(searchEl){searchEl.focus(); searchEl.setSelectionRange(searchFilter.length, searchFilter.length);}
+  }
+}
+
+// =============================================
+// STEP 1: SYMPTOMS
+// =============================================
+function renderSymptoms(){
+  const s = SYMPTOMS[selectedAnimal];
+  const nLocal = checkedSymptoms.local.size;
+  const nSis = checkedSymptoms.sistemico.size;
+  const nTotal = nLocal + nSis;
+
+  let h = progHTML(1, false);
+  h+='<div class="card">';
+  h+=`<h2><span class="step-badge">2/${TOTAL_STEPS}</span> Manifesta\u00e7\u00f5es cl\u00ednicas</h2>`;
+  h+=`<p class="subtitle">Marque os sinais e sintomas presentes. ${ANIMAL_NAMES[selectedAnimal]}.`;
+  if(CID10[selectedAnimal]) h+=` <span class="cid-badge">CID-10: ${CID10[selectedAnimal].code}</span>`;
+  h+='</p>';
+
+  // Patient type reminder
+  if(patientType === 'crianca'){
+    h += '<div class="ped-alert" style="margin-bottom:.75rem"><span class="ped-icon">\u{1F476}</span><span><strong>Paciente pedi\u00e1trico.</strong> Lembrar que gravidade pode ser maior em crian\u00e7as pela rela\u00e7\u00e3o veneno/peso corporal.</span></div>';
+  } else if(patientType === 'gestante'){
+    h += '<div class="warn-banner" style="margin-bottom:.75rem"><span class="warn-icon">\u{1F930}</span><span><strong>Gestante.</strong> Monitorar BCF. Soroterapia N\u00c3O \u00e9 contraindicada na gravidez.</span></div>';
+  }
+
+  // Symptom counter
+  h+='<div class="symptom-counter">';
+  h+=`<div class="sc-item"><span class="sc-num">${nTotal}</span> total</div>`;
+  h+='<div class="sc-divider"></div>';
+  h+=`<div class="sc-item"><span class="sc-num">${nLocal}</span> locais</div>`;
+  h+='<div class="sc-divider"></div>';
+  h+=`<div class="sc-item"><span class="sc-num">${nSis}</span> sist\u00eamicos</div>`;
+  h+='</div>';
+
+  // Dry bite info if no symptoms selected
+  if(nTotal === 0 && DRY_BITE_INFO[selectedAnimal]){
+    const db = DRY_BITE_INFO[selectedAnimal];
+    h += `<div class="dry-bite-banner"><span>\u{2139}\u{FE0F}</span><span><strong>Picada seca (~${db.rate}):</strong> ${db.text}</span></div>`;
+  }
+
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Manifesta\u00e7\u00f5es locais</div>';
+  for(const sym of s.local){
+    const ck = checkedSymptoms.local.has(sym);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSymptom('local',${JSON.stringify(sym)})"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${sym}</span></button>`;
+  }
+
+  h+='<div class="option-group-label">Manifesta\u00e7\u00f5es sist\u00eamicas</div>';
+  for(const sym of s.sistemico){
+    const ck = checkedSymptoms.sistemico.has(sym);
+    const isRedFlag = isSymptomRedFlag(selectedAnimal, sym);
+    h+=`<button class="check-btn ${ck?(isRedFlag?'checked-warn':'checked'):''}" onclick="toggleSymptom('sistemico',${JSON.stringify(sym)})"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${sym}${isRedFlag?' \u{26A0}\u{FE0F}':''}</span></button>`;
+  }
+
+  h+='</div>';
+
+  // Auto-suggest severity
+  const suggestedSev = suggestSeverity();
+  if(suggestedSev){
+    const displaySev = (selectedAnimal === 'laquetico' && suggestedSev === 'leve') ? 'moderado' : suggestedSev;
+    const bannerClass = displaySev === 'grave' ? 'danger-banner' : displaySev === 'moderado' ? 'warn-banner' : 'info-banner';
+    const iconClass = displaySev === 'grave' ? 'danger-icon' : displaySev === 'moderado' ? 'warn-icon' : 'info-icon';
+    const icon = displaySev === 'grave' ? '\u{1F534}' : displaySev === 'moderado' ? '\u{1F7E1}' : '\u{1F7E2}';
+    h+=`<div class="${bannerClass}" style="margin-top:1rem"><span class="${iconClass}">${icon}</span><span><strong>Sugest\u00e3o autom\u00e1tica:</strong> Com base nos sintomas, a gravidade sugerida \u00e9 <strong>${displaySev.toUpperCase()}</strong>. Confirme na pr\u00f3xima etapa.</span></div>`;
+  }
+
+  // Pediatric alert if applicable AND patient is child
+  if(PED_ALERTS[selectedAnimal] && patientType === 'crianca'){
+    h+=`<div class="ped-alert"><span class="ped-icon">\u{1F476}</span><span><strong>Alerta pedi\u00e1trico:</strong> ${PED_ALERTS[selectedAnimal]}</span></div>`;
+  }
+  // Always show pediatric alert for phoneutria and tityus (even if adult selected) since children may present
+  if(PED_ALERTS[selectedAnimal] && patientType === 'adulto' && (selectedAnimal === 'phoneutria' || selectedAnimal === 'tityus')){
+    h+=`<div class="ped-alert" style="opacity:.7"><span class="ped-icon">\u{1F476}</span><span><strong>Nota pedi\u00e1trica (se aplic\u00e1vel):</strong> ${PED_ALERTS[selectedAnimal]}</span></div>`;
+  }
+
+  // Gestante alert if applicable
+  if(GESTANTE_ALERTS[selectedAnimal] && patientType === 'gestante'){
+    h+=`<div class="warn-banner" style="margin-top:.75rem"><span class="warn-icon">\u{1F930}</span><span><strong>Alerta gestante:</strong> ${GESTANTE_ALERTS[selectedAnimal]}</span></div>`;
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">\u2190 Voltar</button>';
+  h+=`<button class="nav-btn primary" onclick="next()">Pr\u00f3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML = h;
+}
+
+// =============================================
+// STEP 2: SEVERITY
+// =============================================
+function renderSeverity(){
+  const sev = SEVERITY[selectedAnimal];
+  let h = progHTML(2, false);
+  h+='<div class="card">';
+  h+=`<h2><span class="step-badge">3/${TOTAL_STEPS}</span> Classifica\u00e7\u00e3o de gravidade</h2>`;
+  h+=`<p class="subtitle">${ANIMAL_NAMES[selectedAnimal]}. Classifique conforme crit\u00e9rios do Minist\u00e9rio da Sa\u00fade.</p>`;
+
+  // Urgency strip for laquetico
+  if(selectedAnimal === 'laquetico'){
+    h+='<div class="urgency-strip urgency-alta">\u{26A0}\u{FE0F} Acidente laqu\u00e9tico n\u00e3o possui classifica\u00e7\u00e3o leve. Tratar como no m\u00ednimo moderado.</div>';
+  }
+  if(selectedAnimal === 'elapidico'){
+    h+='<div class="urgency-strip urgency-alta">\u{26A0}\u{FE0F} Acidente elap\u00eddico: mesma dose de SAE (10 ampolas) independente da gravidade.</div>';
+  }
+
+  // Child severity warning
+  if(patientType === 'crianca' && (selectedAnimal === 'tityus' || selectedAnimal === 'phoneutria')){
+    h+='<div class="urgency-strip urgency-alta">\u{1F476} Crian\u00e7a: considerar classificar pelo menos como MODERADO. Evolu\u00e7\u00e3o pode ser r\u00e1pida.</div>';
+  }
+
+  h+='<div class="severity-cards">';
+  for(const sKey of ['leve','moderado','grave']){
+    const sv = sev[sKey];
+    if(!sv){
+      h+=`<div class="sev-card sev-card-disabled">`;
+      h+=`<div class="sev-icon">\u{1F7E2}</div>`;
+      h+=`<div class="sev-title">Leve</div>`;
+      h+=`<div class="sev-desc">N\u00e3o aplic\u00e1vel para este animal</div>`;
+      h+='</div>';
+      continue;
+    }
+    const sel = severity === sKey;
+    const selCls = sel ? ` selected sel-${sKey}` : '';
+    const icons = {leve:'\u{1F7E2}', moderado:'\u{1F7E1}', grave:'\u{1F534}'};
+    h+=`<div class="sev-card${selCls}" onclick="setSeverity('${sKey}')">`;
+    h+=`<div class="sev-icon">${icons[sKey]}</div>`;
+    h+=`<div class="sev-title">${sKey.charAt(0).toUpperCase()+sKey.slice(1)}</div>`;
+    h+=`<div class="sev-desc">${sv.desc}</div>`;
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // Show antivenom preview
+  if(severity){
+    const sv = sev[severity];
+    if(!sv) {
+      severity = null;
+      render();
+      return;
+    }
+    h+='<div style="margin-top:1.25rem">';
+    if(sv.vials > 0){
+      h+='<div class="vial-display">';
+      h+=`<div class="vial-number">${sv.vials}</div>`;
+      h+='<div class="vial-label">';
+      h+=`<div class="vial-title">Ampolas de ${sv.antivenom}</div>`;
+      h+=`<div class="vial-sub">Via ${sv.route}, dilu\u00eddo em SF 0,9% ou SG 5%<br>Infundir em 20-60 min. Dose \u00fanica (n\u00e3o fracionar).</div>`;
+      h+='</div></div>';
+
+      // Time window alert for antivenom
+      if(timeSinceAccidentHours !== null && ANTIVENOM_TIME_WINDOW[selectedAnimal]){
+        const tw = ANTIVENOM_TIME_WINDOW[selectedAnimal];
+        if(timeSinceAccidentHours > tw.acceptable){
+          h += `<div class="danger-banner" style="margin-top:.5rem"><span class="danger-icon">\u{23F0}</span><span><strong>Aten\u00e7\u00e3o:</strong> ${tw.text_late}</span></div>`;
+        }
+      }
+
+      // Antivenom reaction management
+      h+='<div class="antivenom-reaction">';
+      h+='<h4>\u{26A0}\u{FE0F} Manejo de rea\u00e7\u00f5es ao soro</h4>';
+      h+=`<p><strong>Antes:</strong> ${ANTIVENOM_REACTION.premedication}</p>`;
+      h+=`<p style="margin-top:.5rem"><strong>Rea\u00e7\u00e3o precoce:</strong> ${ANTIVENOM_REACTION.earlyReaction}</p>`;
+      h+=`<p style="margin-top:.5rem"><strong>Doen\u00e7a do soro:</strong> ${ANTIVENOM_REACTION.lateReaction}</p>`;
+      h+='</div>';
+    } else {
+      h+=`<div class="info-banner"><span class="info-icon">\u{2139}\u{FE0F}</span><span><strong>${sv.antivenom}</strong> \u2014 ${sv.antivenom === 'N\u00e3o indicado' ? 'Tratamento sintom\u00e1tico e suporte cl\u00ednico.' : 'Tratar com suporte cl\u00ednico e medidas espec\u00edficas.'}</span></div>`;
+    }
+    h+='</div>';
+  }
+
+  // First aid box
+  if(FIRST_AID[selectedAnimal]){
+    h+='<div class="first-aid-box">';
+    h+='<h4>\u{1F6A8} Orienta\u00e7\u00f5es pr\u00e9-hospitalares (primeiros socorros)</h4>';
+    for(const item of FIRST_AID[selectedAnimal]){
+      h+=`<div class="first-aid-item">${item}</div>`;
+    }
+    h+='</div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">\u2190 Voltar</button>';
+  h+=`<button class="nav-btn primary" ${severity?'':'disabled'} onclick="next()">Pr\u00f3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML = h;
+}
+
+// =============================================
+// STEP 3: SUPPORTIVE CARE CHECKLIST
+// =============================================
+function renderSupportCare(){
+  let h = progHTML(3, false);
+  h+='<div class="card">';
+  h+=`<h2><span class="step-badge">4/${TOTAL_STEPS}</span> Cuidados de suporte</h2>`;
+  h+=`<p class="subtitle">Checklist de medidas adjuvantes para ${ANIMAL_NAMES[selectedAnimal]}.</p>`;
+
+  // Urgency banner for grave cases
+  if(severity === 'grave'){
+    h+='<div class="danger-banner" style="margin-bottom:1rem"><span class="danger-icon">\u{1F6A8}</span><span><strong>Caso GRAVE:</strong> Priorizar estabiliza\u00e7\u00e3o hemodin\u00e2mica e vias a\u00e9reas. Soroterapia deve ser iniciada o mais r\u00e1pido poss\u00edvel.</span></div>';
+  }
+
+  // Gestante-specific support
+  if(patientType === 'gestante' && GESTANTE_ALERTS[selectedAnimal]){
+    h+=`<div class="warn-banner" style="margin-bottom:1rem"><span class="warn-icon">\u{1F930}</span><span><strong>Gestante:</strong> ${GESTANTE_ALERTS[selectedAnimal]}</span></div>`;
+  }
+
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Medidas gerais</div>';
+  for(const item of SUPPORT_COMMON){
+    const ck = checkedSupport.has(item.text);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSupport(${JSON.stringify(item.text)})"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${item.icon} ${item.text}</span></button>`;
+  }
+
+  const specific = SUPPORT_SPECIFIC[selectedAnimal];
+  if(specific && specific.length > 0){
+    h+=`<div class="option-group-label">Espec\u00edficos para ${ANIMAL_NAMES[selectedAnimal]}</div>`;
+    for(const item of specific){
+      const ck = checkedSupport.has(item.text);
+      h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSupport(${JSON.stringify(item.text)})"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${item.icon} ${item.text}</span></button>`;
+    }
+  }
+
+  h+='</div>';
+
+  // Observation time
+  if(OBS_TIME[selectedAnimal] && severity && OBS_TIME[selectedAnimal][severity]){
+    h+='<div class="obs-time-box">';
+    h+='<h4>\u{23F0} Tempo de observa\u00e7\u00e3o recomendado</h4>';
+    h+=`<div class="obs-time-item"><strong>${severity.charAt(0).toUpperCase()+severity.slice(1)}:</strong> ${OBS_TIME[selectedAnimal][severity]}</div>`;
+    // Add pediatric observation note if child
+    if(patientType === 'crianca' && (selectedAnimal === 'tityus' || selectedAnimal === 'phoneutria' || selectedAnimal === 'abelha')){
+      h += '<div class="obs-time-item" style="color:#c4b5fd">\u{1F476} <strong>Crian\u00e7a:</strong> Considerar tempo de observa\u00e7\u00e3o estendido. Monitorar evolu\u00e7\u00e3o cl\u00ednica rigorosamente.</div>';
+    }
+    h+='</div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">\u2190 Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver Resultado \u2192</button>';
+  h+='</div></div>';
+  app.innerHTML = h;
+}
+
+// =============================================
+// STEP 4: RESULT
+// =============================================
+function renderResult(){
+  const sev = SEVERITY[selectedAnimal];
+  const sv = sev[severity];
+  const badgeCls = {leve:'badge-leve', moderado:'badge-moderado', grave:'badge-grave'};
+  const badgeIcon = {leve:'\u2713', moderado:'!', grave:'\u2717'};
+  const sevLabel = severity.charAt(0).toUpperCase() + severity.slice(1);
+
+  let h = progHTML(TOTAL_STEPS, true);
+  h+='<div class="card result-card">';
+
+  // Badge
+  h+=`<div class="result-badge ${badgeCls[severity]}">${badgeIcon[severity]}</div>`;
+  h+=`<div class="result-title">${ANIMAL_NAMES[selectedAnimal]}</div>`;
+
+  // Patient type indicator
+  const ptLabels = {adulto:'Adulto', crianca:'Crian\u00e7a', gestante:'Gestante'};
+  h+=`<div class="result-desc">Gravidade: ${sevLabel} | ${ptLabels[patientType]} | ${checkedSymptoms.local.size + checkedSymptoms.sistemico.size} sintomas | ${getElapsedStr()}</div>`;
+  if(CID10[selectedAnimal]) h+=`<div class="result-cid">CID-10: ${CID10[selectedAnimal].code} \u2014 ${CID10[selectedAnimal].desc}</div>`;
+
+  // Time since accident in result
+  if(timeSinceAccidentHours !== null){
+    h += `<div style="font-size:.75rem;color:#94a3b8;margin-top:.35rem">\u{23F0} Tempo desde o acidente: ${timeSinceAccidentHours}h</div>`;
+  }
+
+  // -- Sintomas
+  h+=collapsible('symptoms', '\u{1F4CB} Sintomas identificados', ()=>{
+    let s='';
+    if(checkedSymptoms.local.size > 0){
+      s+='<div style="font-size:.7rem;color:#64748b;text-transform:uppercase;margin-bottom:.5rem">Locais</div>';
+      for(const sym of checkedSymptoms.local) s+=`<div class="summary-row"><span class="criteria">${sym}</span><span class="value"><span class="dot dot-moderado"></span></span></div>`;
+    }
+    if(checkedSymptoms.sistemico.size > 0){
+      s+='<div style="font-size:.7rem;color:#64748b;text-transform:uppercase;margin-top:.75rem;margin-bottom:.5rem">Sist\u00eamicos</div>';
+      for(const sym of checkedSymptoms.sistemico) s+=`<div class="summary-row"><span class="criteria">${sym}</span><span class="value"><span class="dot dot-grave"></span></span></div>`;
+    }
+    if(checkedSymptoms.local.size===0 && checkedSymptoms.sistemico.size===0){
+      s+='<p style="color:#64748b;text-align:center;padding:.5rem 0;font-size:.85rem">Nenhum sintoma selecionado.</p>';
+    }
+    return s;
+  });
+
+  // -- Gravidade + Antiveneno
+  h+=collapsible('antivenom', '\u{1F489} Soroterapia / Antiveneno', ()=>{
+    let s='';
+    const boxCls = {leve:'leve-box', moderado:'moderado-box', grave:'grave-box'};
+    s+=`<div class="conduta-box ${boxCls[severity]}" style="margin-bottom:.75rem">`;
+    s+=`<h3>Classifica\u00e7\u00e3o: ${sevLabel}</h3>`;
+    s+=`<div class="conduta-item"><span class="conduta-icon">\u{1F4CB}</span><span>${sv.desc}</span></div>`;
+    if(sv.vials > 0){
+      s+=`<div class="conduta-item"><span class="conduta-icon">\u{1F489}</span><span><strong>${sv.vials} ampolas</strong> de ${sv.antivenom}</span></div>`;
+      s+=`<div class="conduta-item"><span class="conduta-icon">\u{1F4A7}</span><span>Via ${sv.route}, dilu\u00eddo em 100-250 mL de SF 0,9% ou SG 5%</span></div>`;
+      s+=`<div class="conduta-item"><span class="conduta-icon">\u{23F0}</span><span>Infundir em 20-60 minutos (dose \u00fanica, n\u00e3o fracionar)</span></div>`;
+      s+=`<div class="conduta-item"><span class="conduta-icon">\u{26A0}\u{FE0F}</span><span>Material para anafilaxia \u00e0 beira-leito (adrenalina, corticoide, anti-H1)</span></div>`;
+      s+=`<div class="conduta-item"><span class="conduta-icon">\u{1F504}</span><span>Reavaliar: dose adicional se piora cl\u00ednica ou laboratorial em 12h</span></div>`;
+    } else {
+      s+=`<div class="conduta-item"><span class="conduta-icon">\u{2139}\u{FE0F}</span><span>${sv.antivenom === 'N\u00e3o indicado' ? 'Soroterapia n\u00e3o indicada nesta gravidade. Tratamento sintom\u00e1tico.' : sv.antivenom + '. Tratamento de suporte.'}</span></div>`;
+    }
+    s+='</div>';
+
+    // Observation time in result
+    if(OBS_TIME[selectedAnimal] && severity && OBS_TIME[selectedAnimal][severity]){
+      s+=`<div style="font-size:.8rem;color:#94a3b8;padding:.5rem 0">\u{23F0} <strong>Observa\u00e7\u00e3o:</strong> ${OBS_TIME[selectedAnimal][severity]}</div>`;
+    }
+    return s;
+  });
+
+  // -- Red Flags
+  const flags = RED_FLAGS[selectedAnimal];
+  const presentFlags = countPresentRedFlags();
+  h+=collapsible('redflags', `\u{26A0}\u{FE0F} Sinais de alarme${presentFlags > 0 ? ' (' + presentFlags + ' PRESENTE' + (presentFlags > 1 ? 'S' : '') + ')' : ''}`, ()=>{
+    let s='';
+    for(const f of flags){
+      const isPresent = isRedFlagPresent(f);
+      s+=`<div class="red-flag-item"><span style="flex-shrink:0">${isPresent ? '\u{1F534}' : '\u{26A0}\u{FE0F}'}</span><span${isPresent?' style="font-weight:700"':''}>${f}${isPresent?' (PRESENTE)':''}</span></div>`;
+    }
+    return s;
+  }, 'red-flag-box');
+
+  // -- Labs
+  h+=collapsible('labs', '\u{1F52C} Exames complementares', ()=>{
+    const labData = LABS[selectedAnimal];
+    const labList = labData.labs;
+    const urgentList = labData.urgent || [];
+    let s='';
+    if(severity === 'grave' || severity === 'moderado'){
+      s+='<div style="font-size:.7rem;color:#fca5a5;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">\u{1F534} = Urgente / colher imediatamente</div>';
+    }
+    s+='<div class="lab-grid">';
+    for(const lab of labList){
+      const isUrgent = (severity === 'grave' || severity === 'moderado') && urgentList.includes(lab);
+      s+=`<div class="lab-item ${isUrgent?'lab-urgent':''}"><span class="lab-name">${isUrgent?'\u{1F534} ':''}${lab}</span></div>`;
+    }
+    s+='</div>';
+    return s;
+  });
+
+  // -- Suporte
+  h+=collapsible('support', `\u{1F3E5} Cuidados de suporte (${checkedSupport.size} marcados)`, ()=>{
+    let s='';
+    if(checkedSupport.size === 0){
+      s+='<p style="color:#64748b;text-align:center;padding:.5rem 0;font-size:.85rem">Nenhum cuidado marcado.</p>';
+    } else {
+      for(const item of checkedSupport){
+        s+=`<div class="conduta-item"><span class="conduta-icon">\u2713</span><span>${item}</span></div>`;
+      }
+    }
+    return s;
+  });
+
+  // -- Note
+  h+=collapsible('note', '\u{1F4DD} Nota para prontu\u00e1rio', ()=> buildNoteContent());
+
+  // Nav
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">\u2190 Editar</button>';
+  h+='<button class="nav-btn danger" onclick="confirmRestart()">Recome\u00e7ar</button>';
+  h+='</div></div>';
+  app.innerHTML = h;
+}
+
+// =============================================
+// NOTE GENERATION
+// =============================================
+function buildNoteContent(){
+  const pad = n => String(n).padStart(2,'0');
+  const now = new Date(evalStartTime);
+  const ts = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const sv = SEVERITY[selectedAnimal][severity];
+  const sevLabel = severity.charAt(0).toUpperCase() + severity.slice(1);
+  const cid = CID10[selectedAnimal];
+  const ptLabels = {adulto:'Adulto', crianca:'Crian\u00e7a', gestante:'Gestante'};
+
+  let n = '';
+  n += `ACIDENTE POR ANIMAL PE\u00c7ONHENTO \u2014 AVALIA\u00c7\u00c3O ESTRUTURADA\n`;
+  n += `Data/hora da avalia\u00e7\u00e3o: ${ts}\n`;
+  n += `Tempo de atendimento: ${getElapsedStr()}\n`;
+  n += `Paciente: ${ptLabels[patientType]}\n`;
+  if(timeSinceAccidentHours !== null) n += `Tempo desde o acidente: ${timeSinceAccidentHours}h\n`;
+  n += `========================================\n\n`;
+
+  n += `ANIMAL: ${ANIMAL_NAMES[selectedAnimal]}\n`;
+  n += `GRAVIDADE: ${sevLabel}\n`;
+  if(cid) n += `CID-10: ${cid.code} \u2014 ${cid.desc}\n`;
+  n += '\n';
+
+  n += `MANIFESTA\u00c7\u00d5ES CL\u00cdNICAS\n`;
+  if(checkedSymptoms.local.size > 0){
+    n += `  Locais:\n`;
+    for(const s of checkedSymptoms.local) n += `    - ${s}\n`;
+  }
+  if(checkedSymptoms.sistemico.size > 0){
+    n += `  Sist\u00eamicas:\n`;
+    for(const s of checkedSymptoms.sistemico) n += `    - ${s}\n`;
+  }
+  if(checkedSymptoms.local.size === 0 && checkedSymptoms.sistemico.size === 0){
+    n += `  Nenhum sintoma registrado.\n`;
+  }
+
+  n += `\nSOROTERAPIA\n`;
+  if(sv.vials > 0){
+    n += `  ${sv.antivenom}: ${sv.vials} ampolas, via ${sv.route}\n`;
+    n += `  Dilu\u00eddo em SF 0,9% ou SG 5%, infundir em 20-60 min\n`;
+    n += `  Dose \u00fanica, n\u00e3o fracionar. Material para anafilaxia \u00e0 beira-leito.\n`;
+  } else {
+    n += `  ${sv.antivenom}\n`;
+  }
+
+  // Red flags present
+  const flagsList = RED_FLAGS[selectedAnimal];
+  const presentFlagsList = flagsList.filter(f => isRedFlagPresent(f));
+  if(presentFlagsList.length > 0){
+    n += `\nSINAIS DE ALARME PRESENTES\n`;
+    for(const f of presentFlagsList) n += `  [!] ${f}\n`;
+  }
+
+  n += `\nEXAMES SOLICITADOS\n`;
+  const labData = LABS[selectedAnimal];
+  for(const lab of labData.labs) n += `  - ${lab}\n`;
+
+  if(checkedSupport.size > 0){
+    n += `\nCUIDADOS DE SUPORTE\n`;
+    for(const item of checkedSupport) n += `  - ${item}\n`;
+  }
+
+  n += `\nOBSERVA\u00c7\u00c3O RECOMENDADA\n`;
+  if(OBS_TIME[selectedAnimal] && severity && OBS_TIME[selectedAnimal][severity]){
+    n += `  ${OBS_TIME[selectedAnimal][severity]}\n`;
+  }
+
+  if(patientType === 'gestante'){
+    n += `\nALERTA GESTANTE\n`;
+    n += `  Monitorizar BCF. Soroterapia n\u00e3o contraindicada.\n`;
+    if(GESTANTE_ALERTS[selectedAnimal]) n += `  ${GESTANTE_ALERTS[selectedAnimal]}\n`;
+  }
+
+  n += `\nPROFILAXIA ANTITET\u00c2NICA: verificar cart\u00e3o vacinal\n`;
+  n += `NOTIFICA\u00c7\u00c3O COMPULS\u00d3RIA: preencher ficha SINAN`;
+  if(cid) n += ` (CID-10: ${cid.code})`;
+  n += `\n`;
+
+  const escaped = n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">\u{1F4CB} Copiar nota para prontu\u00e1rio</button>`;
+}
+
+function copyNote(){
+  const el = document.getElementById('noteContent');
+  if(!el) return;
+  const text = el.textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(onCopySuccess).catch(()=> fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); onCopySuccess(); }
+  catch(e) { alert('N\u00e3o foi poss\u00edvel copiar. Selecione o texto manualmente.'); }
+  document.body.removeChild(ta);
+}
+
+function onCopySuccess(){
+  const btn = document.getElementById('copyBtn');
+  if(!btn) return;
+  btn.textContent = '\u2713 Copiado!';
+  btn.classList.add('copied');
+  setTimeout(()=>{
+    if(btn){btn.textContent='\u{1F4CB} Copiar nota para prontu\u00e1rio';btn.classList.remove('copied');}
+  },2000);
+}
+
+// =============================================
+// RED FLAG MATCHING (improved heuristic)
+// =============================================
+function isSymptomRedFlag(animalId, symptom){
+  const flags = RED_FLAGS[animalId];
+  if(!flags) return false;
+  const symNorm = normalizeSearch(symptom);
+  return flags.some(rf => {
+    const rfNorm = normalizeSearch(rf);
+    const symWords = symNorm.split(/\s+/).filter(w => w.length >= 3);
+    const rfWords = rfNorm.split(/\s+/).filter(w => w.length >= 3);
+    return symWords.some(sw => rfWords.some(rw => rw.includes(sw) || sw.includes(rw)));
+  });
+}
+
+function isRedFlagPresent(flag){
+  const flagNorm = normalizeSearch(flag);
+  const flagWords = flagNorm.split(/\s+/).filter(w => w.length >= 3);
+  const allSymptoms = [...checkedSymptoms.local, ...checkedSymptoms.sistemico];
+  return allSymptoms.some(sym => {
+    const symNorm = normalizeSearch(sym);
+    const symWords = symNorm.split(/\s+/).filter(w => w.length >= 3);
+    let matchCount = 0;
+    let hasLongMatch = false;
+    for(const fw of flagWords){
+      for(const sw of symWords){
+        if(fw.includes(sw) || sw.includes(fw)){
+          matchCount++;
+          if(fw.length >= 6 || sw.length >= 6) hasLongMatch = true;
+          break;
+        }
+      }
+    }
+    return matchCount >= 2 || (matchCount >= 1 && hasLongMatch);
+  });
+}
+
+function countPresentRedFlags(){
+  const flags = RED_FLAGS[selectedAnimal];
+  if(!flags) return 0;
+  return flags.filter(f => isRedFlagPresent(f)).length;
+}
+
+// =============================================
+// SEVERITY SUGGESTION -- ANIMAL-SPECIFIC
+// =============================================
+function suggestSeverity(){
+  const nLocal = checkedSymptoms.local.size;
+  const nSis = checkedSymptoms.sistemico.size;
+  if(nLocal === 0 && nSis === 0) return null;
+
+  const allSis = [...checkedSymptoms.sistemico];
+  const allLocal = [...checkedSymptoms.local];
+
+  const sisHas = (...keywords) => allSis.some(s => keywords.some(k => s.toLowerCase().includes(k.toLowerCase())));
+  const localHas = (...keywords) => allLocal.some(s => keywords.some(k => s.toLowerCase().includes(k.toLowerCase())));
+
+  // Pediatric escalation: child + certain animals = bump severity
+  const isChild = patientType === 'crianca';
+
+  let suggested = null;
+
+  switch(selectedAnimal){
+    case 'botropico':
+      if(sisHas('Choque','an\u00faria','Olig\u00faria')) suggested = 'grave';
+      else if(sisHas('Incoagulabilidade','Hemat\u00faria') || nSis >= 2) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else if(localHas('Bolhas','necrose')) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    case 'crotalico':
+      if(sisHas('Olig\u00faria','insufici\u00eancia renal','Urina escura')) suggested = 'grave';
+      else if(nSis >= 3) suggested = 'grave';
+      else if(sisHas('F\u00e1cies','Diplopia','Oftalmoplegia')) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    case 'elapidico':
+      if(sisHas('Insufici\u00eancia respirat\u00f3ria','Paralisia','Disfagia')) suggested = 'grave';
+      else if(sisHas('Ptose','Diplopia')) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    case 'laquetico':
+      if(sisHas('Choque','Sangramento sist\u00eamico','hemorragia')) suggested = 'grave';
+      else suggested = 'moderado'; // No leve for laquetico
+      break;
+
+    case 'phoneutria':
+      if(sisHas('Edema pulmonar','Choque')) suggested = 'grave';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      // Escalate for children with any systemic symptoms
+      if(isChild && nSis >= 1 && suggested === 'moderado') suggested = 'grave';
+      if(isChild && suggested === 'leve' && nLocal > 0) suggested = 'moderado';
+      break;
+
+    case 'loxosceles':
+      if(sisHas('hemol\u00edtica','Insufici\u00eancia renal','CIVD','Hemoglobin\u00faria')) suggested = 'grave';
+      else if(localHas('marm\u00f3rea','Necrose')) suggested = 'moderado';
+      else if(sisHas('Icter\u00edcia')) suggested = 'moderado';
+      else if(nSis >= 2) suggested = 'grave';
+      else suggested = 'leve';
+      // Children: hemolytic form more common
+      if(isChild && suggested === 'moderado' && nSis >= 1) suggested = 'grave';
+      break;
+
+    case 'latrodectus':
+      if(sisHas('Contraturas musculares','Hipertens\u00e3o') && nSis >= 3) suggested = 'grave';
+      else if(nSis >= 2) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    case 'tityus':
+      if(sisHas('edema pulmonar','Choque','Dispneia')) suggested = 'grave';
+      else if(nSis >= 2) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      // Escalate for children: any systemic = at least moderado, 2+ systemic = grave
+      if(isChild && nSis >= 2 && suggested === 'moderado') suggested = 'grave';
+      if(isChild && suggested === 'leve' && nLocal > 0) suggested = 'moderado';
+      break;
+
+    case 'abelha':
+      if(sisHas('choque','Rabdomi\u00f3lise','Insufici\u00eancia renal')) suggested = 'grave';
+      else if(sisHas('Broncoespasmo','Angioedema')) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    case 'lonomia':
+      if(sisHas('Hemorragia intracraniana','Insufici\u00eancia renal')) suggested = 'grave';
+      else if(sisHas('Sangramento','Gengivorragia','Hemat\u00faria','Equimoses')) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    case 'marinho':
+      if(sisHas('Hipotens\u00e3o','Paralisia')) suggested = 'grave';
+      else if(nSis >= 2) suggested = 'moderado';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+      break;
+
+    default:
+      if(nSis >= 3) suggested = 'grave';
+      else if(nSis >= 1) suggested = 'moderado';
+      else suggested = 'leve';
+  }
+
+  return suggested;
+}
+
+// =============================================
+// HELPERS
+// =============================================
+function escHTML(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s){ return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function normalizeSearch(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function getElapsedStr(){
+  const elapsed = Math.floor((Date.now() - evalStartTime) / 1000);
+  const mm = Math.floor(elapsed / 60);
+  const ss = elapsed % 60;
+  if(mm === 0) return ss + 's';
+  return mm + 'min ' + ss + 's';
+}
+
+// =============================================
+// ACTIONS
+// =============================================
+function selectAnimal(id){
+  if(selectedAnimal !== id){
+    selectedAnimal = id;
+    checkedSymptoms = {local: new Set(), sistemico: new Set()};
+    severity = null;
+    checkedSupport = new Set();
+  }
+  render();
+}
+
+function filterAnimals(val){
+  searchFilter = val;
+  render();
+}
+
+function toggleSymptom(type, sym){
+  if(checkedSymptoms[type].has(sym)) checkedSymptoms[type].delete(sym);
+  else checkedSymptoms[type].add(sym);
+  render();
+}
+
+function setSeverity(s){
+  if(SEVERITY[selectedAnimal] && !SEVERITY[selectedAnimal][s]) return;
+  severity = s;
+  render();
+}
+
+function toggleSupport(text){
+  if(checkedSupport.has(text)) checkedSupport.delete(text);
+  else checkedSupport.add(text);
+  render();
+}
+
+function toggleSection(id){
+  sections[id] = !sections[id];
+  render();
+}
+
+function setPatientType(type){
+  patientType = type;
+  render();
+}
+
+function setTimeSince(val){
+  const v = parseFloat(val);
+  timeSinceAccidentHours = isNaN(v) || val === '' ? null : Math.max(0, v);
+  // Don't re-render the whole thing (would lose input focus); update banner only
+  // But since we need to show/update banners, we do a targeted update
+  // For simplicity with the current architecture, re-render
+  // Preserve input focus after render
+  render();
+  const input = document.getElementById('timeSinceInput');
+  if(input){
+    input.focus();
+    // Set cursor to end
+    const len = input.value.length;
+    input.setSelectionRange(len, len);
+  }
+}
+
+function next(){
+  if(step===0 && !selectedAnimal) return;
+  if(step===2 && !severity) return;
+  step++;
+  searchFilter = '';
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function prev(){
+  if(step>0){step--;render();window.scrollTo({top:0, behavior:'smooth'});}
+}
+
+function confirmRestart(){
+  const overlay = document.getElementById('confirmOverlay');
+  overlay.innerHTML = `<div class="confirm-overlay" onclick="handleOverlayClick(event)">
+    <div class="confirm-dialog">
+      <h3>Recome\u00e7ar avalia\u00e7\u00e3o?</h3>
+      <p>Todos os dados preenchidos ser\u00e3o perdidos.</p>
+      <div class="dialog-btns">
+        <button style="background:#334155;color:#cbd5e1" onclick="closeOverlay()">Cancelar</button>
+        <button style="background:#991b1b;color:#fca5a5" onclick="doRestart()">Recome\u00e7ar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function handleOverlayClick(e){
+  // Close only when clicking the overlay backdrop, not the dialog content
+  if(e.target.classList.contains('confirm-overlay')){
+    closeOverlay();
+  }
+}
+
+function closeOverlay(){
+  document.getElementById('confirmOverlay').innerHTML = '';
+}
+
+function doRestart(){
+  document.getElementById('confirmOverlay').innerHTML = '';
+  step = 0;
+  selectedAnimal = null;
+  checkedSymptoms = {local: new Set(), sistemico: new Set()};
+  severity = null;
+  checkedSupport = new Set();
+  searchFilter = '';
+  patientType = 'adulto';
+  timeSinceAccidentHours = null;
+  evalStartTime = Date.now();
+  sections = {symptoms:true, severity:true, antivenom:true, redflags:true, labs:true, support:true, note:true, firstaid:false, obstime:true, avreaction:false};
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){
+    const overlay = document.getElementById('confirmOverlay');
+    if(overlay && overlay.innerHTML) {closeOverlay(); return;}
+  }
+  if(document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+  if(e.key === 'ArrowRight' && e.altKey){e.preventDefault(); next();}
+  if(e.key === 'ArrowLeft' && e.altKey){e.preventDefault(); prev();}
+});
+
+// Prevent double-tap zoom on iOS for buttons
+document.addEventListener('touchend', function(e){
+  const target = e.target.closest('button, .sev-card, .check-btn, .option-btn, .patient-toggle-btn');
+  if(target) e.preventDefault();
+}, {passive: false});
+
+// Initial render
+render();
+</script>
+</body>
+</html>

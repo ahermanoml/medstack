@@ -1,0 +1,1455 @@
+<!-- VERSION: 10 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cefaleia — Emergência</title>
+<link rel="icon" href="data:,">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0b1220;--surface:#111a2e;--surface-2:#0a1122;--line:#243044;--line-2:#324666;
+    --ink:#e6ecf5;--ink-dim:#94a3b8;--ink-mute:#64748b;--ink-low:#475569;
+    --accent:#3b82f6;--accent-2:#60a5fa;
+    --red:#ef4444;--red-bg:#3a0a0a;--red-line:#7f1d1d;--red-ink:#fecaca;
+    --amber:#f59e0b;--amber-bg:#2a1700;--amber-line:#7c3a06;--amber-ink:#fcd34d;
+    --green:#22c55e;--green-bg:#05220f;--green-line:#14532d;--green-ink:#86efac;
+    --blue-bg:#0e1f3b;--blue-line:#1e3a5f;--blue-ink:#93c5fd;
+    --mono:'SF Mono','JetBrains Mono','Consolas',monospace;
+  }
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+  header{background:var(--surface-2);width:100%;padding:.9rem 1rem;text-align:center;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:50}
+  header h1{font-size:1.05rem;font-weight:800;letter-spacing:-.01em;text-transform:uppercase}
+  header p{font-size:.62rem;color:var(--ink-mute);margin-top:.15rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+  .back-link{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--ink-mute);text-decoration:none;font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;gap:.25rem;padding:.35rem .5rem;border:1px solid var(--line);background:var(--bg);text-transform:uppercase;letter-spacing:.06em}
+  .back-link:hover{color:var(--ink);border-color:var(--line-2)}
+  .back-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .container{max-width:680px;width:100%;padding:1rem;display:flex;flex-direction:column;gap:.75rem;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom,0px))}
+
+  .progress-bar{display:flex;gap:.25rem;padding:0 .1rem}
+  .progress-step{flex:1;height:3px;background:var(--line);transition:background .2s}
+  .progress-step.clickable{cursor:pointer}
+  .progress-step.done{background:var(--accent)}
+  .progress-step.active{background:var(--accent-2)}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.52rem;color:var(--ink-low);padding:.3rem .1rem 0;user-select:none;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .progress-labels span{padding:.1rem;transition:color .15s}
+  .progress-labels span.clickable{cursor:pointer}
+  .progress-labels span.clickable:hover{color:var(--ink-dim)}
+  .progress-labels span.active-label{color:var(--accent-2)}
+  .progress-labels span.done-label{color:var(--accent)}
+
+  .card{background:var(--surface);border:1.5px solid var(--line);padding:1.15rem 1rem}
+  .card h2{font-size:1.05rem;margin-bottom:.15rem;font-weight:800;letter-spacing:-.01em;text-transform:uppercase}
+  .card .subtitle{font-size:.72rem;color:var(--ink-mute);margin-bottom:.95rem;line-height:1.4}
+
+  .options{display:flex;flex-direction:column;gap:.45rem}
+  .group-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-low);margin-top:.85rem;margin-bottom:-.15rem;font-weight:800;display:flex;align-items:center;gap:.4rem}
+  .group-label::after{content:"";flex:1;height:1px;background:var(--line);opacity:.6}
+  .group-label:first-child{margin-top:0}
+
+  .btn-base{background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink-dim);cursor:pointer;transition:border-color .12s,background .12s,color .12s;-webkit-tap-highlight-color:transparent;font-family:inherit}
+  .btn-base:hover{border-color:var(--accent);color:var(--ink)}
+  .btn-base:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn-base:active{transform:translateY(1px)}
+
+  .option-btn{padding:.75rem .9rem;font-size:.86rem;text-align:left;display:flex;align-items:center;gap:.65rem}
+  .option-btn.selected{border-color:var(--accent);background:var(--blue-bg);color:var(--ink)}
+  .option-btn .icon{font-family:var(--mono);font-size:.95rem;font-weight:800;flex-shrink:0;width:1.5rem;text-align:center;color:var(--accent-2)}
+  .option-btn .label{flex:1}
+  .option-btn.selected.onset-subito{border-color:var(--red);background:var(--red-bg)}
+  .option-btn.selected.onset-subito .icon{color:var(--red-ink)}
+
+  .check-btn{padding:.6rem .85rem;font-size:.82rem;text-align:left;display:flex;align-items:center;gap:.6rem;width:100%}
+  .check-btn.checked{border-color:var(--accent);background:var(--blue-bg);color:var(--ink)}
+  .check-btn.checked.red-flag{border-color:var(--red);background:var(--red-bg);color:var(--red-ink)}
+  .check-btn.dim{opacity:.4}
+  .check-box{width:16px;height:16px;border:1.5px solid var(--line-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;font-weight:800}
+  .check-btn.checked .check-box{background:var(--accent);border-color:var(--accent)}
+  .check-btn.checked.red-flag .check-box{background:var(--red);border-color:var(--red)}
+
+  .chip-row{display:flex;gap:.3rem;flex-wrap:wrap}
+  .score-opt{flex:1;min-width:60px;padding:.5rem .4rem;font-size:.7rem;text-align:center;line-height:1.2;font-weight:600;min-height:2.1rem;display:inline-flex;align-items:center;justify-content:center}
+  .score-opt.picked{border-color:var(--accent);background:var(--blue-bg);color:var(--ink);font-weight:800}
+  .score-opt.compact{flex:0 1 auto;min-width:72px}
+
+  .pain-scale{display:flex;gap:.25rem;margin-top:.3rem;flex-wrap:wrap;justify-content:center}
+  .pain-dot{width:2rem;height:2rem;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;cursor:pointer;transition:border-color .12s,background .12s;color:var(--ink-mute);background:var(--surface-2);-webkit-tap-highlight-color:transparent;font-family:var(--mono)}
+  .pain-dot:hover{border-color:var(--accent)}
+  .pain-dot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .pain-dot:active{transform:translateY(1px)}
+  .pain-dot.picked{color:#fff}
+  .pain-dot.p-low{border-color:var(--green);background:var(--green);color:#021a07}
+  .pain-dot.p-mod{border-color:var(--amber);background:var(--amber);color:#1f1100}
+  .pain-dot.p-high{border-color:var(--red);background:var(--red);color:#fff}
+  .pain-labels{display:flex;justify-content:space-between;padding:.3rem .1rem 0;font-size:.55rem;color:var(--ink-low);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+
+  .nav-row{display:flex;gap:.55rem;margin-top:1.1rem}
+  .nav-btn{flex:1;padding:.8rem;font-size:.82rem;font-weight:800;cursor:pointer;transition:background .12s,border-color .12s;letter-spacing:.02em;text-transform:uppercase;-webkit-tap-highlight-color:transparent;border:1.5px solid transparent;font-family:inherit}
+  .nav-btn:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+  .nav-btn.secondary{background:transparent;color:var(--ink-dim);border-color:var(--line-2)}
+  .nav-btn.secondary:hover{background:var(--surface-2);color:var(--ink)}
+  .nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .nav-btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  .nav-btn:disabled{opacity:.4;cursor:not-allowed}
+  .nav-btn:active:not(:disabled){transform:translateY(1px)}
+
+  .validation-hint{font-size:.7rem;color:var(--red);margin-top:.55rem;display:flex;align-items:center;gap:.3rem;font-weight:600}
+
+  .result-card{text-align:center;padding:1.4rem 1rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:3.6rem;height:3.6rem;font-size:1.5rem;font-weight:800;margin-bottom:.7rem;font-family:var(--mono);letter-spacing:-.02em;border:2.5px solid}
+  .badge-emergent{background:var(--red-bg);color:var(--red-ink);border-color:var(--red)}
+  .badge-urgent{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber)}
+  .badge-primary{background:var(--blue-bg);color:var(--blue-ink);border-color:var(--accent)}
+  .result-title{font-size:1.1rem;font-weight:800;margin-bottom:.15rem;letter-spacing:.02em;text-transform:uppercase}
+  .result-desc{color:var(--ink-mute);font-size:.76rem;margin-bottom:.9rem;line-height:1.4}
+
+  .dx-list{text-align:left;margin:.6rem 0 .9rem;display:flex;flex-direction:column;gap:.3rem}
+  .dx-item{display:flex;align-items:flex-start;gap:.55rem;padding:.45rem .65rem;font-size:.8rem;line-height:1.35;border-left:3px solid;background:var(--surface-2)}
+  .dx-item.dx-red{border-color:var(--red);color:var(--red-ink)}
+  .dx-item.dx-amber{border-color:var(--amber);color:var(--amber-ink)}
+  .dx-item.dx-blue{border-color:var(--accent);color:var(--blue-ink)}
+  .dx-item .dx-mark{font-family:var(--mono);font-weight:800;flex-shrink:0;min-width:1.1rem}
+
+  .dark-box{background:var(--surface);border:1.5px solid var(--line);padding:.85rem 1rem;margin-bottom:.55rem}
+  .dark-box h3{font-size:.68rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.12em;font-weight:800;display:flex;align-items:center}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--line);font-size:.78rem;gap:.5rem}
+  .summary-row:last-child{border-bottom:none}
+  .summary-row .criteria{color:var(--ink-dim);flex:1;min-width:0;line-height:1.35}
+  .summary-row .value{font-weight:700;display:flex;align-items:center;gap:.4rem;flex-shrink:0;white-space:nowrap;color:var(--ink)}
+  .dot{width:7px;height:7px;flex-shrink:0}
+  .dot-red{background:var(--red)}.dot-yellow{background:var(--amber)}.dot-green{background:var(--green)}.dot-blue{background:var(--accent)}
+
+  .conduta-box{padding:.85rem 1rem;margin-bottom:.55rem;border:1.5px solid}
+  .conduta-box h3{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:0;display:flex;align-items:center}
+  .conduta-box.alta-prob{background:var(--red-bg);border-color:var(--red)}
+  .conduta-box.alta-prob h3{color:var(--red-ink)}
+  .conduta-box.mod-prob{background:var(--amber-bg);border-color:var(--amber)}
+  .conduta-box.mod-prob h3{color:var(--amber-ink)}
+  .conduta-box.baixa-prob{background:var(--green-bg);border-color:var(--green)}
+  .conduta-box.baixa-prob h3{color:var(--green-ink)}
+  .conduta-box.neutra-prob{background:var(--surface);border-color:var(--line-2)}
+  .conduta-box.neutra-prob h3{color:var(--ink-dim)}
+  .conduta-item{display:flex;align-items:flex-start;gap:.55rem;padding:.38rem 0;font-size:.8rem;color:var(--ink);line-height:1.4;border-bottom:1px dashed rgba(255,255,255,.05)}
+  .conduta-item:last-child{border-bottom:none}
+  .conduta-icon{flex-shrink:0;width:1rem;text-align:center;font-size:.85rem;color:var(--accent-2);font-weight:800;font-family:var(--mono);padding-top:.06rem}
+
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+  .collapse-header h3{margin-bottom:0}
+  .collapse-arrow{font-size:.55rem;color:var(--ink-low);transition:transform .2s;width:1.1rem;height:1.1rem;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{display:none}
+  .collapse-body.open{display:block;margin-top:.65rem}
+
+  .section-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.2rem;height:1.2rem;padding:0 .35rem;font-size:.56rem;font-weight:800;margin-left:.5rem;border:1px solid}
+  .section-badge.sb-red{background:var(--red-bg);color:var(--red-ink);border-color:var(--red-line)}
+  .section-badge.sb-amber{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line)}
+  .section-badge.sb-green{background:var(--green-bg);color:var(--green-ink);border-color:var(--green-line)}
+  .section-badge.sb-neutral{background:var(--surface-2);color:var(--ink-dim);border-color:var(--line-2)}
+
+  .note-text{background:var(--surface-2);border:1.5px solid var(--line);padding:.85rem;font-family:var(--mono);font-size:.68rem;color:var(--ink);white-space:pre-wrap;line-height:1.55;max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .note-text::-webkit-scrollbar{width:4px}.note-text::-webkit-scrollbar-thumb{background:var(--line-2)}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.65rem;padding:.7rem;border:1.5px solid var(--line-2);background:var(--surface-2);color:var(--ink);font-size:.78rem;font-weight:800;cursor:pointer;transition:border-color .12s,color .12s,background .12s;-webkit-tap-highlight-color:transparent;text-transform:uppercase;letter-spacing:.06em;font-family:inherit}
+  .copy-btn:hover{border-color:var(--accent);color:#fff;background:var(--blue-bg)}
+  .copy-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .copy-btn.copied{border-color:var(--green);color:var(--green-ink);background:var(--green-bg)}
+
+  .snoop-letter{display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;font-weight:800;font-size:.65rem;margin-right:.35rem;flex-shrink:0;font-family:var(--mono);border:1px solid}
+  .snoop-s{background:var(--red-bg);color:var(--red-ink);border-color:var(--red-line)}
+  .snoop-n{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line)}
+  .snoop-o{background:#3a0520;color:#fbcfe8;border-color:#831843}
+  .snoop-o2{background:#2a1065;color:#c4b5fd;border-color:#5b21b6}
+  .snoop-p{background:#422006;color:#fdba74;border-color:#9a3412}
+
+  .ottawa-box{background:var(--surface-2);border:1.5px solid var(--line-2);padding:.85rem 1rem;margin-top:.85rem}
+  .ottawa-box h4{font-size:.78rem;margin-bottom:.25rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .ottawa-box>p{font-size:.67rem;color:var(--ink-mute);margin-bottom:.6rem;line-height:1.4}
+  .ottawa-result{display:flex;align-items:center;gap:.8rem;padding:.7rem;margin-top:.6rem;border:1.5px solid}
+  .ottawa-result.or-high{background:var(--red-bg);border-color:var(--red-line)}
+  .ottawa-result.or-low{background:var(--green-bg);border-color:var(--green-line)}
+  .ottawa-num{font-size:1.4rem;font-weight:800;font-family:var(--mono);min-width:1.8rem;text-align:center}
+  .ottawa-result.or-high .ottawa-num{color:var(--red-ink)}
+  .ottawa-result.or-low .ottawa-num{color:var(--green-ink)}
+  .ottawa-info{flex:1}.ottawa-info .oi-label{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .ottawa-info .oi-detail{font-size:.67rem;color:var(--ink-dim);margin-top:.18rem;line-height:1.4}
+
+  .rf-count{display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .65rem;font-size:.7rem;font-weight:800;margin-bottom:.8rem;border:1.5px solid;text-transform:uppercase;letter-spacing:.06em}
+  .rf-count.rf-high{background:var(--red-bg);color:var(--red-ink);border-color:var(--red-line)}
+  .rf-count.rf-mod{background:var(--amber-bg);color:var(--amber-ink);border-color:var(--amber-line)}
+  .rf-count.rf-none{background:var(--green-bg);color:var(--green-ink);border-color:var(--green-line)}
+
+  .inline-alert{padding:.55rem .75rem;margin-top:.5rem;font-size:.73rem;line-height:1.4;display:flex;align-items:flex-start;gap:.5rem;border-left:3px solid}
+  .inline-alert.ia-red{background:rgba(127,29,29,.25);border-color:var(--red);color:var(--red-ink)}
+  .inline-alert.ia-blue{background:rgba(30,58,95,.25);border-color:var(--accent);color:var(--blue-ink)}
+  .inline-alert.ia-amber{background:rgba(120,53,15,.25);border-color:var(--amber);color:var(--amber-ink)}
+  .inline-alert .ia-icon{flex-shrink:0;font-size:.8rem;font-weight:800;font-family:var(--mono);padding-top:.08rem}
+  .alert-stack{margin-top:.55rem;display:flex;flex-direction:column;gap:.35rem}
+  .alert-stack .inline-alert{margin-top:0}
+
+  .disposition-box{padding:.9rem 1rem;margin-bottom:.6rem;border:2px solid;display:flex;align-items:center;gap:.75rem}
+  .disp-emergent{background:var(--red-bg);border-color:var(--red)}
+  .disp-urgent{background:var(--amber-bg);border-color:var(--amber)}
+  .disp-obs{background:var(--surface);border-color:var(--accent)}
+  .disp-alta{background:var(--green-bg);border-color:var(--green)}
+  .disposition-box .disp-icon{font-size:.95rem;font-weight:800;font-family:var(--mono);flex-shrink:0;min-width:2.8rem;height:2.2rem;padding:0 .4rem;display:flex;align-items:center;justify-content:center;border:1.5px solid;letter-spacing:.04em}
+  .disp-emergent .disp-icon{border-color:var(--red);color:var(--red-ink)}
+  .disp-urgent .disp-icon{border-color:var(--amber);color:var(--amber-ink)}
+  .disp-obs .disp-icon{border-color:var(--accent);color:var(--blue-ink)}
+  .disp-alta .disp-icon{border-color:var(--green);color:var(--green-ink)}
+  .disposition-box .disp-body{flex:1;min-width:0}
+  .disposition-box .disp-title{font-size:.85rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .disposition-box .disp-desc{font-size:.7rem;color:var(--ink-dim);line-height:1.35;margin-top:.15rem}
+
+  .auto-flag-hint{font-size:.6rem;color:var(--ink-mute);font-style:italic;margin-top:.1rem;padding-left:.4rem;display:flex;align-items:center;gap:.35rem}
+  .auto-flag-hint .dot-auto{width:4px;height:4px;background:var(--accent);flex-shrink:0}
+
+  .disclaimer{text-align:center;padding:1rem 1.25rem 1.75rem;font-size:.6rem;color:var(--ink-low);line-height:1.5;max-width:600px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+
+  .selection-summary{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.7rem;padding-top:.7rem;border-top:1px dashed var(--line-2)}
+  .selection-chip{font-size:.58rem;color:var(--ink-dim);background:var(--surface-2);border:1px solid var(--line-2);padding:.15rem .45rem;display:inline-flex;align-items:center;gap:.25rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  .selection-chip .chip-dot{width:5px;height:5px;flex-shrink:0}
+  .selection-chip.chip-red .chip-dot{background:var(--red)}
+  .selection-chip.chip-blue .chip-dot{background:var(--accent)}
+  .selection-chip.chip-yellow .chip-dot{background:var(--amber)}
+  .selection-chip.chip-green .chip-dot{background:var(--green)}
+
+  .empty-note{color:var(--ink-low);text-align:center;padding:.5rem 0;font-size:.76rem}
+
+  .section-center{margin-top:.75rem;text-align:center}
+  .mt-small{margin-top:.55rem}
+
+  @media print{
+    body{background:#fff;color:#000}
+    header,.progress-bar,.progress-labels,.nav-row,.copy-btn,.disclaimer,.back-link{display:none!important}
+    .card,.dark-box,.conduta-box,.disposition-box,.ottawa-box{background:#fff!important;border:1px solid #444!important;color:#000!important;break-inside:avoid}
+    .card h2,.result-title,.conduta-box h3,.dark-box h3,.disposition-box .disp-title,.ottawa-box h4{color:#000!important}
+    .card .subtitle,.result-desc,.disp-desc,.ottawa-box>p{color:#333!important}
+    .dx-item{background:#f7f7f7!important;color:#000!important}
+    .note-text{background:#f7f7f7!important;border:1px solid #bbb!important;color:#000!important;max-height:none!important;font-size:9pt}
+    .summary-row{border-color:#bbb!important}
+    .summary-row .criteria{color:#222!important}
+    .summary-row .value{color:#000!important}
+    .conduta-item{color:#111!important;border-bottom-color:#ddd!important}
+    .collapse-body{display:block!important;margin-top:.65rem!important}
+    .collapse-arrow{display:none!important}
+    .container{max-width:100%;padding:0}
+    .rf-count{color:#000!important;background:#eee!important;border-color:#666!important}
+    .result-badge{background:#fff!important;color:#000!important;border-color:#000!important}
+  }
+
+  @media(max-width:500px){
+    .container{padding:.75rem;padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px));gap:.65rem}
+    .card{padding:1rem .85rem}
+    header{padding:.85rem .75rem .85rem 3rem}
+    header h1{font-size:.95rem}
+    .option-btn{padding:.65rem .8rem;font-size:.8rem}
+    .check-btn{padding:.55rem .75rem;font-size:.78rem}
+    .score-opt{font-size:.66rem;min-height:2rem;padding:.45rem .25rem}
+    .pain-dot{width:1.85rem;height:1.85rem;font-size:.68rem}
+    .pain-scale{gap:.2rem}
+    .result-title{font-size:1rem}
+    .nav-btn{padding:.7rem;font-size:.76rem}
+    .back-link{left:.6rem;font-size:.66rem;padding:.3rem .45rem}
+    .conduta-item{font-size:.76rem}
+    .summary-row{font-size:.74rem}
+    .dx-item{font-size:.76rem;padding:.4rem .55rem}
+    .ottawa-result{flex-direction:column;text-align:center;gap:.35rem;padding:.6rem}
+    .disposition-box{padding:.75rem .85rem;gap:.6rem}
+    .disposition-box .disp-icon{min-width:2.4rem;height:2rem;font-size:.82rem}
+  }
+  @media(max-width:360px){
+    .pain-dot{width:1.65rem;height:1.65rem;font-size:.6rem}
+    .score-opt{font-size:.6rem;padding:.38rem .15rem}
+    .back-link span.back-text{display:none}
+    header{padding:.75rem .5rem .75rem 2.5rem}
+    .card{padding:.85rem .75rem}
+    .option-btn{padding:.55rem .7rem;font-size:.76rem}
+    .check-btn{padding:.5rem .65rem;font-size:.74rem}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../dor-de-cabeca.html" class="back-link" aria-label="Voltar">&larr; <span class="back-text">Voltar</span></a>
+  <h1>Cefaleia</h1>
+  <p>SNOOP &middot; Ottawa &middot; Conduta</p>
+</header>
+<div class="container" id="app"></div>
+<div class="disclaimer" id="disclaimer"></div>
+<script>
+// =============================================
+// DATA
+// =============================================
+const STEP_LABELS=['História','Red Flags','Sintomas','Exame','Vitais','Resultado'];
+const TOTAL_STEPS=6;
+
+const SNOOP_FLAGS=[
+  {id:'s_febre',letter:'S',label:'Febre, perda de peso, sudorese noturna',cls:'snoop-s',cat:'Sistêmicos'},
+  {id:'s_hiv',letter:'S',label:'HIV ou imunossupressão',cls:'snoop-s',cat:'Sistêmicos'},
+  {id:'s_cancer',letter:'S',label:'História de neoplasia',cls:'snoop-s',cat:'Sistêmicos'},
+  {id:'s_gestante',letter:'S',label:'Gestante ou puérpera',cls:'snoop-s',cat:'Sistêmicos'},
+  {id:'s_anticoag',letter:'S',label:'Anticoagulante / coagulopatia',cls:'snoop-s',cat:'Sistêmicos'},
+  {id:'n_focal',letter:'N',label:'Déficit neurológico focal',cls:'snoop-n',cat:'Neurológicos'},
+  {id:'n_confusao',letter:'N',label:'Confusão / rebaixamento',cls:'snoop-n',cat:'Neurológicos'},
+  {id:'n_convulsao',letter:'N',label:'Convulsão',cls:'snoop-n',cat:'Neurológicos'},
+  {id:'o_subita',letter:'O',label:'Início súbito (pico em segundos)',cls:'snoop-o',cat:'Onset (thunderclap)'},
+  {id:'o_pior',letter:'O',label:'"Pior cefaleia da vida"',cls:'snoop-o',cat:'Onset (thunderclap)'},
+  {id:'o2_idade',letter:'O',label:'Idade > 50 anos com cefaleia nova',cls:'snoop-o2',cat:'Older age (> 50)'},
+  {id:'p_progressiva',letter:'P',label:'Progressiva (dias/semanas)',cls:'snoop-p',cat:'Mudança de padrão'},
+  {id:'p_postural',letter:'P',label:'Piora com postura / Valsalva / esforço',cls:'snoop-p',cat:'Mudança de padrão'},
+  {id:'p_desperta',letter:'P',label:'Desperta o paciente do sono',cls:'snoop-p',cat:'Mudança de padrão'},
+  {id:'p_trauma',letter:'P',label:'Trauma craniano recente',cls:'snoop-p',cat:'Mudança de padrão'},
+];
+
+const OTTAWA_CRITERIA=[
+  {id:'ot_age40',label:'Idade ≥ 40 anos'},
+  {id:'ot_neck',label:'Dor / rigidez cervical'},
+  {id:'ot_witness',label:'Perda de consciência testemunhada'},
+  {id:'ot_onset_effort',label:'Início durante esforço físico'},
+  {id:'ot_thunder',label:'Thunderclap (pico instantâneo)'},
+  {id:'ot_flexion',label:'Limitação à flexão cervical ao exame'},
+];
+
+const ASSOC_SYMPTOMS=[
+  {id:'as_nausea',label:'Náuseas / vômitos',cat:'Gerais'},
+  {id:'as_foto',label:'Fotofobia',cat:'Gerais'},
+  {id:'as_fono',label:'Fonofobia',cat:'Gerais'},
+  {id:'as_aura',label:'Aura visual (escotomas, fosfenos)',cat:'Gerais'},
+  {id:'as_osmofobia',label:'Osmofobia',cat:'Gerais'},
+  {id:'as_lacrimej',label:'Lacrimejamento / hiperemia ipsilateral',cat:'Autonômicos'},
+  {id:'as_rinorreia',label:'Rinorreia / congestão nasal ipsilateral',cat:'Autonômicos'},
+  {id:'as_ptose',label:'Ptose / miose ipsilateral',cat:'Autonômicos'},
+  {id:'as_inquietude',label:'Inquietude / agitação durante crise',cat:'Autonômicos'},
+  {id:'as_rigidez',label:'Rigidez de nuca',cat:'Meningismo'},
+  {id:'as_kernig',label:'Kernig / Brudzinski positivo',cat:'Meningismo'},
+  {id:'as_rash',label:'Rash / petéquias',cat:'Meningismo'},
+  {id:'as_diplopia',label:'Diplopia ou perda visual',cat:'Neurológico'},
+  {id:'as_fraqueza',label:'Fraqueza / parestesia focal',cat:'Neurológico'},
+  {id:'as_afasia',label:'Afasia / disartria',cat:'Neurológico'},
+  {id:'as_ataxia',label:'Ataxia / vertigem intensa',cat:'Neurológico'},
+  {id:'as_sincope',label:'Síncope',cat:'Neurológico'},
+  {id:'as_campovisu',label:'Defeito de campo visual',cat:'Neurológico'},
+  {id:'as_dorcervical',label:'Dor cervical intensa',cat:'Vasculares'},
+  {id:'as_horner',label:'Horner (ptose + miose + anidrose)',cat:'Vasculares'},
+];
+
+const EXAM_FINDINGS=[
+  {id:'ex_papil',label:'Papiledema na fundoscopia',cat:'Fundoscopia',severe:true},
+  {id:'ex_hemorr',label:'Hemorragia retiniana',cat:'Fundoscopia',severe:true},
+  {id:'ex_focal',label:'Déficit motor / sensitivo focal',cat:'Neurológico',severe:true},
+  {id:'ex_ataxia',label:'Ataxia de marcha',cat:'Neurológico',severe:true},
+  {id:'ex_dismetria',label:'Dismetria / disdiadococinesia',cat:'Neurológico',severe:true},
+  {id:'ex_anisocoria',label:'Anisocoria / déficit pupilar',cat:'Neurológico',severe:true},
+  {id:'ex_parncraniano',label:'Paralisia de NC (III, VI, VII)',cat:'Neurológico',severe:true},
+  {id:'ex_campovisu',label:'Defeito de campo ao confronto',cat:'Neurológico',severe:true},
+  {id:'ex_meningismo',label:'Rigidez de nuca ao exame',cat:'Sinais meníngeos',severe:true},
+  {id:'ex_kernig',label:'Kernig / Brudzinski positivo',cat:'Sinais meníngeos',severe:true},
+  {id:'ex_temporal',label:'Artéria temporal dolorosa / endurecida',cat:'Palpação',severe:true},
+  {id:'ex_claudic',label:'Claudicação mandibular',cat:'Palpação',severe:true},
+  {id:'ex_seio',label:'Dor à palpação de seios da face',cat:'Palpação',severe:false},
+  {id:'ex_trigger',label:'Ponto-gatilho cervical / trapézio',cat:'Palpação',severe:false},
+  {id:'ex_normal',label:'Exame neurológico completamente normal',cat:'Normal',severe:false},
+];
+
+const MED_OPTIONS=[
+  {id:'med_dipirona',label:'Dipirona'},
+  {id:'med_paracetamol',label:'Paracetamol'},
+  {id:'med_aine',label:'AINE'},
+  {id:'med_triptano',label:'Triptano'},
+  {id:'med_opioide',label:'Opioide'},
+  {id:'med_nenhum',label:'Nenhuma'},
+];
+
+// =============================================
+// STATE
+// =============================================
+let currentStep=0;
+let maxStepReached=0;
+let onset={type:null,duration:null,location:null,quality:null,frequency:null,age:null,intensity:null};
+let medsTried=new Set();
+let redFlags=new Set();
+let ottawaChecks=new Set();
+let assocSymptoms=new Set();
+let examFindings=new Set();
+let vitals={pa:null,fc:null,temp:null,gcs:null,spo2:null};
+let sections={snoop:true,ottawa:false,symptoms:false,exam:false,vitals:false,conduta:true,workup:true,note:false};
+const evalStartTime=new Date();
+const app=document.getElementById('app');
+const disclaimerEl=document.getElementById('disclaimer');
+
+// =============================================
+// HELPERS
+// =============================================
+const has=(set,...ids)=>ids.some(id=>set.has(id));
+function hasThunderclap(){return has(redFlags,'o_subita','o_pior')||onset.type==='subito'}
+function redFlagCount(){return redFlags.size}
+function hasMeningism(){return has(assocSymptoms,'as_rigidez','as_kernig')||has(examFindings,'ex_meningismo','ex_kernig')}
+function hasFocalDeficit(){return redFlags.has('n_focal')||has(examFindings,'ex_focal','ex_ataxia','ex_dismetria','ex_anisocoria','ex_parncraniano','ex_campovisu')||has(assocSymptoms,'as_fraqueza','as_afasia','as_ataxia','as_campovisu')}
+function hasPapilledema(){return examFindings.has('ex_papil')}
+function hasRetinalHemorrhage(){return examFindings.has('ex_hemorr')}
+function hasTemporalArteritis(){return has(examFindings,'ex_temporal','ex_claudic')&&redFlags.has('o2_idade')}
+function hasFever(){return redFlags.has('s_febre')||vitals.temp==='fever'}
+function ottawaPositive(){return ottawaChecks.size>0}
+function hasAutonomic(){return has(assocSymptoms,'as_lacrimej','as_rinorreia','as_ptose','as_inquietude')}
+function hasMigraineFeatures(){return has(assocSymptoms,'as_nausea','as_foto','as_fono','as_aura','as_osmofobia')}
+function isPregnant(){return redFlags.has('s_gestante')}
+function isAnticoagulated(){return redFlags.has('s_anticoag')}
+function hasTrauma(){return redFlags.has('p_trauma')}
+function hasLowSpO2(){return vitals.spo2==='low'}
+function hasRash(){return assocSymptoms.has('as_rash')}
+function hasCushingReflex(){return vitals.pa==='crisis'&&vitals.fc==='bradi'}
+function hasPostural(){return redFlags.has('p_postural')}
+function isDrowsy(){return vitals.gcs==='drowsy'}
+function hasHorner(){return assocSymptoms.has('as_horner')}
+function hasCervicalPain(){return assocSymptoms.has('as_dorcervical')||ottawaChecks.has('ot_neck')}
+function hasVisualFieldDefect(){return assocSymptoms.has('as_campovisu')||examFindings.has('ex_campovisu')}
+
+function suspectDissection(){return (hasCervicalPain()||hasHorner())&&(hasFocalDeficit()||hasHorner())&&(onset.type==='subito'||onset.type==='agudo')}
+function suspectCVT(){return isPregnant()&&redFlags.has('p_progressiva')&&(hasPapilledema()||hasFocalDeficit()||redFlags.has('n_convulsao'))}
+function suspectPituitaryApoplexy(){return onset.type==='subito'&&(hasVisualFieldDefect()||assocSymptoms.has('as_diplopia'))&&!hasMeningism()}
+function suspectPRES(){return vitals.pa==='crisis'&&(redFlags.has('n_convulsao')||assocSymptoms.has('as_diplopia')||hasFocalDeficit())}
+function suspectIIH(){return hasPapilledema()&&!hasFocalDeficit()&&!hasMeningism()&&!hasThunderclap()&&(hasPostural()||redFlags.has('p_progressiva'))}
+function isMedOveruse(){return onset.frequency==='cronica'&&(medsTried.size>=3||medsTried.has('med_opioide'))&&!medsTried.has('med_nenhum')}
+
+function isAgeOver40(){return onset.age==='40_49'||onset.age==='50_64'||onset.age==='ge65'}
+function isAgeOver50(){return onset.age==='50_64'||onset.age==='ge65'}
+
+function getRiskLevel(){
+  if(hasThunderclap())return 'emergent';
+  if(hasMeningism()&&hasFever())return 'emergent';
+  if(hasMeningism()&&hasRash())return 'emergent';
+  if(hasFocalDeficit()&&redFlags.has('n_confusao'))return 'emergent';
+  if(redFlags.has('n_convulsao')&&(hasFocalDeficit()||hasMeningism()||vitals.pa==='crisis'))return 'emergent';
+  if(hasPapilledema()&&hasFocalDeficit())return 'emergent';
+  if(hasPapilledema()&&has(assocSymptoms,'as_diplopia','as_sincope'))return 'emergent';
+  if(hasRetinalHemorrhage()&&vitals.pa==='crisis')return 'emergent';
+  if(vitals.gcs==='reduced')return 'emergent';
+  if(hasCushingReflex())return 'emergent';
+  if(hasLowSpO2()&&redFlags.has('n_confusao'))return 'emergent';
+  if(isPregnant()&&(vitals.pa==='crisis'||hasFocalDeficit()||redFlags.has('n_convulsao')))return 'emergent';
+  if(isAnticoagulated()&&hasTrauma())return 'emergent';
+  if(isAnticoagulated()&&hasFocalDeficit())return 'emergent';
+  if(suspectDissection())return 'emergent';
+  if(suspectPRES())return 'emergent';
+
+  if(redFlagCount()>=3)return 'urgent';
+  if(hasFocalDeficit())return 'urgent';
+  if(hasMeningism())return 'urgent';
+  if(hasPapilledema())return 'urgent';
+  if(hasRetinalHemorrhage())return 'urgent';
+  if(hasTemporalArteritis())return 'urgent';
+  if(redFlags.has('n_confusao'))return 'urgent';
+  if(redFlags.has('n_convulsao'))return 'urgent';
+  if(isDrowsy()&&(hasFever()||redFlagCount()>0))return 'urgent';
+  if(redFlags.has('p_progressiva')&&(redFlags.has('o2_idade')||redFlags.has('s_cancer')))return 'urgent';
+  if(hasFever()&&(redFlags.has('s_hiv')||redFlags.has('s_cancer')))return 'urgent';
+  if(vitals.pa==='crisis')return 'urgent';
+  if(isPregnant()&&vitals.pa==='elevada')return 'urgent';
+  if(isAnticoagulated()&&(onset.type==='subito'||onset.type==='agudo'))return 'urgent';
+  if(examFindings.has('ex_parncraniano'))return 'urgent';
+  if(hasLowSpO2())return 'urgent';
+  if(has(examFindings,'ex_temporal','ex_claudic')&&!redFlags.has('o2_idade')&&isAgeOver40())return 'urgent';
+  if(onset.frequency==='primeiro'&&isAgeOver50()&&onset.intensity!==null&&onset.intensity>=7)return 'urgent';
+  if(suspectCVT())return 'urgent';
+  if(hasHorner()&&onset.type==='agudo')return 'urgent';
+
+  if(redFlagCount()>0)return 'low_flags';
+  return 'primary';
+}
+
+function getClassification(){
+  const risk=getRiskLevel();
+  if(risk==='emergent'){
+    let dx=[];
+    if(hasThunderclap())dx.push('Hemorragia subaracnoidea');
+    if(hasThunderclap()&&onset.frequency==='recorrente')dx.push('RCVS (vasoconstrição cerebral reversível)');
+    if(hasMeningism()&&hasFever())dx.push('Meningite / Encefalite');
+    if(hasMeningism()&&hasRash())dx.push('Meningococcemia');
+    if(hasFocalDeficit()&&!hasThunderclap())dx.push('Lesão expansiva / AVC');
+    if(redFlags.has('n_convulsao')&&!isPregnant())dx.push('Lesão estrutural / Status epiléptico');
+    if(hasPapilledema())dx.push('Hipertensão intracraniana');
+    if(hasCushingReflex())dx.push('Tríade de Cushing — herniação iminente');
+    if(hasRetinalHemorrhage()&&vitals.pa==='crisis')dx.push('Hipertensão maligna');
+    if(vitals.gcs==='reduced')dx.push('Processo intracraniano agudo');
+    if(isPregnant()&&(vitals.pa==='crisis'||redFlags.has('n_convulsao')))dx.push('Eclâmpsia / Pré-eclâmpsia grave');
+    if(isAnticoagulated()&&hasTrauma())dx.push('Hematoma intracraniano em anticoagulado');
+    if(isAnticoagulated()&&hasFocalDeficit()&&!hasTrauma())dx.push('Hemorragia espontânea em anticoagulado');
+    if(suspectDissection())dx.push('Dissecção arterial cervical');
+    if(suspectPRES())dx.push('PRES');
+    if(suspectPituitaryApoplexy())dx.push('Apoplexia hipofisária');
+    if(dx.length===0)dx.push('Cefaleia secundária de alto risco');
+    return {level:'emergent',title:'Emergente',badge:'badge-emergent',icon:'!!',dx,desc:'Investigação imediata obrigatória'};
+  }
+  if(risk==='urgent'){
+    let dx=[];
+    if(hasTemporalArteritis())dx.push('Arterite temporal (células gigantes)');
+    if(hasPapilledema()&&suspectIIH())dx.push('Hipertensão intracraniana idiopática');
+    else if(hasPapilledema())dx.push('Hipertensão intracraniana');
+    if(hasRetinalHemorrhage())dx.push('Retinopatia — investigar hipertensão maligna');
+    if(hasMeningism()&&!hasFever())dx.push('Irritação meníngea — HSA? viral?');
+    if(hasMeningism()&&hasFever())dx.push('Meningite / Encefalite');
+    if(hasFocalDeficit())dx.push('Lesão estrutural');
+    if(examFindings.has('ex_parncraniano'))dx.push('Paralisia NC — aneurisma? massa?');
+    if(redFlags.has('p_progressiva'))dx.push('Cefaleia progressiva — lesão expansiva?');
+    if(vitals.pa==='crisis')dx.push('Emergência hipertensiva');
+    if(isPregnant()&&vitals.pa==='elevada')dx.push('Pré-eclâmpsia');
+    if(isAnticoagulated())dx.push('Hemorragia em anticoagulado');
+    if(hasLowSpO2())dx.push('Hipoxemia — avaliar causa sistêmica');
+    if(isDrowsy()&&hasFever())dx.push('Sonolência + febre — encefalite?');
+    if(onset.frequency==='primeiro'&&isAgeOver50())dx.push('Cefaleia nova em > 50 anos');
+    if(has(examFindings,'ex_temporal','ex_claudic')&&isAgeOver40()&&!hasTemporalArteritis())dx.push('Arterite temporal provável — VHS/PCR');
+    if(suspectCVT())dx.push('Trombose venosa cerebral');
+    if(hasHorner()&&onset.type==='agudo')dx.push('Dissecção carotídea — angio-TC urgente');
+    if(redFlags.has('n_convulsao'))dx.push('Convulsão — avaliar lesão estrutural');
+    if(dx.length===0)dx.push('Cefaleia secundária suspeita');
+    return {level:'urgent',title:'Urgente',badge:'badge-urgent',icon:'!',dx,desc:'Investigação antes da alta'};
+  }
+  if(risk==='low_flags'){
+    return {level:'low_flags',title:'Baixo risco c/ red flags',badge:'badge-urgent',icon:'?',dx:['Red flags presentes — considerar investigação'],desc:'Avaliar exames conforme achados'};
+  }
+  let dx=[];
+  if(hasAutonomic()&&onset.location==='unilateral'&&onset.duration==='15min_3h')dx.push('Cefaleia em salvas (cluster)');
+  else if(hasAutonomic()&&(onset.location==='unilateral'||onset.location==='periorb'))dx.push('Cefaleia trigêmino-autonômica');
+  if(hasMigraineFeatures()||(onset.quality==='pulsatil'&&onset.duration==='4_72h'))dx.push('Migrânea');
+  if(onset.quality==='pressao'||onset.location==='bilateral')dx.push('Cefaleia tensional');
+  if(onset.frequency==='cronica')dx.push('Cefaleia crônica diária');
+  if(onset.location==='periorb'&&examFindings.has('ex_seio'))dx.push('Sinusite');
+  if(onset.location==='occipital'&&examFindings.has('ex_trigger'))dx.push('Cefaleia cervicogênica');
+  if(redFlags.has('p_postural')&&!hasFocalDeficit()&&!hasPapilledema())dx.push('Cefaleia primária por esforço');
+  if(isMedOveruse())dx.push('Cefaleia por uso excessivo de analgésicos');
+  if(dx.length===0)dx.push('Cefaleia primária inespecífica');
+  return {level:'primary',title:'Cefaleia primária',badge:'badge-primary',icon:'OK',dx,desc:'Sem alarmes — tratamento sintomático'};
+}
+
+function getTimeElapsed(){
+  const diff=Math.floor((new Date()-evalStartTime)/1000);
+  const m=Math.floor(diff/60);
+  const s=diff%60;
+  return m>0?m+'min '+s+'s':s+'s';
+}
+
+// =============================================
+// PROGRESS BAR
+// =============================================
+function progHTML(idx,allDone){
+  let h='<div class="progress-bar" role="navigation" aria-label="Progresso">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done':i===idx?'active':'';
+    const canClick=i<=maxStepReached;
+    const clickable=canClick?` onclick="goToStep(${i})" tabindex="0" role="button" aria-label="${STEP_LABELS[i]}"`:'';
+    h+=`<div class="progress-step ${c} ${canClick?'clickable':''}"${clickable}></div>`;
+  }
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done-label':i===idx?'active-label':'';
+    const canClick=i<=maxStepReached;
+    const clickable=canClick?` onclick="goToStep(${i})" tabindex="0" role="button"`:'';
+    h+=`<span class="${c} ${canClick?'clickable':''}"${clickable}>${STEP_LABELS[i]}</span>`;
+  }
+  h+='</div>';
+  return h;
+}
+
+// =============================================
+// RENDER ROUTER
+// =============================================
+function render(){
+  if(currentStep===0)renderOnset();
+  else if(currentStep===1)renderRedFlags();
+  else if(currentStep===2)renderSymptoms();
+  else if(currentStep===3)renderExam();
+  else if(currentStep===4)renderVitals();
+  else renderResult();
+  disclaimerEl.innerHTML=currentStep>=TOTAL_STEPS?'Apoio clínico &middot; Não substitui o julgamento do profissional':'';
+}
+
+// =============================================
+// CHIP GROUP HELPER
+// =============================================
+function chipGroup(label,opts,current,field,compact){
+  let h=`<div class="group-label">${label}</div><div class="chip-row">`;
+  for(const o of opts){
+    h+=`<button class="btn-base score-opt${compact?' compact':''} ${current===o.v?'picked':''}" onclick="setOnset('${field}','${o.v}')">${o.l}</button>`;
+  }
+  h+='</div>';
+  return h;
+}
+
+// =============================================
+// STEP 0: ONSET
+// =============================================
+function renderOnset(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<h2>História</h2>';
+  h+='<p class="subtitle">Quem é o paciente e como é a dor.</p>';
+  h+='<div class="options">';
+
+  h+=chipGroup('Faixa etária',[{v:'lt18',l:'< 18'},{v:'18_39',l:'18-39'},{v:'40_49',l:'40-49'},{v:'50_64',l:'50-64'},{v:'ge65',l:'≥ 65'}],onset.age,'age');
+  if(isAgeOver50()){
+    h+='<div class="auto-flag-hint"><span class="dot-auto"></span>&gt; 50 anos: cefaleia nova vira red flag automática</div>';
+  }
+
+  h+='<div class="group-label">Modo de início</div>';
+  const onsetTypes=[
+    {v:'subito',l:'Súbito — pico em segundos',icon:'\u26A1'},
+    {v:'agudo',l:'Agudo — minutos a horas',icon:'h'},
+    {v:'subagudo',l:'Subagudo — dias',icon:'d'},
+    {v:'cronico',l:'Crônico — semanas/meses',icon:'s'},
+  ];
+  for(const o of onsetTypes){
+    const sel=onset.type===o.v;
+    const extra=sel&&o.v==='subito'?' onset-subito':'';
+    h+=`<button class="btn-base option-btn ${sel?'selected':''}${extra}" onclick="setOnset('type','${o.v}')">`;
+    h+=`<span class="icon">${o.icon}</span><span class="label">${o.l}</span></button>`;
+  }
+  if(onset.type==='subito'){
+    h+='<div class="inline-alert ia-red"><span class="ia-icon">!</span><span>Thunderclap exige exclusão de HSA. Ottawa na próxima etapa.</span></div>';
+  }
+
+  h+='<div class="group-label">Intensidade (EVA 0-10)</div>';
+  h+='<div class="pain-scale">';
+  for(let i=0;i<=10;i++){
+    let cls='';
+    if(onset.intensity===i){
+      if(i<=3)cls='picked p-low';
+      else if(i<=6)cls='picked p-mod';
+      else cls='picked p-high';
+    }
+    h+=`<button class="pain-dot ${cls}" onclick="setOnset('intensity',${i})" aria-label="Intensidade ${i}">${i}</button>`;
+  }
+  h+='</div>';
+  h+='<div class="pain-labels"><span>Sem dor</span><span>Moderada</span><span>Pior possível</span></div>';
+
+  h+=chipGroup('Qualidade',[{v:'pulsatil',l:'Pulsátil'},{v:'pressao',l:'Aperto'},{v:'pontada',l:'Pontada'},{v:'queimacao',l:'Queimação'}],onset.quality,'quality');
+  h+=chipGroup('Localização',[{v:'unilateral',l:'Unilateral'},{v:'bilateral',l:'Bilateral'},{v:'frontal',l:'Frontal'},{v:'occipital',l:'Occipital'},{v:'holocraniana',l:'Holo'},{v:'periorb',l:'Periorbital'}],onset.location,'location');
+  h+=chipGroup('Duração dos episódios',[{v:'seg_min',l:'Segundos'},{v:'15min_3h',l:'15min-3h'},{v:'4_72h',l:'4-72h'},{v:'gt72h',l:'> 72h'},{v:'constante',l:'Constante'}],onset.duration,'duration');
+  h+=chipGroup('Frequência',[{v:'primeiro',l:'Primeiro episódio'},{v:'recorrente',l:'Recorrente'},{v:'cronica',l:'Crônica (>15d/mês)'}],onset.frequency,'frequency',true);
+
+  if(onset.frequency==='primeiro'&&isAgeOver50()){
+    h+='<div class="inline-alert ia-amber"><span class="ia-icon">!</span><span>Primeiro episódio em > 50 anos exige investigação ativa.</span></div>';
+  }
+
+  h+='<div class="group-label">Medicações já tentadas</div><div class="chip-row">';
+  for(const m of MED_OPTIONS){
+    h+=`<button class="btn-base score-opt compact ${medsTried.has(m.id)?'picked':''}" onclick="toggleMed('${m.id}')">${m.label}</button>`;
+  }
+  h+='</div>';
+
+  h+='</div>';
+  h+=buildStepSummary(0);
+
+  h+='<div class="nav-row">';
+  const canNext=onset.type!==null&&onset.age!==null;
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()">Próximo</button>`;
+  h+='</div>';
+  if(!canNext){
+    h+='<div class="validation-hint">Selecione idade e modo de início</div>';
+  }
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 1: RED FLAGS
+// =============================================
+function renderRedFlags(){
+  let h=progHTML(1,false);
+  h+='<div class="card">';
+  h+='<h2>Red Flags — SNOOP</h2>';
+  h+='<p class="subtitle">Sinais de alarme para cefaleia secundária.</p>';
+  h+='<div class="options">';
+
+  let lastCat='';
+  for(const f of SNOOP_FLAGS){
+    if(f.cat!==lastCat){h+=`<div class="group-label">${f.cat}</div>`;lastCat=f.cat;}
+    const ck=redFlags.has(f.id);
+    const isAutoFlagged=(f.id==='o2_idade'&&isAgeOver50());
+    h+=`<button class="btn-base check-btn ${ck?'checked red-flag':''}" onclick="toggleRedFlag('${f.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+    h+=`<span class="snoop-letter ${f.cls}">${f.letter}</span>`;
+    h+=`<span class="label">${f.label}</span></button>`;
+    if(isAutoFlagged&&ck){
+      h+='<div class="auto-flag-hint"><span class="dot-auto"></span>Auto-selecionado (idade > 50)</div>';
+    }
+  }
+  h+='</div>';
+
+  if(redFlags.size>0){
+    const rfCls=redFlags.size>=3?'rf-high':'rf-mod';
+    h+=`<div class="section-center"><span class="rf-count ${rfCls}">${redFlags.size} red flag${redFlags.size>1?'s':''}</span></div>`;
+  }
+
+  if(hasThunderclap()){
+    h+='<div class="ottawa-box">';
+    h+='<h4>Regra de Ottawa para HSA</h4>';
+    h+='<p>Sens. 100% &middot; cefaleia não traumática, pico em 1h, GCS 15, idade ≥ 15. Qualquer critério positivo → investigar.</p>';
+    h+='<div class="options">';
+    for(const c of OTTAWA_CRITERIA){
+      const ck=ottawaChecks.has(c.id);
+      const isAutoOttawa=(c.id==='ot_age40'&&isAgeOver40())||(c.id==='ot_thunder'&&(onset.type==='subito'||redFlags.has('o_subita')));
+      h+=`<button class="btn-base check-btn ${ck?'checked red-flag':''}" onclick="toggleOttawa('${c.id}')">`;
+      h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+      h+=`<span class="label">${c.label}</span></button>`;
+      if(isAutoOttawa&&ck){
+        h+='<div class="auto-flag-hint"><span class="dot-auto"></span>Auto-selecionado</div>';
+      }
+    }
+    h+='</div>';
+    if(ottawaChecks.size>0){
+      h+='<div class="ottawa-result or-high">';
+      h+=`<div class="ottawa-num">${ottawaChecks.size}</div>`;
+      h+='<div class="ottawa-info"><div class="oi-label">Ottawa POSITIVO</div>';
+      h+='<div class="oi-detail">TC s/ contraste. Se normal &lt; 6h → angio-TC. Se &gt; 6h → punção lombar (xantocromia).</div></div></div>';
+    }else{
+      h+='<div class="ottawa-result or-low">';
+      h+='<div class="ottawa-num">0</div>';
+      h+='<div class="ottawa-info"><div class="oi-label">Ottawa negativo</div>';
+      h+='<div class="oi-detail">HSA excluída se pico em 1h e paciente alerta.</div></div></div>';
+    }
+    h+='</div>';
+  }
+
+  h+=buildStepSummary(1);
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 2: SYMPTOMS
+// =============================================
+function renderSymptoms(){
+  let h=progHTML(2,false);
+  h+='<div class="card">';
+  h+='<h2>Sintomas Associados</h2>';
+  h+='<p class="subtitle">Marque os sintomas durante a crise.</p>';
+  h+='<div class="options">';
+
+  let lastCat='';
+  for(const s of ASSOC_SYMPTOMS){
+    if(s.cat!==lastCat){h+=`<div class="group-label">${s.cat}</div>`;lastCat=s.cat;}
+    const ck=assocSymptoms.has(s.id);
+    h+=`<button class="btn-base check-btn ${ck?'checked':''}" onclick="toggleSymptom('${s.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+    h+=`<span class="label">${s.label}</span></button>`;
+  }
+  h+='</div>';
+
+  if(assocSymptoms.size>0){
+    let hints=[];
+    if(hasRash()&&hasMeningism())hints.push({icon:'!!',text:'Rash + meningismo: meningococcemia — ATB IMEDIATO.',cls:'ia-red'});
+    else if(hasMeningism())hints.push({icon:'!',text:'Irritação meníngea — investigar meningite / HSA.',cls:'ia-red'});
+    if(has(assocSymptoms,'as_fraqueza','as_afasia'))hints.push({icon:'!!',text:'Déficit focal — descartar AVC ou lesão expansiva.',cls:'ia-red'});
+    if(hasHorner())hints.push({icon:'!!',text:'Horner + cefaleia: dissecção carotídea? Angio-TC urgente.',cls:'ia-red'});
+    else if(hasCervicalPain()&&(onset.type==='subito'||onset.type==='agudo'))hints.push({icon:'!',text:'Dor cervical + cefaleia aguda: avaliar dissecção arterial.',cls:'ia-amber'});
+    if(assocSymptoms.has('as_campovisu'))hints.push({icon:'!',text:'Defeito de campo: lesão quiasmática ou AVC occipital.',cls:'ia-amber'});
+    if(hints.length>0){
+      h+='<div class="alert-stack">';
+      for(const hint of hints)h+=`<div class="inline-alert ${hint.cls}"><span class="ia-icon">${hint.icon}</span><span>${hint.text}</span></div>`;
+      h+='</div>';
+    }
+  }
+
+  h+=buildStepSummary(2);
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 3: EXAM
+// =============================================
+function renderExam(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<h2>Exame Físico</h2>';
+  h+='<p class="subtitle">Se normal, marque apenas a última opção.</p>';
+  h+='<div class="options">';
+
+  const normalSelected=examFindings.has('ex_normal');
+  let lastCat='';
+  for(const e of EXAM_FINDINGS){
+    if(e.cat!==lastCat){h+=`<div class="group-label">${e.cat}</div>`;lastCat=e.cat;}
+    const ck=examFindings.has(e.id);
+    const isRed=e.severe&&ck;
+    const isDim=normalSelected&&e.id!=='ex_normal';
+    h+=`<button class="btn-base check-btn ${ck?'checked':''}${isRed?' red-flag':''}${isDim?' dim':''}" onclick="toggleExam('${e.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+    h+=`<span class="label">${e.label}</span></button>`;
+  }
+  h+='</div>';
+
+  const severeCount=EXAM_FINDINGS.filter(e=>e.severe&&examFindings.has(e.id)).length;
+  if(severeCount>0){
+    h+=`<div class="inline-alert ia-red mt-small"><span class="ia-icon">!</span><span>${severeCount} achado${severeCount>1?'s':''} anormal${severeCount>1?'is':''} — provável cefaleia secundária.</span></div>`;
+  }
+
+  h+=buildStepSummary(3);
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 4: VITALS
+// =============================================
+function renderVitals(){
+  let h=progHTML(4,false);
+  h+='<div class="card">';
+  h+='<h2>Sinais Vitais</h2>';
+  h+='<p class="subtitle">PA, FC, temperatura, SpO₂, consciência.</p>';
+  h+='<div class="options">';
+
+  const vitalGroups=[
+    {label:'Pressão arterial',field:'pa',opts:[{v:'normal',l:'Normal'},{v:'elevada',l:'>140/90'},{v:'crisis',l:'Crise >180/120'}]},
+    {label:'Frequência cardíaca',field:'fc',opts:[{v:'normal',l:'60-100 bpm'},{v:'taqui',l:'> 100 bpm'},{v:'bradi',l:'< 60 bpm'}]},
+    {label:'Temperatura',field:'temp',opts:[{v:'normal',l:'< 37,8°'},{v:'subfebril',l:'37,8-38,5°'},{v:'fever',l:'> 38,5°'}]},
+    {label:'SpO₂',field:'spo2',opts:[{v:'normal',l:'≥ 95%'},{v:'low',l:'< 95%'}]},
+    {label:'Consciência',field:'gcs',opts:[{v:'alert',l:'Alerta'},{v:'drowsy',l:'Sonolento'},{v:'reduced',l:'Rebaixado'}]},
+  ];
+  for(const g of vitalGroups){
+    h+=`<div class="group-label">${g.label}</div><div class="chip-row">`;
+    for(const o of g.opts)h+=`<button class="btn-base score-opt ${vitals[g.field]===o.v?'picked':''}" onclick="setVital('${g.field}','${o.v}')">${o.l}</button>`;
+    h+='</div>';
+  }
+
+  let vitalAlerts=[];
+  if(hasCushingReflex())vitalAlerts.push({icon:'!!',text:'Tríade de Cushing: herniação iminente — ação imediata.',cls:'ia-red'});
+  if(vitals.gcs==='reduced')vitalAlerts.push({icon:'!!',text:'GCS rebaixado: proteger via aérea se ≤ 8.',cls:'ia-red'});
+  if(isPregnant()&&vitals.pa==='crisis')vitalAlerts.push({icon:'!!',text:'Gestante + crise: protocolo eclâmpsia (MgSO₄).',cls:'ia-red'});
+  else if(isPregnant()&&vitals.pa==='elevada')vitalAlerts.push({icon:'!',text:'Gestante + HAS: pré-eclâmpsia. Proteinúria.',cls:'ia-amber'});
+  if(vitals.pa==='crisis'&&(redFlags.has('n_convulsao')||hasFocalDeficit()))vitalAlerts.push({icon:'!',text:'Crise + déficit: considerar PRES.',cls:'ia-amber'});
+  if(vitalAlerts.length>0){
+    h+='<div class="alert-stack">';
+    for(const a of vitalAlerts)h+=`<div class="inline-alert ${a.cls}"><span class="ia-icon">${a.icon}</span><span>${a.text}</span></div>`;
+    h+='</div>';
+  }
+
+  h+='</div>';
+  h+=buildStepSummary(4);
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver resultado</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP SUMMARY
+// =============================================
+function buildStepSummary(step){
+  let chips=[];
+  if(step>=0){
+    if(onset.age)chips.push({label:ageLabels()[onset.age],cls:'chip-blue'});
+    if(onset.type)chips.push({label:onsetLabelsShort()[onset.type],cls:onset.type==='subito'?'chip-red':'chip-blue'});
+    if(onset.intensity!==null)chips.push({label:'EVA '+onset.intensity,cls:onset.intensity>=7?'chip-red':onset.intensity>=4?'chip-yellow':'chip-green'});
+  }
+  if(step>=1&&redFlags.size>0)chips.push({label:redFlags.size+' RF',cls:redFlags.size>=3?'chip-red':'chip-yellow'});
+  if(step>=2&&assocSymptoms.size>0)chips.push({label:assocSymptoms.size+' sint.',cls:'chip-blue'});
+  if(step>=3){
+    const sev=EXAM_FINDINGS.filter(e=>e.severe&&examFindings.has(e.id)).length;
+    if(examFindings.has('ex_normal'))chips.push({label:'Exame normal',cls:'chip-green'});
+    else if(sev>0)chips.push({label:sev+' anormal',cls:'chip-red'});
+  }
+  if(step>=4){
+    const abnV=countAbnormalVitals();
+    if(abnV>0)chips.push({label:abnV+' alt. vitais',cls:'chip-yellow'});
+    else if(vitals.pa||vitals.fc||vitals.temp)chips.push({label:'Vitais OK',cls:'chip-green'});
+  }
+  if(chips.length===0)return '';
+  let h='<div class="selection-summary">';
+  for(const c of chips)h+=`<span class="selection-chip ${c.cls}"><span class="chip-dot"></span>${c.label}</span>`;
+  h+='</div>';
+  return h;
+}
+
+function ageLabels(){return {lt18:'< 18','18_39':'18-39','40_49':'40-49','50_64':'50-64',ge65:'≥ 65'}}
+function onsetLabelsShort(){return {subito:'Súbito',agudo:'Agudo',subagudo:'Subagudo',cronico:'Crônico'}}
+
+function countAbnormalVitals(){
+  let n=0;
+  if(vitals.pa==='crisis'||vitals.pa==='elevada')n++;
+  if(vitals.fc&&vitals.fc!=='normal')n++;
+  if(vitals.temp==='fever'||vitals.temp==='subfebril')n++;
+  if(vitals.gcs==='reduced'||vitals.gcs==='drowsy')n++;
+  if(vitals.spo2==='low')n++;
+  return n;
+}
+
+// =============================================
+// RESULT
+// =============================================
+function renderResult(){
+  const cls=getClassification();
+  const rfCount=redFlagCount();
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+  h+=`<div class="result-badge ${cls.badge}">${cls.icon}</div>`;
+  h+=`<div class="result-title">${cls.title}</div>`;
+  h+=`<div class="result-desc">${cls.desc}</div>`;
+
+  const rfCls=rfCount>=3?'rf-high':rfCount>0?'rf-mod':'rf-none';
+  h+=`<div class="rf-count ${rfCls}">${rfCount===0?'\u2713 Sem red flags':rfCount+' red flag'+(rfCount>1?'s':'')}</div>`;
+
+  if(cls.dx.length>0){
+    const dxCls=cls.level==='emergent'?'dx-red':cls.level==='urgent'?'dx-amber':cls.level==='primary'?'dx-blue':'dx-amber';
+    const dxMark=cls.level==='emergent'?'!!':cls.level==='urgent'?'!':cls.level==='primary'?'\u2022':'?';
+    h+='<div class="dx-list">';
+    for(const d of cls.dx){
+      h+=`<div class="dx-item ${dxCls}"><span class="dx-mark">${dxMark}</span><span>${d}</span></div>`;
+    }
+    h+='</div>';
+  }
+
+  h+=buildDisposition(cls);
+  h+=buildConduta(cls);
+  h+=buildWorkup(cls);
+
+  const rfBadge=rfCount>0?`<span class="section-badge ${rfCount>=3?'sb-red':'sb-amber'}">${rfCount}</span>`:'<span class="section-badge sb-green">0</span>';
+  h+=collapsible('snoop','Red Flags (SNOOP)',rfBadge,()=>{
+    if(rfCount===0)return '<p class="empty-note">Nenhuma red flag.</p>';
+    let s='';
+    for(const f of SNOOP_FLAGS)if(redFlags.has(f.id))s+=`<div class="summary-row"><span class="criteria"><span class="snoop-letter ${f.cls}" style="width:1.05rem;height:1.05rem;font-size:.55rem;margin-right:.35rem">${f.letter}</span>${f.label}</span><span class="value"><span class="dot dot-red"></span>Sim</span></div>`;
+    return s;
+  });
+
+  if(hasThunderclap()){
+    const ottBadge=ottawaPositive()?`<span class="section-badge sb-red">${ottawaChecks.size}/6</span>`:'<span class="section-badge sb-green">0/6</span>';
+    h+=collapsible('ottawa','Ottawa SAH',ottBadge,()=>{
+      let s='';
+      if(ottawaPositive())s+='<div class="inline-alert ia-red" style="margin-top:0;margin-bottom:.5rem"><span class="ia-icon">!!</span><span><strong>POSITIVO ('+ottawaChecks.size+'/6)</strong> — TC s/ contraste. Se normal &lt; 6h: angio-TC. Se &gt; 6h: punção lombar (xantocromia).</span></div>';
+      else s+='<div class="inline-alert ia-blue" style="margin-top:0;margin-bottom:.5rem"><span class="ia-icon">\u2713</span><span><strong>Negativo (0/6)</strong> — HSA excluída (sens. 100%) se pico em 1h e paciente alerta.</span></div>';
+      for(const c of OTTAWA_CRITERIA){
+        const ck=ottawaChecks.has(c.id);
+        s+=`<div class="summary-row"><span class="criteria">${c.label}</span><span class="value"><span class="dot ${ck?'dot-red':'dot-green'}"></span>${ck?'Sim':'Não'}</span></div>`;
+      }
+      return s;
+    });
+  }
+
+  const symBadge=assocSymptoms.size>0?`<span class="section-badge sb-neutral">${assocSymptoms.size}</span>`:'';
+  h+=collapsible('symptoms','Sintomas Associados',symBadge,()=>{
+    if(assocSymptoms.size===0)return '<p class="empty-note">Nenhum.</p>';
+    let s='';
+    for(const sym of ASSOC_SYMPTOMS)if(assocSymptoms.has(sym.id))s+=`<div class="summary-row"><span class="criteria">${sym.label}</span><span class="value"><span class="dot dot-blue"></span>Presente</span></div>`;
+    return s;
+  });
+
+  const severeExamCount=EXAM_FINDINGS.filter(e=>e.severe&&examFindings.has(e.id)).length;
+  const examBadge=severeExamCount>0?`<span class="section-badge sb-red">${severeExamCount} anormal</span>`:examFindings.has('ex_normal')?'<span class="section-badge sb-green">Normal</span>':'';
+  h+=collapsible('exam','Exame Físico',examBadge,()=>{
+    if(examFindings.size===0)return '<p class="empty-note">Não registrado.</p>';
+    let s='';
+    for(const ex of EXAM_FINDINGS)if(examFindings.has(ex.id)){
+      const dotC=ex.severe?'dot-red':'dot-green';
+      s+=`<div class="summary-row"><span class="criteria">${ex.label}</span><span class="value"><span class="dot ${dotC}"></span>${ex.severe?'Anormal':'Normal'}</span></div>`;
+    }
+    return s;
+  });
+
+  h+=collapsible('vitals','Sinais Vitais',buildVitalsBadge(),()=>{
+    const paL={'normal':'Normal','elevada':'>140/90','crisis':'Crise >180/120'};
+    const fcL={'normal':'60-100 bpm','taqui':'Taquicardia','bradi':'Bradicardia'};
+    const tempL={'normal':'Normal','subfebril':'Subfebril','fever':'Febre'};
+    const gcsL={'alert':'Alerta','drowsy':'Sonolento','reduced':'Rebaixado'};
+    const spo2L={'normal':'≥ 95%','low':'< 95%'};
+    let s='';
+    if(vitals.pa)s+=`<div class="summary-row"><span class="criteria">PA</span><span class="value"><span class="dot ${vitals.pa==='crisis'?'dot-red':vitals.pa==='elevada'?'dot-yellow':'dot-green'}"></span>${paL[vitals.pa]}</span></div>`;
+    if(vitals.fc)s+=`<div class="summary-row"><span class="criteria">FC</span><span class="value"><span class="dot ${vitals.fc!=='normal'?'dot-yellow':'dot-green'}"></span>${fcL[vitals.fc]}</span></div>`;
+    if(vitals.temp)s+=`<div class="summary-row"><span class="criteria">Temp</span><span class="value"><span class="dot ${vitals.temp==='fever'?'dot-red':vitals.temp==='subfebril'?'dot-yellow':'dot-green'}"></span>${tempL[vitals.temp]}</span></div>`;
+    if(vitals.spo2)s+=`<div class="summary-row"><span class="criteria">SpO₂</span><span class="value"><span class="dot ${vitals.spo2==='low'?'dot-red':'dot-green'}"></span>${spo2L[vitals.spo2]}</span></div>`;
+    if(vitals.gcs)s+=`<div class="summary-row"><span class="criteria">Consciência</span><span class="value"><span class="dot ${vitals.gcs==='reduced'?'dot-red':vitals.gcs==='drowsy'?'dot-yellow':'dot-green'}"></span>${gcsL[vitals.gcs]}</span></div>`;
+    if(!vitals.pa&&!vitals.fc&&!vitals.temp&&!vitals.gcs&&!vitals.spo2)s='<p class="empty-note">Não registrado.</p>';
+    return s;
+  });
+
+  h+=collapsible('note','Nota para prontuário','',()=>buildNoteContent(cls));
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="restart()">Recomeçar</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+function buildVitalsBadge(){
+  const abnormal=countAbnormalVitals();
+  if(abnormal>0)return `<span class="section-badge sb-amber">${abnormal} alt.</span>`;
+  if(vitals.pa||vitals.fc||vitals.temp||vitals.gcs||vitals.spo2)return '<span class="section-badge sb-green">OK</span>';
+  return '';
+}
+
+// =============================================
+// DISPOSITION
+// =============================================
+function buildDisposition(cls){
+  let icon,title,desc,dcls;
+  if(cls.level==='emergent'){icon='UTI';title='Internação / UTI';desc='Monitorização. Acionar equipe especializada.';dcls='disp-emergent';}
+  else if(cls.level==='urgent'){icon='OBS';title='Observação + investigação';desc='Não dar alta antes dos exames.';dcls='disp-urgent';}
+  else if(cls.level==='low_flags'){icon='4-6h';title='Observação 4-6h';desc='Reavaliação obrigatória antes da alta.';dcls='disp-obs';}
+  else{icon='ALTA';title='Alta com orientações';desc='Primária sem alarmes. Alta após analgesia.';dcls='disp-alta';}
+  return `<div class="disposition-box ${dcls}"><div class="disp-icon">${icon}</div><div class="disp-body"><div class="disp-title">${title}</div><div class="disp-desc">${desc}</div></div></div>`;
+}
+
+// =============================================
+// CONDUTA
+// =============================================
+function buildConduta(cls){
+  let boxCls,items;
+  if(cls.level==='emergent'){
+    boxCls='alta-prob';
+    items=[['>','Estabilização imediata (ABCDE)'],['>','TC de crânio sem contraste URGENTE']];
+    if(hasThunderclap()){
+      items.push(['>','Se TC normal < 6h: angio-TC. Se > 6h e TC normal: punção lombar.']);
+      items.push(['>','Acionar neurocirurgia se HSA confirmada']);
+      if(onset.frequency==='recorrente')items.push(['>','Thunderclap recorrente: considerar RCVS. Angio-TC ou angio-RNM.']);
+    }
+    if(hasMeningism()&&hasFever()){
+      items.push(['>','ATB empírico IMEDIATO — não atrasar por exames']);
+      items.push(['>','Ceftriaxona 2g IV 12/12h + Dexametasona 0,15 mg/kg IV 6/6h']);
+      items.push(['>','Hemocultura + punção lombar (TC antes se déficit focal)']);
+      if(redFlags.has('s_hiv'))items.push(['>','Imunossupresso: associar ampicilina 2g IV 4/4h (Listeria)']);
+    }
+    if(hasMeningism()&&hasRash()){
+      items.push(['>','Meningococcemia: ATB + isolamento de gotículas']);
+      items.push(['>','Notificação compulsória + quimioprofilaxia de contatos']);
+    }
+    if(hasCushingReflex()){
+      items.push(['>','Manitol 20% 1g/kg IV ou salina hipertônica 3%']);
+      items.push(['>','Acionar neurocirurgia — risco de herniação']);
+      items.push(['>','Cabeceira 30°, manter PPC > 60 mmHg']);
+    }
+    if(hasFocalDeficit()&&!hasMeningism()&&!hasThunderclap()){
+      items.push(['>','Avaliar AVC — protocolo de trombólise se < 4,5h']);
+      items.push(['>','Glicemia capilar, coagulograma, ECG']);
+    }
+    if(suspectDissection()){
+      items.push(['>','Angio-TC cervical + intracraniana URGENTE']);
+      items.push(['>','Anticoagulação ou antiagregação após confirmação']);
+    }
+    if(suspectPRES()){
+      items.push(['>','Redução gradual da PA (25% na 1ª hora), controlar convulsões']);
+      items.push(['>','RNM FLAIR/DWI — edema vasogênico posterior']);
+    }
+    if(suspectPituitaryApoplexy()){
+      items.push(['>','RNM sela túrcica + cortisol sérico + TSH']);
+      items.push(['>','Hidrocortisona 100mg IV se insuficiência adrenal']);
+      items.push(['>','Acionar neurocirurgia + endocrinologia']);
+    }
+    if(vitals.gcs==='reduced'){
+      items.push(['>','Proteger via aérea se GCS ≤ 8']);
+      items.push(['>','Monitorização contínua (PA, FC, SpO₂, ECG)']);
+    }
+    if(isPregnant()){
+      items.push(['>','Sulfato de magnésio 4g IV + 1-2g/h se eclâmpsia']);
+      items.push(['>','Acionar obstetrícia IMEDIATO']);
+    }
+    if(isAnticoagulated()){
+      items.push(['>','Reverter: vitamina K / CCP / idarucizumabe conforme droga']);
+      items.push(['>','Coagulograma + INR IMEDIATO']);
+    }
+    if(hasLowSpO2())items.push(['>','O₂ suplementar para SpO₂ ≥ 94%']);
+    items.push(['>','Internação hospitalar / UTI']);
+  }else if(cls.level==='urgent'){
+    boxCls='mod-prob';
+    items=[['>','TC de crânio sem contraste']];
+    if(hasTemporalArteritis()){
+      items.push(['>','VHS + PCR URGENTE']);
+      items.push(['>','Prednisona 60-80 mg/dia VO — NÃO aguardar biópsia']);
+      items.push(['>','Biópsia de artéria temporal em até 2 semanas']);
+    }
+    if(has(examFindings,'ex_temporal','ex_claudic')&&isAgeOver40()&&!hasTemporalArteritis()){
+      items.push(['>','VHS + PCR urgente — artéria temporal em > 40 anos']);
+      items.push(['>','Considerar prednisona empírica se alta suspeição']);
+    }
+    if(hasPapilledema()&&suspectIIH()){
+      items.push(['>','RNM com venografia + avaliação oftalmológica urgente']);
+      items.push(['>','Acetazolamida 250mg VO 8/8h + perda de peso']);
+      items.push(['>','Punção lombar com manometria']);
+    }else if(hasPapilledema()){
+      items.push(['>','Angio-TC ou RNM com venografia (trombose venosa?)']);
+      items.push(['>','Avaliação oftalmológica — perimetria']);
+    }
+    if(hasMeningism()&&!hasFever())items.push(['>','Punção lombar (TC antes se déficit focal)']);
+    if(isDrowsy()&&hasFever()){
+      items.push(['>','ATB empírico até excluir neuroinfecção']);
+      items.push(['>','Punção lombar após TC de crânio']);
+    }
+    if(vitals.pa==='crisis'){
+      items.push(['>','Redução gradual da PA (25% na 1ª hora): nitroprussiato ou labetalol']);
+      items.push(['>','Avaliar lesão de órgão-alvo (ECG, fundo, função renal)']);
+    }
+    if(isPregnant()&&vitals.pa==='elevada'){
+      items.push(['>','Nifedipina 10mg VO ou hidralazina 5mg IV']);
+      items.push(['>','Proteinúria + hemograma + LDH + transaminases + plaquetas']);
+      items.push(['>','Avaliação obstétrica']);
+    }
+    if(isAnticoagulated()){
+      items.push(['>','Coagulograma + INR']);
+      items.push(['>','TC mesmo se quadro aparentemente benigno']);
+    }
+    if(examFindings.has('ex_parncraniano'))items.push(['>','Angio-TC/RNM: excluir aneurisma compressivo']);
+    if(suspectCVT()){
+      items.push(['>','Angio-TC venosa ou RNM com venografia']);
+      items.push(['>','Se confirmada: heparina (mesmo se hemorragia)']);
+    }
+    if(hasHorner()&&onset.type==='agudo')items.push(['>','Angio-TC cervical — dissecção carotídea']);
+    if(hasRetinalHemorrhage())items.push(['>','Avaliação oftalmológica urgente']);
+    if(hasLowSpO2())items.push(['>','O₂ suplementar + investigar hipoxemia']);
+    if(redFlags.has('n_convulsao')){
+      items.push(['>','Diazepam 10mg IV ou midazolam 5mg IM se convulsão ativa']);
+      items.push(['>','EEG se sem causa estrutural']);
+    }
+    items.push(['>','Observação e reavaliação antes da alta']);
+  }else if(cls.level==='low_flags'){
+    boxCls='neutra-prob';
+    items=[
+      ['>','Avaliar cada red flag individualmente'],
+      ['>','Considerar TC se cefaleia nova > 50 anos ou primeiro episódio intenso'],
+      ['>','Exames conforme suspeita (hemograma, VHS, PCR)'],
+      ['>','Analgesia: dipirona 1g IV ou cetoprofeno 100mg IV'],
+      ['>','Orientar sinais de alarme e retorno se piora'],
+      ['>','Observação 4-6h; reavaliar antes da alta'],
+    ];
+    if(isPregnant())items.push(['!','Gestante: evitar AINEs no 3º trimestre. Preferir paracetamol.']);
+    if(redFlags.has('p_postural'))items.push(['i','Cefaleia por esforço: se primeiro episódio, angio-TC para excluir HSA.']);
+  }else{
+    boxCls='baixa-prob';
+    items=[['\u2713','Exame normal — sem indicação de neuroimagem']];
+    if(hasMigraineFeatures()){
+      items.push(['>','Migrânea: metoclopramida 10mg IV + dipirona 1g IV (ou cetoprofeno 100mg IV)']);
+      items.push(['>','Refratário: sumatriptano 50-100mg VO (6mg SC). Evitar se doença coronária.']);
+      if(isPregnant())items.push(['!','Gestante: evitar triptanos e AINEs. Preferir metoclopramida + paracetamol.']);
+      items.push(['>','≥ 3 crises/mês: encaminhar para profilaxia ambulatorial']);
+    }else{
+      items.push(['>','Analgesia: dipirona 1g IV ou ibuprofeno 400-600mg VO']);
+      if(isPregnant())items.push(['!','Gestante: evitar AINEs no 3º trimestre. Preferir paracetamol/dipirona.']);
+    }
+    if(hasAutonomic()){
+      items.push(['>','Cluster: O₂ 100% 12-15 L/min por 15 min com máscara não reinalante']);
+      items.push(['>','Alternativa: sumatriptano 6mg SC']);
+      items.push(['>','Se cluster confirmado: profilaxia com verapamil']);
+    }
+    if(isMedOveruse())items.push(['!','Abuso medicamentoso provável: redução gradual + cefaliatria.']);
+    else if(medsTried.size>=2&&!medsTried.has('med_nenhum'))items.push(['!','Atenção para abuso de analgésicos se uso > 10-15 d/mês']);
+    if(medsTried.has('med_opioide'))items.push(['!','Opioide em cefaleia primária: risco de cronificação. Evitar.']);
+    items.push(['>','Alta com orientações de retorno']);
+  }
+
+  const open=sections.conduta;
+  let h=`<div class="conduta-box ${boxCls}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('conduta')"><h3>Conduta <span class="section-badge sb-neutral">${items.length}</span></h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'open':''}">`;
+  if(open)for(const[icon,text]of items)h+=`<div class="conduta-item"><span class="conduta-icon">${icon}</span><span>${text}</span></div>`;
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// WORKUP
+// =============================================
+function buildWorkup(cls){
+  const open=sections.workup;
+  let h='<div class="dark-box">';
+  h+=`<div class="collapse-header" onclick="toggleSection('workup')"><h3>Investigação Sugerida</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'open':''}">`;
+  if(open){
+    let items=[];
+    if(cls.level==='emergent'||cls.level==='urgent')items.push({exam:'TC de crânio sem contraste',priority:'Imediato',reason:'Excluir hemorragia, massa, hidrocefalia'});
+    if(hasThunderclap()){
+      items.push({exam:'Angio-TC cerebral',priority:'Urgente',reason:'Aneurisma / dissecção'});
+      items.push({exam:'Punção lombar',priority:'Se TC normal > 6h',reason:'Xantocromia — excluir HSA'});
+    }
+    if(hasMeningism()||hasFever()){
+      items.push({exam:'Hemograma + PCR + Lactato',priority:'Urgente',reason:'Processo infeccioso'});
+      items.push({exam:'Punção lombar',priority:'Urgente',reason:'Celularidade, proteína, cultura, Gram'});
+      items.push({exam:'Hemoculturas (2 pares)',priority:'Antes do ATB',reason:'Agente etiológico'});
+    }
+    if(hasTemporalArteritis()||(has(examFindings,'ex_temporal','ex_claudic')&&isAgeOver40())){
+      items.push({exam:'VHS',priority:'Urgente',reason:'> 50 mm/h na arterite temporal'});
+      items.push({exam:'PCR',priority:'Urgente',reason:'Marcador inflamatório'});
+      items.push({exam:'Biópsia de artéria temporal',priority:'Até 2 semanas',reason:'Confirmação (não atrasar corticoide)'});
+    }
+    if(hasPapilledema()){
+      items.push({exam:'RNM com venografia',priority:'Urgente',reason:'Excluir trombose venosa'});
+      items.push({exam:'Avaliação oftalmológica',priority:'Urgente',reason:'Perimetria — risco visual'});
+      if(suspectIIH())items.push({exam:'Punção lombar com manometria',priority:'Urgente',reason:'PAo > 25 cmH₂O confirma HII'});
+    }
+    if(hasRetinalHemorrhage()&&!hasPapilledema())items.push({exam:'Fundo de olho detalhado',priority:'Urgente',reason:'Retinopatia — hipertensão maligna?'});
+    if(hasFocalDeficit()&&!hasThunderclap())items.push({exam:'RNM de crânio com difusão',priority:'Urgente',reason:'Lesão estrutural / AVC'});
+    if(examFindings.has('ex_parncraniano'))items.push({exam:'Angio-TC ou angio-RNM',priority:'Urgente',reason:'Aneurisma compressivo'});
+    if(hasCushingReflex())items.push({exam:'TC de crânio imediata',priority:'Imediato',reason:'Herniação?'});
+    if(suspectDissection())items.push({exam:'Angio-TC cervical + intracraniana',priority:'Urgente',reason:'Dissecção arterial'});
+    if(suspectPRES())items.push({exam:'RNM com FLAIR/DWI',priority:'Urgente',reason:'Edema vasogênico posterior'});
+    if(suspectPituitaryApoplexy()){
+      items.push({exam:'RNM sela túrcica',priority:'Urgente',reason:'Apoplexia hipofisária'});
+      items.push({exam:'Cortisol + TSH + prolactina',priority:'Urgente',reason:'Avaliação endócrina'});
+    }
+    if(suspectCVT()){
+      items.push({exam:'Angio-TC venosa ou RNM venografia',priority:'Urgente',reason:'Trombose venosa'});
+      items.push({exam:'D-dímero',priority:'Urgente',reason:'Complementar (sens. limitada)'});
+    }
+    if(vitals.pa==='crisis'){
+      items.push({exam:'Função renal + eletrólitos',priority:'Urgente',reason:'Lesão de órgão-alvo'});
+      items.push({exam:'Fundo de olho',priority:'Urgente',reason:'Retinopatia hipertensiva'});
+      items.push({exam:'ECG',priority:'Urgente',reason:'Sobrecarga / isquemia'});
+    }
+    if(isPregnant()&&(vitals.pa==='elevada'||vitals.pa==='crisis')){
+      items.push({exam:'Proteinúria',priority:'Urgente',reason:'Critério de pré-eclâmpsia'});
+      items.push({exam:'Hemograma + LDH + TGO/TGP',priority:'Urgente',reason:'HELLP'});
+      items.push({exam:'Ácido úrico',priority:'Urgente',reason:'Gravidade na pré-eclâmpsia'});
+    }
+    if(isAnticoagulated()&&(cls.level==='urgent'||cls.level==='emergent'))items.push({exam:'Coagulograma + INR',priority:'Imediato',reason:'Nível de anticoagulação'});
+    if(cls.level==='low_flags'&&redFlags.has('o2_idade')){
+      items.push({exam:'TC de crânio sem contraste',priority:'Considerar',reason:'Cefaleia nova > 50 anos'});
+      items.push({exam:'VHS + PCR',priority:'Considerar',reason:'Excluir arterite temporal'});
+    }
+    if(cls.level==='low_flags'&&redFlags.has('s_cancer'))items.push({exam:'RNM com contraste',priority:'Considerar',reason:'Metástase cerebral'});
+    if(cls.level==='low_flags'&&redFlags.has('s_hiv'))items.push({exam:'RNM com contraste',priority:'Considerar',reason:'Infecção oportunista do SNC'});
+    if(cls.level==='low_flags'&&redFlags.has('p_postural'))items.push({exam:'Angio-TC cerebral',priority:'Considerar',reason:'Excluir HSA / malformação'});
+    if(isDrowsy()&&hasFever()&&cls.level==='urgent')items.push({exam:'Punção lombar',priority:'Urgente',reason:'Sonolência + febre — neuroinfecção'});
+    if(items.length===0)items.push({exam:'Neuroimagem',priority:'Não indicada',reason:'Primária sem red flags, exame normal'});
+
+    for(const item of items){
+      const pCls=item.priority==='Imediato'||item.priority==='Antes do ATB'?'dot-red':item.priority==='Urgente'?'dot-yellow':item.priority==='Não indicada'?'dot-green':'dot-blue';
+      h+=`<div class="summary-row"><span class="criteria" style="flex:1">${item.exam}<br><span style="font-size:.64rem;color:var(--ink-low)">${item.reason}</span></span><span class="value"><span class="dot ${pCls}"></span>${item.priority}</span></div>`;
+    }
+  }
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// COLLAPSIBLE
+// =============================================
+function collapsible(id,title,badge,contentFn){
+  const open=sections[id];
+  let h='<div class="dark-box">';
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}${badge||''}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'open':''}">`;
+  if(open)h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// NOTE
+// =============================================
+function buildNoteContent(cls){
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  const ageLabel={'lt18':'< 18','18_39':'18-39','40_49':'40-49','50_64':'50-64','ge65':'≥ 65'};
+  const onsetLabel={'subito':'Súbito (thunderclap)','agudo':'Agudo','subagudo':'Subagudo','cronico':'Crônico'};
+  const qualLabel={'pulsatil':'Pulsátil','pressao':'Aperto','pontada':'Pontada','queimacao':'Queimação'};
+  const locLabel={'unilateral':'Unilateral','bilateral':'Bilateral','frontal':'Frontal','occipital':'Occipital','holocraniana':'Holocraniana','periorb':'Periorbital'};
+  const durLabel={'seg_min':'Segundos','15min_3h':'15 min - 3h','4_72h':'4 - 72h','gt72h':'> 72h','constante':'Constante'};
+  const freqLabel={'primeiro':'Primeiro episódio','recorrente':'Recorrente','cronica':'Crônica (>15d/mês)'};
+  const paLabel={'normal':'Normal','elevada':'Elevada','crisis':'Crise hipertensiva'};
+  const fcLabel={'normal':'60-100 bpm','taqui':'Taquicardia','bradi':'Bradicardia'};
+  const tempLabel={'normal':'Normal','subfebril':'Subfebril','fever':'Febre'};
+  const gcsLabel={'alert':'Alerta (GCS 15)','drowsy':'Sonolento','reduced':'Rebaixado'};
+  const spo2Label={'normal':'≥ 95%','low':'< 95%'};
+
+  let n='';
+  n+='CEFALEIA — AVALIAÇÃO NA EMERGÊNCIA\n';
+  n+=`Data/hora: ${ts}\n`;
+  n+='========================================\n\n';
+  n+=`PACIENTE: ${ageLabel[onset.age]||'N/I'} anos\n\n`;
+
+  n+='HISTÓRIA\n';
+  n+=`  Início: ${onsetLabel[onset.type]||'N/I'}\n`;
+  if(onset.quality)n+=`  Qualidade: ${qualLabel[onset.quality]}\n`;
+  if(onset.location)n+=`  Localização: ${locLabel[onset.location]}\n`;
+  if(onset.duration)n+=`  Duração: ${durLabel[onset.duration]}\n`;
+  if(onset.frequency)n+=`  Frequência: ${freqLabel[onset.frequency]}\n`;
+  if(onset.intensity!==null)n+=`  Intensidade: ${onset.intensity}/10\n`;
+  const activeMeds=MED_OPTIONS.filter(m=>medsTried.has(m.id));
+  if(activeMeds.length>0)n+='  Medicações tentadas: '+activeMeds.map(m=>m.label).join(', ')+'\n';
+
+  n+='\nRED FLAGS (SNOOP)\n';
+  const activeRF=SNOOP_FLAGS.filter(f=>redFlags.has(f.id));
+  if(activeRF.length===0)n+='  Nenhuma.\n';
+  else for(const f of activeRF)n+=`  [${f.letter}] ${f.label}\n`;
+
+  if(hasThunderclap()){
+    n+='\nOTTAWA SAH\n';
+    const activeOt=OTTAWA_CRITERIA.filter(c=>ottawaChecks.has(c.id));
+    if(activeOt.length>0){
+      n+=`  POSITIVO (${activeOt.length}/6)\n`;
+      for(const c of activeOt)n+=`  [+] ${c.label}\n`;
+    }else n+='  NEGATIVO (0/6) — sens. 100% para HSA\n';
+  }
+
+  const activeSym=ASSOC_SYMPTOMS.filter(s=>assocSymptoms.has(s.id));
+  if(activeSym.length>0){
+    n+='\nSINTOMAS ASSOCIADOS\n';
+    for(const s of activeSym)n+=`  - ${s.label}\n`;
+  }
+
+  const activeEx=EXAM_FINDINGS.filter(e=>examFindings.has(e.id));
+  if(activeEx.length>0){
+    n+='\nEXAME FÍSICO\n';
+    for(const e of activeEx)n+=`  ${e.severe?'[!]':'[ok]'} ${e.label}\n`;
+  }else n+='\nEXAME FÍSICO\n  Não registrado\n';
+
+  n+='\nSINAIS VITAIS\n';
+  if(vitals.pa)n+=`  PA: ${paLabel[vitals.pa]}\n`;
+  if(vitals.fc)n+=`  FC: ${fcLabel[vitals.fc]}\n`;
+  if(vitals.temp)n+=`  Temp: ${tempLabel[vitals.temp]}\n`;
+  if(vitals.spo2)n+=`  SpO₂: ${spo2Label[vitals.spo2]}\n`;
+  if(vitals.gcs)n+=`  Consciência: ${gcsLabel[vitals.gcs]}\n`;
+  if(!vitals.pa&&!vitals.fc&&!vitals.temp&&!vitals.gcs&&!vitals.spo2)n+='  Não registrados\n';
+
+  n+=`\nCLASSIFICAÇÃO: ${cls.title}\n`;
+  n+=`Red flags: ${redFlagCount()}\n`;
+  n+='Diagnósticos suspeitos:\n';
+  for(const d of cls.dx)n+=`  - ${d}\n`;
+
+  if(cls.level==='emergent')n+='\nDISPOSIÇÃO: Internação / UTI\n';
+  else if(cls.level==='urgent')n+='\nDISPOSIÇÃO: Observação + investigação\n';
+  else if(cls.level==='low_flags')n+='\nDISPOSIÇÃO: Observação 4-6h, reavaliação antes da alta\n';
+  else n+='\nDISPOSIÇÃO: Alta com orientações\n';
+
+  n+=`\nTempo de avaliação: ${getTimeElapsed()}\n`;
+  n+='\n--- MedStack (apoio clínico) ---\n';
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  if(!el)return;
+  const text=el.textContent||el.innerText;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(showCopied).catch(()=>fallbackCopy(text));
+  else fallbackCopy(text);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showCopied();}catch(e){}
+  document.body.removeChild(ta);
+}
+function showCopied(){
+  const btn=document.getElementById('copyBtn');
+  if(!btn)return;
+  btn.textContent='\u2713 Copiado';btn.classList.add('copied');
+  setTimeout(()=>{if(btn){btn.textContent='Copiar nota';btn.classList.remove('copied');}},1800);
+}
+
+// =============================================
+// ACTIONS
+// =============================================
+function setOnset(field,val){
+  onset[field]=val;
+  syncAgeDerivedFlags();
+  render();
+}
+function syncAgeDerivedFlags(){
+  if(isAgeOver50())redFlags.add('o2_idade');
+  else redFlags.delete('o2_idade');
+  if(isAgeOver40()&&(onset.type==='subito'||hasThunderclap()))ottawaChecks.add('ot_age40');
+  else ottawaChecks.delete('ot_age40');
+  if(onset.type==='subito')ottawaChecks.add('ot_thunder');
+  else if(!redFlags.has('o_subita'))ottawaChecks.delete('ot_thunder');
+}
+function toggleMed(id){
+  if(id==='med_nenhum'){
+    if(medsTried.has('med_nenhum'))medsTried.delete('med_nenhum');
+    else{medsTried.clear();medsTried.add('med_nenhum');}
+  }else{
+    medsTried.delete('med_nenhum');
+    medsTried.has(id)?medsTried.delete(id):medsTried.add(id);
+  }
+  render();
+}
+function toggleRedFlag(id){
+  redFlags.has(id)?redFlags.delete(id):redFlags.add(id);
+  if(id==='o_subita'){
+    if(redFlags.has('o_subita'))ottawaChecks.add('ot_thunder');
+    else if(onset.type!=='subito')ottawaChecks.delete('ot_thunder');
+  }
+  render();
+}
+function toggleOttawa(id){ottawaChecks.has(id)?ottawaChecks.delete(id):ottawaChecks.add(id);render();}
+function toggleSymptom(id){assocSymptoms.has(id)?assocSymptoms.delete(id):assocSymptoms.add(id);render();}
+function toggleExam(id){
+  if(id==='ex_normal'){
+    if(examFindings.has('ex_normal'))examFindings.delete('ex_normal');
+    else{examFindings.clear();examFindings.add('ex_normal');}
+  }else{
+    examFindings.delete('ex_normal');
+    examFindings.has(id)?examFindings.delete(id):examFindings.add(id);
+  }
+  render();
+}
+function setVital(field,val){vitals[field]=val;render();}
+function toggleSection(id){sections[id]=!sections[id];render();}
+
+function goToStep(step){
+  if(step<0||step>TOTAL_STEPS)return;
+  if(step>maxStepReached)return;
+  currentStep=step;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function next(){
+  if(currentStep===0&&(onset.type===null||onset.age===null))return;
+  currentStep++;
+  if(currentStep>maxStepReached)maxStepReached=currentStep;
+  if(currentStep===1)syncAgeDerivedFlags();
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function prev(){
+  if(currentStep>0){
+    currentStep--;
+    render();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+function restart(){
+  if(!confirm('Recomeçar a avaliação? Todos os dados serão apagados.'))return;
+  currentStep=0;
+  maxStepReached=0;
+  onset={type:null,duration:null,location:null,quality:null,frequency:null,age:null,intensity:null};
+  medsTried=new Set();
+  redFlags=new Set();ottawaChecks=new Set();assocSymptoms=new Set();examFindings=new Set();
+  vitals={pa:null,fc:null,temp:null,gcs:null,spo2:null};
+  sections={snoop:true,ottawa:false,symptoms:false,exam:false,vitals:false,conduta:true,workup:true,note:false};
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'||e.key===' '){
+    const el=document.activeElement;
+    if(el&&(el.classList.contains('score-opt')||el.classList.contains('check-btn')||el.classList.contains('option-btn')||el.classList.contains('pain-dot')||el.classList.contains('progress-step'))){
+      e.preventDefault();
+      el.click();
+    }
+  }
+});
+
+render();
+</script>
+</body>
+</html>

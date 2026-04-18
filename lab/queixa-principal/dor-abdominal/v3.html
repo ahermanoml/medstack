@@ -1,0 +1,1841 @@
+<!-- VERSION: 3 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dor Abdominal - Avaliação no PS</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg-primary:#0f172a;--bg-card:#1e293b;--bg-input:#0f172a;
+    --border:#334155;--border-active:#3b82f6;
+    --text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;
+    --accent:#3b82f6;--accent-light:#60a5fa;--accent-bg:#1e3a5f;
+    --red:#ef4444;--red-dark:#991b1b;--red-light:#fca5a5;--red-bg:#450a0a;
+    --yellow:#f59e0b;--yellow-dark:#78350f;--yellow-light:#fcd34d;--yellow-bg:#451a03;
+    --green:#22c55e;--green-dark:#14532d;--green-light:#86efac;--green-bg:#052e16;
+    --radius:.75rem;--radius-sm:.5rem;
+    --transition:all .2s ease;
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg-primary);color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent;padding-bottom:var(--safe-bottom)}
+  header{background:linear-gradient(135deg,#1e293b 0%,#1a2744 50%,#334155 100%);width:100%;padding:calc(1.25rem + var(--safe-top)) 1.5rem 1.25rem;text-align:center;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  header h1{font-size:1.35rem;font-weight:700;color:var(--text-primary);letter-spacing:-.01em}
+  header p{font-size:.8rem;color:var(--text-secondary);margin-top:.2rem}
+  .back-link{position:absolute;left:1.25rem;top:50%;transform:translateY(-50%);color:var(--text-secondary);text-decoration:none;font-size:.85rem;font-weight:500;transition:var(--transition);display:flex;align-items:center;gap:.3rem;padding:.4rem;border-radius:var(--radius-sm)}
+  .back-link:hover{color:var(--text-primary)}
+  .back-link:active{background:rgba(255,255,255,.05)}
+  .container{max-width:700px;width:100%;padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+
+  /* Progress */
+  .progress-bar{display:flex;align-items:center;gap:.3rem;padding:0 .25rem}
+  .progress-step{flex:1;height:5px;border-radius:3px;background:#1e293b;transition:background .5s ease,box-shadow .5s ease}
+  .progress-step.done{background:var(--accent);box-shadow:0 0 6px rgba(59,130,246,.3)}
+  .progress-step.active{background:var(--accent-light);animation:pulse-bar 2s ease-in-out infinite}
+  @keyframes pulse-bar{0%,100%{opacity:1;box-shadow:0 0 4px rgba(96,165,250,.2)}50%{opacity:.5;box-shadow:0 0 8px rgba(96,165,250,.4)}}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.55rem;color:var(--text-muted);padding:.25rem .25rem 0}
+  .progress-labels span{transition:color .3s}
+  .progress-labels span.active-label{color:#93c5fd;font-weight:700}
+  .progress-labels span.done-label{color:var(--accent)}
+
+  /* Step counter chip */
+  .step-chip{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--text-muted);background:var(--bg-primary);border:1px solid var(--border);border-radius:9999px;padding:.25rem .65rem;margin-bottom:.25rem}
+  .step-chip .step-num{color:var(--accent-light);font-weight:700}
+
+  /* Cards */
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:1rem;padding:1.75rem;animation:slideUp .35s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.15rem;color:var(--text-primary);margin-bottom:.15rem;font-weight:700}
+  .card .subtitle{font-size:.78rem;color:var(--text-secondary);margin-bottom:1.25rem;line-height:1.4}
+
+  /* Options */
+  .options{display:flex;flex-direction:column;gap:.65rem}
+  .option-group-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:.75rem;margin-bottom:-.15rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
+  .option-group-label::after{content:'';flex:1;height:1px;background:var(--border);opacity:.5}
+  .option-group-label:first-child{margin-top:0}
+  .option-btn{background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;color:#cbd5e1;font-size:.9rem;cursor:pointer;transition:var(--transition);text-align:left;display:flex;align-items:center;gap:.75rem;position:relative;overflow:hidden;-webkit-user-select:none;user-select:none}
+  .option-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.05),transparent);opacity:0;transition:opacity .2s}
+  .option-btn:hover{border-color:var(--accent);background:#172040;color:var(--text-primary)}
+  .option-btn:hover::before{opacity:1}
+  .option-btn:active{transform:scale(.98)}
+  .option-btn.selected{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary);box-shadow:0 0 12px rgba(59,130,246,.15)}
+  .option-btn .icon{font-size:1.2rem;flex-shrink:0;width:1.8rem;text-align:center}
+  .option-btn .label{flex:1;line-height:1.3}
+  .option-btn .tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:9999px;font-weight:600;flex-shrink:0}
+
+  /* Check buttons */
+  .check-btn{background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius);padding:.7rem 1rem;color:#cbd5e1;font-size:.88rem;cursor:pointer;transition:var(--transition);text-align:left;display:flex;align-items:center;gap:.65rem;-webkit-user-select:none;user-select:none}
+  .check-btn:hover{border-color:var(--accent);background:#172040;color:var(--text-primary)}
+  .check-btn:active{transform:scale(.98)}
+  .check-btn.checked{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary)}
+  .check-box{width:18px;height:18px;border:2px solid #475569;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:var(--transition);font-size:.7rem;line-height:1}
+  .check-btn.checked .check-box{background:var(--accent);border-color:var(--accent)}
+
+  /* Nav */
+  .nav-row{display:flex;gap:.65rem;margin-top:1.5rem}
+  .nav-btn{flex:1;padding:.85rem;border-radius:var(--radius);font-size:.9rem;font-weight:600;cursor:pointer;transition:var(--transition);border:none;position:relative;overflow:hidden;-webkit-user-select:none;user-select:none}
+  .nav-btn:active{transform:scale(.97)}
+  .nav-btn.secondary{background:#334155;color:#cbd5e1}.nav-btn.secondary:hover{background:#475569}
+  .nav-btn.primary{background:var(--accent);color:#fff}.nav-btn.primary:hover{background:#2563eb}
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
+
+  /* Result */
+  .result-card{text-align:center;padding:1.75rem 1.5rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:4.5rem;height:4.5rem;border-radius:50%;font-size:1.4rem;font-weight:800;margin-bottom:1rem;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  .result-badge.badge-surgical{background:var(--red-bg);color:var(--red-light);border:3px solid var(--red)}
+  .result-badge.badge-urgent{background:var(--yellow-bg);color:var(--yellow-light);border:3px solid var(--yellow)}
+  .result-badge.badge-medical{background:#1e40af;color:#93c5fd;border:3px solid var(--accent)}
+  .result-badge.badge-low{background:var(--green-bg);color:var(--green-light);border:3px solid var(--green)}
+  .result-title{font-size:1.3rem;font-weight:700;margin-bottom:.25rem}
+  .result-desc{color:var(--text-secondary);font-size:.88rem;margin-bottom:1.25rem;line-height:1.5}
+
+  /* Dark box */
+  .dark-box{background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;text-align:left;margin-bottom:.75rem;transition:border-color .2s}
+  .dark-box:hover{border-color:rgba(59,130,246,.3)}
+  .dark-box h3{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid rgba(30,41,59,.7);font-size:.82rem;gap:.5rem}
+  .summary-row:last-child{border-bottom:none}
+  .summary-row .criteria{color:var(--text-secondary);flex-shrink:0;margin-right:.5rem;white-space:nowrap}
+  .summary-row .value{font-weight:600;display:flex;align-items:center;gap:.4rem;color:var(--text-primary);text-align:right;flex-wrap:wrap;justify-content:flex-end;min-width:0;word-break:break-word}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .dot-red{background:var(--red)}.dot-yellow{background:var(--yellow)}.dot-blue{background:var(--accent)}.dot-green{background:var(--green)}
+
+  /* Abdomen diagram */
+  .abdomen-container{display:flex;flex-direction:column;align-items:center;margin-bottom:.75rem}
+  .abdomen-svg-wrap{position:relative;width:240px;margin:0 auto}
+  .abdomen-svg-wrap svg{width:100%;height:auto;display:block}
+  .abd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:240px;margin:0 auto}
+  .abd-cell{background:var(--bg-input);border:1.5px solid var(--border);border-radius:.6rem;padding:.7rem .4rem;color:var(--text-muted);font-size:.78rem;cursor:pointer;transition:var(--transition);text-align:center;display:flex;flex-direction:column;align-items:center;gap:.25rem;line-height:1.2;-webkit-user-select:none;user-select:none}
+  .abd-cell:hover{border-color:var(--accent);background:#172040;color:var(--text-primary)}
+  .abd-cell:active{transform:scale(.95)}
+  .abd-cell.selected{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary);font-weight:600;box-shadow:0 0 10px rgba(59,130,246,.2)}
+  .abd-cell .abd-icon{font-size:1.15rem}
+  .abd-label{font-size:.72rem;margin-top:.1rem;color:var(--text-muted);text-align:center}
+  .abd-label.selected-label{color:var(--accent-light);font-weight:600}
+  .abd-diffuse-btn{width:240px;margin-top:6px}
+
+  /* Score section */
+  .score-section{background:var(--bg-primary);border-radius:var(--radius);padding:1.15rem;text-align:left;margin-bottom:.75rem}
+  .score-section h3{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem}
+  .score-tabs{display:flex;gap:.4rem;margin-bottom:1rem}
+  .score-tab{flex:1;padding:.55rem;border-radius:var(--radius-sm);font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-input);color:var(--text-muted);text-align:center;transition:var(--transition);-webkit-user-select:none;user-select:none}
+  .score-tab.active{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary)}
+  .score-tab:hover{border-color:var(--accent)}
+  .score-row{margin-bottom:.65rem}
+  .score-row-label{font-size:.78rem;color:var(--text-secondary);margin-bottom:.35rem;display:flex;justify-content:space-between;align-items:center}
+  .score-row-label .auto-tag{font-size:.58rem;background:var(--accent-bg);color:var(--accent-light);padding:.1rem .4rem;border-radius:9999px;font-weight:600}
+  .score-options{display:flex;gap:.35rem}
+  .score-opt{flex:1;padding:.5rem .3rem;border-radius:var(--radius-sm);font-size:.72rem;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-input);color:var(--text-muted);text-align:center;transition:var(--transition);line-height:1.3;-webkit-user-select:none;user-select:none}
+  .score-opt:hover{border-color:var(--accent);color:#cbd5e1}
+  .score-opt:active{transform:scale(.95)}
+  .score-opt.picked{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary);font-weight:600}
+  .score-opt .pts{display:block;font-size:.58rem;color:var(--text-muted);margin-top:.1rem}.score-opt.picked .pts{color:#93c5fd}
+  .score-result{display:flex;align-items:center;gap:.85rem;padding:.85rem;border-radius:var(--radius);margin-top:.65rem;transition:var(--transition)}
+  .score-result.sr-high{background:var(--red-bg);border:1px solid #7f1d1d}
+  .score-result.sr-mod{background:var(--yellow-bg);border:1px solid var(--yellow-dark)}
+  .score-result.sr-low{background:var(--green-bg);border:1px solid var(--green-dark)}
+  .score-result.sr-pending{background:var(--bg-card);border:1px solid var(--border)}
+  .score-num{font-size:1.8rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;min-width:2.2rem;text-align:center}
+  .score-result.sr-high .score-num{color:var(--red-light)}
+  .score-result.sr-mod .score-num{color:var(--yellow-light)}
+  .score-result.sr-low .score-num{color:var(--green-light)}
+  .score-result.sr-pending .score-num{color:var(--text-muted)}
+  .score-info{flex:1}.score-info .score-label{font-size:.82rem;font-weight:600;color:var(--text-primary)}
+  .score-info .score-detail{font-size:.72rem;color:var(--text-secondary);margin-top:.15rem;line-height:1.4}
+
+  /* Conduta box */
+  .conduta-box{border-radius:var(--radius);padding:1.15rem;text-align:left;margin-bottom:.75rem}
+  .conduta-box h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem}
+  .conduta-box.alta-prob{background:var(--red-bg);border:1.5px solid var(--red-dark)}.conduta-box.alta-prob h3{color:var(--red-light)}
+  .conduta-box.mod-prob{background:var(--yellow-bg);border:1.5px solid var(--yellow-dark)}.conduta-box.mod-prob h3{color:var(--yellow-light)}
+  .conduta-box.baixa-prob{background:var(--green-bg);border:1.5px solid var(--green-dark)}.conduta-box.baixa-prob h3{color:var(--green-light)}
+  .conduta-box.neutra-prob{background:var(--bg-card);border:1.5px solid var(--border)}.conduta-box.neutra-prob h3{color:var(--text-secondary)}
+  .conduta-item{display:flex;align-items:flex-start;gap:.5rem;padding:.35rem 0;font-size:.82rem;color:#cbd5e1;line-height:1.4}
+  .conduta-icon{flex-shrink:0;width:1.2rem;text-align:center}
+
+  /* Dx list */
+  .dx-list{display:flex;flex-direction:column;gap:.35rem}
+  .dx-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .8rem;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.82rem;color:#cbd5e1;transition:var(--transition)}
+  .dx-item:hover{border-color:rgba(59,130,246,.3)}
+  .dx-item .dx-rank{font-size:.65rem;font-weight:700;color:var(--accent);background:var(--accent-bg);padding:.15rem .4rem;border-radius:9999px;flex-shrink:0}
+  .dx-item .dx-name{flex:1;min-width:0}
+  .dx-item .dx-prob{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:9999px;flex-shrink:0;white-space:nowrap}
+  .dx-prob.prob-high{background:#7f1d1d;color:var(--red-light)}
+  .dx-prob.prob-mod{background:var(--yellow-dark);color:var(--yellow-light)}
+  .dx-prob.prob-low{background:var(--green-dark);color:var(--green-light)}
+
+  /* Collapsible */
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;-webkit-user-select:none;user-select:none;padding:.15rem 0;border-radius:var(--radius-sm)}
+  .collapse-header:hover h3{color:var(--text-secondary)}
+  .collapse-header:active{opacity:.8}
+  .collapse-header h3{margin-bottom:0;transition:color .2s}
+  .collapse-arrow{font-size:.7rem;color:var(--text-muted);transition:transform .3s ease;padding:.2rem}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease}
+  .collapse-body.hidden{max-height:0!important;padding-top:0;margin-top:0;opacity:0}
+  .collapse-body.visible{max-height:5000px;opacity:1}
+
+  /* Note */
+  .note-box{background:var(--bg-primary);border-radius:var(--radius);padding:1.15rem;text-align:left;margin-bottom:.75rem}
+  .note-box h3{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem}
+  .note-text{background:#020617;border:1px solid var(--bg-card);border-radius:var(--radius-sm);padding:.85rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.68rem;color:var(--text-secondary);white-space:pre-wrap;line-height:1.6;max-height:350px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.65rem;padding:.7rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg-card);color:#cbd5e1;font-size:.82rem;font-weight:600;cursor:pointer;transition:var(--transition);-webkit-user-select:none;user-select:none}
+  .copy-btn:hover{border-color:var(--accent);background:#172040;color:var(--text-primary)}
+  .copy-btn:active{transform:scale(.97)}
+  .copy-btn.copied{border-color:var(--green);background:var(--green-bg);color:var(--green-light)}
+
+  /* Connector */
+  .flow-connector{display:flex;justify-content:center;padding:.15rem 0}
+  .flow-connector .arrow{width:2px;height:20px;background:var(--border);position:relative}
+  .flow-connector .arrow::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--border)}
+
+  /* Workup tags */
+  .workup-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem}
+  .workup-tag{font-size:.72rem;padding:.3rem .6rem;border-radius:9999px;background:var(--bg-card);border:1px solid var(--border);color:#cbd5e1;transition:var(--transition)}
+  .workup-tag.urgent{background:#7f1d1d;border-color:var(--red-dark);color:var(--red-light)}
+  .workup-tag.routine{background:var(--accent-bg);border-color:#2563eb;color:#93c5fd}
+
+  /* Info hint */
+  .info-hint{font-size:.75rem;color:var(--text-muted);background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem .8rem;margin-top:.75rem;line-height:1.5;animation:fadeIn .3s ease}
+  .info-hint strong{color:#93c5fd}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  /* Red flag alert */
+  .red-flag{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:var(--radius-sm);padding:.6rem .8rem;margin-top:.75rem;font-size:.75rem;color:var(--red-light);display:flex;align-items:flex-start;gap:.5rem;line-height:1.4;animation:fadeIn .3s ease}
+  .red-flag-icon{font-size:1rem;flex-shrink:0;margin-top:-.05rem}
+
+  /* Analgesia section */
+  .analgesia-box{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem}
+  .analgesia-box h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:#93c5fd;margin-bottom:.6rem;font-weight:600}
+  .analgesia-step{display:flex;align-items:flex-start;gap:.5rem;padding:.3rem 0;font-size:.78rem;color:#cbd5e1;line-height:1.4}
+  .analgesia-step .step-marker{flex-shrink:0;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--accent-bg);border:1px solid var(--accent);color:var(--accent-light);font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+  /* History pills */
+  .history-pills{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem}
+  .history-pill{font-size:.7rem;padding:.25rem .55rem;border-radius:9999px;background:var(--bg-card);border:1px solid var(--border);color:#cbd5e1;cursor:pointer;transition:var(--transition);-webkit-user-select:none;user-select:none}
+  .history-pill:hover{border-color:var(--accent)}
+  .history-pill:active{transform:scale(.95)}
+  .history-pill.active{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary)}
+
+  /* Disclaimer */
+  .disclaimer{font-size:.62rem;color:var(--text-muted);text-align:center;padding:.5rem 1rem;line-height:1.5;opacity:.7}
+
+  /* Responsive */
+  @media(max-width:500px){
+    .container{padding:.85rem}.card{padding:1.25rem}
+    .option-btn{padding:.7rem .85rem;font-size:.85rem}
+    .check-btn{padding:.6rem .8rem;font-size:.82rem}
+    header h1{font-size:1.15rem}header{padding:calc(1rem + var(--safe-top)) 1.25rem 1rem}
+    .back-link{left:1rem;font-size:.8rem}
+    .progress-labels{font-size:.48rem}
+    .score-opt{font-size:.62rem;padding:.4rem .2rem}
+    .abd-grid{width:100%;max-width:240px;gap:4px}
+    .abd-cell{padding:.55rem .3rem;font-size:.7rem}
+    .abd-cell .abd-icon{font-size:1rem}
+    .abd-diffuse-btn{width:100%;max-width:240px}
+    .result-badge{width:4rem;height:4rem;font-size:1.2rem}
+    .result-title{font-size:1.15rem}
+    .nav-row{gap:.5rem}
+    .score-result{gap:.65rem;padding:.75rem}
+    .score-num{font-size:1.5rem;min-width:2rem}
+    .summary-row{flex-wrap:wrap}
+    .summary-row .value{max-width:100%!important}
+    .dx-item{padding:.45rem .6rem;gap:.4rem;font-size:.78rem}
+    .workup-tag{font-size:.66rem;padding:.25rem .5rem}
+  }
+
+  @media(max-width:360px){
+    .container{padding:.65rem}
+    .card{padding:1rem;border-radius:.75rem}
+    header h1{font-size:1.05rem}
+    .score-opt{font-size:.58rem;padding:.35rem .15rem}
+    .abd-grid{gap:3px}
+    .abd-cell{padding:.45rem .25rem;font-size:.65rem}
+  }
+
+  /* Prevent layout shifts on keyboard open (mobile) */
+  @media(max-height:500px){
+    header{position:relative}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../dor-abdominal.html" class="back-link">&#8592; Voltar</a>
+  <h1>Dor Abdominal no PS</h1>
+  <p>Avaliação estruturada + Scores + Conduta</p>
+</header>
+<div class="container" id="app"></div>
+<script>
+// =============================================
+// DATA & CONSTANTS
+// =============================================
+const STEP_LABELS=['Paciente','Local','Características','Sintomas','Exame','Scores'];
+const TOTAL_STEPS=6;
+
+const LOCATIONS=[
+  {id:'epigastric',label:'Epigástrio',icon:'\u2B06\uFE0F'},
+  {id:'ruq',label:'HCD',icon:'\u2196\uFE0F'},
+  {id:'luq',label:'HCE',icon:'\u2197\uFE0F'},
+  {id:'periumbilical',label:'Periumbilical',icon:'\u23FA'},
+  {id:'flank_r',label:'Flanco D',icon:'\u25C0\uFE0F'},
+  {id:'flank_l',label:'Flanco E',icon:'\u25B6\uFE0F'},
+  {id:'rlq',label:'FID',icon:'\u2199\uFE0F'},
+  {id:'llq',label:'FIE',icon:'\u2198\uFE0F'},
+  {id:'suprapubic',label:'Suprapúbico',icon:'\u2B07\uFE0F'},
+  {id:'diffuse',label:'Difusa',icon:'\uD83D\uDD34'},
+];
+
+const LOCATION_DDX={
+  epigastric:['Úlcera péptica','Gastrite','Pancreatite aguda','IAM parede inferior','DRGE','Dispepsia funcional','Aneurisma de aorta abdominal'],
+  ruq:['Colecistite aguda','Coledocolitíase','Colangite','Hepatite aguda','Abscesso hepático','Úlcera duodenal','Pneumonia base D'],
+  luq:['Infarto esplênico','Esplenomegalia','Úlcera gástrica','Pancreatite (cauda)','Pielonefrite E','Pneumonia base E'],
+  periumbilical:['Apendicite inicial','Obstrução intestinal','Gastroenterite','Aneurisma de aorta','Isquemia mesentérica','Hérnia umbilical encarcerada'],
+  flank_r:['Cólica renal D','Pielonefrite D','Abscesso perirrenal','Herpes-zóster','Dor musculoesquelética'],
+  flank_l:['Cólica renal E','Pielonefrite E','Abscesso perirrenal','Infarto esplênico','Dor musculoesquelética'],
+  rlq:['Apendicite','Linfadenite mesentérica','Doença de Crohn','Gravidez ectópica','Torção de ovário','Hérnia inguinal encarcerada','Cólica renal D'],
+  llq:['Diverticulite','Colite','Sigmoidite','Gravidez ectópica','Torção de ovário','Hérnia inguinal encarcerada','Cólica renal E'],
+  suprapubic:['Cistite / ITU','Retenção urinária','DIP','Gravidez ectópica','Torção de ovário','Endometriose','Prostatite'],
+  diffuse:['Peritonite','Obstrução intestinal','Isquemia mesentérica','Cetoacidose diabética','Gastroenterite aguda','Rotura de AAA','Porfiria aguda intermitente'],
+};
+
+const PAIN_ONSET=[
+  {id:'sudden',label:'Súbito (segundos)',icon:'\u26A1',hint:'Perfuração, rotura, torção, cólica'},
+  {id:'acute',label:'Agudo (minutos a horas)',icon:'\u23F1\uFE0F',hint:'Inflamação, obstrução, infecção'},
+  {id:'gradual',label:'Gradual (horas a dias)',icon:'\uD83D\uDCC8',hint:'Processo inflamatório, neoplasia'},
+];
+
+const PAIN_QUALITY=[
+  {id:'colicky',label:'Cólica (vai e volta)',icon:'\uD83C\uDF0A'},
+  {id:'constant',label:'Constante',icon:'\u2796'},
+  {id:'burning',label:'Queimação',icon:'\uD83D\uDD25'},
+  {id:'sharp',label:'Pontada / Lancinante',icon:'\uD83D\uDCCC'},
+  {id:'pressure',label:'Pressão / Peso',icon:'\uD83E\uDDBE'},
+  {id:'tearing',label:'Dilacerante / Rasgando',icon:'\u2694\uFE0F'},
+];
+
+const PAIN_RADIATION=[
+  {id:'none',label:'Sem irradiação'},
+  {id:'back',label:'Dorso'},
+  {id:'shoulder_r',label:'Ombro direito'},
+  {id:'shoulder_l',label:'Ombro esquerdo'},
+  {id:'groin',label:'Região inguinal'},
+  {id:'flank',label:'Flanco'},
+  {id:'chest',label:'Tórax'},
+  {id:'scapular',label:'Região escapular'},
+];
+
+const AGGRAVATING=[
+  {id:'eating',label:'Alimentação'},
+  {id:'movement',label:'Movimentação'},
+  {id:'breathing',label:'Respiração profunda'},
+  {id:'palpation',label:'Palpação'},
+  {id:'valsalva',label:'Valsalva / Tosse'},
+  {id:'supine',label:'Decúbito dorsal'},
+];
+
+const RELIEVING=[
+  {id:'fasting',label:'Jejum'},
+  {id:'antacids',label:'Antiácidos'},
+  {id:'rest',label:'Repouso'},
+  {id:'flexion',label:'Flexão do tronco (prece maometana)'},
+  {id:'vomiting_relief',label:'Vômito'},
+  {id:'defecation',label:'Evacuação'},
+];
+
+const ASSOC_SYMPTOMS=[
+  {id:'nausea',label:'Náusea',icon:'\uD83E\uDD22'},
+  {id:'vomiting',label:'Vômitos',icon:'\uD83E\uDD2E'},
+  {id:'fever',label:'Febre',icon:'\uD83C\uDF21\uFE0F'},
+  {id:'diarrhea',label:'Diarreia',icon:'\uD83D\uDCA9'},
+  {id:'constipation',label:'Constipação / Parada de flatos',icon:'\uD83D\uDED1'},
+  {id:'hematochezia',label:'Hematoquezia / Melena',icon:'\uD83E\uDE78'},
+  {id:'hematemesis',label:'Hematêmese',icon:'\uD83E\uDE78'},
+  {id:'dysuria',label:'Disúria',icon:'\uD83D\uDCA7'},
+  {id:'hematuria',label:'Hematúria',icon:'\uD83E\uDE78'},
+  {id:'vaginal_bleeding',label:'Sangramento vaginal',icon:'\uD83E\uDE78'},
+  {id:'anorexia',label:'Anorexia',icon:'\uD83D\uDEAB'},
+  {id:'jaundice',label:'Icterícia',icon:'\uD83D\uDFE1'},
+  {id:'weight_loss',label:'Perda de peso',icon:'\u2B07\uFE0F'},
+  {id:'distension',label:'Distensão abdominal',icon:'\uD83C\uDF88'},
+  {id:'syncope',label:'Síncope / Pré-síncope',icon:'\uD83D\uDCA4'},
+];
+
+// Physical exam findings
+const PERITONEAL_SIGNS=[
+  {id:'guarding',label:'Defesa involuntária',icon:'\uD83D\uDEE1\uFE0F'},
+  {id:'rebound',label:'Descompressão brusca +',icon:'\u2757'},
+  {id:'rigidity',label:'Abdome em tábua',icon:'\uD83E\uDDF1'},
+  {id:'absent_bs',label:'RHA ausentes',icon:'\uD83D\uDD07'},
+  {id:'hyper_bs',label:'RHA aumentados / metálicos',icon:'\uD83D\uDD0A'},
+];
+
+const SPECIFIC_SIGNS=[
+  {id:'murphy',label:'Sinal de Murphy +',hint:'Colecistite'},
+  {id:'mcburney',label:'Ponto de McBurney +',hint:'Apendicite'},
+  {id:'rovsing',label:'Sinal de Rovsing +',hint:'Apendicite'},
+  {id:'psoas',label:'Sinal do Psoas +',hint:'Apend. retrocecal'},
+  {id:'obturator',label:'Sinal do Obturador +',hint:'Apend. pélvica'},
+  {id:'carnett',label:'Sinal de Carnett +',hint:'Dor parietal'},
+  {id:'cullen',label:'Sinal de Cullen',hint:'Hemorr. retroperitoneal'},
+  {id:'grey_turner',label:'Sinal de Grey-Turner',hint:'Pancreatite hemorrágica'},
+  {id:'giordano',label:'Sinal de Giordano +',hint:'Pielonefrite / Litíase'},
+  {id:'blumberg',label:'Sinal de Blumberg +',hint:'Peritonite localizada'},
+];
+
+const VITAL_SIGNS_OPTS={
+  tachycardia:{id:'tachycardia',label:'FC > 100 bpm'},
+  hypotension:{id:'hypotension',label:'PAS < 90 mmHg'},
+  fever_vs:{id:'fever_vs',label:'Tax > 38,0 °C'},
+  tachypnea:{id:'tachypnea',label:'FR > 20 irpm'},
+  sat_low:{id:'sat_low',label:'SpO\u2082 < 94%'},
+};
+
+// Past history items
+const PAST_HISTORY=[
+  {id:'prev_surgery',label:'Cirurgia abdominal prévia'},
+  {id:'diabetes',label:'Diabetes mellitus'},
+  {id:'hypertension',label:'Hipertensão'},
+  {id:'atrial_fib',label:'Fibrilação atrial'},
+  {id:'anticoag',label:'Uso de anticoagulante'},
+  {id:'nsaid',label:'Uso crônico de AINEs'},
+  {id:'alcohol',label:'Etilismo'},
+  {id:'smoking',label:'Tabagismo'},
+  {id:'immunosupp',label:'Imunossupressão'},
+  {id:'prev_episodes',label:'Episódios prévios semelhantes'},
+  {id:'renal_insuff',label:'Insuficiência renal'},
+  {id:'liver_disease',label:'Hepatopatia crônica'},
+];
+
+// Alvarado Score items
+const ALVARADO=[
+  {id:'alv_migration',label:'Migração da dor para FID',pts:1},
+  {id:'alv_anorexia',label:'Anorexia',pts:1},
+  {id:'alv_nausea',label:'Náusea / Vômitos',pts:1},
+  {id:'alv_rlq_tender',label:'Dor à palpação em FID',pts:2},
+  {id:'alv_rebound',label:'Descompressão brusca +',pts:1},
+  {id:'alv_fever',label:'Temperatura > 37,3 °C',pts:1},
+  {id:'alv_leukocytosis',label:'Leucocitose > 10.000',pts:2},
+  {id:'alv_left_shift',label:'Desvio à esquerda (> 75% neutrófilos)',pts:1},
+];
+
+// Ranson Criteria (admission)
+const RANSON_ADMIT=[
+  {id:'ran_age',label:'Idade > 55 anos',pts:1},
+  {id:'ran_wbc',label:'Leucócitos > 16.000',pts:1},
+  {id:'ran_glucose',label:'Glicose > 200 mg/dL',pts:1},
+  {id:'ran_ldh',label:'LDH > 350 U/L',pts:1},
+  {id:'ran_ast',label:'AST > 250 U/L',pts:1},
+];
+
+// Ranson Criteria (48h)
+const RANSON_48H=[
+  {id:'ran_hct',label:'Queda Hct > 10%',pts:1},
+  {id:'ran_bun',label:'Aumento BUN > 5 mg/dL',pts:1},
+  {id:'ran_calcium',label:'Cálcio < 8 mg/dL',pts:1},
+  {id:'ran_pao2',label:'PaO\u2082 < 60 mmHg',pts:1},
+  {id:'ran_base',label:'Déficit de base > 4 mEq/L',pts:1},
+  {id:'ran_fluid',label:'Sequestro líquido > 6L',pts:1},
+];
+
+// =============================================
+// STATE
+// =============================================
+let step=0;
+let location=null;
+let painOnset=null;
+let painQuality=new Set();
+let painRadiation=new Set();
+let aggravating=new Set();
+let relieving=new Set();
+let assocSymptoms=new Set();
+let peritonealSigns=new Set();
+let specificSigns=new Set();
+let vitalSigns=new Set();
+let pastHistory=new Set();
+let patAge=null; // 0=<18, 1=18-40, 2=40-65, 3=>65
+let patSex=null; // M/F
+let lmpStatus=null; // null, 'possible','unlikely','na'
+let painDuration=null; // 0=<6h, 1=6-24h, 2=24-72h, 3=>72h
+let painIntensity=null; // 0=leve, 1=moderada, 2=intensa
+let activeScoreTab='alvarado';
+let alvaradoState={};
+let ransonAdmitState={};
+let ranson48hState={};
+let sections={summary:true,ddx:true,scores:true,workup:true,conduta:true,analgesia:false,note:false};
+const evalStartTime=new Date();
+
+const app=document.getElementById('app');
+
+// =============================================
+// AUTO-FILL HELPERS
+// =============================================
+function autoAlvarado(){
+  const a={...alvaradoState};
+  if(assocSymptoms.has('anorexia')&&a['alv_anorexia']===undefined) a['alv_anorexia']=1;
+  if((assocSymptoms.has('nausea')||assocSymptoms.has('vomiting'))&&a['alv_nausea']===undefined) a['alv_nausea']=1;
+  if(specificSigns.has('mcburney')&&a['alv_rlq_tender']===undefined) a['alv_rlq_tender']=1;
+  if(peritonealSigns.has('rebound')&&a['alv_rebound']===undefined) a['alv_rebound']=1;
+  if((assocSymptoms.has('fever')||vitalSigns.has('fever_vs'))&&a['alv_fever']===undefined) a['alv_fever']=1;
+  // Auto-fill migration if location is rlq and periumbilical pain mentioned
+  if(location==='rlq'&&a['alv_migration']===undefined) a['alv_migration']=1;
+  return a;
+}
+
+function autoRansonAdmit(){
+  const r={...ransonAdmitState};
+  if(patAge===3&&r['ran_age']===undefined) r['ran_age']=1;
+  return r;
+}
+
+function getAlvaradoScore(){
+  const a=autoAlvarado();
+  let total=0, filled=0;
+  for(const item of ALVARADO){
+    if(a[item.id]!==undefined){filled++;if(a[item.id])total+=item.pts;}
+  }
+  if(filled<ALVARADO.length) return null;
+  return total;
+}
+
+function getRansonAdmitScore(){
+  const r=autoRansonAdmit();
+  let total=0, filled=0;
+  for(const item of RANSON_ADMIT){
+    if(r[item.id]!==undefined){filled++;if(r[item.id])total+=item.pts;}
+  }
+  if(filled<RANSON_ADMIT.length) return null;
+  return total;
+}
+
+function getRanson48hScore(){
+  let total=0, filled=0;
+  for(const item of RANSON_48H){
+    if(ranson48hState[item.id]!==undefined){filled++;if(ranson48hState[item.id])total+=item.pts;}
+  }
+  if(filled<RANSON_48H.length) return null;
+  return total;
+}
+
+function getRansonTotal(){
+  const a=getRansonAdmitScore(), b=getRanson48hScore();
+  if(a===null) return null;
+  return a+(b!==null?b:0);
+}
+
+// =============================================
+// RISK STRATIFICATION
+// =============================================
+function isSurgicalAbdomen(){
+  if(peritonealSigns.has('rigidity')) return true;
+  if(peritonealSigns.has('guarding')&&peritonealSigns.has('rebound')) return true;
+  if(peritonealSigns.has('absent_bs')&&(peritonealSigns.has('guarding')||peritonealSigns.has('rebound'))) return true;
+  if(vitalSigns.has('hypotension')&&peritonealSigns.size>0) return true;
+  return false;
+}
+
+function isUrgent(){
+  if(vitalSigns.has('hypotension')) return true;
+  if(vitalSigns.has('tachycardia')&&(assocSymptoms.has('hematochezia')||assocSymptoms.has('hematemesis'))) return true;
+  if(assocSymptoms.has('fever')&&assocSymptoms.has('jaundice')) return true; // Charcot
+  if(peritonealSigns.size>=2) return true;
+  if(painOnset==='sudden'&&painIntensity===2) return true;
+  if(assocSymptoms.has('syncope')&&vitalSigns.has('tachycardia')) return true;
+  if(painQuality.has('tearing')&&painRadiation.has('back')) return true; // Dissecção/AAA
+  if(patSex==='F'&&lmpStatus==='possible'&&assocSymptoms.has('vaginal_bleeding')) return true; // Ectópica
+  if(patAge===3&&painOnset==='sudden'&&(location==='diffuse'||location==='periumbilical')) return true; // Isquemia mesentérica
+  return false;
+}
+
+function getRiskLevel(){
+  if(isSurgicalAbdomen()) return 'surgical';
+  if(isUrgent()) return 'urgent';
+  if(peritonealSigns.size===0&&!vitalSigns.has('hypotension')&&!vitalSigns.has('tachycardia')&&!assocSymptoms.has('syncope')) return 'low';
+  return 'medical';
+}
+
+function getRiskInfo(){
+  const r=getRiskLevel();
+  if(r==='surgical') return {level:'surgical',title:'Abdome Cirúrgico',desc:'Sinais de irritação peritoneal difusa e/ou instabilidade hemodinâmica. Avaliar cirurgia de urgência.',badge:'badge-surgical',icon:'\uD83D\uDEA8'};
+  if(r==='urgent') return {level:'urgent',title:'Urgência — Avaliar',desc:'Sinais de alarme presentes. Requer avaliação imediata e investigação rápida.',badge:'badge-urgent',icon:'\u26A0\uFE0F'};
+  if(r==='medical') return {level:'medical',title:'Investigar — Manejo Clínico',desc:'Achados sugestivos de etiologia clínica. Prosseguir com investigação direcionada.',badge:'badge-medical',icon:'\uD83D\uDD0D'};
+  return {level:'low',title:'Baixo Risco',desc:'Exame físico sem sinais de alarme. Considerar avaliação ambulatorial ou observação breve.',badge:'badge-low',icon:'\u2705'};
+}
+
+// =============================================
+// RED FLAGS
+// =============================================
+function getRedFlags(){
+  const flags=[];
+  if(vitalSigns.has('hypotension')) flags.push('Hipotensão — avaliar choque');
+  if(peritonealSigns.has('rigidity')) flags.push('Abdome em tábua — peritonite difusa');
+  if(painOnset==='sudden'&&painIntensity===2) flags.push('Dor súbita intensa — considerar perfuração, rotura ou torção');
+  if(assocSymptoms.has('fever')&&assocSymptoms.has('jaundice')&&location==='ruq') flags.push('Tríade de Charcot — colangite aguda');
+  if(assocSymptoms.has('syncope')) flags.push('Síncope — avaliar sangramento ou instabilidade hemodinâmica');
+  if(patAge===3&&painOnset==='sudden'&&(location==='diffuse'||location==='periumbilical')) flags.push('Idoso + dor difusa súbita — excluir isquemia mesentérica e AAA');
+  if(assocSymptoms.has('hematemesis')||assocSymptoms.has('hematochezia')) flags.push('Sangramento GI — avaliar estabilidade e hemoglobina');
+  if(patSex==='F'&&lmpStatus==='possible'&&(assocSymptoms.has('vaginal_bleeding')||vitalSigns.has('hypotension'))) flags.push('Gravidez ectópica rota até que se prove o contrário');
+  if(specificSigns.has('cullen')||specificSigns.has('grey_turner')) flags.push('Sinais de hemorragia retroperitoneal');
+  if(painIntensity===2&&peritonealSigns.size===0&&patAge>=2) flags.push('Dor intensa sem peritonismo — considerar isquemia mesentérica');
+  if(patAge===3&&vitalSigns.has('tachycardia')&&!assocSymptoms.has('fever')) flags.push('Taquicardia sem febre em idoso — avaliar hemorragia oculta');
+  if(pastHistory.has('immunosupp')&&assocSymptoms.has('fever')) flags.push('Febre em imunossuprimido — infecção oportunista / apresentação atípica');
+  return flags;
+}
+
+// =============================================
+// DIFFERENTIAL DIAGNOSIS ENGINE
+// =============================================
+function buildDifferentials(){
+  if(!location) return [];
+  const base=LOCATION_DDX[location]||[];
+  let scored=base.map((dx,i)=>({name:dx,score:base.length-i}));
+
+  for(const s of scored){
+    const n=s.name.toLowerCase();
+    // Appendicitis
+    if(n.includes('apendicite')){
+      if(specificSigns.has('mcburney')) s.score+=5;
+      if(specificSigns.has('rovsing')) s.score+=3;
+      if(specificSigns.has('psoas')) s.score+=2;
+      if(specificSigns.has('obturator')) s.score+=2;
+      if(assocSymptoms.has('anorexia')) s.score+=2;
+      if(assocSymptoms.has('nausea')||assocSymptoms.has('vomiting')) s.score+=1;
+      if(assocSymptoms.has('fever')) s.score+=1;
+      if(location==='rlq') s.score+=3;
+      if(patAge===1) s.score+=1;
+      if(painDuration<=1) s.score+=1; // Typically <24h
+    }
+    // Cholecystitis
+    if(n.includes('colecistite')){
+      if(specificSigns.has('murphy')) s.score+=5;
+      if(painRadiation.has('shoulder_r')||painRadiation.has('scapular')) s.score+=3;
+      if(assocSymptoms.has('nausea')||assocSymptoms.has('vomiting')) s.score+=1;
+      if(painQuality.has('colicky')) s.score+=2;
+      if(aggravating.has('eating')) s.score+=2;
+      if(patSex==='F') s.score+=1;
+      if(patAge>=2) s.score+=1;
+      if(assocSymptoms.has('fever')) s.score+=1;
+    }
+    // Cholangitis (Charcot)
+    if(n.includes('colangite')){
+      if(assocSymptoms.has('fever')&&assocSymptoms.has('jaundice')) s.score+=5;
+      if(vitalSigns.has('hypotension')) s.score+=2; // Pêntade de Reynolds
+      if(assocSymptoms.has('jaundice')) s.score+=2;
+    }
+    // Pancreatitis
+    if(n.includes('pancreatite')){
+      if(painRadiation.has('back')) s.score+=4;
+      if(relieving.has('flexion')) s.score+=3;
+      if(painQuality.has('constant')) s.score+=2;
+      if(assocSymptoms.has('vomiting')) s.score+=2;
+      if(specificSigns.has('cullen')||specificSigns.has('grey_turner')) s.score+=4;
+      if(pastHistory.has('alcohol')) s.score+=3;
+      if(location==='epigastric') s.score+=2;
+    }
+    // Bowel obstruction
+    if(n.includes('obstru')){
+      if(assocSymptoms.has('vomiting')&&assocSymptoms.has('constipation')) s.score+=5;
+      if(peritonealSigns.has('absent_bs')) s.score+=3;
+      if(peritonealSigns.has('hyper_bs')) s.score+=3;
+      if(painQuality.has('colicky')) s.score+=3;
+      if(assocSymptoms.has('distension')) s.score+=3;
+      if(location==='diffuse'||location==='periumbilical') s.score+=2;
+      if(pastHistory.has('prev_surgery')) s.score+=4;
+    }
+    // Peritonitis
+    if(n.includes('peritonite')){
+      if(peritonealSigns.has('rigidity')) s.score+=5;
+      if(peritonealSigns.has('guarding')&&peritonealSigns.has('rebound')) s.score+=4;
+      if(peritonealSigns.has('absent_bs')) s.score+=2;
+      if(assocSymptoms.has('fever')) s.score+=1;
+    }
+    // UTI / Cistite
+    if(n.includes('cistite')||n.includes('itu')){
+      if(assocSymptoms.has('dysuria')) s.score+=5;
+      if(assocSymptoms.has('hematuria')) s.score+=3;
+      if(patSex==='F') s.score+=1;
+    }
+    // Pyelonephritis / Renal colic
+    if(n.includes('pielonefrite')){
+      if(assocSymptoms.has('fever')) s.score+=3;
+      if(assocSymptoms.has('dysuria')) s.score+=2;
+      if(specificSigns.has('giordano')) s.score+=4;
+    }
+    if(n.includes('lica renal')||n.includes('lit')){
+      if(painQuality.has('colicky')) s.score+=3;
+      if(painRadiation.has('groin')) s.score+=4;
+      if(assocSymptoms.has('hematuria')) s.score+=3;
+      if(specificSigns.has('giordano')) s.score+=3;
+      if(painOnset==='sudden'||painOnset==='acute') s.score+=2;
+    }
+    // Ectopic pregnancy
+    if(n.includes('ect\u00F3pica')||n.includes('ectopica')){
+      if(patSex==='F'&&lmpStatus==='possible') s.score+=5;
+      if(assocSymptoms.has('vaginal_bleeding')) s.score+=4;
+      if(vitalSigns.has('hypotension')) s.score+=3;
+      if(assocSymptoms.has('syncope')) s.score+=2;
+    }
+    // Ovarian torsion
+    if(n.includes('tor\u00E7\u00E3o de ov\u00E1rio')||n.includes('torcao de ovario')){
+      if(patSex==='F') s.score+=2;
+      if(painOnset==='sudden') s.score+=3;
+      if(assocSymptoms.has('nausea')||assocSymptoms.has('vomiting')) s.score+=1;
+    }
+    // Diverticulitis
+    if(n.includes('diverticulite')){
+      if(patAge>=2) s.score+=2;
+      if(assocSymptoms.has('fever')) s.score+=2;
+      if(assocSymptoms.has('constipation')) s.score+=1;
+      if(location==='llq') s.score+=3;
+      if(painDuration>=1) s.score+=1; // Usually >6h onset
+    }
+    // Gastroenteritis
+    if(n.includes('gastroenterite')){
+      if(assocSymptoms.has('diarrhea')) s.score+=4;
+      if(assocSymptoms.has('nausea')&&assocSymptoms.has('vomiting')) s.score+=2;
+      if(peritonealSigns.size===0) s.score+=2; // No peritoneal signs expected
+    }
+    // Ulcer
+    if(n.includes('lcera')){
+      if(painQuality.has('burning')) s.score+=3;
+      if(relieving.has('antacids')) s.score+=3;
+      if(aggravating.has('eating')) s.score+=1;
+      if(pastHistory.has('nsaid')) s.score+=3;
+      if(assocSymptoms.has('hematemesis')) s.score+=3;
+    }
+    // Mesenteric ischemia
+    if(n.includes('isquemia mesent')){
+      if(patAge>=3) s.score+=3;
+      if(painOnset==='sudden'&&painIntensity===2) s.score+=3;
+      if(painIntensity===2&&peritonealSigns.size===0) s.score+=4;
+      if(pastHistory.has('atrial_fib')) s.score+=4;
+      if(pastHistory.has('anticoag')) s.score-=1; // Less likely if anticoagulated
+    }
+    // AAA
+    if(n.includes('aaa')||n.includes('aneurisma')){
+      if(patAge>=3) s.score+=2;
+      if(painOnset==='sudden') s.score+=2;
+      if(vitalSigns.has('hypotension')) s.score+=3;
+      if(painRadiation.has('back')) s.score+=2;
+      if(pastHistory.has('hypertension')) s.score+=2;
+      if(pastHistory.has('smoking')) s.score+=2;
+      if(patSex==='M') s.score+=1;
+    }
+    // DIP
+    if(n.includes('dip')){
+      if(patSex==='F') s.score+=2;
+      if(assocSymptoms.has('fever')) s.score+=2;
+      if(assocSymptoms.has('vaginal_bleeding')) s.score+=1;
+    }
+    // Hernia
+    if(n.includes('rnia')){
+      if(aggravating.has('valsalva')) s.score+=3;
+      if(pastHistory.has('prev_surgery')) s.score+=1;
+    }
+    // Pneumonia (basal)
+    if(n.includes('pneumonia')){
+      if(vitalSigns.has('tachypnea')) s.score+=3;
+      if(assocSymptoms.has('fever')) s.score+=2;
+      if(vitalSigns.has('sat_low')) s.score+=3;
+    }
+    // IAM
+    if(n.includes('iam')){
+      if(patAge>=2) s.score+=2;
+      if(pastHistory.has('diabetes')) s.score+=2;
+      if(pastHistory.has('hypertension')) s.score+=1;
+      if(painRadiation.has('chest')) s.score+=2;
+    }
+    // Prostatite
+    if(n.includes('prostatite')){
+      if(patSex==='M') s.score+=2;
+      if(assocSymptoms.has('dysuria')) s.score+=2;
+      if(assocSymptoms.has('fever')) s.score+=2;
+    }
+    // Cetoacidose diabética
+    if(n.includes('cetoacidose')){
+      if(pastHistory.has('diabetes')) s.score+=5;
+      if(vitalSigns.has('tachypnea')) s.score+=2;
+    }
+    // General onset boosts
+    if(n.includes('perfura')||n.includes('rotura')){
+      if(painOnset==='sudden') s.score+=3;
+    }
+  }
+
+  // Filter sex-specific
+  if(patSex==='M'){
+    scored=scored.filter(d=>{
+      const dl=d.name.toLowerCase();
+      return !['ect\u00F3pica','ectopica','tor\u00E7\u00E3o de ov\u00E1rio','torcao de ovario','dip','endometriose'].some(g=>dl.includes(g));
+    });
+  }
+  if(patSex==='F'){
+    scored=scored.filter(d=>!d.name.toLowerCase().includes('prostatite'));
+  }
+
+  scored.sort((a,b)=>b.score-a.score);
+  return scored.slice(0,7);
+}
+
+// =============================================
+// SUGGESTED WORKUP
+// =============================================
+function buildWorkup(){
+  const risk=getRiskLevel();
+  const urgent=[];
+  const routine=[];
+
+  // Always
+  routine.push('Hemograma completo');
+  routine.push('PCR');
+
+  if(risk==='surgical'||risk==='urgent'){
+    urgent.push('Tipo sanguíneo + Reserva');
+    urgent.push('Lactato');
+    urgent.push('Gasometria arterial');
+  }
+
+  // Location-specific
+  if(location==='ruq'||assocSymptoms.has('jaundice')){
+    routine.push('TGO / TGP / FA / GGT');
+    routine.push('Bilirrubinas');
+    urgent.push('USG de abdome superior');
+  }
+  if(location==='epigastric'||location==='ruq'){
+    routine.push('Amilase / Lipase');
+  }
+  if(location==='rlq'||location==='llq'||location==='periumbilical'){
+    if(risk!=='low') urgent.push('TC de abdome com contraste');
+  }
+  if(location==='flank_r'||location==='flank_l'){
+    routine.push('EAS / Urina tipo I');
+    routine.push('Ureia / Creatinina');
+    if(painQuality.has('colicky')||assocSymptoms.has('hematuria')){
+      urgent.push('TC de abdome sem contraste (protocolo litíase)');
+    } else {
+      urgent.push('USG de vias urinárias');
+    }
+  }
+  if(location==='suprapubic'||assocSymptoms.has('dysuria')||assocSymptoms.has('hematuria')){
+    routine.push('EAS / Urina tipo I');
+    routine.push('Urocultura');
+  }
+  if(patSex==='F'&&lmpStatus==='possible'){
+    urgent.push('Beta-hCG quantitativo');
+    if(assocSymptoms.has('vaginal_bleeding')||vitalSigns.has('hypotension')){
+      urgent.push('USG transvaginal');
+    }
+  }
+  if(patSex==='F'&&lmpStatus!=='na'&&lmpStatus!=='possible'&&patAge!==0&&patAge!==null){
+    routine.push('Beta-hCG (se idade fértil)');
+  }
+  if(assocSymptoms.has('constipation')||peritonealSigns.has('absent_bs')||assocSymptoms.has('distension')){
+    urgent.push('Rx abdome (3 incidências)');
+  }
+  if(assocSymptoms.has('hematochezia')||assocSymptoms.has('hematemesis')){
+    if(vitalSigns.has('tachycardia')||vitalSigns.has('hypotension')){
+      urgent.push('Hemotransfusão se Hb baixa');
+    }
+    if(assocSymptoms.has('hematemesis')){
+      urgent.push('EDA de urgência');
+    }
+    if(assocSymptoms.has('hematochezia')){
+      routine.push('Colonoscopia (programar)');
+    }
+  }
+  if(location==='diffuse'){
+    urgent.push('TC de abdome com contraste');
+    routine.push('Amilase / Lipase');
+    routine.push('TGO / TGP / FA / GGT');
+  }
+  if(vitalSigns.has('hypotension')){
+    urgent.push('Acesso venoso calibroso x2');
+    urgent.push('Reposição volêmica agressiva');
+  }
+  if(assocSymptoms.has('fever')){
+    routine.push('Hemoculturas (2 pares)');
+  }
+  if(pastHistory.has('anticoag')){
+    urgent.push('Coagulograma (TAP/INR + TTPA)');
+  }
+  if(pastHistory.has('diabetes')){
+    routine.push('Glicemia');
+    routine.push('HbA1c');
+    if(location==='diffuse'||vitalSigns.has('tachypnea')){
+      routine.push('Cetonúria / Cetonemia');
+    }
+  }
+  if(location==='epigastric'&&patAge>=2){
+    routine.push('ECG (excluir IAM inferior)');
+  }
+  if(vitalSigns.has('tachypnea')||vitalSigns.has('sat_low')){
+    urgent.push('Rx de tórax');
+    if(risk==='surgical'||risk==='urgent') urgent.push('Gasometria arterial');
+  }
+  if(pastHistory.has('renal_insuff')){
+    routine.push('Ureia / Creatinina');
+    routine.push('Eletrólitos (Na, K, Mg)');
+  }
+  if(pastHistory.has('liver_disease')){
+    routine.push('TGO / TGP / FA / GGT');
+    routine.push('Albumina');
+    routine.push('Coagulograma (TAP/INR + TTPA)');
+  }
+
+  // Electrolytes (always)
+  routine.push('Ureia / Creatinina');
+  routine.push('Eletrólitos (Na, K, Mg)');
+
+  // Deduplicate
+  const uSet=new Set(), rSet=new Set();
+  const uFinal=[], rFinal=[];
+  for(const u of urgent) if(!uSet.has(u)){uSet.add(u);uFinal.push(u);}
+  for(const r of routine) if(!rSet.has(r)&&!uSet.has(r)){rSet.add(r);rFinal.push(r);}
+
+  return {urgent:uFinal,routine:rFinal};
+}
+
+// =============================================
+// ANALGESIA PROTOCOL
+// =============================================
+function buildAnalgesiaProtocol(){
+  const intensity=painIntensity;
+  const steps=[];
+  const hasRenalInsuff=pastHistory.has('renal_insuff');
+
+  if(intensity===0){
+    steps.push({n:'1',text:'Dipirona 1g EV ou Paracetamol 750mg VO'});
+    steps.push({n:'2',text:'Hioscina (Buscopan\u00AE) 20mg EV se cólica'});
+    steps.push({n:'R',text:'Reavaliar dor em 30–60 min'});
+  } else if(intensity===1){
+    if(hasRenalInsuff){
+      steps.push({n:'1',text:'Dipirona 1g EV (evitar AINEs — insuficiência renal)'});
+    } else {
+      steps.push({n:'1',text:'Dipirona 1g EV + Cetoprofeno 100mg EV (ou Tenoxicam 20mg EV)'});
+    }
+    steps.push({n:'2',text:'Hioscina 20mg EV se componente cólico'});
+    steps.push({n:'3',text:'Se sem melhora: Tramadol 50–100mg EV diluído'});
+    steps.push({n:'R',text:'Reavaliar dor em 30 min'});
+  } else {
+    if(hasRenalInsuff){
+      steps.push({n:'1',text:'Dipirona 2g EV (evitar AINEs — insuficiência renal)'});
+    } else {
+      steps.push({n:'1',text:'Dipirona 2g EV + Cetoprofeno 100mg EV'});
+    }
+    steps.push({n:'2',text:'Morfina 2–4mg EV (titular a cada 5 min até alívio)'});
+    steps.push({n:'3',text:'Ondansetrona 4mg EV se náuseas com opioide'});
+    steps.push({n:'!',text:'NÃO retardar analgesia por avaliação cirúrgica'});
+    steps.push({n:'R',text:'Reavaliar dor a cada 15–30 min'});
+  }
+  if(pastHistory.has('nsaid')){
+    steps.push({n:'\u26A0',text:'Cautela com AINEs — uso crônico de AINEs relatado'});
+  }
+  if(pastHistory.has('liver_disease')){
+    steps.push({n:'\u26A0',text:'Cautela com Paracetamol — hepatopatia crônica relatada'});
+  }
+  if(assocSymptoms.has('hematemesis')||assocSymptoms.has('hematochezia')){
+    steps.push({n:'\u26A0',text:'AINEs CONTRAINDICADOS — sangramento GI'});
+  }
+  return steps;
+}
+
+// =============================================
+// PROGRESS BAR
+// =============================================
+function progHTML(idx,allDone){
+  let h='<div class="progress-bar">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done':i===idx?'active':'';
+    h+=`<div class="progress-step ${c}"></div>`;
+  }
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done-label':i===idx?'active-label':'';
+    h+=`<span class="${c}">${STEP_LABELS[i]}</span>`;
+  }
+  h+='</div>';
+  if(!allDone) h+='<div class="flow-connector"><div class="arrow"></div></div>';
+  return h;
+}
+
+// =============================================
+// COLLAPSIBLE
+// =============================================
+function collapsible(id,title,contentFn){
+  const open=sections[id];
+  let h='<div class="dark-box">';
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">&#x25BC;</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.75rem':'0'}">`;
+  if(open) h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// RENDER ROUTER
+// =============================================
+function render(){
+  if(step===0) renderPatient();
+  else if(step===1) renderLocation();
+  else if(step===2) renderCharacteristics();
+  else if(step===3) renderSymptoms();
+  else if(step===4) renderExam();
+  else if(step===5) renderScores();
+  else renderResult();
+}
+
+// =============================================
+// STEP 0: PATIENT DATA
+// =============================================
+function renderPatient(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<div class="step-chip"><span class="step-num">1</span> de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Dados do paciente</h2><p class="subtitle">Sexo, idade e informações básicas para direcionar a avaliação</p>';
+  h+='<div class="options">';
+
+  // Sex
+  h+='<div class="option-group-label">Sexo biológico</div>';
+  h+='<div style="display:flex;gap:.5rem">';
+  h+=`<button class="option-btn ${patSex==='M'?'selected':''}" onclick="setPatField('patSex','M')" style="flex:1;justify-content:center"><span class="icon">\u2642\uFE0F</span><span class="label">Masculino</span></button>`;
+  h+=`<button class="option-btn ${patSex==='F'?'selected':''}" onclick="setPatField('patSex','F')" style="flex:1;justify-content:center"><span class="icon">\u2640\uFE0F</span><span class="label">Feminino</span></button>`;
+  h+='</div>';
+
+  // Age
+  h+='<div class="option-group-label">Faixa etária</div>';
+  h+='<div style="display:flex;gap:.4rem">';
+  const ageOpts=[{v:0,l:'< 18'},{v:1,l:'18–40'},{v:2,l:'40–65'},{v:3,l:'> 65'}];
+  for(const o of ageOpts){
+    h+=`<button class="score-opt ${patAge===o.v?'picked':''}" onclick="setPatField('patAge',${o.v})" style="flex:1;padding:.65rem .3rem">${o.l}</button>`;
+  }
+  h+='</div>';
+
+  // LMP (only for females)
+  if(patSex==='F'){
+    h+='<div class="option-group-label">Possibilidade de gravidez</div>';
+    h+='<div style="display:flex;gap:.4rem">';
+    const lmpOpts=[{v:'possible',l:'Possível'},{v:'unlikely',l:'Improvável'},{v:'na',l:'N/A (pós-menop.)'}];
+    for(const o of lmpOpts){
+      h+=`<button class="score-opt ${lmpStatus===o.v?'picked':''}" onclick="setPatField('lmpStatus','${o.v}')" style="flex:1;padding:.65rem .3rem">${o.l}</button>`;
+    }
+    h+='</div>';
+  }
+
+  // Duration
+  h+='<div class="option-group-label">Duração do quadro</div>';
+  h+='<div style="display:flex;gap:.4rem">';
+  const durOpts=[{v:0,l:'< 6h'},{v:1,l:'6–24h'},{v:2,l:'24–72h'},{v:3,l:'> 72h'}];
+  for(const o of durOpts){
+    h+=`<button class="score-opt ${painDuration===o.v?'picked':''}" onclick="setPatField('painDuration',${o.v})" style="flex:1;padding:.65rem .3rem">${o.l}</button>`;
+  }
+  h+='</div>';
+
+  // Pain intensity (moved here for earlier capture)
+  h+='<div class="option-group-label">Intensidade da dor (EVA)</div>';
+  h+='<div style="display:flex;gap:.4rem">';
+  const intOpts=[
+    {v:0,l:'Leve',sub:'1–3'},
+    {v:1,l:'Moderada',sub:'4–6'},
+    {v:2,l:'Intensa',sub:'7–10'},
+  ];
+  for(const o of intOpts){
+    h+=`<button class="score-opt ${painIntensity===o.v?'picked':''}" onclick="setPainIntensity(${o.v})" style="flex:1;padding:.6rem .3rem">${o.l}<span class="pts">${o.sub}</span></button>`;
+  }
+  h+='</div>';
+
+  // Past history
+  h+='<div class="option-group-label">Antecedentes relevantes</div>';
+  h+='<div class="history-pills">';
+  for(const item of PAST_HISTORY){
+    const active=pastHistory.has(item.id);
+    h+=`<span class="history-pill ${active?'active':''}" onclick="toggleSet('pastHistory','${item.id}')">${item.label}</span>`;
+  }
+  h+='</div>';
+
+  h+='</div><div class="nav-row">';
+  const canNext=patAge!==null&&patSex!==null&&painDuration!==null;
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 1: LOCATION
+// =============================================
+function renderLocation(){
+  let h=progHTML(1,false);
+  h+='<div class="card">';
+  h+='<div class="step-chip"><span class="step-num">2</span> de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Onde é a dor?</h2><p class="subtitle">Selecione a região de maior intensidade</p>';
+
+  // Abdomen grid
+  h+='<div class="abdomen-container">';
+  h+='<div class="abd-grid">';
+  const gridRegions=[
+    {id:'ruq',label:'HCD',icon:'\u2196\uFE0F'},
+    {id:'epigastric',label:'Epigástrio',icon:'\u2B06\uFE0F'},
+    {id:'luq',label:'HCE',icon:'\u2197\uFE0F'},
+    {id:'flank_r',label:'Flanco D',icon:'\u25C0\uFE0F'},
+    {id:'periumbilical',label:'Periumbilical',icon:'\u23FA'},
+    {id:'flank_l',label:'Flanco E',icon:'\u25B6\uFE0F'},
+    {id:'rlq',label:'FID',icon:'\u2199\uFE0F'},
+    {id:'suprapubic',label:'Suprapúbico',icon:'\u2B07\uFE0F'},
+    {id:'llq',label:'FIE',icon:'\u2198\uFE0F'},
+  ];
+  for(const r of gridRegions){
+    h+=`<div class="abd-cell ${location===r.id?'selected':''}" onclick="setLocation('${r.id}')"><span class="abd-icon">${r.icon}</span>${r.label}</div>`;
+  }
+  h+='</div>';
+  // Diffuse button
+  h+=`<button class="option-btn abd-diffuse-btn ${location==='diffuse'?'selected':''}" onclick="setLocation('diffuse')" style="margin-top:6px"><span class="icon">\uD83D\uDD34</span><span class="label">Dor difusa / Abdome todo</span></button>`;
+  h+='</div>';
+
+  // DDX hint
+  if(location){
+    const ddx=LOCATION_DDX[location]||[];
+    h+='<div class="info-hint"><strong>Diferenciais comuns:</strong> '+ddx.slice(0,5).join(', ')+'</div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${location===null?'disabled':''} onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 2: PAIN CHARACTERISTICS
+// =============================================
+function renderCharacteristics(){
+  let h=progHTML(2,false);
+  h+='<div class="card">';
+  h+='<div class="step-chip"><span class="step-num">3</span> de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Características da dor</h2><p class="subtitle">Início, qualidade, irradiação e fatores moduladores</p>';
+  h+='<div class="options">';
+
+  // Onset
+  h+='<div class="option-group-label">Início</div>';
+  for(const o of PAIN_ONSET){
+    h+=`<button class="option-btn ${painOnset===o.id?'selected':''}" onclick="setPainOnset('${o.id}')"><span class="icon">${o.icon}</span><span class="label">${o.label}<br><span style="font-size:.7rem;color:var(--text-muted)">${o.hint}</span></span></button>`;
+  }
+
+  // Quality (multi-select)
+  h+='<div class="option-group-label">Qualidade (marque todos)</div>';
+  for(const q of PAIN_QUALITY){
+    const ck=painQuality.has(q.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSet('painQuality','${q.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="icon" style="font-size:1.1rem">${q.icon}</span><span class="label">${q.label}</span></button>`;
+  }
+
+  // Radiation (multi-select with mutual exclusion for "none")
+  h+='<div class="option-group-label">Irradiação</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:.4rem">';
+  for(const r of PAIN_RADIATION){
+    const ck=painRadiation.has(r.id);
+    h+=`<span class="history-pill ${ck?'active':''}" onclick="toggleRadiation('${r.id}')">${r.label}</span>`;
+  }
+  h+='</div>';
+
+  // Aggravating (multi-select)
+  h+='<div class="option-group-label">Fatores de piora</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:.4rem">';
+  for(const a of AGGRAVATING){
+    const ck=aggravating.has(a.id);
+    h+=`<span class="history-pill ${ck?'active':''}" onclick="toggleSet('aggravating','${a.id}')">${a.label}</span>`;
+  }
+  h+='</div>';
+
+  // Relieving (multi-select)
+  h+='<div class="option-group-label">Fatores de melhora</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:.4rem">';
+  for(const r of RELIEVING){
+    const ck=relieving.has(r.id);
+    h+=`<span class="history-pill ${ck?'active':''}" onclick="toggleSet('relieving','${r.id}')">${r.label}</span>`;
+  }
+  h+='</div>';
+
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${painOnset===null?'disabled':''} onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 3: ASSOCIATED SYMPTOMS
+// =============================================
+function renderSymptoms(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<div class="step-chip"><span class="step-num">4</span> de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Sintomas associados</h2><p class="subtitle">Marque todos os sintomas presentes</p>';
+  h+='<div class="options">';
+
+  for(const s of ASSOC_SYMPTOMS){
+    // Hide sex-specific symptoms
+    if(patSex==='M'&&s.id==='vaginal_bleeding') continue;
+    const ck=assocSymptoms.has(s.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSet('assocSymptoms','${s.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="icon" style="font-size:1.1rem">${s.icon}</span><span class="label">${s.label}</span></button>`;
+  }
+
+  // Show red flags inline if detected
+  const flags=getRedFlags();
+  if(flags.length>0){
+    h+='<div class="red-flag"><span class="red-flag-icon">\u26A0\uFE0F</span><div>';
+    h+='<strong style="display:block;margin-bottom:.25rem">Sinais de alarme detectados:</strong>';
+    h+=flags.map(f=>'&#8226; '+f).join('<br>');
+    h+='</div></div>';
+  }
+
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 4: PHYSICAL EXAM
+// =============================================
+function renderExam(){
+  let h=progHTML(4,false);
+  h+='<div class="card">';
+  h+='<div class="step-chip"><span class="step-num">5</span> de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Exame físico</h2><p class="subtitle">Sinais vitais, peritoneais e específicos</p>';
+  h+='<div class="options">';
+
+  // Vital signs
+  h+='<div class="option-group-label">Sinais vitais alterados</div>';
+  for(const v of Object.values(VITAL_SIGNS_OPTS)){
+    const ck=vitalSigns.has(v.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSet('vitalSigns','${v.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${v.label}</span></button>`;
+  }
+
+  // Peritoneal signs
+  h+='<div class="option-group-label">Sinais peritoneais / Ausculta</div>';
+  for(const p of PERITONEAL_SIGNS){
+    const ck=peritonealSigns.has(p.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSet('peritonealSigns','${p.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="icon" style="font-size:1rem">${p.icon}</span><span class="label">${p.label}</span></button>`;
+  }
+
+  // Specific signs (filter by relevance to selected location)
+  h+='<div class="option-group-label">Sinais específicos</div>';
+  const relevantSigns=getRelevantSigns();
+  const otherSigns=SPECIFIC_SIGNS.filter(s=>!relevantSigns.includes(s));
+
+  if(relevantSigns.length>0){
+    for(const s of relevantSigns){
+      const ck=specificSigns.has(s.id);
+      h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSet('specificSigns','${s.id}')" style="border-color:${ck?'var(--accent)':'rgba(59,130,246,.25)'}"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${s.label}</span><span style="font-size:.62rem;color:var(--accent-light);margin-left:auto;flex-shrink:0;background:var(--accent-bg);padding:.15rem .45rem;border-radius:9999px">${s.hint}</span></button>`;
+    }
+  }
+  if(otherSigns.length>0){
+    if(relevantSigns.length>0) h+='<div class="option-group-label" style="font-size:.6rem;margin-top:.5rem">Outros sinais</div>';
+    for(const s of otherSigns){
+      const ck=specificSigns.has(s.id);
+      h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSet('specificSigns','${s.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${s.label}</span><span style="font-size:.62rem;color:var(--text-muted);margin-left:auto;flex-shrink:0;background:var(--bg-card);padding:.15rem .45rem;border-radius:9999px">${s.hint}</span></button>`;
+    }
+  }
+
+  // Red flags
+  const flags=getRedFlags();
+  if(flags.length>0){
+    h+='<div class="red-flag"><span class="red-flag-icon">\u26A0\uFE0F</span><div>';
+    h+='<strong style="display:block;margin-bottom:.25rem">Sinais de alarme:</strong>';
+    h+=flags.map(f=>'&#8226; '+f).join('<br>');
+    h+='</div></div>';
+  }
+
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// Helper: get relevant signs for selected location
+function getRelevantSigns(){
+  const map={
+    ruq:['murphy'],
+    rlq:['mcburney','rovsing','psoas','obturator','blumberg'],
+    llq:['blumberg'],
+    epigastric:['carnett'],
+    periumbilical:['mcburney','carnett'],
+    flank_r:['giordano'],
+    flank_l:['giordano'],
+    suprapubic:['blumberg'],
+    diffuse:['blumberg','cullen','grey_turner'],
+  };
+  const ids=map[location]||[];
+  // Add cullen/grey_turner if pancreatitis suspected
+  if(painRadiation.has('back')&&(location==='epigastric'||location==='diffuse')){
+    if(!ids.includes('cullen')) ids.push('cullen');
+    if(!ids.includes('grey_turner')) ids.push('grey_turner');
+  }
+  return SPECIFIC_SIGNS.filter(s=>ids.includes(s.id));
+}
+
+// =============================================
+// STEP 5: SCORES
+// =============================================
+function renderScores(){
+  let h=progHTML(5,false);
+  h+='<div class="card">';
+  h+='<div class="step-chip"><span class="step-num">6</span> de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Scores clínicos</h2><p class="subtitle">Preencha conforme os dados clínicos e laboratoriais. Campos pré-preenchidos podem ser ajustados.</p>';
+
+  // Relevance hint
+  const showAlvarado=(location==='rlq'||location==='periumbilical');
+  const showRanson=(location==='epigastric'||location==='diffuse'||painRadiation.has('back'));
+  if(showAlvarado&&!showRanson){
+    h+='<div class="info-hint" style="margin-bottom:1rem"><strong>Sugestão:</strong> Baseado na localização, o Score de Alvarado é o mais relevante.</div>';
+  } else if(showRanson&&!showAlvarado){
+    h+='<div class="info-hint" style="margin-bottom:1rem"><strong>Sugestão:</strong> Baseado nos dados, os Critérios de Ranson são mais relevantes.</div>';
+  }
+
+  // Tabs
+  h+='<div class="score-tabs">';
+  h+=`<button class="score-tab ${activeScoreTab==='alvarado'?'active':''}" onclick="switchTab('alvarado')">Alvarado${showAlvarado?' \u2B50':''}</button>`;
+  h+=`<button class="score-tab ${activeScoreTab==='ranson'?'active':''}" onclick="switchTab('ranson')">Ranson${showRanson?' \u2B50':''}</button>`;
+  h+='</div>';
+
+  if(activeScoreTab==='alvarado') h+=buildAlvarado();
+  else h+=buildRanson();
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver Resultado</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+function buildAlvarado(){
+  const auto=autoAlvarado();
+  let h='<p style="font-size:.72rem;color:var(--text-muted);margin-bottom:.85rem;line-height:1.5">Score de Alvarado (MANTRELS) para apendicite aguda. Campos com <span class="auto-tag" style="display:inline">Auto</span> foram preenchidos a partir dos dados anteriores e podem ser alterados.</p>';
+
+  for(const item of ALVARADO){
+    const val=auto[item.id]!==undefined?auto[item.id]:(alvaradoState[item.id]!==undefined?alvaradoState[item.id]:undefined);
+    const isAuto=auto[item.id]!==undefined&&alvaradoState[item.id]===undefined;
+    h+=`<div class="score-row"><div class="score-row-label"><span>${item.label}</span>${isAuto?'<span class="auto-tag">Auto</span>':''}</div>`;
+    h+='<div class="score-options">';
+    h+=`<button class="score-opt ${val===0?'picked':''}" onclick="setAlvarado('${item.id}',0)">Não<span class="pts">0 pt</span></button>`;
+    h+=`<button class="score-opt ${val===1?'picked':''}" onclick="setAlvarado('${item.id}',1)">Sim<span class="pts">${item.pts} pt${item.pts>1?'s':''}</span></button>`;
+    h+='</div></div>';
+  }
+
+  const total=getAlvaradoScore();
+  if(total!==null){
+    let sc,sl,sd;
+    if(total<=4){sc='sr-low';sl='Baixa probabilidade';sd=`Alvarado ${total}/10 \u2014 Apendicite improvável. Considerar outros diagnósticos.`;}
+    else if(total<=6){sc='sr-mod';sl='Probabilidade intermediária';sd=`Alvarado ${total}/10 \u2014 Observação + imagem (USG/TC). Reavaliar em 6–12h.`;}
+    else if(total<=8){sc='sr-mod';sl='Alta probabilidade';sd=`Alvarado ${total}/10 \u2014 Forte suspeita. TC de abdome e/ou avaliação cirúrgica.`;}
+    else{sc='sr-high';sl='Muito alta probabilidade';sd=`Alvarado ${total}/10 \u2014 Apendicite muito provável. Solicitar avaliação cirúrgica imediata.`;}
+    h+=`<div class="score-result ${sc}"><div class="score-num">${total}</div><div class="score-info"><div class="score-label">${sl}</div><div class="score-detail">${sd}</div></div></div>`;
+  } else {
+    const filled=ALVARADO.filter(i=>auto[i.id]!==undefined||alvaradoState[i.id]!==undefined).length;
+    h+=`<div class="score-result sr-pending"><div class="score-num">?</div><div class="score-info"><div class="score-label">Preencha todos os campos (${filled}/${ALVARADO.length})</div><div class="score-detail">Campos "Auto" já foram preenchidos pelos dados anteriores.</div></div></div>`;
+  }
+  return h;
+}
+
+function buildRanson(){
+  const autoR=autoRansonAdmit();
+  let h='<p style="font-size:.72rem;color:var(--text-muted);margin-bottom:.85rem;line-height:1.5">Critérios de Ranson para gravidade de pancreatite aguda. Os critérios de 48h são opcionais na avaliação inicial do PS.</p>';
+
+  h+='<div style="font-size:.72rem;color:#93c5fd;font-weight:600;margin-bottom:.65rem">Na admissão</div>';
+  for(const item of RANSON_ADMIT){
+    const val=autoR[item.id]!==undefined?autoR[item.id]:(ransonAdmitState[item.id]!==undefined?ransonAdmitState[item.id]:undefined);
+    const isAuto=autoR[item.id]!==undefined&&ransonAdmitState[item.id]===undefined;
+    h+=`<div class="score-row"><div class="score-row-label"><span>${item.label}</span>${isAuto?'<span class="auto-tag">Auto</span>':''}</div>`;
+    h+='<div class="score-options">';
+    h+=`<button class="score-opt ${val===0?'picked':''}" onclick="setRansonAdmit('${item.id}',0)">Não<span class="pts">0 pt</span></button>`;
+    h+=`<button class="score-opt ${val===1?'picked':''}" onclick="setRansonAdmit('${item.id}',1)">Sim<span class="pts">1 pt</span></button>`;
+    h+='</div></div>';
+  }
+
+  h+='<div style="font-size:.72rem;color:#93c5fd;font-weight:600;margin:.85rem 0 .65rem">Após 48 horas (opcional no PS)</div>';
+  for(const item of RANSON_48H){
+    const val=ranson48hState[item.id];
+    h+=`<div class="score-row"><div class="score-row-label"><span>${item.label}</span></div>`;
+    h+='<div class="score-options">';
+    h+=`<button class="score-opt ${val===0?'picked':''}" onclick="setRanson48('${item.id}',0)">Não<span class="pts">0 pt</span></button>`;
+    h+=`<button class="score-opt ${val===1?'picked':''}" onclick="setRanson48('${item.id}',1)">Sim<span class="pts">1 pt</span></button>`;
+    h+='</div></div>';
+  }
+
+  const admitScore=getRansonAdmitScore();
+  const total=getRansonTotal();
+  const displayScore=total!==null?total:(admitScore!==null?admitScore:null);
+
+  if(displayScore!==null){
+    let sc,sl,sd;
+    const maxPossible=total!==null?11:5;
+    if(displayScore<=2){sc='sr-low';sl='Pancreatite leve';sd=`Ranson ${displayScore}/${maxPossible} \u2014 Mortalidade < 5%. Manejo conservador com hidratação e analgesia.`;}
+    else if(displayScore<=4){sc='sr-mod';sl='Pancreatite moderada';sd=`Ranson ${displayScore}/${maxPossible} \u2014 Mortalidade ~15–20%. Considerar monitoramento em UTI.`;}
+    else if(displayScore<=6){sc='sr-high';sl='Pancreatite grave';sd=`Ranson ${displayScore}/${maxPossible} \u2014 Mortalidade ~40%. Internação em UTI obrigatória.`;}
+    else{sc='sr-high';sl='Pancreatite muito grave';sd=`Ranson ${displayScore}/${maxPossible} \u2014 Mortalidade > 99%. Prognóstico reservado.`;}
+    const partial=total===null&&admitScore!==null?' (somente admissão)':'';
+    h+=`<div class="score-result ${sc}"><div class="score-num">${displayScore}</div><div class="score-info"><div class="score-label">${sl}${partial}</div><div class="score-detail">${sd}</div></div></div>`;
+  } else {
+    const filled=RANSON_ADMIT.filter(i=>autoR[i.id]!==undefined||ransonAdmitState[i.id]!==undefined).length;
+    h+=`<div class="score-result sr-pending"><div class="score-num">?</div><div class="score-info"><div class="score-label">Preencha os critérios de admissão (${filled}/${RANSON_ADMIT.length})</div><div class="score-detail">Os critérios de 48h são opcionais na avaliação inicial.</div></div></div>`;
+  }
+  return h;
+}
+
+// =============================================
+// RESULT PAGE
+// =============================================
+function renderResult(){
+  const risk=getRiskInfo();
+  const ddx=buildDifferentials();
+  const workup=buildWorkup();
+  const flags=getRedFlags();
+
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  // Badge
+  h+=`<div class="result-badge ${risk.badge}">${risk.icon}</div>`;
+  h+=`<div class="result-title">${risk.title}</div>`;
+  h+=`<div class="result-desc">${risk.desc}</div>`;
+
+  // Summary line
+  const locLabel=LOCATIONS.find(l=>l.id===location)?.label||location;
+  const onsetLabel=PAIN_ONSET.find(o=>o.id===painOnset)?.label||'';
+  const sexLabel=patSex==='M'?'Masc':'Fem';
+  const ageLabel=['<18','18–40','40–65','>65'][patAge]||'';
+  const durLabel=['<6h','6–24h','24–72h','>72h'][painDuration]||'';
+  h+=`<p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:1.25rem;line-height:1.5">${sexLabel}, ${ageLabel}a | ${locLabel} | ${onsetLabel} | ${durLabel}</p>`;
+
+  // Red flags at top if present
+  if(flags.length>0){
+    h+='<div class="red-flag" style="margin-bottom:1rem;text-align:left"><span class="red-flag-icon">\uD83D\uDEA8</span><div>';
+    h+='<strong style="display:block;margin-bottom:.25rem">Sinais de alarme:</strong>';
+    h+=flags.map(f=>'&#8226; '+f).join('<br>');
+    h+='</div></div>';
+  }
+
+  // ---- COLLAPSIBLE: Summary ----
+  h+=collapsible('summary','Resumo da avaliação',()=>{
+    let s='';
+    s+=`<div class="summary-row"><span class="criteria">Localização</span><span class="value">${locLabel}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Início</span><span class="value">${onsetLabel}</span></div>`;
+    const qualLabels=[...painQuality].map(q=>PAIN_QUALITY.find(p=>p.id===q)?.label).filter(Boolean);
+    s+=`<div class="summary-row"><span class="criteria">Qualidade</span><span class="value">${qualLabels.length?qualLabels.join(', '):'N/A'}</span></div>`;
+    const radLabels=[...painRadiation].map(r=>PAIN_RADIATION.find(p=>p.id===r)?.label).filter(Boolean);
+    s+=`<div class="summary-row"><span class="criteria">Irradiação</span><span class="value">${radLabels.length?radLabels.join(', '):'Sem'}</span></div>`;
+    const intLabel=['Leve','Moderada','Intensa'][painIntensity]||'N/A';
+    s+=`<div class="summary-row"><span class="criteria">Intensidade</span><span class="value">${intLabel}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Duração</span><span class="value">${durLabel}</span></div>`;
+    // Peritoneal signs
+    const periLabels=[...peritonealSigns].map(p=>PERITONEAL_SIGNS.find(x=>x.id===p)?.label).filter(Boolean);
+    s+=`<div class="summary-row"><span class="criteria">Sinais peritoneais</span><span class="value">${periLabels.length?'<span class="dot dot-red"></span> '+periLabels.join(', '):'<span class="dot dot-green"></span> Ausentes'}</span></div>`;
+    // Specific signs
+    const specLabels=[...specificSigns].map(p=>SPECIFIC_SIGNS.find(x=>x.id===p)?.label).filter(Boolean);
+    if(specLabels.length){
+      s+=`<div class="summary-row"><span class="criteria">Sinais específicos</span><span class="value" style="text-align:right;max-width:55%">${specLabels.join(', ')}</span></div>`;
+    }
+    // Vital signs
+    const vsLabels=[...vitalSigns].map(v=>Object.values(VITAL_SIGNS_OPTS).find(x=>x.id===v)?.label).filter(Boolean);
+    s+=`<div class="summary-row"><span class="criteria">Sinais vitais</span><span class="value">${vsLabels.length?'<span class="dot dot-yellow"></span> '+vsLabels.join(', '):'<span class="dot dot-green"></span> Estáveis'}</span></div>`;
+    // Assoc symptoms
+    const symLabels=[...assocSymptoms].map(a=>ASSOC_SYMPTOMS.find(x=>x.id===a)?.label).filter(Boolean);
+    if(symLabels.length){
+      s+=`<div class="summary-row"><span class="criteria">Sintomas</span><span class="value" style="text-align:right;max-width:55%">${symLabels.join(', ')}</span></div>`;
+    }
+    // Past history
+    const histLabels=[...pastHistory].map(ph=>PAST_HISTORY.find(x=>x.id===ph)?.label).filter(Boolean);
+    if(histLabels.length){
+      s+=`<div class="summary-row"><span class="criteria">Antecedentes</span><span class="value" style="text-align:right;max-width:55%">${histLabels.join(', ')}</span></div>`;
+    }
+    return s;
+  });
+
+  // ---- COLLAPSIBLE: Differentials ----
+  h+=collapsible('ddx','Diagnósticos diferenciais',()=>{
+    let s='<div class="dx-list">';
+    ddx.forEach((d,i)=>{
+      const probCls=i===0?'prob-high':i<3?'prob-mod':'prob-low';
+      const probLabel=i===0?'Mais provável':i<3?'Provável':'Considerar';
+      s+=`<div class="dx-item"><span class="dx-rank">${i+1}</span><span class="dx-name">${d.name}</span><span class="dx-prob ${probCls}">${probLabel}</span></div>`;
+    });
+    s+='</div>';
+    return s;
+  });
+
+  // ---- COLLAPSIBLE: Scores ----
+  h+=collapsible('scores','Scores de risco',()=>{
+    let s='';
+    const alvScore=getAlvaradoScore();
+    if(alvScore!==null){
+      let sc,sl;
+      if(alvScore<=4){sc='sr-low';sl='Baixa probabilidade';}
+      else if(alvScore<=6){sc='sr-mod';sl='Probabilidade intermediária';}
+      else if(alvScore<=8){sc='sr-mod';sl='Alta probabilidade';}
+      else{sc='sr-high';sl='Muito alta probabilidade';}
+      s+=`<div class="score-result ${sc}"><div class="score-num">${alvScore}</div><div class="score-info"><div class="score-label">Alvarado \u2014 ${sl}</div><div class="score-detail">Score ${alvScore}/10 para apendicite aguda</div></div></div>`;
+    }
+    const ranTotal=getRansonTotal();
+    const ranAdmit=getRansonAdmitScore();
+    const ranDisplay=ranTotal!==null?ranTotal:(ranAdmit!==null?ranAdmit:null);
+    if(ranDisplay!==null){
+      let sc,sl;
+      if(ranDisplay<=2){sc='sr-low';sl='Pancreatite leve';}
+      else if(ranDisplay<=4){sc='sr-mod';sl='Pancreatite moderada';}
+      else{sc='sr-high';sl='Pancreatite grave';}
+      const partial=ranTotal===null?' (admissão)':'';
+      s+=`<div class="score-result ${sc}" style="margin-top:.5rem"><div class="score-num">${ranDisplay}</div><div class="score-info"><div class="score-label">Ranson${partial} \u2014 ${sl}</div><div class="score-detail">Critérios ${ranDisplay}/11 para pancreatite</div></div></div>`;
+    }
+    if(!alvScore&&!ranDisplay){
+      s+='<p style="font-size:.82rem;color:var(--text-muted);text-align:center;padding:.5rem">Nenhum score preenchido completamente.</p>';
+    }
+    return s;
+  });
+
+  // ---- COLLAPSIBLE: Workup ----
+  h+=collapsible('workup','Propedêutica sugerida',()=>{
+    let s='';
+    if(workup.urgent.length){
+      s+='<div style="font-size:.68rem;color:var(--red-light);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;font-weight:600">\u26A1 Urgente</div>';
+      s+='<div class="workup-tags">';
+      for(const w of workup.urgent) s+=`<span class="workup-tag urgent">${w}</span>`;
+      s+='</div>';
+    }
+    if(workup.routine.length){
+      s+=`<div style="font-size:.68rem;color:#93c5fd;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;margin-top:${workup.urgent.length?'.85rem':'0'};font-weight:600">\uD83D\uDCCB Rotina</div>`;
+      s+='<div class="workup-tags">';
+      for(const w of workup.routine) s+=`<span class="workup-tag routine">${w}</span>`;
+      s+='</div>';
+    }
+    return s;
+  });
+
+  // ---- COLLAPSIBLE: Conduta ----
+  h+=buildCondutaSection(risk);
+
+  // ---- COLLAPSIBLE: Analgesia ----
+  if(painIntensity!==null){
+    h+=collapsible('analgesia','Protocolo de analgesia',()=>{
+      const protocol=buildAnalgesiaProtocol();
+      let s='<div class="analgesia-box"><h4>Sugestão de analgesia \u2014 '+['Dor Leve','Dor Moderada','Dor Intensa'][painIntensity]+'</h4>';
+      for(const st of protocol){
+        const isWarning=st.n==='\u26A0'||st.n==='!';
+        s+=`<div class="analgesia-step"><span class="step-marker" ${isWarning?'style="background:var(--yellow-bg);border-color:var(--yellow);color:var(--yellow-light)"':''}>${st.n}</span><span>${st.text}</span></div>`;
+      }
+      s+='</div>';
+      s+='<p style="font-size:.68rem;color:var(--text-muted);line-height:1.5;margin-top:.5rem">* Doses para adultos. Ajustar conforme função renal/hepática e comorbidades. AINEs contraindicados se suspeita de sangramento GI ou insuficiência renal.</p>';
+      return s;
+    });
+  }
+
+  // ---- COLLAPSIBLE: Clinical Note ----
+  h+=collapsible('note','Nota para prontuário',()=>buildNoteContent(risk,ddx,workup));
+
+  // Nav
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="restart()">\u21BB Recomeçar</button>';
+  h+='</div></div>';
+
+  // Disclaimer
+  h+='<p class="disclaimer">Ferramenta de apoio à decisão clínica. Não substitui o julgamento médico. Sempre correlacionar com o quadro clínico completo do paciente.</p>';
+
+  app.innerHTML=h;
+}
+
+// =============================================
+// CONDUTA SECTION
+// =============================================
+function buildCondutaSection(risk){
+  let cls,title,items;
+  if(risk.level==='surgical'){
+    cls='alta-prob';title='\uD83D\uDEA8 Abdome cirúrgico \u2014 Intervenção urgente';
+    items=[
+      ['\uD83D\uDEA8','Avaliação cirúrgica IMEDIATA'],
+      ['\uD83D\uDC89','Acesso venoso calibroso x2 + Reposição volêmica agressiva'],
+      ['\uD83E\uDE78','Tipo sanguíneo + Reserva de hemocomponentes'],
+      ['\uD83D\uDCCB','Exames pré-op: hemograma, coagulograma, função renal, ECG'],
+      ['\uD83D\uDCA8','Sonda nasogástrica se obstrução / vômitos'],
+      ['\uD83D\uDC8A','Antibioticoterapia empírica se peritonite (ex: Ceftriaxona + Metronidazol)'],
+      ['\u26D4','Manter paciente em JEJUM'],
+      ['\uD83D\uDCDE','Comunicar centro cirúrgico e anestesiologia'],
+    ];
+  } else if(risk.level==='urgent'){
+    cls='mod-prob';title='\u26A0\uFE0F Urgência \u2014 Investigação rápida';
+    items=[
+      ['\uD83D\uDCC4','Exames laboratoriais STAT'],
+      ['\uD83D\uDCF7','Imagem direcionada (TC/USG) conforme suspeita'],
+      ['\uD83D\uDC89','Acesso venoso periférico + Hidratação EV'],
+      ['\uD83D\uDC8A','Analgesia (NÃO retardar pela avaliação cirúrgica)'],
+      ['\uD83D\uDD04','Reavaliação seriada a cada 2–4h com exame físico'],
+      ['\u26D4','Manter paciente em jejum até definição diagnóstica'],
+      ['\uD83D\uDCDE','Considerar interconsulta precoce (cirurgia/gastro/GO)'],
+    ];
+  } else if(risk.level==='medical'){
+    cls='neutra-prob';title='\uD83D\uDD0D Investigar \u2014 Manejo clínico';
+    items=[
+      ['\uD83D\uDCC4','Exames laboratoriais direcionados'],
+      ['\uD83D\uDCF7','Imagem conforme hipótese diagnóstica principal'],
+      ['\uD83D\uDC8A','Analgesia + Sintomáticos (antieméticos, IBP se indicado)'],
+      ['\uD83D\uDD04','Reavaliação clínica em 4–6h'],
+      ['\uD83D\uDD0D','Avaliar alta com orientações se melhora clínica'],
+      ['\uD83D\uDCCB','Orientar sinais de alarme para retorno ao PS'],
+    ];
+  } else {
+    cls='baixa-prob';title='\u2705 Baixo risco \u2014 Observação';
+    items=[
+      ['\uD83D\uDCC4','Exames básicos se clinicamente indicado'],
+      ['\uD83D\uDC8A','Sintomáticos (analgesia simples, hidratação oral)'],
+      ['\uD83C\uDFE0','Considerar alta com retorno se piora'],
+      ['\uD83D\uDCCB','Orientar sinais de alarme: febre, vômitos persistentes, piora da dor, sangramento'],
+      ['\uD83D\uDD04','Encaminhamento ambulatorial se dor recorrente'],
+    ];
+  }
+
+  const open=sections.conduta;
+  let h=`<div class="conduta-box ${cls}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('conduta')"><h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">&#x25BC;</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.75rem':'0'}">`;
+  if(open) for(const[icon,text] of items) h+=`<div class="conduta-item"><span class="conduta-icon">${icon}</span><span>${text}</span></div>`;
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// CLINICAL NOTE
+// =============================================
+function buildNoteContent(risk,ddx,workup){
+  const pad=n=>String(n).padStart(2,'0');
+  const now=evalStartTime;
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  const locLabel=LOCATIONS.find(l=>l.id===location)?.label||location;
+  const onsetLabel=PAIN_ONSET.find(o=>o.id===painOnset)?.label||'';
+  const qualLabels=[...painQuality].map(q=>PAIN_QUALITY.find(p=>p.id===q)?.label).filter(Boolean);
+  const radLabels=[...painRadiation].map(r=>PAIN_RADIATION.find(p=>p.id===r)?.label).filter(Boolean);
+  const intLabel=['Leve (1-3)','Moderada (4-6)','Intensa (7-10)'][painIntensity]||'N/A';
+  const durLabel=['< 6 horas','6-24 horas','24-72 horas','> 72 horas'][painDuration]||'';
+  const aggLabels=[...aggravating].map(a=>AGGRAVATING.find(x=>x.id===a)?.label).filter(Boolean);
+  const relLabels=[...relieving].map(r=>RELIEVING.find(x=>x.id===r)?.label).filter(Boolean);
+  const symLabels=[...assocSymptoms].map(a=>ASSOC_SYMPTOMS.find(x=>x.id===a)?.label).filter(Boolean);
+  const periLabels=[...peritonealSigns].map(p=>PERITONEAL_SIGNS.find(x=>x.id===p)?.label).filter(Boolean);
+  const specLabels=[...specificSigns].map(p=>SPECIFIC_SIGNS.find(x=>x.id===p)?.label).filter(Boolean);
+  const vsLabels=[...vitalSigns].map(v=>Object.values(VITAL_SIGNS_OPTS).find(x=>x.id===v)?.label).filter(Boolean);
+  const histLabels=[...pastHistory].map(ph=>PAST_HISTORY.find(x=>x.id===ph)?.label).filter(Boolean);
+
+  let n='';
+  n+=`DOR ABDOMINAL - AVALIAÇÃO ESTRUTURADA NO PS\n`;
+  n+=`Data/hora: ${ts}\n`;
+  n+=`========================================\n\n`;
+  n+=`PACIENTE: ${patSex==='M'?'Masculino':'Feminino'}, ${['< 18','18-40','40-65','> 65'][patAge]} anos\n`;
+  if(patSex==='F'&&lmpStatus){
+    const lmpLabel={possible:'Possibilidade de gravidez',unlikely:'Gravidez improvável',na:'Pós-menopausa'}[lmpStatus];
+    n+=`Status gestacional: ${lmpLabel}\n`;
+  }
+  n+=`Duração do quadro: ${durLabel}\n`;
+  if(histLabels.length) n+=`Antecedentes: ${histLabels.join(', ')}\n`;
+  n+='\n';
+
+  n+=`HISTÓRIA DA DOR\n`;
+  n+=`  Localização: ${locLabel}\n`;
+  n+=`  Início: ${onsetLabel}\n`;
+  n+=`  Qualidade: ${qualLabels.length?qualLabels.join(', '):'Não especificada'}\n`;
+  n+=`  Irradiação: ${radLabels.length?radLabels.join(', '):'Sem irradiação'}\n`;
+  n+=`  Intensidade: ${intLabel}\n`;
+  if(aggLabels.length) n+=`  Piora com: ${aggLabels.join(', ')}\n`;
+  if(relLabels.length) n+=`  Melhora com: ${relLabels.join(', ')}\n`;
+  n+='\n';
+
+  n+=`SINTOMAS ASSOCIADOS\n`;
+  n+=`  ${symLabels.length?symLabels.join(', '):'Nenhum relatado'}\n\n`;
+
+  n+=`EXAME FÍSICO\n`;
+  n+=`  Sinais vitais: ${vsLabels.length?vsLabels.join(', '):'Estáveis'}\n`;
+  n+=`  Sinais peritoneais: ${periLabels.length?periLabels.join(', '):'Ausentes'}\n`;
+  if(specLabels.length) n+=`  Sinais específicos: ${specLabels.join(', ')}\n`;
+  n+='\n';
+
+  n+=`ESTRATIFICAÇÃO DE RISCO: ${risk.title}\n`;
+  n+=`  ${risk.desc}\n\n`;
+
+  const flags=getRedFlags();
+  if(flags.length){
+    n+=`SINAIS DE ALARME\n`;
+    flags.forEach(f=>{n+=`  - ${f}\n`;});
+    n+='\n';
+  }
+
+  n+=`DIAGNÓSTICOS DIFERENCIAIS\n`;
+  ddx.forEach((d,i)=>{n+=`  ${i+1}. ${d.name}\n`;});
+  n+='\n';
+
+  const alvScore=getAlvaradoScore();
+  const ranTotal=getRansonTotal();
+  const ranAdmit=getRansonAdmitScore();
+  if(alvScore!==null||ranTotal!==null||ranAdmit!==null){
+    n+=`SCORES CLÍNICOS\n`;
+    if(alvScore!==null){
+      const alvRisk=alvScore<=4?'Baixa probabilidade':alvScore<=6?'Intermediária':alvScore<=8?'Alta probabilidade':'Muito alta';
+      n+=`  Alvarado: ${alvScore}/10 - ${alvRisk}\n`;
+    }
+    if(ranTotal!==null||ranAdmit!==null){
+      const rDisplay=ranTotal!==null?ranTotal:ranAdmit;
+      const rRisk=rDisplay<=2?'Leve':rDisplay<=4?'Moderada':rDisplay<=6?'Grave':'Muito grave';
+      const partial=ranTotal===null?' (admissão)':'';
+      n+=`  Ranson${partial}: ${rDisplay}/11 - ${rRisk}\n`;
+    }
+    n+='\n';
+  }
+
+  n+=`PROPEDÊUTICA SUGERIDA\n`;
+  if(workup.urgent.length) n+=`  Urgente: ${workup.urgent.join(', ')}\n`;
+  if(workup.routine.length) n+=`  Rotina: ${workup.routine.join(', ')}\n`;
+  n+='\n';
+
+  if(painIntensity!==null){
+    const protocol=buildAnalgesiaProtocol();
+    n+=`ANALGESIA\n`;
+    protocol.forEach(st=>{n+=`  ${st.n}. ${st.text}\n`;});
+  }
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">\uD83D\uDCCB Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  const text=el.textContent||el.innerText;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>showCopied()).catch(()=>fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:-9999px';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  try{document.execCommand('copy');showCopied();}catch(e){alert('Não foi possível copiar. Selecione o texto manualmente.');}
+  document.body.removeChild(ta);
+}
+
+function showCopied(){
+  const btn=document.getElementById('copyBtn');
+  if(!btn) return;
+  btn.textContent='\u2713 Copiado!';btn.classList.add('copied');
+  setTimeout(()=>{if(btn){btn.textContent='\uD83D\uDCCB Copiar nota';btn.classList.remove('copied');}},2000);
+}
+
+// =============================================
+// ACTIONS
+// =============================================
+function setLocation(id){
+  location=id;
+  render();
+}
+
+function setPainOnset(id){
+  painOnset=id;
+  render();
+}
+
+function setPainIntensity(v){
+  painIntensity=v;
+  render();
+}
+
+function toggleRadiation(id){
+  // "Sem irradiação" is mutually exclusive with other options
+  if(id==='none'){
+    if(painRadiation.has('none')){
+      painRadiation.delete('none');
+    } else {
+      painRadiation.clear();
+      painRadiation.add('none');
+    }
+  } else {
+    painRadiation.delete('none');
+    if(painRadiation.has(id)) painRadiation.delete(id); else painRadiation.add(id);
+  }
+  render();
+}
+
+function toggleSet(setName,id){
+  const sets={painQuality,painRadiation,aggravating,relieving,assocSymptoms,peritonealSigns,specificSigns,vitalSigns,pastHistory};
+  const s=sets[setName];
+  if(!s) return;
+  if(s.has(id)) s.delete(id); else s.add(id);
+  render();
+}
+
+function setPatField(field,val){
+  if(field==='patAge') patAge=val;
+  else if(field==='patSex'){
+    patSex=val;
+    // Reset LMP if switching to male
+    if(val==='M') lmpStatus=null;
+  }
+  else if(field==='lmpStatus') lmpStatus=val;
+  else if(field==='painDuration') painDuration=val;
+  render();
+}
+
+function switchTab(t){activeScoreTab=t;render();}
+
+function setAlvarado(id,val){
+  alvaradoState[id]=val;
+  render();
+}
+
+function setRansonAdmit(id,val){
+  ransonAdmitState[id]=val;
+  render();
+}
+
+function setRanson48(id,val){
+  ranson48hState[id]=val;
+  render();
+}
+
+function toggleSection(id){sections[id]=!sections[id];render();}
+
+function next(){
+  if(step===0&&(patAge===null||patSex===null||painDuration===null)) return;
+  if(step===1&&location===null) return;
+  if(step===2&&painOnset===null) return;
+  step++;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prev(){
+  if(step>0){step--;render();window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+function restart(){
+  step=0;location=null;painOnset=null;
+  painQuality=new Set();painRadiation=new Set();
+  aggravating=new Set();relieving=new Set();
+  assocSymptoms=new Set();peritonealSigns=new Set();
+  specificSigns=new Set();vitalSigns=new Set();pastHistory=new Set();
+  patAge=null;patSex=null;lmpStatus=null;
+  painDuration=null;painIntensity=null;
+  activeScoreTab='alvarado';
+  alvaradoState={};ransonAdmitState={};ranson48hState={};
+  sections={summary:true,ddx:true,scores:true,workup:true,conduta:true,analgesia:false,note:false};
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>

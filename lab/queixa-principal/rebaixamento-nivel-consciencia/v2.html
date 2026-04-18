@@ -1,0 +1,1022 @@
+<!-- VERSION: 2 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebaixamento do Nível de Consciência</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#050914;
+    --bg-2:#0a0f1c;
+    --panel:#0d1426;
+    --line:rgba(245,158,11,.14);
+    --line-2:rgba(148,163,184,.09);
+    --amber:#f59e0b;
+    --amber-glow:#fbbf24;
+    --red:#dc2626;
+    --red-glow:#ef4444;
+    --text:#e8eaf0;
+    --text-dim:#8b96ad;
+    --text-mute:#5c6782;
+    --serif:'IBM Plex Serif', Georgia, serif;
+    --sans:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', 'SF Mono', monospace;
+  }
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    font-weight:400;
+    letter-spacing:.005em;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .vignette{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(245,158,11,.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(220,38,38,.04) 0%, transparent 60%);
+  }
+  .wrap{position:relative;z-index:2;max-width:640px;margin:0 auto;padding:0 1.1rem 3rem}
+
+  /* NAV */
+  nav.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:.9rem .1rem;
+    border-bottom:1px solid var(--line);
+    margin-bottom:1.3rem;
+  }
+  nav.top a.back{
+    color:var(--text-mute);
+    text-decoration:none;
+    font-size:.7rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-weight:500;
+    transition:color .2s;
+    padding:.25rem 0;
+  }
+  nav.top a.back:hover,nav.top a.back:active{color:var(--amber)}
+  nav.top .station{
+    font-family:var(--mono);
+    font-size:.6rem;
+    color:var(--text-mute);
+    letter-spacing:.18em;
+    display:flex;
+    align-items:center;
+    gap:.45rem;
+  }
+  nav.top .station::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 8px var(--amber);
+    animation:pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.4;transform:scale(.85)}
+  }
+
+  /* HEADER */
+  header.hero{
+    padding:.2rem 0 1.5rem;
+    border-bottom:1px solid var(--line);
+    margin-bottom:1.5rem;
+  }
+  header.hero .kicker{
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.3em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:.7rem;
+    display:flex;
+    align-items:center;
+    gap:.55rem;
+  }
+  header.hero .kicker::before{
+    content:"";
+    width:16px;height:1px;background:var(--amber);
+  }
+  header.hero h1{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:1.8rem;
+    line-height:1.1;
+    letter-spacing:-.01em;
+    color:var(--text);
+    margin-bottom:.5rem;
+  }
+  header.hero h1 em{
+    font-style:italic;
+    color:var(--amber-glow);
+    font-weight:400;
+  }
+  header.hero p.sub{
+    font-size:.82rem;
+    color:var(--text-dim);
+    line-height:1.5;
+    max-width:40ch;
+  }
+
+  /* SECTION */
+  section{margin-bottom:2rem}
+  .sec-head{
+    display:flex;
+    align-items:baseline;
+    gap:.75rem;
+    margin-bottom:.95rem;
+    padding-bottom:.5rem;
+    border-bottom:1px solid var(--line-2);
+  }
+  .sec-head .num{
+    font-family:var(--mono);
+    font-size:.62rem;
+    color:var(--amber);
+    letter-spacing:.2em;
+  }
+  .sec-head h2{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:1.1rem;
+    color:var(--text);
+    letter-spacing:-.005em;
+  }
+  .sec-head .tag{
+    margin-left:auto;
+    font-family:var(--mono);
+    font-size:.54rem;
+    color:var(--text-mute);
+    letter-spacing:.22em;
+    text-transform:uppercase;
+  }
+
+  /* GCS DASHBOARD */
+  .gcs-panel{
+    background:linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.3rem 1rem 1.4rem;
+    position:relative;
+    box-shadow:
+      inset 0 1px 0 rgba(245,158,11,.05),
+      0 0 40px rgba(245,158,11,.03);
+  }
+  .gcs-panel::before{
+    content:"";
+    position:absolute;
+    top:-1px;left:1rem;right:1rem;height:2px;
+    background:linear-gradient(90deg, transparent, var(--amber), transparent);
+    opacity:.55;
+  }
+  .gcs-total-block{
+    text-align:center;
+    padding:.6rem 0 1.2rem;
+    border-bottom:1px dashed var(--line);
+    margin-bottom:1.2rem;
+  }
+  .gcs-total-label{
+    font-family:var(--mono);
+    font-size:.58rem;
+    letter-spacing:.32em;
+    color:var(--text-mute);
+    text-transform:uppercase;
+    margin-bottom:.15rem;
+  }
+  .gcs-total{
+    font-family:var(--serif);
+    font-size:4.4rem;
+    font-weight:400;
+    line-height:1;
+    color:var(--amber-glow);
+    letter-spacing:-.02em;
+    text-shadow:
+      0 0 20px rgba(251,191,36,.5),
+      0 0 40px rgba(245,158,11,.25);
+    animation:gcs-pulse 3s ease-in-out infinite;
+    font-variant-numeric:tabular-nums;
+  }
+  .gcs-total.critical{
+    color:var(--red-glow);
+    text-shadow:
+      0 0 20px rgba(239,68,68,.6),
+      0 0 40px rgba(220,38,38,.3);
+  }
+  @keyframes gcs-pulse{
+    0%,100%{filter:brightness(1)}
+    50%{filter:brightness(1.15)}
+  }
+  .gcs-range{
+    font-family:var(--mono);
+    font-size:.6rem;
+    color:var(--text-mute);
+    letter-spacing:.14em;
+    margin-top:.15rem;
+  }
+  .gcs-interp{
+    margin-top:.75rem;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:.92rem;
+    color:var(--text);
+    min-height:1.4em;
+  }
+  .gcs-interp.warn{color:var(--red-glow)}
+
+  /* METER STRIP */
+  .meter{margin-bottom:1.1rem}
+  .meter:last-of-type{margin-bottom:.2rem}
+  .meter-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:.45rem;
+  }
+  .meter-title{
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .meter-value{
+    font-family:var(--serif);
+    font-size:1.3rem;
+    color:var(--amber-glow);
+    font-weight:500;
+    font-variant-numeric:tabular-nums;
+    text-shadow:0 0 10px rgba(251,191,36,.35);
+  }
+  .meter-strip{
+    display:grid;
+    gap:3px;
+    margin-bottom:.4rem;
+  }
+  .meter-strip.s4{grid-template-columns:repeat(4,1fr)}
+  .meter-strip.s5{grid-template-columns:repeat(5,1fr)}
+  .meter-strip.s6{grid-template-columns:repeat(6,1fr)}
+  .seg{
+    height:34px;
+    background:rgba(148,163,184,.04);
+    border:1px solid rgba(245,158,11,.12);
+    border-radius:2px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--text-mute);
+    transition:background .15s, border-color .15s, color .15s, transform .08s;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    padding:0;
+  }
+  .seg:active{transform:scale(.97)}
+  .seg.active{
+    background:linear-gradient(180deg, rgba(245,158,11,.38) 0%, rgba(245,158,11,.22) 100%);
+    border-color:var(--amber);
+    color:var(--bg);
+    font-weight:600;
+    box-shadow:
+      inset 0 0 8px rgba(251,191,36,.3),
+      0 0 10px rgba(245,158,11,.35);
+  }
+  .seg.filled{
+    background:rgba(245,158,11,.08);
+    border-color:rgba(245,158,11,.25);
+  }
+  .meter-descr{
+    font-size:.78rem;
+    color:var(--text-dim);
+    font-style:italic;
+    font-family:var(--serif);
+    min-height:1.3em;
+    line-height:1.4;
+  }
+
+  /* CTA IOT */
+  .iot-alert{
+    margin-top:1.2rem;
+    padding:.85rem .95rem;
+    border-left:2px solid var(--red);
+    background:rgba(220,38,38,.08);
+    border-radius:0 3px 3px 0;
+    display:none;
+  }
+  .iot-alert.show{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .iot-alert .label{
+    font-family:var(--mono);
+    font-size:.56rem;
+    letter-spacing:.28em;
+    color:var(--red-glow);
+    text-transform:uppercase;
+    margin-bottom:.3rem;
+  }
+  .iot-alert .msg{
+    font-family:var(--serif);
+    font-size:.9rem;
+    color:var(--text);
+    line-height:1.4;
+  }
+
+  /* ABCDE */
+  .abcde{
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .abcde-row{
+    display:grid;
+    grid-template-columns:34px 1fr;
+    gap:.85rem;
+    padding:.75rem .85rem;
+    background:var(--panel);
+    border:1px solid var(--line-2);
+    border-radius:3px;
+    align-items:start;
+  }
+  .abcde-letter{
+    font-family:var(--serif);
+    font-size:1.5rem;
+    font-weight:500;
+    color:var(--amber);
+    line-height:1;
+    text-align:center;
+    text-shadow:0 0 10px rgba(245,158,11,.3);
+  }
+  .abcde-body .t{
+    font-family:var(--mono);
+    font-size:.58rem;
+    letter-spacing:.22em;
+    color:var(--text-mute);
+    text-transform:uppercase;
+    margin-bottom:.28rem;
+  }
+  .abcde-body .d{
+    font-size:.83rem;
+    color:var(--text);
+    line-height:1.5;
+  }
+  .abcde-body .d b{color:var(--amber-glow);font-weight:500}
+
+  /* GLICEMIA */
+  .glic-block{
+    margin-top:.9rem;
+    padding:.9rem;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+  }
+  .glic-label{
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.22em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:.5rem;
+  }
+  .glic-input-row{
+    display:flex;
+    align-items:center;
+    gap:.55rem;
+  }
+  .glic-input-row input{
+    flex:1;
+    min-width:0;
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--amber-glow);
+    padding:.6rem .7rem;
+    font-family:var(--serif);
+    font-size:1.3rem;
+    border-radius:3px;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+    font-variant-numeric:tabular-nums;
+    text-align:center;
+    font-weight:500;
+  }
+  .glic-input-row input:focus{
+    border-color:var(--amber);
+    box-shadow:0 0 0 3px rgba(245,158,11,.15);
+  }
+  .glic-input-row .unit{
+    font-family:var(--mono);
+    font-size:.7rem;
+    color:var(--text-mute);
+    letter-spacing:.1em;
+  }
+  .glic-feedback{
+    margin-top:.6rem;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:.83rem;
+    color:var(--text-dim);
+    min-height:1.3em;
+    line-height:1.4;
+  }
+  .glic-feedback.warn{color:var(--red-glow)}
+  .glic-feedback.ok{color:var(--amber-glow)}
+
+  /* AEIOU CARDS */
+  .aeiou-grid{
+    display:flex;
+    flex-direction:column;
+    gap:.4rem;
+  }
+  .aeiou{
+    background:var(--panel);
+    border:1px solid var(--line-2);
+    border-radius:3px;
+    overflow:hidden;
+    transition:border-color .2s;
+  }
+  .aeiou.open{border-color:var(--line)}
+  .aeiou-head{
+    display:grid;
+    grid-template-columns:34px 1fr 16px;
+    gap:.75rem;
+    align-items:center;
+    padding:.7rem .85rem;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .aeiou-letter{
+    font-family:var(--serif);
+    font-size:1.4rem;
+    font-weight:500;
+    color:var(--amber);
+    line-height:1;
+    text-align:center;
+  }
+  .aeiou-title{
+    font-size:.83rem;
+    font-weight:500;
+    color:var(--text);
+    letter-spacing:.005em;
+  }
+  .aeiou-chev{
+    color:var(--text-mute);
+    font-family:var(--mono);
+    font-size:.75rem;
+    transition:transform .25s, color .2s;
+    line-height:1;
+  }
+  .aeiou.open .aeiou-chev{transform:rotate(90deg);color:var(--amber)}
+  .aeiou-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .aeiou.open .aeiou-body{max-height:280px}
+  .aeiou-body-inner{
+    padding:0 .9rem 1rem 3.9rem;
+    font-size:.79rem;
+    color:var(--text-dim);
+    line-height:1.55;
+    font-family:var(--serif);
+    font-style:italic;
+  }
+
+  /* RED FLAGS */
+  .flags{
+    display:flex;
+    flex-direction:column;
+    gap:.45rem;
+  }
+  .flag{
+    display:grid;
+    grid-template-columns:10px 1fr;
+    gap:.7rem;
+    padding:.65rem .85rem;
+    background:rgba(220,38,38,.04);
+    border:1px solid rgba(220,38,38,.15);
+    border-radius:3px;
+    align-items:start;
+  }
+  .flag::before{
+    content:"";
+    display:block;
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--red-glow);
+    box-shadow:0 0 6px var(--red);
+    margin-top:.45rem;
+  }
+  .flag .txt{
+    font-size:.81rem;
+    color:var(--text);
+    line-height:1.45;
+  }
+  .flag .txt b{color:var(--red-glow);font-weight:600}
+
+  /* DIAG LIST */
+  .diag-steps{
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .diag-step{
+    padding:.75rem .9rem;
+    background:var(--panel);
+    border:1px solid var(--line-2);
+    border-left:2px solid var(--amber);
+    border-radius:0 3px 3px 0;
+  }
+  .diag-step .n{
+    font-family:var(--mono);
+    font-size:.56rem;
+    letter-spacing:.22em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:.25rem;
+  }
+  .diag-step .h{
+    font-family:var(--serif);
+    font-size:.92rem;
+    color:var(--text);
+    margin-bottom:.25rem;
+    font-weight:500;
+  }
+  .diag-step .b{
+    font-size:.78rem;
+    color:var(--text-dim);
+    line-height:1.5;
+  }
+  .diag-step.star{
+    border-left-color:var(--red);
+    background:rgba(220,38,38,.05);
+  }
+  .diag-step.star .n, .diag-step.star .h{color:var(--red-glow)}
+
+  .cocktail{
+    margin-top:.9rem;
+    padding:.9rem;
+    background:var(--bg-2);
+    border:1px dashed var(--line);
+    border-radius:3px;
+  }
+  .cocktail-h{
+    font-family:var(--mono);
+    font-size:.58rem;
+    letter-spacing:.25em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:.5rem;
+  }
+  .cocktail ul{list-style:none}
+  .cocktail li{
+    padding:.35rem 0;
+    font-size:.79rem;
+    color:var(--text-dim);
+    border-bottom:1px dotted var(--line-2);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:.7rem;
+  }
+  .cocktail li:last-child{border-bottom:none}
+  .cocktail li .name{color:var(--text);font-family:var(--serif);font-style:italic}
+  .cocktail li .dose{font-family:var(--mono);font-size:.7rem;color:var(--amber-glow);text-align:right}
+
+  /* CONDUTA */
+  .conduta{
+    display:flex;
+    flex-direction:column;
+  }
+  .conduta .item{
+    display:grid;
+    grid-template-columns:16px 1fr;
+    gap:.65rem;
+    padding:.55rem .25rem;
+    font-size:.81rem;
+    color:var(--text);
+    line-height:1.5;
+    border-bottom:1px solid var(--line-2);
+  }
+  .conduta .item:last-child{border-bottom:none}
+  .conduta .item::before{
+    content:"→";
+    color:var(--amber);
+    font-family:var(--mono);
+    font-size:.88rem;
+    line-height:1.5;
+  }
+
+  /* DISPO */
+  .dispo{
+    padding:.95rem;
+    background:linear-gradient(180deg, rgba(245,158,11,.08) 0%, rgba(245,158,11,.02) 100%);
+    border:1px solid rgba(245,158,11,.25);
+    border-radius:3px;
+  }
+  .dispo-h{
+    font-family:var(--mono);
+    font-size:.58rem;
+    letter-spacing:.25em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:.45rem;
+  }
+  .dispo-b{
+    font-family:var(--serif);
+    font-size:.9rem;
+    color:var(--text);
+    line-height:1.55;
+  }
+  .dispo-b b{color:var(--amber-glow);font-weight:500}
+
+  footer{
+    margin-top:2.5rem;
+    padding-top:1.3rem;
+    border-top:1px solid var(--line-2);
+    text-align:center;
+    font-family:var(--mono);
+    font-size:.56rem;
+    color:var(--text-mute);
+    letter-spacing:.22em;
+    text-transform:uppercase;
+  }
+
+  @media (min-width:480px){
+    .wrap{padding:0 1.5rem 3rem}
+    header.hero h1{font-size:2.05rem}
+    .gcs-total{font-size:5rem}
+    .seg{height:32px}
+  }
+</style>
+</head>
+<body>
+
+<div class="vignette"></div>
+
+<div class="wrap">
+
+  <nav class="top">
+    <a href="../rebaixamento-nivel-consciencia.html" class="back">&larr; Lab</a>
+    <div class="station">NEURO · ST.01</div>
+  </nav>
+
+  <header class="hero">
+    <div class="kicker">Emergência Neurológica</div>
+    <h1>Rebaixamento do <em>Nível de Consciência</em></h1>
+    <p class="sub">Avaliação à beira-leito: Glasgow, ABCDE, diagnóstico diferencial e conduta.</p>
+  </header>
+
+  <!-- SECTION 1 — GCS CALCULATOR -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 01</span>
+      <h2>Escala de Glasgow</h2>
+      <span class="tag">LIVE</span>
+    </div>
+
+    <div class="gcs-panel">
+      <div class="gcs-total-block">
+        <div class="gcs-total-label">Pontuação Total</div>
+        <div class="gcs-total" id="gcsTotal">15</div>
+        <div class="gcs-range">/ 15 · faixa 3–15</div>
+        <div class="gcs-interp" id="gcsInterp">Consciência preservada</div>
+      </div>
+
+      <div class="meter" data-meter="eye" data-max="4">
+        <div class="meter-head">
+          <span class="meter-title">Abertura Ocular · O</span>
+          <span class="meter-value"><span id="eyeVal">4</span>/4</span>
+        </div>
+        <div class="meter-strip s4" id="eyeStrip"></div>
+        <div class="meter-descr" id="eyeDescr">Espontânea</div>
+      </div>
+
+      <div class="meter" data-meter="verbal" data-max="5">
+        <div class="meter-head">
+          <span class="meter-title">Resposta Verbal · V</span>
+          <span class="meter-value"><span id="verbalVal">5</span>/5</span>
+        </div>
+        <div class="meter-strip s5" id="verbalStrip"></div>
+        <div class="meter-descr" id="verbalDescr">Orientada</div>
+      </div>
+
+      <div class="meter" data-meter="motor" data-max="6">
+        <div class="meter-head">
+          <span class="meter-title">Resposta Motora · M</span>
+          <span class="meter-value"><span id="motorVal">6</span>/6</span>
+        </div>
+        <div class="meter-strip s6" id="motorStrip"></div>
+        <div class="meter-descr" id="motorDescr">Obedece a comandos</div>
+      </div>
+
+      <div class="iot-alert" id="iotAlert">
+        <div class="label">· Alerta · Via Aérea</div>
+        <div class="msg">GCS ≤ 8 = coma. Paciente não protege via aérea — considerar IOT imediata.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 — ABCDE -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 02</span>
+      <h2>Abordagem ABCDE</h2>
+      <span class="tag">PRIMARY</span>
+    </div>
+    <div class="abcde">
+      <div class="abcde-row">
+        <div class="abcde-letter">A·B</div>
+        <div class="abcde-body">
+          <div class="t">Via aérea · Respiração</div>
+          <div class="d">Proteger via aérea se GCS ≤ 8. Avaliar padrão respiratório (Cheyne-Stokes, apneia), SpO₂, O₂ suplementar, IOT.</div>
+        </div>
+      </div>
+      <div class="abcde-row">
+        <div class="abcde-letter">C</div>
+        <div class="abcde-body">
+          <div class="t">Circulação</div>
+          <div class="d">PA, FC, perfusão. Dois acessos calibrosos, monitor. Atenção à tríade de Cushing (HAS + bradicardia + alt. respiratória = HIC).</div>
+        </div>
+      </div>
+      <div class="abcde-row">
+        <div class="abcde-letter">D</div>
+        <div class="abcde-body">
+          <div class="t">Disfunção neurológica</div>
+          <div class="d">Pupilas, GCS seriado, postura anormal, foco neurológico, sinais meníngeos. <b>Dextro capilar imediato.</b></div>
+        </div>
+      </div>
+      <div class="abcde-row">
+        <div class="abcde-letter">E</div>
+        <div class="abcde-body">
+          <div class="t">Exposição</div>
+          <div class="d">Despir: sinais de trauma (Battle, raccoon), otorragia, rigidez de nuca, petéquias, puntura venosa, temperatura.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glic-block">
+      <div class="glic-label">Dextro · Glicemia capilar</div>
+      <div class="glic-input-row">
+        <input type="number" id="glicInput" placeholder="—" inputmode="numeric" min="0" max="900">
+        <span class="unit">mg/dL</span>
+      </div>
+      <div class="glic-feedback" id="glicFb">Dextro antes de qualquer investigação. Hipoglicemia mata.</div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 — AEIOU-TIPS -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 03</span>
+      <h2>AEIOU-TIPS</h2>
+      <span class="tag">DDX</span>
+    </div>
+    <div class="aeiou-grid" id="aeiouGrid"></div>
+  </section>
+
+  <!-- SECTION 4 — RED FLAGS -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 04</span>
+      <h2>Red Flags</h2>
+      <span class="tag">ALERT</span>
+    </div>
+    <div class="flags">
+      <div class="flag"><div class="txt"><b>Anisocoria</b> — herniação uncal, lesão III par, massa expansiva.</div></div>
+      <div class="flag"><div class="txt"><b>Pupilas puntiformes</b> — opioides ou lesão pontina.</div></div>
+      <div class="flag"><div class="txt"><b>Midríase fixa bilateral</b> — lesão mesencefálica, anóxia grave, anticolinérgico.</div></div>
+      <div class="flag"><div class="txt"><b>Tríade de Cushing</b> — HAS + bradicardia + Cheyne-Stokes → iminência de herniação.</div></div>
+      <div class="flag"><div class="txt"><b>Postura anormal</b> — decorticação (flexão) = cortical; descerebração (extensão) = mais caudal, pior prognóstico.</div></div>
+      <div class="flag"><div class="txt"><b>Déficit focal</b> — hemiparesia, afasia, desvio do olhar → AVC, massa.</div></div>
+      <div class="flag"><div class="txt"><b>Rigidez de nuca + febre</b> → meningite até prova em contrário.</div></div>
+      <div class="flag"><div class="txt"><b>Sinais de trauma</b> — Battle, raccoon, otorragia, rinorreia liquórica → fratura de base.</div></div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 — DIAGNÓSTICO -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 05</span>
+      <h2>Conduta Diagnóstica</h2>
+      <span class="tag">WORKUP</span>
+    </div>
+    <div class="diag-steps">
+      <div class="diag-step star">
+        <div class="n">Passo 1 · Prioridade</div>
+        <div class="h">Dextro primeiro — sempre</div>
+        <div class="b">Se &lt; 60 mg/dL: glicose 50% 40–60 mL EV. Tiamina 100 mg EV antes se etilismo/desnutrição.</div>
+      </div>
+      <div class="diag-step">
+        <div class="n">Passo 2 · Laboratório</div>
+        <div class="h">Painel metabólico amplo</div>
+        <div class="b">Gasometria, Na/K/Ca/Mg, função renal, hepática + amônia, CPK, lactato, hemograma, coagulograma, toxicológico, culturas se sepse.</div>
+      </div>
+      <div class="diag-step">
+        <div class="n">Passo 3 · Imagem</div>
+        <div class="h">TC de crânio sem contraste</div>
+        <div class="b">Em todo RNC de causa não esclarecida. Antes de PL. Busca: sangramento, massa, AVC, edema, HIC.</div>
+      </div>
+      <div class="diag-step">
+        <div class="n">Passo 4 · Específicos</div>
+        <div class="h">PL, ECG, RX tórax</div>
+        <div class="b">PL se suspeita de meningoencefalite (após TC). ECG (arritmia, IAM). RX tórax (pneumonia aspirativa).</div>
+      </div>
+    </div>
+
+    <div class="cocktail">
+      <div class="cocktail-h">· Coma Cocktail</div>
+      <ul>
+        <li><span class="name">Glicose 50%</span><span class="dose">40–60 mL EV</span></li>
+        <li><span class="name">Tiamina</span><span class="dose">100 mg EV · antes da glicose</span></li>
+        <li><span class="name">Naloxona</span><span class="dose">0,4–2 mg EV · se opioide</span></li>
+        <li><span class="name">Flumazenil</span><span class="dose">0,2 mg EV · uso restrito</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SECTION 6 — CONDUTA -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 06</span>
+      <h2>Conduta Clínica</h2>
+      <span class="tag">MGMT</span>
+    </div>
+    <div class="conduta">
+      <div class="item">IOT se GCS ≤ 8, hipoxemia, hipercapnia ou incapacidade de proteção</div>
+      <div class="item">Evitar hipotensão · PAM ≥ 65 (PAS ≥ 110 em HIC/TCE)</div>
+      <div class="item">Cabeceira 30° · cabeça em linha média</div>
+      <div class="item">Controle glicêmico — evitar hipo e hiperglicemia persistente</div>
+      <div class="item">Convulsões — BZD; fenitoína ou levetiracetam se recorrentes</div>
+      <div class="item">Controle de PIC — sedação, normotermia, osmoterapia (manitol ou salina hipertônica)</div>
+      <div class="item">SNG e sonda vesical · proteção ocular · profilaxia TVP quando seguro</div>
+    </div>
+  </section>
+
+  <!-- SECTION 7 — DISPO -->
+  <section>
+    <div class="sec-head">
+      <span class="num">§ 07</span>
+      <h2>Disposição</h2>
+      <span class="tag">DISPO</span>
+    </div>
+    <div class="dispo">
+      <div class="dispo-h">· Destino</div>
+      <div class="dispo-b">UTI na maioria dos casos — especialmente GCS ≤ 12 ou instabilidade. <b>Neurocirurgia imediata</b> em sangramento, massa ou TCE com achado em TC.</div>
+    </div>
+  </section>
+
+  <footer>
+    Medstack · v2
+  </footer>
+
+</div>
+
+<script>
+  // GCS DATA
+  const GCS = {
+    eye: {
+      max: 4,
+      desc: {4:"Espontânea",3:"Ao chamado verbal",2:"À dor",1:"Ausente"}
+    },
+    verbal: {
+      max: 5,
+      desc: {5:"Orientada",4:"Confusa",3:"Palavras inapropriadas",2:"Sons incompreensíveis",1:"Ausente"}
+    },
+    motor: {
+      max: 6,
+      desc: {6:"Obedece a comandos",5:"Localiza a dor",4:"Retirada inespecífica",3:"Flexão anormal (decorticação)",2:"Extensão anormal (descerebração)",1:"Ausente"}
+    }
+  };
+
+  const state = { eye:4, verbal:5, motor:6 };
+
+  function buildStrip(key){
+    const strip = document.getElementById(key+"Strip");
+    const max = GCS[key].max;
+    strip.innerHTML = "";
+    for(let i=1;i<=max;i++){
+      const seg = document.createElement("button");
+      seg.type = "button";
+      seg.className = "seg";
+      seg.dataset.val = i;
+      seg.textContent = i;
+      seg.setAttribute("aria-label", key+" "+i);
+      seg.addEventListener("click", ()=>setMeter(key, i));
+      strip.appendChild(seg);
+    }
+  }
+
+  function setMeter(key, val){
+    state[key] = val;
+    const strip = document.getElementById(key+"Strip");
+    [...strip.children].forEach(seg=>{
+      const v = parseInt(seg.dataset.val);
+      seg.classList.toggle("active", v === val);
+      seg.classList.toggle("filled", v < val);
+    });
+    document.getElementById(key+"Val").textContent = val;
+    document.getElementById(key+"Descr").textContent = GCS[key].desc[val];
+    updateTotal();
+  }
+
+  function updateTotal(){
+    const total = state.eye + state.verbal + state.motor;
+    const totalEl = document.getElementById("gcsTotal");
+    const interpEl = document.getElementById("gcsInterp");
+    const alertEl = document.getElementById("iotAlert");
+    totalEl.textContent = total;
+
+    let interp = "", critical = false;
+    if(total >= 13) interp = "Consciência preservada · TCE leve";
+    else if(total >= 9) interp = "Rebaixamento moderado · TCE moderado";
+    else if(total >= 6){ interp = "Coma · rebaixamento grave"; critical = true; }
+    else { interp = "Coma profundo · prognóstico reservado"; critical = true; }
+
+    interpEl.textContent = interp;
+    interpEl.classList.toggle("warn", critical);
+    totalEl.classList.toggle("critical", total <= 8);
+    alertEl.classList.toggle("show", total <= 8);
+  }
+
+  ["eye","verbal","motor"].forEach(k=>{
+    buildStrip(k);
+    setMeter(k, state[k]);
+  });
+
+  // GLICEMIA
+  const glicInput = document.getElementById("glicInput");
+  const glicFb = document.getElementById("glicFb");
+  const DEFAULT_FB = "Dextro antes de qualquer investigação. Hipoglicemia mata.";
+  glicInput.addEventListener("input", ()=>{
+    const raw = glicInput.value.trim();
+    const v = parseFloat(raw);
+    glicFb.className = "glic-feedback";
+    if(raw === "" || isNaN(v)){
+      glicFb.textContent = DEFAULT_FB;
+      return;
+    }
+    if(v < 60){
+      glicFb.classList.add("warn");
+      glicFb.textContent = "HIPOGLICEMIA — tratar: glicose 50% 40–60 mL EV. Tiamina 100 mg antes se etilismo/desnutrição.";
+    } else if(v > 300){
+      glicFb.classList.add("warn");
+      glicFb.textContent = "HIPERGLICEMIA grave — avaliar CAD ou estado hiperosmolar. Gasometria, cetonas, osmolaridade.";
+    } else if(v >= 70 && v <= 180){
+      glicFb.classList.add("ok");
+      glicFb.textContent = "Glicemia na faixa — causa glicêmica improvável. Prosseguir investigação.";
+    } else {
+      glicFb.textContent = "Glicemia limítrofe — monitorar e prosseguir investigação.";
+    }
+  });
+
+  // AEIOU-TIPS
+  const AEIOU = [
+    {l:"A", t:"Álcool · Intoxicação", d:"Etilismo agudo, drogas lícitas/ilícitas, psicotrópicos. Hálito, história, toxicológico."},
+    {l:"E", t:"Epilepsia · Encefalopatia", d:"Pós-ictal prolongado, mal epiléptico não convulsivo. Encefalopatia hepática (amônia), urêmica, hipertensiva, de Wernicke."},
+    {l:"I", t:"Insulina · Distúrbio glicêmico", d:"Hipo (dextro sempre) ou hiperglicemia grave — CAD, estado hiperosmolar. Tratar hipoglicemia antes."},
+    {l:"O", t:"Opioides · Overdose", d:"Tríade: miose + depressão respiratória + RNC. Naloxona 0,4–2 mg EV. BZD, barbitúricos, ADT também."},
+    {l:"U", t:"Uremia · Distúrbio metabólico", d:"IR avançada, distúrbios hidroeletrolíticos (Na, Ca, Mg), ácido-base graves."},
+    {l:"T", t:"Trauma · TCE", d:"Hematoma subdural, epidural, contusão, HSA traumática. Battle, raccoon, otorragia. TC urgente."},
+    {l:"I", t:"Infecção", d:"Meningite, encefalite, abscesso, encefalopatia séptica. Rigidez de nuca, febre, petéquias. PL após TC."},
+    {l:"P", t:"Psiquiátrico · Porfiria", d:"Catatonia, transtorno conversivo (exclusão). Porfiria aguda — rara, dor abdominal + neurológico."},
+    {l:"S", t:"Stroke · Shock · Síncope", d:"AVC isquêmico/hemorrágico, HSA, hipoperfusão por choque, pós-síncope prolongado."}
+  ];
+  const grid = document.getElementById("aeiouGrid");
+  AEIOU.forEach(it=>{
+    const el = document.createElement("div");
+    el.className = "aeiou";
+    el.innerHTML = `
+      <div class="aeiou-head" role="button" tabindex="0" aria-expanded="false">
+        <div class="aeiou-letter">${it.l}</div>
+        <div class="aeiou-title">${it.t}</div>
+        <div class="aeiou-chev">›</div>
+      </div>
+      <div class="aeiou-body"><div class="aeiou-body-inner">${it.d}</div></div>
+    `;
+    const head = el.querySelector(".aeiou-head");
+    const toggle = ()=>{
+      const open = el.classList.toggle("open");
+      head.setAttribute("aria-expanded", open);
+    };
+    head.addEventListener("click", toggle);
+    head.addEventListener("keydown", e=>{
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
+    });
+    grid.appendChild(el);
+  });
+</script>
+</body>
+</html>

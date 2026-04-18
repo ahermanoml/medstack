@@ -1,0 +1,1207 @@
+<!-- VERSION: 9 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dispneia — Avaliação</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg-deep:#081425;--bg-card:#0f1e33;--bg-input:#0a1628;--bg-panel:#050e1c;
+    --border:#1e3a5f;--border-light:#2b4a78;
+    --text-primary:#e6f0fb;--text-secondary:#8fa8c4;--text-dim:#5a7290;--text-faint:#3a506b;
+    --accent:#3b82f6;--accent-light:#60a5fa;--accent-pale:#93c5fd;--accent-bg:#13284a;
+    --danger:#ef4444;--danger-dark:#7f1d1d;--danger-bg:#2a0a0a;--danger-light:#fca5a5;
+    --warning:#f59e0b;--warning-dark:#78350f;--warning-bg:#2a1a03;--warning-light:#fcd34d;
+    --success:#22c55e;--success-dark:#14532d;--success-bg:#052e16;--success-light:#86efac;
+    --monitor:#10b981;--monitor-glow:rgba(16,185,129,.28);
+    --radius:1rem;--radius-sm:.75rem;--radius-xs:.5rem;
+    --shadow-card:0 4px 20px rgba(0,0,0,.4);
+    --font-mono:'SF Mono','JetBrains Mono','Fira Code','Consolas',monospace;
+    --t-fast:.15s ease;--t-normal:.25s ease;
+  }
+  html,body{overscroll-behavior-y:contain}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg-deep);color:var(--text-primary);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0);
+    background-image:
+      linear-gradient(rgba(30,58,95,.12) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(30,58,95,.12) 1px,transparent 1px);
+    background-size:24px 24px;
+    background-position:-1px -1px}
+  header{background:linear-gradient(180deg,rgba(15,30,51,.95),rgba(10,22,40,.92));width:100%;padding:1rem 1.5rem;padding-top:max(1rem,env(safe-area-inset-top));text-align:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  header h1{font-size:1.05rem;font-weight:600;color:var(--text-primary);letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:.55rem}
+  header h1::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--monitor);box-shadow:0 0 10px var(--monitor-glow);animation:pulse-dot 2.4s ease-in-out infinite}
+  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.85)}}
+  .back-link{position:absolute;left:.5rem;top:50%;transform:translateY(-50%);color:var(--text-secondary);text-decoration:none;font-size:1.1rem;font-weight:500;transition:color var(--t-fast);padding:.5rem .75rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation;line-height:1}
+  .back-link:hover,.back-link:active{color:var(--text-primary)}
+  .container{max-width:700px;width:100%;padding:1.15rem;display:flex;flex-direction:column;gap:1rem}
+
+  /* Progress */
+  .progress{display:flex;align-items:center;gap:.3rem;padding:0 .25rem}
+  .progress-step{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background .35s ease,box-shadow .35s ease}
+  .progress-step.done{background:var(--accent)}
+  .progress-step.active{background:var(--monitor);box-shadow:0 0 6px var(--monitor-glow);animation:pulse-bar 1.8s ease-in-out infinite}
+  @keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.55}}
+  .progress-label{font-size:.62rem;color:var(--text-dim);text-align:center;padding:.2rem 0 0;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-mono)}
+  .progress-label .current{color:var(--monitor);font-weight:600}
+
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;animation:fadeIn .25s ease;box-shadow:var(--shadow-card)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.05rem;color:var(--text-primary);margin-bottom:.2rem;font-weight:600;letter-spacing:-.01em}
+  .card .subtitle{font-size:.78rem;color:var(--text-secondary);margin-bottom:1.1rem;line-height:1.4}
+
+  .options{display:flex;flex-direction:column;gap:.55rem}
+  .group-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-top:.9rem;margin-bottom:-.1rem;display:flex;align-items:center;gap:.5rem;font-family:var(--font-mono)}
+  .group-label:first-child{margin-top:0}
+  .group-label::after{content:'';flex:1;height:1px;background:var(--border)}
+  .group-label .count{color:var(--accent-light);font-weight:600}
+
+  .option-btn{background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1rem;color:var(--text-primary);font-size:.9rem;cursor:pointer;transition:all var(--t-fast);text-align:left;display:flex;align-items:center;gap:.75rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:3rem;font-family:inherit}
+  .option-btn:hover{border-color:var(--accent)}
+  .option-btn:active{transform:scale(.98)}
+  .option-btn.selected{border-color:var(--accent);background:var(--accent-bg);box-shadow:inset 0 0 0 1px var(--accent)}
+  .option-btn .label{flex:1;line-height:1.3}
+  .option-btn .label small{display:block;color:var(--text-dim);font-size:.72rem;margin-top:.15rem}
+  .option-btn.selected .label small{color:var(--accent-pale)}
+  .option-btn .tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:9999px;font-weight:700;flex-shrink:0;font-family:var(--font-mono)}
+  .tag-leve{background:#1e293b;color:var(--text-secondary)}
+  .tag-moderada{background:#164e63;color:#67e8f9}
+  .tag-grave{background:var(--warning-dark);color:var(--warning-light)}
+  .tag-critico{background:var(--danger-dark);color:var(--danger-light)}
+
+  .check-btn{background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .9rem;color:var(--text-primary);font-size:.85rem;cursor:pointer;transition:all var(--t-fast);text-align:left;display:flex;align-items:center;gap:.65rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:2.7rem;font-family:inherit;line-height:1.3;width:100%}
+  .check-btn:hover{border-color:var(--accent)}
+  .check-btn:active{transform:scale(.98)}
+  .check-btn.checked{border-color:var(--accent);background:var(--accent-bg)}
+  .check-btn.emergency-checked{border-color:var(--danger);background:var(--danger-bg)}
+  .check-box{width:18px;height:18px;border:2px solid var(--border-light);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--t-fast);font-size:.7rem;color:#fff}
+  .check-btn.checked .check-box{background:var(--accent);border-color:var(--accent)}
+  .check-btn.emergency-checked .check-box{background:var(--danger);border-color:var(--danger)}
+
+  .nav-row{display:flex;gap:.6rem;margin-top:1.2rem}
+  .nav-btn{flex:1;padding:.9rem;border-radius:var(--radius-sm);font-size:.88rem;font-weight:600;cursor:pointer;transition:all var(--t-fast);border:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:inherit;min-height:3rem}
+  .nav-btn:active{transform:scale(.97)}
+  .nav-btn.secondary{background:var(--bg-input);color:var(--text-secondary);border:1.5px solid var(--border);flex:0 0 4rem}
+  .nav-btn.secondary:hover{border-color:var(--border-light);color:var(--text-primary)}
+  .nav-btn.primary{background:var(--accent);color:#fff}
+  .nav-btn.primary:hover{background:#2563eb}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+  /* Monitor strip with ECG motif */
+  .monitor-strip{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.9rem 1rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;font-family:var(--font-mono);margin-top:1rem;position:relative;overflow:hidden}
+  .monitor-strip::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--monitor),transparent);opacity:.5;animation:sweep 3.2s linear infinite}
+  @keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  .monitor-cell{display:flex;flex-direction:column;gap:.15rem;padding:.1rem;position:relative;z-index:1}
+  .monitor-cell .lbl{font-size:.55rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+  .monitor-cell .val{font-size:1.1rem;font-weight:700;color:var(--monitor);line-height:1;text-shadow:0 0 8px var(--monitor-glow)}
+  .monitor-cell.warn .val{color:var(--warning-light);text-shadow:0 0 6px rgba(245,158,11,.3)}
+  .monitor-cell.crit .val{color:var(--danger-light);text-shadow:0 0 8px rgba(239,68,68,.35);animation:crit-blink 1.2s ease-in-out infinite}
+  .monitor-cell.empty .val{color:var(--text-faint);text-shadow:none}
+  .monitor-cell .unit{font-size:.6rem;color:var(--text-dim);margin-left:.2rem;font-weight:400}
+  @keyframes crit-blink{0%,100%{opacity:1}50%{opacity:.6}}
+
+  /* Result */
+  .result-card{text-align:center;padding:1.65rem 1.15rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:4.3rem;height:4.3rem;border-radius:50%;font-size:1.4rem;font-weight:800;margin-bottom:.85rem;animation:badgePop .4s ease}
+  @keyframes badgePop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+  .risk-critico{background:#450a0a;color:var(--danger-light);border:2px solid var(--danger);box-shadow:0 0 24px rgba(239,68,68,.3)}
+  .risk-alto{background:#451a03;color:var(--warning-light);border:2px solid var(--warning)}
+  .risk-moderado{background:#13284a;color:var(--accent-pale);border:2px solid var(--accent)}
+  .risk-baixo{background:var(--success-dark);color:var(--success-light);border:2px solid var(--success)}
+  .result-title{font-size:1.2rem;font-weight:700;margin-bottom:.2rem}
+  .result-desc{color:var(--text-secondary);font-size:.78rem;margin-bottom:1rem;font-family:var(--font-mono);letter-spacing:.02em}
+
+  /* Red flags */
+  .red-flags{background:linear-gradient(135deg,#2a0a0a,#4a1010);border:1.5px solid var(--danger);border-radius:var(--radius-sm);padding:.9rem 1.1rem;margin-bottom:1rem;animation:alertPulse 2.2s ease-in-out infinite;text-align:left}
+  @keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.35)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
+  .red-flags h4{color:var(--danger-light);font-size:.72rem;margin-bottom:.4rem;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-mono)}
+  .red-flags ul{list-style:none;padding:0}
+  .red-flags li{font-size:.78rem;color:#fecaca;padding:.15rem 0;padding-left:.9rem;position:relative;line-height:1.4}
+  .red-flags li::before{content:'';position:absolute;left:0;top:.55rem;width:4px;height:4px;background:var(--danger);border-radius:50%}
+
+  .box{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.15rem;text-align:left;margin-bottom:.85rem}
+  .box h3{font-size:.72rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.55rem;font-family:var(--font-mono)}
+  .sum-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.82rem;gap:.75rem}
+  .sum-row:last-child{border-bottom:none}
+  .sum-row .k{color:var(--text-dim);flex-shrink:0}
+  .sum-row .v{font-weight:500;text-align:right;display:flex;align-items:center;gap:.4rem;justify-content:flex-end;flex-wrap:wrap}
+  .dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .dot-red{background:var(--danger)}.dot-yellow{background:var(--warning)}.dot-green{background:var(--monitor)}
+
+  /* Chips */
+  .chips{display:flex;gap:.35rem;flex-wrap:wrap}
+  .chip{flex:1;min-width:0;padding:.55rem .3rem;border-radius:var(--radius-xs);font-size:.72rem;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-input);color:var(--text-dim);text-align:center;transition:all var(--t-fast);line-height:1.3;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:inherit;min-height:2.5rem}
+  .chip:active{transform:scale(.96)}
+  .chip.picked{border-color:var(--accent);background:var(--accent-bg);color:var(--text-primary);font-weight:600}
+
+  /* Conduta */
+  .conduta{border-radius:var(--radius-sm);padding:1rem 1.15rem;text-align:left;margin-bottom:.85rem;border:1.5px solid}
+  .conduta h3{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;font-family:var(--font-mono)}
+  .conduta.c-critico{background:var(--danger-bg);border-color:var(--danger)}
+  .conduta.c-critico h3{color:var(--danger-light)}
+  .conduta.c-alto{background:var(--warning-bg);border-color:var(--warning-dark)}
+  .conduta.c-alto h3{color:var(--warning-light)}
+  .conduta.c-moderado{background:var(--accent-bg);border-color:var(--accent)}
+  .conduta.c-moderado h3{color:var(--accent-pale)}
+  .conduta.c-baixo{background:var(--success-bg);border-color:var(--success-dark)}
+  .conduta.c-baixo h3{color:var(--success-light)}
+  .conduta-item{padding:.35rem 0;font-size:.82rem;color:var(--text-primary);line-height:1.4;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:.5rem}
+  .conduta-item:last-child{border-bottom:none}
+  .conduta-item::before{content:'\203A';color:var(--accent-light);font-weight:700;flex-shrink:0}
+  .conduta-sub{padding:.1rem 0 .1rem 1rem;font-size:.74rem;color:var(--text-secondary);line-height:1.35}
+
+  /* Collapse */
+  .collapse-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .collapse-hdr h3{margin-bottom:0}
+  .collapse-arrow{font-size:.7rem;color:var(--text-dim);transition:transform var(--t-normal)}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .3s ease,margin-top .3s ease}
+  .collapse-body.hidden{max-height:0!important;margin-top:0!important}
+  .collapse-body.visible{max-height:6000px;margin-top:.6rem}
+
+  /* Note */
+  .note-text{background:#020a14;border:1px solid var(--border);border-radius:var(--radius-xs);padding:.9rem;font-family:var(--font-mono);font-size:.7rem;color:var(--text-secondary);white-space:pre-wrap;line-height:1.55;max-height:360px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy-btn{width:100%;margin-top:.6rem;padding:.7rem;border-radius:var(--radius-xs);border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:.82rem;font-weight:600;cursor:pointer;transition:all var(--t-fast);-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:inherit}
+  .copy-btn:hover{border-color:var(--accent)}
+  .copy-btn.copied{border-color:var(--success);background:var(--success-bg);color:var(--success-light)}
+
+  /* Vitals grid */
+  .vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  .v-group{display:flex;flex-direction:column;gap:.3rem}
+  .v-group label{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);gap:.3rem}
+  .v-input{background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.65rem .75rem;color:var(--text-primary);font-size:1.05rem;font-family:var(--font-mono);font-weight:600;width:100%;transition:border-color var(--t-fast),box-shadow var(--t-fast),color var(--t-fast);-webkit-appearance:none;appearance:none}
+  .v-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+  .v-input::placeholder{color:var(--text-faint);font-size:.82rem;font-weight:400}
+  .v-input.danger{border-color:var(--danger);color:var(--danger-light)}
+  .v-input.warning{border-color:var(--warning);color:var(--warning-light)}
+  .v-input.normal{border-color:var(--monitor);color:var(--monitor)}
+  .v-tag{font-size:.55rem;padding:.12rem .4rem;border-radius:9999px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-family:var(--font-mono)}
+  .v-tag.normal{background:rgba(16,185,129,.15);color:var(--monitor)}
+  .v-tag.warning{background:var(--warning-dark);color:var(--warning-light)}
+  .v-tag.danger{background:var(--danger-dark);color:var(--danger-light)}
+
+  /* O2 suggestion */
+  .o2-strip{font-size:.76rem;margin-top:.8rem;padding:.65rem .85rem;border-radius:var(--radius-xs);display:flex;align-items:center;gap:.5rem;border:1px solid;line-height:1.35}
+  .o2-strip.crit{background:var(--danger-bg);border-color:var(--danger-dark);color:var(--danger-light)}
+  .o2-strip.warn{background:var(--warning-bg);border-color:var(--warning-dark);color:var(--warning-light)}
+  .o2-strip.ok{background:var(--success-bg);border-color:var(--success-dark);color:var(--success-light)}
+
+  /* Differential cards */
+  .dx-card{background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1rem;margin-bottom:.55rem;transition:all var(--t-fast)}
+  .dx-card.primary{border-color:var(--accent);background:var(--accent-bg)}
+  .dx-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;gap:.5rem}
+  .dx-name{font-size:.9rem;font-weight:600;color:var(--text-primary);line-height:1.25}
+  .dx-prob{font-size:.72rem;font-weight:700;font-family:var(--font-mono);padding:.15rem .5rem;border-radius:9999px;flex-shrink:0;letter-spacing:.02em}
+  .prob-high{background:var(--danger-dark);color:var(--danger-light)}
+  .prob-mod{background:var(--warning-dark);color:var(--warning-light)}
+  .prob-low{background:var(--border);color:var(--text-secondary)}
+  .dx-cat{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:.2rem;font-family:var(--font-mono)}
+  .dx-clues{font-size:.76rem;color:var(--text-secondary);line-height:1.4}
+
+  /* Disclaimer */
+  .disclaimer{font-size:.62rem;color:var(--text-faint);text-align:center;padding:1rem;width:100%;max-width:700px;margin-top:auto;letter-spacing:.03em}
+
+  /* Missing hint */
+  .miss-hint{font-size:.68rem;color:var(--text-dim);text-align:center;margin-top:.5rem;font-family:var(--font-mono);letter-spacing:.03em}
+
+  /* Step alert */
+  .step-alert{border-radius:var(--radius-xs);padding:.7rem .85rem;font-size:.78rem;line-height:1.4;border:1px solid;margin-top:.6rem}
+  .step-alert.crit{background:var(--danger-bg);border-color:var(--danger);color:var(--danger-light)}
+  .step-alert.warn{background:var(--warning-bg);border-color:var(--warning-dark);color:var(--warning-light)}
+  .step-alert.mt-md{margin-top:.8rem}
+
+  .spacer{margin-top:1rem}
+
+  /* Restart confirm */
+  .restart-confirm{margin-top:.6rem;padding:.65rem;border-radius:var(--radius-xs);background:var(--danger-bg);border:1px solid var(--danger-dark);color:var(--danger-light);font-size:.78rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+  .restart-confirm span{flex:1 1 100%;margin-bottom:.3rem}
+  .restart-confirm button{flex:1;font-family:inherit;font-size:.78rem;padding:.5rem;border-radius:var(--radius-xs);border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-primary);cursor:pointer}
+  .restart-confirm button.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+
+  @media(max-width:500px){
+    .container{padding:.85rem}
+    .card{padding:1.1rem}
+    .option-btn{padding:.75rem .85rem;font-size:.85rem}
+    .check-btn{padding:.6rem .75rem;font-size:.8rem;min-height:2.5rem}
+    header h1{font-size:.95rem}
+    .back-link{font-size:1rem;left:.25rem;padding:.5rem .6rem}
+    .vitals-grid{grid-template-columns:1fr 1fr;gap:.55rem}
+    .chip{font-size:.65rem;padding:.5rem .2rem}
+    .nav-btn{font-size:.8rem;padding:.8rem}
+    .sum-row{flex-direction:column;align-items:flex-start;gap:.15rem}
+    .sum-row .v{text-align:left;justify-content:flex-start}
+    .monitor-strip{padding:.75rem .85rem;gap:.4rem}
+    .monitor-cell .val{font-size:.95rem}
+    .result-desc{font-size:.72rem}
+  }
+  @media(max-width:360px){
+    .vitals-grid{grid-template-columns:1fr}
+    .chip{font-size:.6rem}
+    .monitor-cell .val{font-size:.85rem}
+  }
+  @media print{
+    body{background:#fff;color:#000;background-image:none}
+    header,.nav-row,.progress,.progress-label,.back-link,.disclaimer{display:none!important}
+    .card{border:1px solid #ccc;box-shadow:none;page-break-inside:avoid}
+    .note-text{background:#fff;color:#000;border:1px solid #ccc;max-height:none;font-size:.7rem}
+    .collapse-body.hidden{max-height:none!important;margin-top:.5rem!important}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../falta-de-ar.html" class="back-link" aria-label="Voltar">&larr;</a>
+  <h1>Avaliação de Dispneia</h1>
+</header>
+<div class="container" id="app"></div>
+<div class="disclaimer">Apoio à decisão. Não substitui o julgamento clínico.</div>
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const STEP_LABELS=['Paciente','Sintomas','Vitais','Exame','Resultado'];
+const TOTAL_STEPS=5;
+
+const SYMPTOM_LIST=[
+  {id:'dor_toracica',label:'Dor torácica',cat:'cardiac'},
+  {id:'palpitacoes',label:'Palpitações',cat:'cardiac'},
+  {id:'ortopneia',label:'Ortopneia (piora ao deitar)',cat:'cardiac'},
+  {id:'dpn',label:'Dispneia paroxística noturna',cat:'cardiac'},
+  {id:'edema_mmii',label:'Edema de membros inferiores',cat:'cardiac'},
+  {id:'febre',label:'Febre',cat:'pulmonary'},
+  {id:'tosse',label:'Tosse',cat:'pulmonary'},
+  {id:'expectoracao',label:'Expectoração produtiva',cat:'pulmonary'},
+  {id:'hemoptise',label:'Hemoptise',cat:'pulmonary'},
+  {id:'sibilancia',label:'Sibilância / chiado',cat:'pulmonary'},
+  {id:'dor_pleuritica',label:'Dor pleurítica',cat:'pulmonary'},
+  {id:'dor_panturrilha',label:'Dor / edema unilateral de panturrilha',cat:'pulmonary'},
+  {id:'tontura',label:'Tontura / pré-síncope',cat:'other'},
+  {id:'parestesias',label:'Parestesias periféricas',cat:'other'},
+  {id:'ansiedade',label:'Ansiedade / sensação de morte',cat:'other'},
+  {id:'estridor_sint',label:'Estridor / rouquidão',cat:'other'},
+  {id:'urticaria',label:'Urticária / prurido',cat:'other'},
+  {id:'disfagia',label:'Disfagia / edema facial',cat:'other'},
+  {id:'sudorese',label:'Sudorese fria',cat:'other'},
+  {id:'sincope',label:'Síncope',cat:'other'},
+];
+
+const EXAM_LIST=[
+  {id:'desvio_traqueia',label:'Desvio de traqueia',cat:'emergencia'},
+  {id:'enfisema_subcut',label:'Enfisema subcutâneo',cat:'emergencia'},
+  {id:'estridor',label:'Estridor',cat:'emergencia'},
+  {id:'angioedema',label:'Angioedema / edema de glote',cat:'emergencia'},
+  {id:'sibilos',label:'Sibilos',cat:'pulmonary'},
+  {id:'crepitacoes',label:'Crepitações / estertores',cat:'pulmonary'},
+  {id:'mv_diminuido',label:'Murmúrio vesicular diminuído',cat:'pulmonary'},
+  {id:'mv_abolido',label:'MV abolido unilateral',cat:'pulmonary'},
+  {id:'macicez',label:'Macicez à percussão',cat:'pulmonary'},
+  {id:'timpanismo',label:'Timpanismo à percussão',cat:'pulmonary'},
+  {id:'turgencia_jugular',label:'Turgência jugular',cat:'cardiac'},
+  {id:'edema_periferico',label:'Edema periférico',cat:'cardiac'},
+  {id:'b3',label:'Terceira bulha (B3)',cat:'cardiac'},
+  {id:'hepatomegalia',label:'Hepatomegalia dolorosa',cat:'cardiac'},
+  {id:'pulso_paradoxal',label:'Pulso paradoxal > 10 mmHg',cat:'cardiac'},
+  {id:'ritmo_irregular',label:'Ritmo cardíaco irregular',cat:'cardiac'},
+  {id:'uso_acessoria',label:'Uso de musculatura acessória',cat:'geral'},
+  {id:'cianose',label:'Cianose',cat:'geral'},
+  {id:'tiragem',label:'Tiragem intercostal / subcostal',cat:'geral'},
+  {id:'alteracao_consciencia',label:'Alteração do nível de consciência',cat:'geral'},
+];
+
+const HISTORY_FIELDS=[
+  {id:'dpoc',label:'DPOC'},
+  {id:'asthma',label:'Asma'},
+  {id:'icc',label:'Insuficiência cardíaca'},
+  {id:'immob',label:'Imobilização / cirurgia recente'},
+  {id:'cancer',label:'Câncer ativo'},
+  {id:'tvp_tep',label:'TVP/TEP prévio'},
+  {id:'dm',label:'Diabetes'},
+  {id:'has',label:'Hipertensão'},
+  {id:'hiv',label:'HIV / Imunossupressão'},
+  {id:'drc',label:'Doença renal crônica'},
+  {id:'gestante',label:'Gestante / puérpera'},
+  {id:'fa',label:'FA / arritmia conhecida'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentStep=0;
+const evalStart=new Date();
+let onset=null, severity=null;
+let symptoms=new Set();
+let vitals={spo2:'',fr:'',fc:'',pas:'',pad:'',temp:''};
+let examFindings=new Set();
+let patHistory={age:null,sex:null,smoking:null};
+let patHistoryChecks=new Set();
+let sections={resumo:true,diag:true,note:false};
+let restartConfirming=false;
+
+const app=document.getElementById('app');
+
+// ============================================================
+// HELPERS
+// ============================================================
+const vNum=v=>{const n=parseFloat(v);return isNaN(n)?null:n};
+const spo2V=()=>vNum(vitals.spo2);
+const frV=()=>vNum(vitals.fr);
+const fcV=()=>vNum(vitals.fc);
+const pasV=()=>vNum(vitals.pas);
+const padV=()=>vNum(vitals.pad);
+const tempV=()=>vNum(vitals.temp);
+
+function mapVal(){const p=pasV(),d=padV();if(p===null||d===null)return null;return Math.round(d+(p-d)/3)}
+
+function spo2Status(){const v=spo2V();if(v===null)return null;if(v<=88)return 'danger';if(v<=94)return 'warning';return 'normal'}
+function frStatus(){const v=frV();if(v===null)return null;if(v>=30||v<=8)return 'danger';if(v>=24)return 'warning';return 'normal'}
+function fcStatus(){const v=fcV();if(v===null)return null;if(v>=130||v<=40)return 'danger';if(v>=100||v<=50)return 'warning';return 'normal'}
+function pasStatus(){const v=pasV();if(v===null)return null;if(v<=90)return 'danger';if(v>=180)return 'warning';return 'normal'}
+function padStatus(){const v=padV();if(v===null)return null;if(v<=50)return 'danger';if(v>=110)return 'warning';return 'normal'}
+function tempStatus(){const v=tempV();if(v===null)return null;if(v>=39.5||v<=35)return 'danger';if(v>=38)return 'warning';return 'normal'}
+
+function dotCls(st){return st==='danger'?'dot-red':st==='warning'?'dot-yellow':'dot-green'}
+
+function severityScore(){if(severity==='incapaz')return 4;if(severity==='palavras')return 3;if(severity==='frases')return 2;if(severity==='sentencas')return 1;return 0}
+
+function vitalSeverity(){
+  let s=0;
+  const sp=spo2V(),f=frV(),fc=fcV(),p=pasV(),t=tempV();
+  if(sp!==null){if(sp<=88)s+=3;else if(sp<=92)s+=2;else if(sp<=95)s+=1}
+  if(f!==null){if(f>=30)s+=3;else if(f>=24)s+=2;else if(f>=20)s+=1}
+  if(fc!==null){if(fc>=130)s+=2;else if(fc>=100)s+=1;else if(fc<=40)s+=2;else if(fc<=50)s+=1}
+  if(p!==null&&p<=90)s+=2;
+  if(t!==null){if(t>=39.5)s+=1;else if(t<=35)s+=2}
+  return s;
+}
+
+function examSeverity(){
+  let s=0;
+  const crit=['estridor','desvio_traqueia','mv_abolido','cianose','angioedema','alteracao_consciencia'];
+  const mod=['enfisema_subcut','uso_acessoria','tiragem'];
+  const mild=['turgencia_jugular','crepitacoes','sibilos','edema_periferico','b3','hepatomegalia','mv_diminuido','macicez','timpanismo','pulso_paradoxal','ritmo_irregular'];
+  for(const id of crit)if(examFindings.has(id))s+=3;
+  for(const id of mod)if(examFindings.has(id))s+=2;
+  for(const id of mild)if(examFindings.has(id))s+=1;
+  return s;
+}
+
+function totalRisk(){return severityScore()+vitalSeverity()+examSeverity()}
+
+function riskLevel(){
+  const s=totalRisk();
+  if(s>=10)return {level:'critico',label:'Crítico',cls:'risk-critico',icon:'\u26A0'};
+  if(s>=6)return {level:'alto',label:'Alto risco',cls:'risk-alto',icon:'!'};
+  if(s>=3)return {level:'moderado',label:'Risco moderado',cls:'risk-moderado',icon:'\u25CE'};
+  return {level:'baixo',label:'Baixo risco',cls:'risk-baixo',icon:'\u2713'};
+}
+
+function getQSOFA(){
+  let s=0;const fr=frV(),pas=pasV();
+  if(fr!==null&&fr>=22)s++;
+  if(pas!==null&&pas<=100)s++;
+  if(examFindings.has('alteracao_consciencia'))s++;
+  return s;
+}
+
+function getO2Suggestion(){
+  const s=spo2V();if(s===null)return null;
+  if(s<=85)return {cls:'crit',text:'Hipoxemia grave \u2014 MNR 15 L/min ou VNI. Preparar IOT.'};
+  if(s<=88)return {cls:'crit',text:'Hipoxemia grave \u2014 MNR 10\u201315 L/min. Considerar VNI.'};
+  if(s<=92)return {cls:'warn',text:'Hipoxemia \u2014 Venturi 40\u201350% ou cateter 3\u20135 L/min.'};
+  if(s<=94)return {cls:'warn',text:'SpO\u2082 limítrofe \u2014 cateter 1\u20133 L/min.'};
+  return {cls:'ok',text:'SpO\u2082 adequada \u2014 O\u2082 suplementar não indicado de rotina.'};
+}
+
+function getRedFlags(){
+  const f=[];
+  if(examFindings.has('desvio_traqueia'))f.push('Desvio de traqueia \u2014 Pneumotórax hipertensivo?');
+  if(examFindings.has('estridor'))f.push('Estridor \u2014 Obstrução de via aérea superior');
+  if(examFindings.has('angioedema'))f.push('Angioedema \u2014 Via aérea ameaçada');
+  if(spo2V()!==null&&spo2V()<=85)f.push('SpO\u2082 \u2264 85% \u2014 Hipoxemia grave');
+  if(severity==='incapaz')f.push('Incapaz de falar \u2014 Insuficiência respiratória iminente');
+  if(examFindings.has('cianose'))f.push('Cianose \u2014 Hipoxemia tecidual');
+  if(pasV()!==null&&pasV()<=80)f.push('PAS \u2264 80 mmHg \u2014 Choque');
+  if(examFindings.has('alteracao_consciencia'))f.push('Alteração de consciência \u2014 Falência orgânica');
+  if(fcV()!==null&&fcV()>=150)f.push('FC \u2265 150 bpm \u2014 Taquiarritmia?');
+  if(fcV()!==null&&fcV()<=40)f.push('FC \u2264 40 bpm \u2014 Bradicardia grave');
+  if(frV()!==null&&frV()>=35)f.push('FR \u2265 35 irpm \u2014 Fadiga respiratória');
+  if(tempV()!==null&&tempV()<=35)f.push('Temp \u2264 35\u00B0C \u2014 Hipotermia');
+  const m=mapVal();
+  if(m!==null&&m<65)f.push(`PAM ${m} < 65 mmHg \u2014 Risco de hipoperfusão`);
+  if(examFindings.has('enfisema_subcut'))f.push('Enfisema subcutâneo \u2014 Pneumotórax / Pneumomediastino?');
+  if(symptoms.has('sincope'))f.push('Síncope associada \u2014 Causa cardíaca ou TEP maciço?');
+  if(examFindings.has('pulso_paradoxal'))f.push('Pulso paradoxal \u2014 Tamponamento? Asma grave?');
+  return f;
+}
+
+// ============================================================
+// DIFFERENTIAL
+// ============================================================
+function buildDifferentials(){
+  const dx=[];
+  const has=id=>examFindings.has(id);
+  const sym=id=>symptoms.has(id);
+  const hx=id=>patHistoryChecks.has(id);
+  const ageIdx=patHistory.age;
+
+  let icc=0;
+  if(sym('ortopneia'))icc+=3;
+  if(sym('dpn'))icc+=3;
+  if(sym('edema_mmii'))icc+=2;
+  if(has('turgencia_jugular'))icc+=3;
+  if(has('crepitacoes'))icc+=2;
+  if(has('b3'))icc+=3;
+  if(has('edema_periferico'))icc+=2;
+  if(has('hepatomegalia'))icc+=2;
+  if(hx('icc'))icc+=3;
+  if(onset==='agudo-cronico')icc+=2;
+  if(onset==='cronico')icc+=1;
+  dx.push({name:'ICC descompensada',cat:'Cardíaca',score:icc,
+    clues:'Ortopneia, DPN, TJP, B3, edema, crepitações bibasais',
+    workup:['BNP / NT-proBNP','RX tórax','ECG 12 derivações','Eco à beira-leito','Função renal e eletrólitos']});
+
+  let eap=0;
+  if(onset==='agudo')eap+=2;
+  if(sym('ortopneia'))eap+=2;
+  if(has('crepitacoes'))eap+=3;
+  if(spo2V()!==null&&spo2V()<=90)eap+=2;
+  if(has('uso_acessoria'))eap+=1;
+  if(severity==='incapaz'||severity==='palavras')eap+=2;
+  if(hx('icc'))eap+=2;
+  if(pasV()!==null&&pasV()>=180)eap+=2;
+  if(sym('sudorese'))eap+=1;
+  dx.push({name:'Edema agudo de pulmão',cat:'Cardíaca',score:eap,
+    clues:'Início agudo, crepitações difusas, ortopneia, hipertensão',
+    workup:['RX tórax','BNP / NT-proBNP','ECG','Gasometria','VNI (CPAP 10 cmH\u2082O) se consciente','Furosemida IV + Nitroglicerina']});
+
+  let sca=0;
+  if(sym('dor_toracica'))sca+=4;
+  if(sym('palpitacoes'))sca+=1;
+  if(sym('sudorese'))sca+=2;
+  if(onset==='agudo')sca+=1;
+  const _fc=fcV();if(_fc!==null&&_fc>=100)sca+=1;
+  if(ageIdx!==null&&ageIdx>=2)sca+=1;
+  if(hx('dm'))sca+=1;
+  if(hx('has'))sca+=1;
+  if(patHistory.smoking==='ativo')sca+=1;
+  if(sym('sincope'))sca+=1;
+  dx.push({name:'Síndrome coronariana aguda',cat:'Cardíaca',score:sca,
+    clues:'Dor torácica, sudorese, fatores de risco CV, ECG alterado',
+    workup:['ECG 12 derivações (imediato)','Troponina de alta sensibilidade 0h/1h','RX tórax','AAS 200 mg VO','Eco se indicado']});
+
+  let tamp=0;
+  if(has('turgencia_jugular'))tamp+=2;
+  if(pasV()!==null&&pasV()<=90)tamp+=2;
+  if(fcV()!==null&&fcV()>=100)tamp+=1;
+  if(sym('dor_toracica'))tamp+=1;
+  if(hx('cancer'))tamp+=1;
+  if(has('pulso_paradoxal'))tamp+=3;
+  if(sym('sincope'))tamp+=1;
+  dx.push({name:'Tamponamento cardíaco',cat:'Cardíaca',score:tamp,
+    clues:'Tríade de Beck + pulso paradoxal > 10 mmHg',
+    workup:['Eco à beira-leito (FAST/POCUS)','ECG (baixa voltagem)','RX tórax','Pericardiocentese se instável']});
+
+  let taq=0;
+  if(sym('palpitacoes'))taq+=3;
+  if(has('ritmo_irregular'))taq+=3;
+  if(fcV()!==null&&fcV()>=120)taq+=2;
+  if(fcV()!==null&&fcV()>=100&&fcV()<120)taq+=1;
+  if(onset==='agudo')taq+=1;
+  if(hx('fa'))taq+=3;
+  if(sym('tontura'))taq+=1;
+  if(sym('sincope'))taq+=2;
+  if(sym('dor_toracica'))taq+=1;
+  dx.push({name:'Taquiarritmia (FA, Flutter, TSVP)',cat:'Cardíaca',score:taq,
+    clues:'Palpitações, ritmo irregular, FC elevada, início súbito',
+    workup:['ECG 12 derivações','Monitorização contínua','Eletrólitos (K, Mg)','TSH','Eco','Se instável: cardioversão sincronizada']});
+
+  let tep=0;
+  if(onset==='agudo')tep+=2;
+  if(sym('dor_pleuritica'))tep+=2;
+  if(sym('hemoptise'))tep+=2;
+  if(sym('dor_panturrilha'))tep+=3;
+  if(fcV()!==null&&fcV()>=100)tep+=1;
+  if(spo2V()!==null&&spo2V()<=92)tep+=1;
+  if(hx('immob'))tep+=2;
+  if(hx('cancer'))tep+=2;
+  if(hx('tvp_tep'))tep+=2;
+  if(hx('gestante'))tep+=1;
+  if(sym('sudorese'))tep+=1;
+  if(sym('sincope'))tep+=2;
+  dx.push({name:'Tromboembolismo pulmonar',cat:'Pulmonar',score:tep,
+    clues:'Início súbito, dor pleurítica, taquicardia, fatores trombóticos',
+    workup:['D-dímero (baixa/moderada probabilidade)','Angio-TC de tórax','ECG (S1Q3T3, BRD novo)','Eco (sobrecarga de VD)','USG MMII','Se instável: trombolítico']});
+
+  let pnm=0;
+  if(sym('febre'))pnm+=3;
+  if(sym('tosse'))pnm+=2;
+  if(sym('expectoracao'))pnm+=2;
+  if(has('crepitacoes'))pnm+=2;
+  if(tempV()!==null&&tempV()>=38)pnm+=2;
+  if(hx('hiv'))pnm+=1;
+  if(frV()!==null&&frV()>=24)pnm+=1;
+  dx.push({name:'Pneumonia',cat:'Pulmonar',score:pnm,
+    clues:'Febre, tosse produtiva, crepitações localizadas, taquipneia',
+    workup:['RX tórax (PA+perfil)','Hemograma, PCR, procalcitonina','Hemoculturas (2)','Gasometria se SpO\u2082 \u2264 92%','CURB-65 para estratificação']});
+
+  let dpoc=0;
+  if(hx('dpoc'))dpoc+=4;
+  if(sym('tosse'))dpoc+=1;
+  if(sym('expectoracao'))dpoc+=2;
+  if(sym('sibilancia'))dpoc+=2;
+  if(has('sibilos'))dpoc+=2;
+  if(onset==='agudo-cronico')dpoc+=2;
+  if(patHistory.smoking==='ativo'||patHistory.smoking==='ex')dpoc+=1;
+  dx.push({name:'DPOC exacerbado',cat:'Pulmonar',score:dpoc,
+    clues:'História de DPOC, tabagismo, sibilos, expectoração purulenta',
+    workup:['RX tórax','Gasometria arterial','Hemograma, PCR','VNI (BiPAP) se acidose resp.','Salbutamol + Ipratrópio inalatório','Prednisona 40 mg VO']});
+
+  let asma=0;
+  if(hx('asthma'))asma+=4;
+  if(sym('sibilancia'))asma+=3;
+  if(has('sibilos'))asma+=3;
+  if(onset==='agudo')asma+=1;
+  if(has('uso_acessoria'))asma+=1;
+  if(has('tiragem'))asma+=1;
+  if(has('pulso_paradoxal'))asma+=1;
+  dx.push({name:'Crise asmática',cat:'Pulmonar',score:asma,
+    clues:'História de asma, sibilos difusos, resposta a broncodilatador',
+    workup:['Peak flow','RX tórax (excluir complicações)','Gasometria se crise grave','Salbutamol 4\u20138 jatos a cada 20 min','Ipratrópio 40\u201380 mcg','Prednisolona 40\u201360 mg VO']});
+
+  let ptx=0;
+  if(onset==='agudo')ptx+=2;
+  if(has('mv_abolido'))ptx+=4;
+  if(has('mv_diminuido'))ptx+=2;
+  if(has('enfisema_subcut'))ptx+=3;
+  if(has('desvio_traqueia'))ptx+=4;
+  if(has('timpanismo'))ptx+=3;
+  if(sym('dor_pleuritica'))ptx+=2;
+  dx.push({name:'Pneumotórax',cat:'Pulmonar',score:ptx,
+    clues:'Início súbito, MV abolido unilateral, timpanismo, desvio de traqueia',
+    workup:['RX tórax','USG pulmonar (ausência de deslizamento)','TC tórax se dúvida','Toracocentese descompressiva se hipertensivo','Drenagem em selo d\'água']});
+
+  let dp=0;
+  if(has('mv_diminuido'))dp+=2;
+  if(has('macicez'))dp+=3;
+  if(onset==='cronico')dp+=1;
+  if(onset==='agudo-cronico')dp+=1;
+  if(hx('cancer'))dp+=2;
+  if(hx('icc'))dp+=1;
+  dx.push({name:'Derrame pleural',cat:'Pulmonar',score:dp,
+    clues:'MV diminuído + macicez, dispneia progressiva',
+    workup:['RX tórax (PA + Laurell)','USG tórax','Toracocentese diagnóstica (Light)','Análise do líquido pleural']});
+
+  let ana=0;
+  if(sym('urticaria'))ana+=4;
+  if(sym('disfagia'))ana+=3;
+  if(sym('estridor_sint'))ana+=3;
+  if(has('angioedema'))ana+=4;
+  if(has('estridor'))ana+=3;
+  if(has('sibilos'))ana+=1;
+  if(onset==='agudo')ana+=2;
+  if(pasV()!==null&&pasV()<=90)ana+=2;
+  dx.push({name:'Anafilaxia',cat:'Emergência',score:ana,
+    clues:'Urticária, angioedema, broncoespasmo, hipotensão após exposição',
+    workup:['Adrenalina IM 0,3\u20130,5 mg (1:1000)','Acesso venoso + SF 0,9% 1\u20132 L','Difenidramina 50 mg IV','Metilprednisolona 125 mg IV','Monitorar 6\u20138 h']});
+
+  let anemia=0;
+  if(onset==='cronico')anemia+=2;
+  if(sym('tontura'))anemia+=1;
+  if(fcV()!==null&&fcV()>=100)anemia+=1;
+  if(sym('sudorese'))anemia+=1;
+  if(sym('sincope'))anemia+=1;
+  dx.push({name:'Anemia grave',cat:'Outra',score:anemia,
+    clues:'Dispneia progressiva, palidez, taquicardia',
+    workup:['Hemograma completo','Reticulócitos','Perfil de ferro','Pesquisa de sangramento oculto','Tipagem + prova cruzada']});
+
+  let anx=0;
+  if(sym('ansiedade'))anx+=3;
+  if(sym('parestesias'))anx+=3;
+  if(sym('tontura'))anx+=1;
+  if(spo2V()!==null&&spo2V()>=97)anx+=1;
+  if(frV()!==null&&frV()>=20&&spo2V()!==null&&spo2V()>=97)anx+=2;
+  if(has('cianose'))anx-=3;
+  if(spo2V()!==null&&spo2V()<=92)anx-=3;
+  if(has('uso_acessoria'))anx-=2;
+  if(has('tiragem'))anx-=2;
+  if(sym('febre'))anx-=2;
+  if(sym('dor_toracica'))anx-=1;
+  dx.push({name:'Ansiedade / hiperventilação',cat:'Outra',score:Math.max(0,anx),
+    clues:'Parestesias, SpO\u2082 normal. Diagnóstico de exclusão.',
+    workup:['Gasometria (alcalose respiratória)','Excluir causas orgânicas','ECG','D-dímero se fatores de risco']});
+
+  let acid=0;
+  if(frV()!==null&&frV()>=24)acid+=1;
+  if(frV()!==null&&frV()>=28&&!has('sibilos')&&!has('crepitacoes'))acid+=2;
+  if(hx('dm'))acid+=2;
+  if(hx('drc'))acid+=2;
+  if(frV()!==null&&frV()>=24&&spo2V()!==null&&spo2V()>=95&&!has('sibilos')&&!has('crepitacoes')&&!has('mv_diminuido'))acid+=1;
+  dx.push({name:'Acidose metabólica (resp. compensatória)',cat:'Outra',score:acid,
+    clues:'Kussmaul, taquipneia sem achado pulmonar, DM ou DRC',
+    workup:['Gasometria + ânion gap','Glicemia','Função renal','Lactato','Cetonemia se DM']});
+
+  let ov=0;
+  if(has('estridor'))ov+=3;
+  if(onset==='agudo')ov+=2;
+  if(has('mv_abolido'))ov+=2;
+  if(sym('estridor_sint'))ov+=2;
+  if(sym('disfagia'))ov+=2;
+  if(severity==='incapaz')ov+=2;
+  if(sym('febre'))ov-=2;
+  if(has('crepitacoes'))ov-=1;
+  dx.push({name:'Obstrução de via aérea (OVACE)',cat:'Emergência',score:Math.max(0,ov),
+    clues:'Início súbito durante alimentação, estridor',
+    workup:['Heimlich se obstrução completa e consciente','Laringoscopia direta','RCP se inconsciente','Cricotireoidostomia se falha']});
+
+  dx.sort((a,b)=>b.score-a.score);
+  return dx;
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function progHTML(idx,allDone){
+  let h='<div class="progress">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done':i===idx?'active':'';h+=`<div class="progress-step ${c}"></div>`}
+  h+='</div>';
+  if(!allDone)h+=`<div class="progress-label"><span class="current">Etapa ${idx+1}/${TOTAL_STEPS}</span> \u00B7 ${STEP_LABELS[idx]}</div>`;
+  else h+=`<div class="progress-label"><span class="current">Completo</span></div>`;
+  return h;
+}
+
+function monitorStripHTML(){
+  let h='<div class="monitor-strip">';
+  const cells=[
+    {lbl:'SpO\u2082',val:vitals.spo2,unit:'%',st:spo2Status()},
+    {lbl:'FR',val:vitals.fr,unit:'',st:frStatus()},
+    {lbl:'FC',val:vitals.fc,unit:'',st:fcStatus()},
+  ];
+  for(const c of cells){
+    const cls=c.val===''?'empty':c.st==='danger'?'crit':c.st==='warning'?'warn':'';
+    h+=`<div class="monitor-cell ${cls}"><span class="lbl">${c.lbl}</span><span class="val">${c.val||'--'}${c.unit&&c.val?`<span class="unit">${c.unit}</span>`:''}</span></div>`;
+  }
+  h+='</div>';
+  return h;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render(){
+  const prev=document.activeElement;
+  const prevId=prev?prev.getAttribute('data-vital'):null;
+  const prevSel=prev&&prev.selectionStart!==undefined?prev.selectionStart:null;
+
+  if(currentStep===0)renderPatient();
+  else if(currentStep===1)renderSymptoms();
+  else if(currentStep===2)renderVitals();
+  else if(currentStep===3)renderExam();
+  else renderResult();
+
+  if(prevId&&currentStep===2){
+    const el=document.querySelector(`[data-vital="${prevId}"]`);
+    if(el){el.focus();if(prevSel!==null&&el.setSelectionRange){try{el.setSelectionRange(prevSel,prevSel)}catch(e){}}}
+  }
+}
+
+// ============================================================
+// STEP 0: PATIENT + ONSET + SEVERITY (merged)
+// ============================================================
+function renderPatient(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<h2>Paciente e apresentação</h2>';
+  h+='<p class="subtitle">Dados demográficos, início e gravidade</p>';
+  h+='<div class="options">';
+
+  h+='<div class="group-label">Idade</div>';
+  const ageOpts=[{v:0,l:'< 45'},{v:1,l:'45\u201364'},{v:2,l:'65\u201379'},{v:3,l:'\u2265 80'}];
+  h+='<div class="chips">';
+  for(const o of ageOpts)h+=`<button class="chip ${patHistory.age===o.v?'picked':''}" onclick="setPatH('age',${o.v})">${o.l}</button>`;
+  h+='</div>';
+
+  h+='<div class="group-label">Sexo</div>';
+  h+='<div class="chips">';
+  h+=`<button class="chip ${patHistory.sex==='M'?'picked':''}" onclick="setPatH('sex','M')">Masculino</button>`;
+  h+=`<button class="chip ${patHistory.sex==='F'?'picked':''}" onclick="setPatH('sex','F')">Feminino</button>`;
+  h+='</div>';
+
+  h+='<div class="group-label">Tabagismo</div>';
+  h+='<div class="chips">';
+  for(const o of [{v:'nao',l:'Não'},{v:'ativo',l:'Ativo'},{v:'ex',l:'Ex'}]){
+    h+=`<button class="chip ${patHistory.smoking===o.v?'picked':''}" onclick="setPatH('smoking','${o.v}')">${o.l}</button>`;
+  }
+  h+='</div>';
+
+  h+='<div class="group-label">Forma de início</div>';
+  const onsetOpts=[
+    {v:'agudo',label:'Agudo',desc:'Minutos a horas'},
+    {v:'cronico',label:'Crônico',desc:'Semanas a meses'},
+    {v:'agudo-cronico',label:'Agudo sobre crônico',desc:'Piora de quadro prévio'},
+  ];
+  for(const o of onsetOpts){
+    h+=`<button class="option-btn ${onset===o.v?'selected':''}" onclick="setOnset('${o.v}')"><span class="label">${o.label}<small>${o.desc}</small></span></button>`;
+  }
+
+  h+='<div class="group-label">Gravidade (capacidade de fala)</div>';
+  const sev=[
+    {v:'sentencas',label:'Sentenças completas',tag:'tag-leve',tagL:'Leve'},
+    {v:'frases',label:'Frases curtas',tag:'tag-moderada',tagL:'Moderada'},
+    {v:'palavras',label:'Palavras isoladas',tag:'tag-grave',tagL:'Grave'},
+    {v:'incapaz',label:'Incapaz de falar',tag:'tag-critico',tagL:'Crítico'},
+  ];
+  for(const o of sev){
+    h+=`<button class="option-btn ${severity===o.v?'selected':''}" onclick="setSeverity('${o.v}')"><span class="label">${o.label}</span><span class="tag ${o.tag}">${o.tagL}</span></button>`;
+  }
+
+  if(severity==='incapaz'){
+    h+=`<div class="step-alert crit">IOT iminente \u2014 preparar via aérea avançada e MOV.</div>`;
+  } else if(severity==='palavras'){
+    h+=`<div class="step-alert warn">Dispneia grave \u2014 O\u2082, monitorização e material de via aérea.</div>`;
+  }
+
+  const histCount=patHistoryChecks.size;
+  h+=`<div class="group-label">Antecedentes${histCount?` <span class="count">${histCount}</span>`:''}</div>`;
+  for(const hf of HISTORY_FIELDS){
+    const ck=patHistoryChecks.has(hf.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleHist('${hf.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${hf.label}</span></button>`;
+  }
+
+  h+='</div>';
+  const canNext=onset!==null&&patHistory.age!==null&&patHistory.sex!==null&&severity!==null;
+  h+='<div class="nav-row">';
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()">Próximo \u2192</button>`;
+  h+='</div>';
+  if(!canNext){
+    const m=[];
+    if(patHistory.age===null)m.push('idade');
+    if(patHistory.sex===null)m.push('sexo');
+    if(onset===null)m.push('início');
+    if(severity===null)m.push('gravidade');
+    h+=`<div class="miss-hint">Preencha: ${m.join(', ')}</div>`;
+  }
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// ============================================================
+// STEP 1: SYMPTOMS
+// ============================================================
+function renderSymptoms(){
+  let h=progHTML(1,false);
+  h+='<div class="card">';
+  h+='<h2>Sintomas associados</h2>';
+  h+='<p class="subtitle">Marque os sintomas presentes</p>';
+
+  h+='<div class="options">';
+  const groups=[{cat:'cardiac',label:'Cardíacos'},{cat:'pulmonary',label:'Pulmonares'},{cat:'other',label:'Outros'}];
+  for(const g of groups){
+    const inGroup=SYMPTOM_LIST.filter(s=>s.cat===g.cat);
+    const count=inGroup.filter(s=>symptoms.has(s.id)).length;
+    h+=`<div class="group-label">${g.label}${count?` <span class="count">${count}</span>`:''}</div>`;
+    for(const s of inGroup){
+      const ck=symptoms.has(s.id);
+      h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSymp('${s.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${s.label}</span></button>`;
+    }
+  }
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar">\u2190</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo \u2192</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ============================================================
+// STEP 2: VITALS
+// ============================================================
+function renderVitals(){
+  let h=progHTML(2,false);
+  h+='<div class="card">';
+  h+='<h2>Sinais vitais</h2>';
+  h+='<p class="subtitle">Opcional \u2014 cada campo é validado individualmente</p>';
+
+  h+='<div class="vitals-grid">';
+  const vItems=[
+    {k:'spo2',label:'SpO\u2082',unit:'%',status:spo2Status(),val:vitals.spo2,ph:'95\u2013100',min:0,max:100},
+    {k:'fr',label:'FR',unit:'irpm',status:frStatus(),val:vitals.fr,ph:'12\u201320',min:0,max:80},
+    {k:'fc',label:'FC',unit:'bpm',status:fcStatus(),val:vitals.fc,ph:'60\u2013100',min:0,max:300},
+    {k:'pas',label:'PAS',unit:'mmHg',status:pasStatus(),val:vitals.pas,ph:'100\u2013140',min:0,max:300},
+    {k:'pad',label:'PAD',unit:'mmHg',status:padStatus(),val:vitals.pad,ph:'60\u201390',min:0,max:200},
+    {k:'temp',label:'Temp',unit:'\u00B0C',status:tempStatus(),val:vitals.temp,ph:'36\u201337,5',min:30,max:45},
+  ];
+  for(const v of vItems){
+    const cls=v.status||'';
+    const tagL=v.status==='danger'?'Crítico':v.status==='warning'?'Alerta':v.status==='normal'?'OK':'';
+    h+='<div class="v-group">';
+    h+=`<label><span>${v.label} (${v.unit})</span>${tagL?`<span class="v-tag ${v.status}">${tagL}</span>`:''}</label>`;
+    const step=v.k==='temp'?'step="any"':'';
+    const im=v.k==='temp'?'decimal':'numeric';
+    h+=`<input type="number" inputmode="${im}" class="v-input ${cls}" data-vital="${v.k}" placeholder="${v.ph}" value="${v.val}" oninput="setVital('${v.k}',this.value)" min="${v.min}" max="${v.max}" ${step}>`;
+    h+='</div>';
+  }
+  h+='</div>';
+
+  const hasAny=vItems.some(v=>v.val!=='');
+  if(hasAny){
+    h+=monitorStripHTML();
+    const m=mapVal();
+    if(m!==null){
+      const low=m<65;
+      h+=`<div class="o2-strip ${low?'crit':'ok'}" style="margin-top:.5rem">PAM ${m} mmHg${low?' \u2014 risco de hipoperfusão':''}</div>`;
+    }
+  }
+
+  const o2=getO2Suggestion();
+  if(o2)h+=`<div class="o2-strip ${o2.cls}">${o2.text}</div>`;
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar">\u2190</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Próximo \u2192</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ============================================================
+// STEP 3: EXAM
+// ============================================================
+function renderExam(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<h2>Exame físico</h2>';
+  h+='<p class="subtitle">Selecione os achados</p>';
+
+  const hasEmerg=EXAM_LIST.filter(e=>e.cat==='emergencia').some(e=>examFindings.has(e.id));
+  if(hasEmerg){
+    h+=`<div class="step-alert crit" style="margin-top:0;margin-bottom:.9rem">Sinal de emergência \u2014 intervenção imediata.</div>`;
+  }
+
+  h+='<div class="options">';
+  const groups=[
+    {cat:'emergencia',label:'Sinais de emergência',emerg:true},
+    {cat:'pulmonary',label:'Ausculta e percussão'},
+    {cat:'cardiac',label:'Cardiovascular'},
+    {cat:'geral',label:'Gerais'},
+  ];
+  for(const g of groups){
+    const inGroup=EXAM_LIST.filter(e=>e.cat===g.cat);
+    const count=inGroup.filter(e=>examFindings.has(e.id)).length;
+    h+=`<div class="group-label">${g.label}${count?` <span class="count">${count}</span>`:''}</div>`;
+    for(const e of inGroup){
+      const ck=examFindings.has(e.id);
+      const ckCls=ck?(g.emerg?'emergency-checked':'checked'):'';
+      h+=`<button class="check-btn ${ckCls}" onclick="toggleExam('${e.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${e.label}</span></button>`;
+    }
+  }
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar">\u2190</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver resultado \u2192</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ============================================================
+// STEP 4: RESULT
+// ============================================================
+function renderResult(){
+  const risk=riskLevel();
+  const dx=buildDifferentials();
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  const flags=getRedFlags();
+  if(flags.length>0){
+    h+='<div class="red-flags"><h4>Red flags</h4><ul>';
+    for(const f of flags)h+=`<li>${f}</li>`;
+    h+='</ul></div>';
+  }
+
+  h+=`<div class="result-badge ${risk.cls}">${risk.icon}</div>`;
+  h+=`<div class="result-title">${risk.label}</div>`;
+  const sevL={sentencas:'Sentenças',frases:'Frases',palavras:'Palavras',incapaz:'Incapaz'};
+  const onsetL={'agudo':'Agudo','cronico':'Crônico','agudo-cronico':'Agudo/crônico'};
+  h+=`<div class="result-desc">${onsetL[onset]} \u00B7 ${sevL[severity]} \u00B7 ${patHistory.sex==='M'?'Masc':'Fem'} ${['< 45','45\u201364','65\u201379','\u2265 80'][patHistory.age]}a</div>`;
+
+  if(spo2V()!==null||frV()!==null||fcV()!==null){
+    h+=monitorStripHTML();
+  }
+
+  const qs=getQSOFA();
+  if(qs>=2){
+    h+=`<div class="step-alert crit mt-md"><strong>qSOFA ${qs}/3</strong> \u2014 Considerar sepse. Lactato, hemoculturas, antibiótico empírico.</div>`;
+  }
+
+  h+='<div class="spacer"></div>';
+
+  h+=collapsible('resumo','Resumo',()=>{
+    let s='';
+    s+=`<div class="sum-row"><span class="k">Início</span><span class="v">${onsetL[onset]}</span></div>`;
+    s+=`<div class="sum-row"><span class="k">Gravidade</span><span class="v">${sevL[severity]}</span></div>`;
+    const sl=SYMPTOM_LIST.filter(x=>symptoms.has(x.id)).map(x=>x.label);
+    s+=`<div class="sum-row"><span class="k">Sintomas</span><span class="v">${sl.length?sl.join(', '):'\u2014'}</span></div>`;
+    if(spo2V()!==null)s+=`<div class="sum-row"><span class="k">SpO\u2082</span><span class="v"><span class="dot ${dotCls(spo2Status())}"></span>${vitals.spo2}%</span></div>`;
+    if(frV()!==null)s+=`<div class="sum-row"><span class="k">FR</span><span class="v"><span class="dot ${dotCls(frStatus())}"></span>${vitals.fr}</span></div>`;
+    if(fcV()!==null)s+=`<div class="sum-row"><span class="k">FC</span><span class="v"><span class="dot ${dotCls(fcStatus())}"></span>${vitals.fc}</span></div>`;
+    if(pasV()!==null)s+=`<div class="sum-row"><span class="k">PA</span><span class="v"><span class="dot ${dotCls(pasStatus())}"></span>${vitals.pas}/${vitals.pad||'?'}</span></div>`;
+    if(tempV()!==null)s+=`<div class="sum-row"><span class="k">Temp</span><span class="v"><span class="dot ${dotCls(tempStatus())}"></span>${vitals.temp}\u00B0C</span></div>`;
+    const el=EXAM_LIST.filter(x=>examFindings.has(x.id)).map(x=>x.label);
+    s+=`<div class="sum-row"><span class="k">Exame</span><span class="v">${el.length?el.join(', '):'\u2014'}</span></div>`;
+    const hl=HISTORY_FIELDS.filter(x=>patHistoryChecks.has(x.id)).map(x=>x.label);
+    if(patHistory.smoking&&patHistory.smoking!=='nao')hl.push('Tabagismo '+(patHistory.smoking==='ativo'?'ativo':'prévio'));
+    s+=`<div class="sum-row"><span class="k">Antecedentes</span><span class="v">${hl.length?hl.join(', '):'\u2014'}</span></div>`;
+    return s;
+  });
+
+  h+=collapsible('diag','Diagnóstico diferencial',()=>{
+    let s='';
+    let shown=0;
+    for(let i=0;i<dx.length;i++){
+      const d=dx[i];
+      if(d.score===0&&shown>=3)continue;
+      if(d.score>0)shown++;
+      const primary=i===0&&d.score>0;
+      let probCls='prob-low';
+      if(d.score>=8)probCls='prob-high';
+      else if(d.score>=4)probCls='prob-mod';
+
+      s+=`<div class="dx-card ${primary?'primary':''}">`;
+      s+=`<div class="dx-cat">${d.cat}${primary?' \u00B7 Principal':''}</div>`;
+      s+=`<div class="dx-hdr"><span class="dx-name">${d.name}</span>`;
+      if(d.score>0)s+=`<span class="dx-prob ${probCls}">+${d.score}</span>`;
+      s+=`</div>`;
+      s+=`<div class="dx-clues">${d.clues}</div>`;
+      s+=`</div>`;
+    }
+    return s;
+  });
+
+  h+=buildConduta(dx);
+
+  h+=collapsible('note','Nota para prontuário',()=>buildNoteContent(dx));
+
+  if(restartConfirming){
+    h+='<div class="restart-confirm"><span>Descartar avaliação atual?</span>';
+    h+='<button onclick="restartCancel()">Cancelar</button>';
+    h+='<button class="danger" onclick="restartConfirm()">Nova</button></div>';
+  } else {
+    h+='<div class="nav-row">';
+    h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar">\u2190</button>';
+    h+='<button class="nav-btn primary" onclick="restartAsk()">Nova avaliação</button>';
+    h+='</div>';
+  }
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// ============================================================
+// CONDUTA
+// ============================================================
+function buildConduta(dx){
+  const risk=riskLevel();
+  let cls,title,items=[];
+
+  if(risk.level==='critico'){
+    cls='c-critico';title='Crítico \u00B7 Intervenção imediata';
+    items.push(['MOV: monitor + oximetria + acesso venoso calibroso',[]]);
+    items.push(['O\u2082: MNR 15 L/min ou VNI',[]]);
+    items.push(['Gasometria arterial, ECG, RX / USG POCUS',[]]);
+    items.push(['Avaliar IOT (SRI)',['Ketamina 1\u20132 mg/kg + Succinilcolina 1\u20131,5 mg/kg','Pré-oxigenação 3\u20135 min']]);
+    items.push(['Labs: hemograma, lactato, função renal, eletrólitos, troponina, BNP',[]]);
+    if(examFindings.has('desvio_traqueia')||examFindings.has('enfisema_subcut')){
+      items.push(['Pneumotórax hipertensivo? Toracocentese descompressiva',['2\u00BA EIC linha hemiclavicular com jelco 14G','Drenagem em selo d\'água']]);
+    }
+    if(examFindings.has('angioedema')||examFindings.has('estridor')){
+      items.push(['Via aérea ameaçada \u2014 Adrenalina IM 0,5 mg',['Nebulização c/ adrenalina','Intubação precoce por operador experiente']]);
+    }
+    if(examFindings.has('ritmo_irregular')&&fcV()!==null&&fcV()>=150){
+      items.push(['Taquiarritmia instável \u2014 cardioversão sincronizada',['FA/Flutter: 120\u2013200 J bifásico','TSVP: Adenosina 6 mg IV']]);
+    }
+  } else if(risk.level==='alto'){
+    cls='c-alto';title='Alto risco \u00B7 Avaliação urgente';
+    items.push(['MOV: monitor, O\u2082, acesso venoso',[]]);
+    items.push(['Gasometria arterial + ECG + RX tórax',[]]);
+    items.push(['Labs: hemograma, PCR, função renal, eletrólitos, troponina, BNP, lactato',[]]);
+  } else if(risk.level==='moderado'){
+    cls='c-moderado';title='Risco moderado \u00B7 Investigação ativa';
+    items.push(['ECG 12 derivações + RX tórax',[]]);
+    items.push(['Labs: hemograma, PCR, função renal, eletrólitos',[]]);
+    items.push(['Conforme suspeita: D-dímero, BNP, troponina',[]]);
+  } else {
+    cls='c-baixo';title='Baixo risco \u00B7 Avaliação ambulatorial possível';
+    items.push(['ECG se não realizado',[]]);
+    items.push(['RX tórax se febre ou achados auscultativos',[]]);
+    items.push(['Orientar sinais de alarme para retorno',[]]);
+  }
+
+  if(dx.length>0&&dx[0].score>0){
+    items.push([`Suspeita: ${dx[0].name}`,[]]);
+    for(const w of dx[0].workup)items.push([w,[]]);
+  }
+  if(dx.length>1&&dx[1].score>=3){
+    items.push([`Também considerar: ${dx[1].name}`,[]]);
+  }
+
+  let h=`<div class="conduta ${cls}">`;
+  h+=`<h3>Conduta \u00B7 ${title}</h3>`;
+  for(const [text,subs] of items){
+    h+=`<div class="conduta-item"><span>${text}</span></div>`;
+    if(subs.length){
+      for(const sub of subs)h+=`<div class="conduta-sub">\u2014 ${sub}</div>`;
+    }
+  }
+  h+='</div>';
+  return h;
+}
+
+// ============================================================
+// NOTE
+// ============================================================
+function buildNoteContent(dx){
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(evalStart.getDate())}/${pad(evalStart.getMonth()+1)}/${evalStart.getFullYear()} ${pad(evalStart.getHours())}:${pad(evalStart.getMinutes())}`;
+  const risk=riskLevel();
+  const onsetL={'agudo':'Agudo','cronico':'Crônico','agudo-cronico':'Agudo sobre crônico'};
+  const sevL={sentencas:'Sentenças completas',frases:'Frases curtas',palavras:'Palavras isoladas',incapaz:'Incapaz de falar'};
+  const ageL=['< 45','45\u201364','65\u201379','\u2265 80'];
+
+  let n='';
+  n+=`DISPNEIA \u2014 AVALIAÇÃO\n`;
+  n+=`${ts}\n`;
+  n+=`--------------------------------\n\n`;
+
+  n+=`PACIENTE: ${patHistory.sex==='M'?'M':'F'}, ${ageL[patHistory.age]} a\n`;
+  const hl=HISTORY_FIELDS.filter(h=>patHistoryChecks.has(h.id)).map(h=>h.label);
+  if(patHistory.smoking&&patHistory.smoking!=='nao')hl.push('Tabagismo '+(patHistory.smoking==='ativo'?'ativo':'prévio'));
+  n+=`Antecedentes: ${hl.length?hl.join(', '):'\u2014'}\n`;
+
+  n+=`\nQUADRO\n`;
+  n+=`  Início: ${onsetL[onset]}\n`;
+  n+=`  Gravidade: ${sevL[severity]}\n`;
+  const sl=SYMPTOM_LIST.filter(s=>symptoms.has(s.id)).map(s=>s.label);
+  n+=`  Sintomas: ${sl.length?sl.join(', '):'\u2014'}\n`;
+
+  n+=`\nSINAIS VITAIS\n`;
+  if(spo2V()!==null)n+=`  SpO2: ${vitals.spo2}%${spo2Status()==='danger'?' [CRIT]':spo2Status()==='warning'?' [baixa]':''}\n`;
+  if(frV()!==null)n+=`  FR: ${vitals.fr} irpm${frStatus()==='danger'?' [CRIT]':frStatus()==='warning'?' [elevada]':''}\n`;
+  if(fcV()!==null)n+=`  FC: ${vitals.fc} bpm${fcStatus()==='danger'?' [CRIT]':fcStatus()==='warning'?' [alt]':''}\n`;
+  if(pasV()!==null)n+=`  PA: ${vitals.pas}/${vitals.pad||'?'} mmHg${pasStatus()==='danger'?' [HIPOTENSAO]':pasStatus()==='warning'?' [HTA]':''}\n`;
+  if(tempV()!==null)n+=`  Temp: ${vitals.temp}C${tempStatus()==='danger'?' [alt]':tempStatus()==='warning'?' [febre]':''}\n`;
+  const m=mapVal();
+  if(m!==null)n+=`  PAM: ${m} mmHg${m<65?' [HIPOPERFUSAO]':''}\n`;
+  if(spo2V()===null&&frV()===null&&fcV()===null)n+=`  (não registrados)\n`;
+
+  n+=`\nEXAME FISICO\n`;
+  const el=EXAM_LIST.filter(e=>examFindings.has(e.id)).map(e=>e.label);
+  if(el.length)for(const l of el)n+=`  - ${l}\n`;
+  else n+=`  Sem achados significativos\n`;
+
+  const flags=getRedFlags();
+  if(flags.length){
+    n+=`\nRED FLAGS\n`;
+    for(const f of flags)n+=`  ! ${f}\n`;
+  }
+
+  n+=`\nESTRATIFICACAO: ${risk.label} (score ${totalRisk()})\n`;
+
+  const qs=getQSOFA();
+  if(frV()!==null||pasV()!==null){
+    n+=`qSOFA: ${qs}/3${qs>=2?' POSITIVO':''}\n`;
+  }
+
+  n+=`\nDIAGNOSTICO DIFERENCIAL\n`;
+  const top=dx.filter(d=>d.score>0).slice(0,5);
+  if(top.length){
+    for(let i=0;i<top.length;i++)n+=`  ${i+1}. ${top[i].name} (${top[i].cat})${i===0?' \u2014 Principal':''}\n`;
+  } else n+=`  Dados insuficientes\n`;
+
+  if(top.length){
+    n+=`\nPROPEDEUTICA\n`;
+    for(const w of top[0].workup)n+=`  - ${w}\n`;
+  }
+
+  n+=`\n--------------------------------\n`;
+  n+=`MedStack \u2014 Dispneia v9\n`;
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  if(!el)return;
+  const text=el.textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showCopied).catch(()=>fallbackCopy(el));
+  } else fallbackCopy(el);
+}
+function showCopied(){
+  const btn=document.getElementById('copyBtn');
+  if(!btn)return;
+  btn.textContent='\u2713 Copiado';btn.classList.add('copied');
+  setTimeout(()=>{const b=document.getElementById('copyBtn');if(b){b.textContent='Copiar nota';b.classList.remove('copied')}},2000);
+}
+function fallbackCopy(el){
+  const ta=document.createElement('textarea');
+  ta.value=el.textContent;ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showCopied()}catch(e){}
+  document.body.removeChild(ta);
+}
+
+// ============================================================
+// COLLAPSIBLE
+// ============================================================
+function collapsible(id,title,contentFn){
+  const open=sections[id];
+  let h='<div class="box">';
+  h+=`<div class="collapse-hdr" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}">`;
+  if(open)h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// ============================================================
+// ACTIONS
+// ============================================================
+function setOnset(v){onset=v;render()}
+function setSeverity(v){severity=v;render()}
+function toggleSymp(id){symptoms.has(id)?symptoms.delete(id):symptoms.add(id);render()}
+function setVital(k,v){vitals[k]=v;clearTimeout(window._t);window._t=setTimeout(()=>render(),350)}
+function toggleExam(id){examFindings.has(id)?examFindings.delete(id):examFindings.add(id);render()}
+function setPatH(f,v){if(f==='age')patHistory.age=v;else if(f==='sex')patHistory.sex=v;else patHistory.smoking=v;render()}
+function toggleHist(id){patHistoryChecks.has(id)?patHistoryChecks.delete(id):patHistoryChecks.add(id);render()}
+function toggleSection(id){sections[id]=!sections[id];render()}
+
+function next(){
+  if(currentStep===0&&(onset===null||patHistory.age===null||patHistory.sex===null||severity===null))return;
+  currentStep++;render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function prev(){if(currentStep>0){currentStep--;render();window.scrollTo({top:0,behavior:'smooth'})}}
+
+function restartAsk(){restartConfirming=true;render()}
+function restartCancel(){restartConfirming=false;render()}
+function restartConfirm(){
+  currentStep=0;onset=null;severity=null;
+  symptoms=new Set();vitals={spo2:'',fr:'',fc:'',pas:'',pad:'',temp:''};
+  examFindings=new Set();patHistory={age:null,sex:null,smoking:null};
+  patHistoryChecks=new Set();
+  sections={resumo:true,diag:true,note:false};
+  restartConfirming=false;
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='ArrowRight'){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){e.preventDefault();prev()}
+  else if(e.key==='Escape'&&restartConfirming){e.preventDefault();restartCancel()}
+});
+
+render();
+</script>
+</body>
+</html>

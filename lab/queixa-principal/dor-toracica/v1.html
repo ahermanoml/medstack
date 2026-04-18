@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dor Toracica - Classificacao + Scores</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+  header{background:linear-gradient(135deg,#1e293b,#334155);width:100%;padding:1.5rem;text-align:center;border-bottom:2px solid #3b82f6;position:relative}
+  header h1{font-size:1.5rem;font-weight:600;color:#f1f5f9}
+  header p{font-size:.875rem;color:#94a3b8;margin-top:.25rem}
+  .back-link{position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);color:#94a3b8;text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s}
+  .back-link:hover{color:#f1f5f9}
+  .container{max-width:700px;width:100%;padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+  .progress-bar{display:flex;align-items:center;gap:.35rem;padding:0 .5rem}
+  .progress-step{flex:1;height:6px;border-radius:3px;background:#1e293b;transition:background .4s}
+  .progress-step.done{background:#3b82f6}.progress-step.active{background:#60a5fa;animation:pulse-bar 1.5s infinite}
+  @keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.5}}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.55rem;color:#64748b;padding:0 .5rem}
+  .progress-labels span.active-label{color:#93c5fd;font-weight:600}.progress-labels span.done-label{color:#3b82f6}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:1rem;padding:2rem;animation:fadeIn .35s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.15rem;color:#f8fafc;margin-bottom:.35rem}
+  .card .subtitle{font-size:.8rem;color:#94a3b8;margin-bottom:1.25rem}
+  .options{display:flex;flex-direction:column;gap:.75rem}
+  .option-group-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-top:.5rem;margin-bottom:-.25rem}
+  .option-group-label:first-child{margin-top:0}
+  .option-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.9rem 1.1rem;color:#cbd5e1;font-size:.95rem;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:.75rem}
+  .option-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .option-btn.selected{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}
+  .option-btn .icon{font-size:1.25rem;flex-shrink:0;width:2rem;text-align:center}
+  .option-btn .label{flex:1}
+  .option-btn .tag{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:9999px;font-weight:600;flex-shrink:0}
+  .tag-typical{background:#164e63;color:#67e8f9}.tag-atypical{background:#4c1d95;color:#c4b5fd}.tag-outro{background:#374151;color:#d1d5db}
+  .check-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.75rem 1rem;color:#cbd5e1;font-size:.9rem;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:.75rem}
+  .check-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .check-btn.checked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}
+  .check-box{width:20px;height:20px;border:2px solid #475569;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.75rem}
+  .check-btn.checked .check-box{background:#3b82f6;border-color:#3b82f6}
+  .check-btn .lr-value{font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:9999px;flex-shrink:0;font-family:'SF Mono','Fira Code',monospace}
+  .lr-up{background:#7f1d1d;color:#fca5a5}.lr-down{background:#14532d;color:#86efac}
+  .nav-row{display:flex;gap:.75rem;margin-top:1.25rem}
+  .nav-btn{flex:1;padding:.8rem;border-radius:.75rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+  .nav-btn.secondary{background:#334155;color:#cbd5e1}.nav-btn.secondary:hover{background:#475569}
+  .nav-btn.primary{background:#3b82f6;color:#fff}.nav-btn.primary:hover{background:#2563eb}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed}
+  .result-card{text-align:center;padding:2rem 1.5rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:5rem;height:5rem;border-radius:50%;font-size:2rem;font-weight:800;margin-bottom:1rem}
+  .result-badge.type-a{background:#991b1b;color:#fca5a5;border:3px solid #ef4444}
+  .result-badge.type-b{background:#92400e;color:#fcd34d;border:3px solid #f59e0b}
+  .result-badge.type-c{background:#1e40af;color:#93c5fd;border:3px solid #3b82f6}
+  .result-badge.type-d{background:#166534;color:#86efac;border:3px solid #22c55e}
+  .result-title{font-size:1.3rem;font-weight:700;margin-bottom:.25rem}
+  .result-desc{color:#94a3b8;font-size:.9rem;margin-bottom:1.5rem}
+  .dark-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .dark-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #1e293b;font-size:.85rem}
+  .summary-row:last-child{border-bottom:none}.summary-row .criteria{color:#94a3b8}
+  .summary-row .value{font-weight:600;display:flex;align-items:center;gap:.4rem}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot-typical{background:#22d3ee}.dot-atypical{background:#a78bfa}.dot-outro{background:#9ca3af}
+  .typical-count{font-size:1rem;margin-bottom:1.5rem;color:#cbd5e1}.typical-count strong{color:#60a5fa;font-size:1.1rem}
+  .lr-combined{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:1rem 0;margin-bottom:.75rem}
+  .lr-combined-item{text-align:center}
+  .lr-combined-value{font-size:1.6rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace}
+  .lr-combined-value.up{color:#fca5a5}.lr-combined-value.down{color:#86efac}.lr-combined-value.neutral{color:#94a3b8}
+  .lr-combined-label{font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:.25rem}
+  .lr-divider{width:1px;height:3rem;background:#334155}
+  .lr-interpretation{text-align:center;padding:.75rem;border-radius:.5rem;font-size:.85rem;font-weight:600}
+  .lr-interpretation.high-risk{background:#450a0a;color:#fca5a5;border:1px solid #7f1d1d}
+  .lr-interpretation.moderate-risk{background:#451a03;color:#fed7aa;border:1px solid #78350f}
+  .lr-interpretation.low-risk{background:#052e16;color:#bbf7d0;border:1px solid #14532d}
+  .lr-interpretation.neutral-risk{background:#1e293b;color:#94a3b8;border:1px solid #334155}
+  .lr-detail-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid #1e293b;font-size:.8rem}
+  .lr-detail-row:last-child{border-bottom:none}.lr-detail-row .feat-name{color:#94a3b8;flex:1}
+  .lr-detail-row .feat-lr{font-weight:700;font-family:'SF Mono','Fira Code',monospace;font-size:.8rem}
+  .lr-detail-row .feat-lr.up{color:#fca5a5}.lr-detail-row .feat-lr.down{color:#86efac}
+  .pretest-input-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+  .pretest-slider-wrap{flex:1;display:flex;align-items:center;gap:.5rem}
+  .pretest-slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:#334155;outline:none}
+  .pretest-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#3b82f6;cursor:pointer;border:2px solid #60a5fa}
+  .pretest-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#3b82f6;cursor:pointer;border:2px solid #60a5fa}
+  .pretest-value{font-size:1.1rem;font-weight:700;color:#f1f5f9;font-family:'SF Mono','Fira Code',monospace;min-width:3.5rem;text-align:right}
+  .posttest-display{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1rem}
+  .prob-box{text-align:center;padding:.75rem 1.25rem;border-radius:.75rem;min-width:6rem}
+  .prob-box.pre{background:#1e293b;border:1px solid #334155}
+  .prob-box.post{border:2px solid}
+  .prob-box.post.risk-high{background:#450a0a;border-color:#ef4444}
+  .prob-box.post.risk-moderate{background:#451a03;border-color:#f59e0b}
+  .prob-box.post.risk-low{background:#052e16;border-color:#22c55e}
+  .prob-box.post.risk-neutral{background:#1e293b;border-color:#64748b}
+  .prob-box-value{font-size:1.5rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace}
+  .prob-box.pre .prob-box-value{color:#94a3b8}
+  .prob-box.post.risk-high .prob-box-value{color:#fca5a5}
+  .prob-box.post.risk-moderate .prob-box-value{color:#fcd34d}
+  .prob-box.post.risk-low .prob-box-value{color:#86efac}
+  .prob-box.post.risk-neutral .prob-box-value{color:#94a3b8}
+  .prob-box-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-top:.2rem}
+  .arrow-between{font-size:1.2rem;color:#475569}
+  .fagan-formula{font-family:'SF Mono','Fira Code',monospace;font-size:.65rem;color:#475569;text-align:center;margin-top:.5rem}
+  .conduta-box{border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .conduta-box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .conduta-box.alta-prob{background:#450a0a;border:1.5px solid #991b1b}.conduta-box.alta-prob h3{color:#fca5a5}
+  .conduta-box.mod-prob{background:#451a03;border:1.5px solid #78350f}.conduta-box.mod-prob h3{color:#fcd34d}
+  .conduta-box.baixa-prob{background:#052e16;border:1.5px solid #14532d}.conduta-box.baixa-prob h3{color:#86efac}
+  .conduta-box.neutra-prob{background:#1e293b;border:1.5px solid #334155}.conduta-box.neutra-prob h3{color:#94a3b8}
+  .conduta-item{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem 0;font-size:.85rem;color:#cbd5e1}
+  .conduta-icon{flex-shrink:0;width:1.2rem;text-align:center}
+  .score-section{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .score-section h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .score-tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+  .score-tab{flex:1;padding:.6rem;border-radius:.5rem;font-size:.8rem;font-weight:600;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s}
+  .score-tab.active{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}.score-tab:hover{border-color:#3b82f6}
+  .score-row{margin-bottom:.75rem}
+  .score-row-label{font-size:.8rem;color:#94a3b8;margin-bottom:.4rem;display:flex;justify-content:space-between}
+  .score-row-label .auto-tag{font-size:.6rem;background:#1e3a5f;color:#60a5fa;padding:.1rem .4rem;border-radius:9999px}
+  .score-options{display:flex;gap:.4rem}
+  .score-opt{flex:1;padding:.5rem .3rem;border-radius:.5rem;font-size:.72rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s;line-height:1.3}
+  .score-opt:hover{border-color:#3b82f6;color:#cbd5e1}
+  .score-opt.picked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9;font-weight:600}
+  .score-opt .pts{display:block;font-size:.6rem;color:#64748b;margin-top:.15rem}.score-opt.picked .pts{color:#93c5fd}
+  .score-result{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:.75rem;margin-top:.75rem}
+  .score-result.sr-high{background:#450a0a;border:1px solid #7f1d1d}
+  .score-result.sr-mod{background:#451a03;border:1px solid #78350f}
+  .score-result.sr-low{background:#052e16;border:1px solid #14532d}
+  .score-result.sr-pending{background:#1e293b;border:1px solid #334155}
+  .score-num{font-size:2rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;min-width:2.5rem;text-align:center}
+  .score-result.sr-high .score-num{color:#fca5a5}.score-result.sr-mod .score-num{color:#fcd34d}
+  .score-result.sr-low .score-num{color:#86efac}.score-result.sr-pending .score-num{color:#64748b}
+  .score-info{flex:1}.score-info .score-label{font-size:.85rem;font-weight:600;color:#f1f5f9}
+  .score-info .score-detail{font-size:.75rem;color:#94a3b8;margin-top:.15rem}
+  /* Shared inputs bar */
+  .shared-inputs{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1rem;margin-bottom:1rem}
+  .shared-inputs-title{font-size:.7rem;color:#60a5fa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem}
+  .shared-row{margin-bottom:.6rem}
+  .shared-row:last-child{margin-bottom:0}
+  .shared-row-label{font-size:.75rem;color:#94a3b8;margin-bottom:.3rem}
+  .shared-options{display:flex;gap:.35rem}
+  .shared-opt{flex:1;padding:.45rem .25rem;border-radius:.4rem;font-size:.7rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s}
+  .shared-opt:hover{border-color:#3b82f6;color:#cbd5e1}
+  .shared-opt.picked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9;font-weight:600}
+  /* Collapsible */
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+  .collapse-header h3{margin-bottom:0}
+  .collapse-arrow{font-size:.8rem;color:#64748b;transition:transform .2s}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .3s ease}
+  .collapse-body.hidden{max-height:0!important;padding-top:0;margin-top:0}
+  .collapse-body.visible{max-height:2000px}
+  /* Note */
+  .note-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .note-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .note-text{background:#020617;border:1px solid #1e293b;border-radius:.5rem;padding:1rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.72rem;color:#94a3b8;white-space:pre-wrap;line-height:1.6;max-height:300px;overflow-y:auto}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.75rem;padding:.7rem;border-radius:.5rem;border:1.5px solid #334155;background:#1e293b;color:#cbd5e1;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .copy-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .copy-btn.copied{border-color:#22c55e;background:#052e16;color:#86efac}
+  .flow-connector{display:flex;justify-content:center;padding:.25rem 0}
+  .flow-connector .arrow{width:2px;height:24px;background:#334155;position:relative}
+  .flow-connector .arrow::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #334155}
+  @media(max-width:500px){
+    .container{padding:1rem}.card{padding:1.25rem}
+    .option-btn{padding:.75rem .9rem;font-size:.85rem}.check-btn{padding:.65rem .85rem;font-size:.8rem}
+    header h1{font-size:1.2rem}.progress-labels{font-size:.45rem}
+    .score-opt{font-size:.6rem;padding:.4rem .15rem}.shared-opt{font-size:.6rem;padding:.35rem .15rem}
+    .posttest-display{gap:.5rem}.prob-box{min-width:4.5rem;padding:.5rem .75rem}
+    .prob-box-value{font-size:1.2rem}.arrow-between{font-size:.9rem}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../dor-toracica.html" class="back-link">&larr; Voltar</a>
+  <h1>Classificador de Dor Toracica</h1>
+  <p>A/B/C/D + LR + HEART + TIMI + GRACE</p>
+</header>
+<div class="container" id="app"></div>
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const STEPS=[
+  {id:'carater',title:'Carater',subtitle:'Como e a dor que o paciente descreve?',
+   typicalLabel:'Tipica',atypicalLabel:'Atipica',
+   typical:[{icon:'\u{1F91C}',label:'Aperto'},{icon:'\u{1FAF8}',label:'Compressao'},{icon:'\u{1F525}',label:'Queimacao'}],
+   atypical:[{icon:'\u{1F4CC}',label:'Pontadas'},{icon:'\u{1FAA1}',label:'Agulhadas'}]},
+  {id:'local',title:'Local',subtitle:'Onde a dor esta localizada?',
+   typicalLabel:'Tipica',atypicalLabel:'Atipica',
+   typical:[{icon:'\u{1FAC1}',label:'Retroesternal'},{icon:'\u{1F4AA}',label:'Ombro esquerdo'},{icon:'\u{1F9B4}',label:'Pescoco'},{icon:'\u{1F9B7}',label:'Face / Dentes'},{icon:'\u{1FAC3}',label:'Regiao epigastrica'}],
+   atypical:[{icon:'\u{1F9BE}',label:'Ombro direito'},{icon:'\u{1FAC1}',label:'Hemitorax direito'}]},
+  {id:'fator',title:'Fatores',subtitle:'O que desencadeia ou piora a dor?',
+   typicalLabel:'Tipica',atypicalLabel:'Atipica',
+   typical:[{icon:'\u{1F3C3}',label:'Exercicio fisico'},{icon:'\u{2744}\u{FE0F}',label:'Estresse / Frio'}],
+   atypical:[{icon:'\u{1F6CB}\u{FE0F}',label:'Ao repouso'}]},
+];
+const LR_FEATURES={
+  favor:[
+    {id:'irrad_dir',label:'Irradiacao p/ braco direito ou ombro',lr:4.7},
+    {id:'irrad_ambos',label:'Irradiacao p/ ambos os bracos/ombros',lr:4.1},
+    {id:'assoc_esf',label:'Associada ao esforco',lr:2.4},
+    {id:'irrad_esq',label:'Irradiacao p/ braco esquerdo',lr:2.3},
+    {id:'diaforese',label:'Associada a diaforese',lr:2.0},
+    {id:'nausea_vom',label:'Associada a nauseas ou vomitos',lr:1.9},
+    {id:'isq_ant',label:'Semelhante a isquemia anterior',lr:1.8},
+    {id:'pressao',label:'Descrita como pressao/aperto',lr:1.3},
+  ],
+  contra:[
+    {id:'pleuritica',label:'Dor pleuritica',lr:0.2},
+    {id:'mov',label:'Piora com a movimentacao',lr:0.3},
+    {id:'afiada',label:'Dor descrita como afiada',lr:0.3},
+    {id:'palpacao',label:'Dor a palpacao da parede toracica',lr:0.3},
+    {id:'inframam',label:'Localizacao inframamaria',lr:0.8},
+    {id:'nao_esf',label:'Nao associada ao esforco',lr:0.8},
+  ],
+};
+const ALL_LABELS=['Carater','Local','Fatores','Paciente','Pre-teste','LR'];
+const TOTAL_STEPS=6;
+const RESULTS={
+  3:{type:'A',title:'Dor Tipo A',badge:'type-a',label:'Definitivamente Anginosa',desc:'3 caracteristicas tipicas.'},
+  2:{type:'B',title:'Dor Tipo B',badge:'type-b',label:'Provavelmente Anginosa',desc:'2 caracteristicas tipicas.'},
+  1:{type:'C',title:'Dor Tipo C',badge:'type-c',label:'Provavelmente Nao Anginosa',desc:'1 caracteristica tipica.'},
+  0:{type:'D',title:'Dor Tipo D',badge:'type-d',label:'Definitivamente Nao Anginosa',desc:'Nenhuma caracteristica tipica.'},
+};
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentStep=0;
+let answers=[null,null,null]; // steps 0-2
+let preTestProb=30;
+let checkedLR=new Set();
+let activeScoreTab='heart';
+// Patient data (step 3)
+let patData={age:null, sex:null, onset:null, riskFactors:new Set()}; // riskFactors: dm,has,dlp,tab,hf,dac
+const RF_LIST=[
+  {id:'dm',label:'DM'},{id:'has',label:'HAS'},{id:'dlp',label:'Dislipidemia'},
+  {id:'tab',label:'Tabagismo'},{id:'hf',label:'Hist. familiar'},{id:'dac',label:'DAC previa'}
+];
+// Shared inputs (ECG + Troponin, filled on result page)
+let sharedECG=null; // 0=normal, 1=inespecifico, 2=desvio ST
+let sharedTrop=null; // 0=normal, 1=1-3x, 2=>3x
+// HEART
+let heart={h:null,e:null,a:null,r:null,t:null};
+// TIMI
+let timi=[null,null,null,null,null,null,null];
+// GRACE
+let grace={age:null,hr:null,sbp:null,cr:null,killip:null,arrest:null,stdev:null,markers:null};
+// Collapsible sections
+let sections={abcd:false, lr:false, prepost:true, conduta:true, shared:true, scores:true, note:true};
+// Evaluation start time
+const evalStartTime=new Date();
+
+const app=document.getElementById('app');
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function tc(){return answers.filter(a=>a==='typical').length}
+function lrProd(){let p=1;for(const f of[...LR_FEATURES.favor,...LR_FEATURES.contra])if(checkedLR.has(f.id))p*=f.lr;return p}
+function feats(){return[...LR_FEATURES.favor,...LR_FEATURES.contra].filter(f=>checkedLR.has(f.id))}
+function fagan(pre,lr){const o=(pre/100)/(1-pre/100);const po=o*lr;return Math.min(99.9,Math.max(0.1,(po/(1+po))*100))}
+function riskCls(p){return p>=60?'risk-high':p>=30?'risk-moderate':p>=10?'risk-neutral':'risk-low'}
+
+// Auto-fill helpers
+function autoHeartH(){const t=tc();return t>=3?2:t===2?1:0}
+function autoHeartA(){if(patData.age===null)return null;return patData.age===0?0:patData.age===1?1:2}
+function autoHeartR(){
+  const n=patData.riskFactors.size;
+  if(patData.age===null&&n===0)return null;
+  if(patData.riskFactors.has('dac'))return 2;
+  return n>=3?2:n>=1?1:0;
+}
+function autoHeartE(){return sharedECG}
+function autoHeartT(){return sharedTrop}
+function autoTimiAge(){if(patData.age===null)return null;return patData.age>=2?1:0}
+function autoTimi3RF(){return patData.riskFactors.size>=3?1:patData.riskFactors.size>0?0:null}
+function autoTimiDAC(){return patData.riskFactors.has('dac')?1:patData.riskFactors.size>0?0:null}
+function autoTimiST(){if(sharedECG===null)return null;return sharedECG===2?1:0}
+function autoTimiMarker(){if(sharedTrop===null)return null;return sharedTrop>=1?1:0}
+function autoGraceAge(){if(patData.age===null)return null;return[18,50,75,91][patData.age]}
+function autoGraceSTDev(){if(sharedECG===null)return null;return sharedECG===2?28:0}
+function autoGraceMarkers(){if(sharedTrop===null)return null;return sharedTrop>=1?14:0}
+
+function getHeart(){
+  const h=heart.h!==null?heart.h:autoHeartH();
+  const e=heart.e!==null?heart.e:autoHeartE();
+  const a=heart.a!==null?heart.a:autoHeartA();
+  const r=heart.r!==null?heart.r:autoHeartR();
+  const t=heart.t!==null?heart.t:autoHeartT();
+  if([h,e,a,r,t].some(v=>v===null))return null;
+  return h+e+a+r+t;
+}
+function getTimi(){
+  const auto=[autoTimiAge(),null,autoTimiDAC(),null,null,autoTimiST(),autoTimiMarker()];
+  const merged=timi.map((v,i)=>v!==null?v:(auto[i]!==null?auto[i]:null));
+  // index 1 = >=3RF
+  if(merged[1]===null)merged[1]=autoTimi3RF();
+  if(merged.some(v=>v===null))return null;
+  return merged.reduce((a,b)=>a+b,0);
+}
+function getGrace(){
+  const auto={age:autoGraceAge(),hr:null,sbp:null,cr:null,killip:null,arrest:null,stdev:autoGraceSTDev(),markers:autoGraceMarkers()};
+  const merged={};
+  for(const k of Object.keys(grace))merged[k]=grace[k]!==null?grace[k]:(auto[k]!==null?auto[k]:null);
+  const vals=Object.values(merged);
+  if(vals.some(v=>v===null))return null;
+  return vals.reduce((a,b)=>a+b,0);
+}
+
+// ═══════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════
+function progHTML(idx,allDone){
+  let h='<div class="progress-bar">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done':i===idx?'active':'';h+=`<div class="progress-step ${c}"></div>`}
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done-label':i===idx?'active-label':'';h+=`<span class="${c}">${ALL_LABELS[i]}</span>`}
+  h+='</div><div class="flow-connector"><div class="arrow"></div></div>';return h;
+}
+
+// ═══════════════════════════════════════════
+// RENDER ROUTER
+// ═══════════════════════════════════════════
+function render(){
+  if(currentStep<3)renderClassic();
+  else if(currentStep===3)renderPatient();
+  else if(currentStep===4)renderPreTest();
+  else if(currentStep===5)renderLR();
+  else renderResult();
+}
+
+// ═══════════════════════════════════════════
+// STEPS 0-2: CLASSIC
+// ═══════════════════════════════════════════
+function renderClassic(){
+  const step=STEPS[currentStep],sel=answers[currentStep];
+  let h=progHTML(currentStep,false);
+  h+='<div class="card">';
+  h+=`<h2>${step.subtitle}</h2><p class="subtitle">Etapa ${currentStep+1} de ${TOTAL_STEPS}</p>`;
+  h+='<div class="options">';
+  h+=`<div class="option-group-label">${step.typicalLabel}</div>`;
+  for(const o of step.typical)h+=`<button class="option-btn ${sel==='typical'?'selected':''}" onclick="select('typical')"><span class="icon">${o.icon}</span><span class="label">${o.label}</span><span class="tag tag-typical">Tipica</span></button>`;
+  h+=`<div class="option-group-label">${step.atypicalLabel}</div>`;
+  for(const o of step.atypical)h+=`<button class="option-btn ${sel==='atypical'?'selected':''}" onclick="select('atypical')"><span class="icon">${o.icon}</span><span class="label">${o.label}</span><span class="tag tag-atypical">Atipica</span></button>`;
+  h+='<div class="option-group-label">Outro</div>';
+  h+=`<button class="option-btn ${sel==='outro'?'selected':''}" onclick="select('outro')"><span class="icon">\u{2753}</span><span class="label">Outro / Nao se aplica</span><span class="tag tag-outro">Outro</span></button>`;
+  h+='</div><div class="nav-row">';
+  if(currentStep>0)h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${sel===null?'disabled':''} onclick="next()">Proximo</button>`;
+  h+='</div></div>';app.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// STEP 3: PATIENT DATA
+// ═══════════════════════════════════════════
+function renderPatient(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<h2>Dados do paciente</h2><p class="subtitle">Etapa 4 de '+TOTAL_STEPS+'</p>';
+  h+='<div class="options">';
+
+  // Onset time
+  h+='<div class="option-group-label">Tempo desde inicio da dor</div>';
+  const onsetOpts=[{v:0,l:'< 2h'},{v:1,l:'2 \u2013 6h'},{v:2,l:'6 \u2013 12h'},{v:3,l:'12 \u2013 24h'},{v:4,l:'> 24h'}];
+  h+='<div style="display:flex;gap:.4rem">';
+  for(const o of onsetOpts)h+=`<button class="score-opt ${patData.onset===o.v?'picked':''}" onclick="setPat('onset',${o.v})" style="flex:1">${o.l}</button>`;
+  h+='</div>';
+
+  // Age
+  h+='<div class="option-group-label" style="margin-top:1rem">Idade</div>';
+  const ageOpts=[{v:0,l:'< 45'},{v:1,l:'45 \u2013 64'},{v:2,l:'65 \u2013 79'},{v:3,l:'\u2265 80'}];
+  h+='<div style="display:flex;gap:.4rem">';
+  for(const o of ageOpts)h+=`<button class="score-opt ${patData.age===o.v?'picked':''}" onclick="setPat('age',${o.v})" style="flex:1">${o.l}</button>`;
+  h+='</div>';
+
+  // Sex
+  h+='<div class="option-group-label" style="margin-top:1rem">Sexo</div>';
+  h+='<div style="display:flex;gap:.4rem">';
+  h+=`<button class="score-opt ${patData.sex==='M'?'picked':''}" onclick="setPat('sex','M')" style="flex:1">Masculino</button>`;
+  h+=`<button class="score-opt ${patData.sex==='F'?'picked':''}" onclick="setPat('sex','F')" style="flex:1">Feminino</button>`;
+  h+='</div>';
+
+  // Risk factors (multi-select)
+  h+='<div class="option-group-label" style="margin-top:1rem">Fatores de risco (marque todos)</div>';
+  for(const rf of RF_LIST){
+    const ck=patData.riskFactors.has(rf.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleRF('${rf.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${rf.label}</span></button>`;
+  }
+
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  const canNext=patData.age!==null&&patData.sex!==null&&patData.onset!==null;
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()">Proximo</button>`;
+  h+='</div></div>';app.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// STEP 4: PRE-TEST
+// ═══════════════════════════════════════════
+function renderPreTest(){
+  const t=tc(),r=RESULTS[t];
+  const bc={A:'#fca5a5',B:'#fcd34d',C:'#93c5fd',D:'#86efac'}[r.type];
+  let h=progHTML(4,false);
+  h+='<div class="card">';
+  h+='<h2>Sua impressao clinica</h2>';
+  h+=`<p class="subtitle">Classificacao: <strong style="color:${bc}">${r.title}</strong> | ${patData.sex==='M'?'Masc':'Fem'}, ${['< 45','45\u201364','65\u201379','\u226580'][patData.age]} anos, ${patData.riskFactors.size} FR</p>`;
+  h+='<div style="padding:1.5rem 0 .5rem">';
+  h+='<label style="font-size:.9rem;color:#cbd5e1;display:block;margin-bottom:1rem">Qual a sua estimativa de probabilidade de SCA?</label>';
+  h+='<div class="pretest-input-row"><div class="pretest-slider-wrap">';
+  h+=`<span style="font-size:.75rem;color:#64748b">1%</span><input type="range" class="pretest-slider" min="1" max="99" value="${preTestProb}" oninput="updateSlider(this.value)"><span style="font-size:.75rem;color:#64748b">99%</span>`;
+  h+='</div></div>';
+  h+=`<div style="text-align:center;margin-top:.5rem"><span class="pretest-value" style="font-size:2rem">${preTestProb}%</span>`;
+  h+='<div style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:.25rem">Probabilidade pre-teste</div></div>';
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Proximo</button>';
+  h+='</div></div>';app.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// STEP 5: LR
+// ═══════════════════════════════════════════
+function renderLR(){
+  let h=progHTML(5,false);
+  h+='<div class="card">';
+  h+=`<h2>Razao de Probabilidade (LR)</h2><p class="subtitle">Marque as caracteristicas presentes. Etapa 6 de ${TOTAL_STEPS}.</p>`;
+  h+='<div class="options">';
+  h+='<div class="option-group-label">\u{1F534} Aumentam probabilidade de SCA</div>';
+  for(const f of LR_FEATURES.favor){const ck=checkedLR.has(f.id);h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleLR('${f.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span><span class="lr-value lr-up">LR ${f.lr}</span></button>`}
+  h+='<div class="option-group-label">\u{1F7E2} Diminuem probabilidade de SCA</div>';
+  for(const f of LR_FEATURES.contra){const ck=checkedLR.has(f.id);h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleLR('${f.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span><span class="lr-value lr-down">LR ${f.lr}</span></button>`}
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver Resultado</button>';
+  h+='</div></div>';app.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// RESULT
+// ═══════════════════════════════════════════
+function renderResult(){
+  const t=tc(),r=RESULTS[t],lr=lrProd(),fs=feats();
+  const postProb=fs.length>0?fagan(preTestProb,lr):preTestProb;
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  // Badge
+  h+=`<div class="result-badge ${r.badge}">${r.type}</div>`;
+  h+=`<div class="result-title">${r.title}</div>`;
+  h+=`<div class="result-desc">${r.label} &mdash; ${r.desc}</div>`;
+  h+=`<p class="typical-count">Tipicas: <strong>${t}/3</strong> | ${patData.sex==='M'?'M':'F'}, ${['<45','45\u201364','65\u201379','\u226580'][patData.age]}a, ${patData.riskFactors.size}FR, dor ${['<2h','2\u20136h','6\u201312h','12\u201324h','>24h'][patData.onset]}</p>`;
+
+  // ── COLLAPSIBLE: A/B/C/D ──
+  h+=collapsible('abcd','Classificacao A/B/C/D',()=>{
+    let s='';
+    const labels=['Carater','Localizacao','Fatores'];
+    for(let i=0;i<3;i++){const a=answers[i];const dc=a==='typical'?'dot-typical':a==='atypical'?'dot-atypical':'dot-outro';const vl=a==='typical'?'Tipica':a==='atypical'?'Atipica':'Outro';s+=`<div class="summary-row"><span class="criteria">${labels[i]}</span><span class="value"><span class="dot ${dc}"></span> ${vl}</span></div>`}
+    return s;
+  });
+
+  // ── COLLAPSIBLE: LR ──
+  h+=collapsible('lr','Razao de Probabilidade',()=>{
+    let s='';
+    if(fs.length===0){s+='<p style="color:#64748b;text-align:center;padding:.5rem 0;font-size:.85rem">Nenhuma selecionada.</p>';}
+    else{
+      const lF=fs.filter(f=>f.lr>1).reduce((a,f)=>a*f.lr,1);const lC=fs.filter(f=>f.lr<1).reduce((a,f)=>a*f.lr,1);
+      s+='<div class="lr-combined">';
+      if(fs.some(f=>f.lr>1))s+=`<div class="lr-combined-item"><div class="lr-combined-value up">${lF.toFixed(1)}</div><div class="lr-combined-label">A favor</div></div>`;
+      if(fs.some(f=>f.lr>1)&&fs.some(f=>f.lr<1))s+='<div class="lr-divider"></div>';
+      if(fs.some(f=>f.lr<1))s+=`<div class="lr-combined-item"><div class="lr-combined-value down">${lC.toFixed(2)}</div><div class="lr-combined-label">Contra</div></div>`;
+      s+='<div class="lr-divider"></div>';
+      s+=`<div class="lr-combined-item"><div class="lr-combined-value ${lr>1?'up':lr<1?'down':'neutral'}">${lr>1?lr.toFixed(1):lr.toFixed(2)}</div><div class="lr-combined-label">Combinada</div></div></div>`;
+      let ic,it;
+      if(lr>=5){ic='high-risk';it='Aumento significativo na prob. de SCA';}
+      else if(lr>=2){ic='moderate-risk';it='Aumento moderado na prob. de SCA';}
+      else if(lr>.5){ic='neutral-risk';it='Pouca alteracao na probabilidade';}
+      else if(lr>.1){ic='low-risk';it='Reducao moderada na prob. de SCA';}
+      else{ic='low-risk';it='Reducao significativa na prob. de SCA';}
+      s+=`<div class="lr-interpretation ${ic}">${it}</div>`;
+      s+='<div style="margin-top:.75rem">';
+      for(const f of fs){const c=f.lr>1?'up':'down';s+=`<div class="lr-detail-row"><span class="feat-name">${f.label}</span><span class="feat-lr ${c}">${f.lr>1?'\u2191':'\u2193'} ${f.lr}</span></div>`}
+      s+='</div>';
+    }
+    return s;
+  });
+
+  // ── COLLAPSIBLE: Pre/Post ──
+  h+=collapsible('prepost','Pre-teste \u2192 Pos-teste',()=>{
+    let s='<div class="posttest-display">';
+    s+=`<div class="prob-box pre"><div class="prob-box-value">${preTestProb}%</div><div class="prob-box-label">Pre-teste</div></div>`;
+    if(fs.length>0){
+      s+=`<span class="arrow-between">\u00D7${lr>1?lr.toFixed(1):lr.toFixed(2)}\u2192</span>`;
+      s+=`<div class="prob-box post ${riskCls(postProb)}"><div class="prob-box-value">${postProb.toFixed(1)}%</div><div class="prob-box-label">Pos-teste</div></div>`;
+    }else{
+      s+='<span class="arrow-between">=</span>';
+      s+=`<div class="prob-box post risk-neutral"><div class="prob-box-value">${preTestProb}%</div><div class="prob-box-label">Sem LR</div></div>`;
+    }
+    s+='</div>';
+    return s;
+  });
+
+  // ── COLLAPSIBLE: Conduta ──
+  h+=buildConduta(postProb);
+
+  // ── COLLAPSIBLE: Shared inputs + Scores ──
+  h+=collapsible('scores','Scores de Risco',()=>{
+    let s='';
+    // Shared ECG + Troponin inputs
+    s+='<div class="shared-inputs">';
+    s+='<div class="shared-inputs-title">\u{1F517} Inputs compartilhados (auto-preenchem HEART, TIMI e GRACE)</div>';
+    s+='<div class="shared-row"><div class="shared-row-label">ECG</div><div class="shared-options">';
+    s+=`<button class="shared-opt ${sharedECG===0?'picked':''}" onclick="setShared('ecg',0)">Normal</button>`;
+    s+=`<button class="shared-opt ${sharedECG===1?'picked':''}" onclick="setShared('ecg',1)">Alteracao inespecifica</button>`;
+    s+=`<button class="shared-opt ${sharedECG===2?'picked':''}" onclick="setShared('ecg',2)">Desvio ST</button>`;
+    s+='</div></div>';
+    s+='<div class="shared-row"><div class="shared-row-label">Troponina</div><div class="shared-options">';
+    s+=`<button class="shared-opt ${sharedTrop===0?'picked':''}" onclick="setShared('trop',0)">\u2264 Normal</button>`;
+    s+=`<button class="shared-opt ${sharedTrop===1?'picked':''}" onclick="setShared('trop',1)">1\u20133x normal</button>`;
+    s+=`<button class="shared-opt ${sharedTrop===2?'picked':''}" onclick="setShared('trop',2)">> 3x normal</button>`;
+    s+='</div></div></div>';
+
+    // Tabs
+    s+='<div class="score-tabs">';
+    s+=`<button class="score-tab ${activeScoreTab==='heart'?'active':''}" onclick="switchTab('heart')">HEART</button>`;
+    s+=`<button class="score-tab ${activeScoreTab==='timi'?'active':''}" onclick="switchTab('timi')">TIMI</button>`;
+    s+=`<button class="score-tab ${activeScoreTab==='grace'?'active':''}" onclick="switchTab('grace')">GRACE</button>`;
+    s+='</div>';
+    if(activeScoreTab==='heart')s+=buildHeart();
+    else if(activeScoreTab==='timi')s+=buildTimi();
+    else s+=buildGrace();
+    return s;
+  });
+
+  // ── COLLAPSIBLE: Note ──
+  h+=collapsible('note','Nota para prontuario',()=>buildNoteContent(t,r,fs,lr,postProb));
+
+  // Nav
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="restart()">Recomecar</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// COLLAPSIBLE
+// ═══════════════════════════════════════════
+function collapsible(id,title,contentFn){
+  const open=sections[id];
+  let h=`<div class="dark-box">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.75rem':'0'}">`;
+  if(open)h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// ═══════════════════════════════════════════
+// CONDUTA
+// ═══════════════════════════════════════════
+function buildConduta(pp){
+  let cls,title,items;
+  if(pp>=60){cls='alta-prob';title='Alta probabilidade de SCA';items=[['\u{1F6A8}','ECG imediato (<10 min)'],['\u{1F489}','Troponina de alta sensibilidade'],['\u{1F4C8}','Troponina seriada (0h e 1h ou 0h e 3h)'],['\u{1F4CB}','Considerar internacao e monitoramento'],['\u{1F48A}','Terapia antiisquemica conforme protocolo']];}
+  else if(pp>=30){cls='mod-prob';title='Probabilidade moderada de SCA';items=[['\u{1F4C4}','ECG em 12 derivacoes'],['\u{1F489}','Troponina de alta sensibilidade'],['\u{1F4C8}','Troponina seriada (0h e 3h)'],['\u{1F504}','ECG seriado se dor persistente']];}
+  else if(pp>=10){cls='neutra-prob';title='Probabilidade baixa-moderada';items=[['\u{1F4C4}','ECG em 12 derivacoes'],['\u{1F489}','Considerar troponina'],['\u{1F50D}','Avaliar diag. diferenciais (musculoesqueletica, GI, pulmonar)']];}
+  else{cls='baixa-prob';title='Baixa probabilidade de SCA';items=[['\u{1F4C4}','ECG se nao realizado'],['\u{1F50D}','Investigar causas nao cardiacas'],['\u{2753}','Troponina provavelmente desnecessaria se ECG normal'],['\u{1F3E0}','Considerar alta precoce']];}
+  const open=sections.conduta;
+  let h=`<div class="conduta-box ${cls}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('conduta')"><h3>Conduta \u2014 ${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.75rem':'0'}">`;
+  if(open)for(const[icon,text]of items)h+=`<div class="conduta-item"><span class="conduta-icon">${icon}</span><span>${text}</span></div>`;
+  h+='</div></div>';return h;
+}
+
+// ═══════════════════════════════════════════
+// SCORES
+// ═══════════════════════════════════════════
+function buildHeart(){
+  const aH=autoHeartH(),aE=autoHeartE(),aA=autoHeartA(),aR=autoHeartR(),aT=autoHeartT();
+  const hV=heart.h!==null?heart.h:aH,eV=heart.e!==null?heart.e:aE,aVa=heart.a!==null?heart.a:aA,rV=heart.r!==null?heart.r:aR,tV=heart.t!==null?heart.t:aT;
+  let h='';
+  h+=sRow('H \u2014 Historia','heart','h',hV,[{v:0,l:'Pouco suspeita'},{v:1,l:'Moderada'},{v:2,l:'Altamente suspeita'}],aH!==null?'Auto: Tipo '+RESULTS[tc()].type:null);
+  h+=sRow('E \u2014 ECG','heart','e',eV,[{v:0,l:'Normal'},{v:1,l:'Inespecifico'},{v:2,l:'Desvio ST'}],aE!==null?'Auto: ECG':null);
+  h+=sRow('A \u2014 Idade','heart','a',aVa,[{v:0,l:'< 45'},{v:1,l:'45\u201364'},{v:2,l:'\u226565'}],aA!==null?'Auto: Paciente':null);
+  h+=sRow('R \u2014 Fatores de risco','heart','r',rV,[{v:0,l:'Nenhum'},{v:1,l:'1\u20132'},{v:2,l:'\u22653 ou DAC'}],aR!==null?'Auto: FR':null);
+  h+=sRow('T \u2014 Troponina','heart','t',tV,[{v:0,l:'\u2264 normal'},{v:1,l:'1\u20133x'},{v:2,l:'> 3x'}],aT!==null?'Auto: Trop':null);
+  const total=getHeart();
+  if(total!==null){let sc,sl,sd;if(total<=3){sc='sr-low';sl='Baixo risco';sd=`HEART ${total}/10 \u2014 MACE ~1.7%. Alta precoce.`}else if(total<=6){sc='sr-mod';sl='Risco moderado';sd=`HEART ${total}/10 \u2014 MACE ~16.6%. Observacao.`}else{sc='sr-high';sl='Alto risco';sd=`HEART ${total}/10 \u2014 MACE ~50.7%. Internacao.`}h+=`<div class="score-result ${sc}"><div class="score-num">${total}</div><div class="score-info"><div class="score-label">${sl}</div><div class="score-detail">${sd}</div></div></div>`}
+  else h+='<div class="score-result sr-pending"><div class="score-num">?</div><div class="score-info"><div class="score-label">Preencha todos os campos</div><div class="score-detail">Campos com "Auto" sao preenchidos pelos dados do paciente e inputs compartilhados.</div></div></div>';
+  return h;
+}
+
+function buildTimi(){
+  const timiLbls=['Idade \u2265 65','\u2265 3 FR para DAC','DAC conhecida (\u226550%)','Uso de AAS 7 dias','Angina grave (\u22652 ep/24h)','Desvio ST \u2265 0.5mm','Marcador cardiaco +'];
+  const auto=[autoTimiAge(),autoTimi3RF(),autoTimiDAC(),null,null,autoTimiST(),autoTimiMarker()];
+  let h='';
+  for(let i=0;i<7;i++){
+    const val=timi[i]!==null?timi[i]:auto[i];
+    const tag=auto[i]!==null?'Auto':null;
+    h+=`<div class="score-row"><div class="score-row-label"><span>${timiLbls[i]}</span>${tag?`<span class="auto-tag">${tag}</span>`:''}</div>`;
+    h+='<div class="score-options">';
+    h+=`<button class="score-opt ${val===0?'picked':''}" onclick="setTimi(${i},0)">Nao<span class="pts">0</span></button>`;
+    h+=`<button class="score-opt ${val===1?'picked':''}" onclick="setTimi(${i},1)">Sim<span class="pts">1</span></button>`;
+    h+='</div></div>';
+  }
+  const total=getTimi();
+  if(total!==null){let sc,sl,sd;if(total<=1){sc='sr-low';sl='Baixo risco';sd=`TIMI ${total}/7 \u2014 Evento 14d ~5%.`}else if(total<=3){sc='sr-mod';sl='Risco moderado';sd=`TIMI ${total}/7 \u2014 Evento 14d ~8-13%.`}else if(total<=5){sc='sr-high';sl='Alto risco';sd=`TIMI ${total}/7 \u2014 Evento 14d ~20-26%.`}else{sc='sr-high';sl='Muito alto risco';sd=`TIMI ${total}/7 \u2014 Evento 14d ~41%.`}h+=`<div class="score-result ${sc}"><div class="score-num">${total}</div><div class="score-info"><div class="score-label">${sl}</div><div class="score-detail">${sd}</div></div></div>`}
+  else h+='<div class="score-result sr-pending"><div class="score-num">?</div><div class="score-info"><div class="score-label">Preencha todos os campos</div><div class="score-detail">Campos com "Auto" sao preenchidos automaticamente.</div></div></div>';
+  return h;
+}
+
+function buildGrace(){
+  let h='<p style="font-size:.75rem;color:#64748b;margin-bottom:1rem">Prognostico intra-hospitalar. Use apos SCA confirmada.</p>';
+  h+=graceRow('Idade','age',[{v:18,l:'< 45'},{v:50,l:'45\u201364'},{v:75,l:'65\u201379'},{v:91,l:'\u226580'}],autoGraceAge()!==null?'Auto':null);
+  h+=graceRow('FC (bpm)','hr',[{v:3,l:'< 70'},{v:9,l:'70\u201389'},{v:15,l:'90\u2013109'},{v:30,l:'\u2265110'}],null);
+  h+=graceRow('PAS (mmHg)','sbp',[{v:58,l:'< 80'},{v:48,l:'80\u2013119'},{v:29,l:'120\u2013159'},{v:10,l:'\u2265160'}],null);
+  h+=graceRow('Creatinina','cr',[{v:3,l:'< 0.8'},{v:7,l:'0.8\u20131.19'},{v:12,l:'1.2\u20131.99'},{v:23,l:'\u22652.0'}],null);
+  h+=graceRow('Killip','killip',[{v:0,l:'I'},{v:20,l:'II'},{v:39,l:'III'},{v:59,l:'IV'}],null);
+  h+=graceRow('PCR admissao','arrest',[{v:0,l:'Nao'},{v:39,l:'Sim'}],null);
+  h+=graceRow('Desvio ST','stdev',[{v:0,l:'Nao'},{v:28,l:'Sim'}],autoGraceSTDev()!==null?'Auto':null);
+  h+=graceRow('Marcador elevado','markers',[{v:0,l:'Nao'},{v:14,l:'Sim'}],autoGraceMarkers()!==null?'Auto':null);
+  const total=getGrace();
+  if(total!==null){let sc,sl,sd;if(total<=108){sc='sr-low';sl='Baixo risco';sd=`GRACE ${total} \u2014 Mortalidade < 1%.`}else if(total<=140){sc='sr-mod';sl='Intermediario';sd=`GRACE ${total} \u2014 Mortalidade 1\u20133%.`}else{sc='sr-high';sl='Alto risco';sd=`GRACE ${total} \u2014 Mortalidade > 3%. Invasiva urgente.`}h+=`<div class="score-result ${sc}"><div class="score-num">${total}</div><div class="score-info"><div class="score-label">${sl}</div><div class="score-detail">${sd}</div></div></div>`}
+  else h+='<div class="score-result sr-pending"><div class="score-num">?</div><div class="score-info"><div class="score-label">Preencha todos os campos</div><div class="score-detail">Campos com "Auto" preenchidos automaticamente.</div></div></div>';
+  return h;
+}
+
+function sRow(label,score,field,current,opts,autoTag){
+  let h=`<div class="score-row"><div class="score-row-label"><span>${label}</span>${autoTag?`<span class="auto-tag">${autoTag}</span>`:''}</div><div class="score-options">`;
+  for(const o of opts)h+=`<button class="score-opt ${current===o.v?'picked':''}" onclick="setScore('${score}','${field}',${o.v})">${o.l}<span class="pts">${o.v} pts</span></button>`;
+  h+='</div></div>';return h;
+}
+function graceRow(label,field,opts,autoTag){
+  const cur=grace[field]!==null?grace[field]:(field==='age'?autoGraceAge():field==='stdev'?autoGraceSTDev():field==='markers'?autoGraceMarkers():null);
+  let h=`<div class="score-row"><div class="score-row-label"><span>${label}</span>${autoTag?`<span class="auto-tag">${autoTag}</span>`:''}</div><div class="score-options">`;
+  for(const o of opts)h+=`<button class="score-opt ${cur===o.v?'picked':''}" onclick="setGrace('${field}',${o.v})">${o.l}<span class="pts">${o.v}</span></button>`;
+  h+='</div></div>';return h;
+}
+
+// ═══════════════════════════════════════════
+// NOTE
+// ═══════════════════════════════════════════
+function buildNoteContent(t,r,fs,lr,pp){
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const ansL=a=>a==='typical'?'Tipica':a==='atypical'?'Atipica':'Outro';
+  const onsetL=['< 2h','2-6h','6-12h','12-24h','> 24h'];
+  const ageL=['< 45','45-64','65-79','\u2265 80'];
+
+  let n='';
+  n+=`DOR TORACICA - AVALIACAO ESTRUTURADA\n`;
+  n+=`Data/hora: ${ts}\n`;
+  n+=`========================================\n\n`;
+  n+=`PACIENTE: ${patData.sex==='M'?'Masculino':'Feminino'}, ${ageL[patData.age]} anos\n`;
+  n+=`Tempo desde inicio: ${onsetL[patData.onset]}\n`;
+  const rfNames=[];for(const rf of RF_LIST)if(patData.riskFactors.has(rf.id))rfNames.push(rf.label);
+  n+=`Fatores de risco: ${rfNames.length>0?rfNames.join(', '):'Nenhum'}\n`;
+
+  n+=`\nCLASSIFICACAO: ${r.title} - ${r.label}\n`;
+  n+=`Tipicas: ${t}/3\n`;
+  const sL=['Carater','Localizacao','Fatores'];
+  for(let i=0;i<3;i++)n+=`  ${sL[i]}: ${ansL(answers[i])}\n`;
+
+  n+=`\nRAZAO DE PROBABILIDADE\n`;
+  if(fs.length===0)n+='  Nenhuma selecionada.\n';
+  else{
+    const fv=fs.filter(f=>f.lr>1),fc=fs.filter(f=>f.lr<1);
+    if(fv.length)for(const f of fv)n+=`  [+] ${f.label} (LR ${f.lr})\n`;
+    if(fc.length)for(const f of fc)n+=`  [-] ${f.label} (LR ${f.lr})\n`;
+    n+=`  LR combinada: ${lr>1?lr.toFixed(1):lr.toFixed(2)}\n`;
+  }
+  n+=`\nPROBABILIDADE: Pre-teste ${preTestProb}% | Pos-teste ${pp.toFixed(1)}%\n`;
+
+  const ecgL=['Normal','Alteracao inespecifica','Desvio ST significativo'];
+  const tropL=['Normal','1-3x normal','> 3x normal'];
+  if(sharedECG!==null)n+=`ECG: ${ecgL[sharedECG]}\n`;
+  if(sharedTrop!==null)n+=`Troponina: ${tropL[sharedTrop]}\n`;
+
+  const ht=getHeart();
+  if(ht!==null){
+    const hRisk=ht<=3?'Baixo (MACE ~1.7%)':ht<=6?'Moderado (MACE ~16.6%)':'Alto (MACE ~50.7%)';
+    n+=`\nHEART: ${ht}/10 - ${hRisk}\n`;
+  }
+  const tt=getTimi();
+  if(tt!==null){
+    const tRisk=tt<=1?'Baixo (~5%)':tt<=3?'Moderado (~8-13%)':tt<=5?'Alto (~20-26%)':'Muito alto (~41%)';
+    n+=`TIMI: ${tt}/7 - ${tRisk}\n`;
+  }
+  const gt=getGrace();
+  if(gt!==null){
+    const gRisk=gt<=108?'Baixo (<1%)':gt<=140?'Intermediario (1-3%)':'Alto (>3%)';
+    n+=`GRACE: ${gt} - ${gRisk}\n`;
+  }
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='\u2713 Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar nota';btn.classList.remove('copied')},2000);
+  });
+}
+
+// ═══════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════
+function select(v){answers[currentStep]=v;render()}
+function toggleLR(id){checkedLR.has(id)?checkedLR.delete(id):checkedLR.add(id);render()}
+function updateSlider(v){preTestProb=parseInt(v);const el=document.querySelector('.pretest-value');if(el)el.textContent=preTestProb+'%'}
+function switchTab(t){activeScoreTab=t;render()}
+function setScore(s,f,v){if(s==='heart')heart[f]=v;render()}
+function setTimi(i,v){timi[i]=v;render()}
+function setGrace(f,v){grace[f]=v;render()}
+function setShared(type,v){if(type==='ecg')sharedECG=v;else sharedTrop=v;render()}
+function setPat(field,v){if(field==='sex')patData.sex=v;else if(field==='age')patData.age=v;else if(field==='onset')patData.onset=v;render()}
+function toggleRF(id){patData.riskFactors.has(id)?patData.riskFactors.delete(id):patData.riskFactors.add(id);render()}
+function toggleSection(id){sections[id]=!sections[id];render()}
+
+function suggestedPreTest(){const t=tc();return t>=3?65:t===2?40:t===1?15:5}
+
+function next(){
+  if(currentStep<3&&answers[currentStep]===null)return;
+  if(currentStep===3&&(patData.age===null||patData.sex===null||patData.onset===null))return;
+  if(currentStep===3)preTestProb=suggestedPreTest();
+  currentStep++;render();
+}
+function prev(){if(currentStep>0){currentStep--;render()}}
+function restart(){
+  currentStep=0;answers=[null,null,null];preTestProb=30;checkedLR=new Set();
+  patData={age:null,sex:null,onset:null,riskFactors:new Set()};
+  sharedECG=null;sharedTrop=null;
+  heart={h:null,e:null,a:null,r:null,t:null};
+  timi=[null,null,null,null,null,null,null];
+  grace={age:null,hr:null,sbp:null,cr:null,killip:null,arrest:null,stdev:null,markers:null};
+  activeScoreTab='heart';sections={abcd:false,lr:false,prepost:true,conduta:true,shared:true,scores:true,note:true};
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

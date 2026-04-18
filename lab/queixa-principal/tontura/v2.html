@@ -1,0 +1,766 @@
+<!-- VERSION: 2 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#041f2e">
+<title>Tontura — Avaliação no PS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#041f2e;
+    --ink-2:#07283a;
+    --ink-3:#0a3448;
+    --teal:#0e7490;
+    --cyan:#22d3ee;
+    --cyan-soft:#67e8f9;
+    --mist:#cffafe;
+    --fog:#a7e8f0;
+    --muted:#7aa5b3;
+    --danger:#fb7185;
+    --warn:#fbbf24;
+    --good:#4ade80;
+    --glow:0 0 32px rgba(34,211,238,.18);
+    --glow-strong:0 0 60px rgba(34,211,238,.32);
+  }
+  html,body{background:var(--ink);color:var(--mist);min-height:100vh}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+    padding-bottom:env(safe-area-inset-bottom,0);
+  }
+
+  /* orbital background — lighter, one fewer layer */
+  .orbit-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .orbit-bg::before,.orbit-bg::after{
+    content:"";position:absolute;left:50%;top:28%;border-radius:50%;
+    border:1px solid rgba(34,211,238,.09);
+    transform:translate(-50%,-50%);
+    will-change:transform;
+  }
+  .orbit-bg::before{width:140vw;height:140vw;animation:spin 120s linear infinite}
+  .orbit-bg::after{width:80vw;height:80vw;border-color:rgba(34,211,238,.13);animation:spin 75s linear infinite reverse}
+  .orbit-bg span{
+    position:absolute;border-radius:50%;border:1px solid rgba(103,232,249,.06);
+    top:78%;left:15%;width:55vw;height:55vw;
+    animation:spin 180s linear infinite reverse;
+  }
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  @keyframes spinCw{to{transform:rotate(360deg)}}
+  @keyframes spinCcw{to{transform:rotate(-360deg)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes pulseGlow{0%,100%{box-shadow:var(--glow-strong),inset 0 0 40px rgba(34,211,238,.2)}50%{box-shadow:0 0 80px rgba(34,211,238,.45),inset 0 0 50px rgba(34,211,238,.3)}}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+
+  main{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:1rem 1.1rem 4rem}
+
+  nav.top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:.4rem 0 1rem;
+  }
+  nav.top a.back{
+    color:var(--fog);text-decoration:none;font-size:.82rem;font-weight:500;
+    display:inline-flex;align-items:center;gap:.4rem;opacity:.85;
+    min-height:36px;padding:.3rem .1rem;
+  }
+  nav.top a.back:hover,nav.top a.back:focus-visible{color:var(--cyan);outline:none}
+  nav.top .badge{
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+    font-size:.66rem;color:var(--cyan-soft);letter-spacing:.14em;
+    padding:.28rem .55rem;border:1px solid rgba(34,211,238,.25);border-radius:999px;
+    background:rgba(34,211,238,.05);
+  }
+
+  header.hero{text-align:center;padding:1rem 0 .6rem;position:relative}
+  header.hero .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.24em;
+    color:var(--cyan);text-transform:uppercase;
+  }
+  header.hero h1{
+    font-family:'DM Sans',sans-serif;font-weight:700;font-size:2.1rem;line-height:1.05;
+    margin-top:.5rem;color:var(--mist);letter-spacing:-.025em;
+  }
+  header.hero h1 em{font-style:normal;color:var(--cyan)}
+  header.hero p.lede{
+    margin-top:.6rem;font-size:.9rem;color:var(--fog);max-width:34ch;margin-inline:auto;line-height:1.5;
+  }
+
+  /* labyrinth orb — refined: slower, more breathing, pulsing core */
+  .labyrinth{
+    position:relative;width:min(300px,82vw);aspect-ratio:1;margin:1.4rem auto .2rem;
+    display:grid;place-items:center;
+  }
+  .labyrinth .ring{
+    position:absolute;inset:0;border-radius:50%;
+    border:1px solid rgba(34,211,238,.22);
+    transform-origin:50% 50%;
+  }
+  .labyrinth .ring.r2{inset:12%;border-color:rgba(34,211,238,.28)}
+  .labyrinth .ring.r3{inset:24%;border-color:rgba(103,232,249,.38);border-style:dashed}
+  .labyrinth .ring.r4{inset:36%;border-color:rgba(207,250,254,.45)}
+  .labyrinth .ring.spin-a{animation:spinCw 55s linear infinite}
+  .labyrinth .ring.spin-b{animation:spinCcw 80s linear infinite}
+  .labyrinth .ring.spin-c{animation:spinCw 38s linear infinite}
+  .labyrinth .core{
+    position:relative;width:44%;height:44%;border-radius:50%;
+    background:radial-gradient(circle at 32% 30%,rgba(34,211,238,.42),rgba(14,116,144,.3) 55%,rgba(7,40,58,.85));
+    animation:pulseGlow 6s ease-in-out infinite;
+    display:grid;place-items:center;text-align:center;
+  }
+  .labyrinth .core .n{font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--mist);letter-spacing:-.01em}
+  .labyrinth .core .k{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.22em;color:var(--cyan-soft);margin-top:.2rem}
+  .labyrinth .node{
+    position:absolute;width:56px;height:56px;border-radius:50%;
+    background:rgba(7,40,58,.88);border:1px solid rgba(34,211,238,.35);
+    display:grid;place-items:center;text-align:center;
+    font-family:'JetBrains Mono',monospace;font-size:.55rem;line-height:1.2;
+    color:var(--fog);letter-spacing:.04em;
+    backdrop-filter:blur(4px);
+    box-shadow:0 0 18px rgba(34,211,238,.15);
+  }
+  .labyrinth .node strong{display:block;color:var(--cyan-soft);font-weight:600;font-size:.62rem;margin-bottom:.05rem}
+  @media(min-width:400px){.labyrinth .node{width:62px;height:62px;font-size:.58rem}}
+
+  section{margin-top:1.8rem}
+  .sec-head{
+    display:flex;align-items:baseline;gap:.7rem;margin-bottom:.85rem;
+  }
+  .sec-head .num{
+    font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);
+    letter-spacing:.14em;
+  }
+  .sec-head h2{
+    font-family:'DM Sans',sans-serif;font-weight:600;font-size:1.1rem;
+    color:var(--mist);letter-spacing:-.015em;
+  }
+  .sec-head p.sub{
+    font-size:.72rem;color:var(--muted);margin-left:auto;font-family:'JetBrains Mono',monospace;
+    letter-spacing:.06em;
+  }
+
+  /* 4-type selector */
+  .types{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  .type{
+    position:relative;padding:.95rem .9rem;border-radius:20px;
+    background:linear-gradient(155deg,rgba(14,116,144,.18),rgba(4,31,46,.7));
+    border:1px solid rgba(34,211,238,.18);
+    cursor:pointer;transition:border-color .3s ease,background .3s ease,box-shadow .3s ease,transform .3s ease;
+    min-height:120px;overflow:hidden;
+    text-align:left;color:inherit;font:inherit;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .type::before{
+    content:"";position:absolute;right:-22px;top:-22px;width:70px;height:70px;border-radius:50%;
+    border:1px solid rgba(34,211,238,.28);
+    transition:transform .6s ease;pointer-events:none;
+  }
+  .type::after{
+    content:"";position:absolute;right:8px;top:8px;width:16px;height:16px;border-radius:50%;
+    background:radial-gradient(circle,var(--cyan),transparent 70%);
+    opacity:.55;pointer-events:none;
+  }
+  .type:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .type:hover{border-color:rgba(34,211,238,.45);box-shadow:var(--glow);transform:translateY(-2px)}
+  .type:hover::before{transform:rotate(180deg) scale(1.2)}
+  .type.active{
+    border-color:var(--cyan);
+    background:linear-gradient(155deg,rgba(34,211,238,.15),rgba(14,116,144,.25));
+    box-shadow:var(--glow-strong);
+  }
+  .type h3{font-family:'DM Sans',sans-serif;font-weight:600;font-size:.98rem;color:var(--mist);letter-spacing:-.01em}
+  .type .hint{font-size:.72rem;color:var(--muted);margin-top:.3rem;font-style:italic}
+  .type .sys{
+    font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--cyan-soft);
+    letter-spacing:.12em;margin-top:.65rem;text-transform:uppercase;
+  }
+
+  .type-detail{
+    margin-top:.85rem;padding:.95rem 1.05rem;border-radius:16px;
+    background:rgba(10,52,72,.5);border:1px solid rgba(34,211,238,.2);
+    font-size:.85rem;color:var(--fog);line-height:1.55;
+    display:none;
+  }
+  .type-detail.show{display:block;animation:fadeUp .3s ease}
+  .type-detail strong{color:var(--cyan-soft);font-weight:600}
+
+  /* TiTrATE */
+  .titrate{
+    padding:1rem;border-radius:20px;
+    background:linear-gradient(160deg,rgba(14,116,144,.12),rgba(4,31,46,.6));
+    border:1px solid rgba(34,211,238,.18);
+  }
+  .titrate-q{
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;
+    color:var(--cyan);text-transform:uppercase;margin-bottom:.55rem;
+  }
+  .titrate-opts{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+  .titrate-opts button{
+    border:1px solid rgba(34,211,238,.22);background:rgba(7,40,58,.55);
+    color:var(--mist);padding:.7rem .65rem;border-radius:14px;
+    font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;
+    cursor:pointer;transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
+    text-align:left;line-height:1.2;-webkit-tap-highlight-color:transparent;
+  }
+  .titrate-opts button small{display:block;font-family:'Inter';font-size:.68rem;color:var(--muted);margin-top:.22rem;font-weight:400}
+  .titrate-opts button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .titrate-opts button:hover{border-color:var(--cyan)}
+  .titrate-opts button.sel{border-color:var(--cyan);background:rgba(34,211,238,.12);box-shadow:var(--glow)}
+
+  .titrate-result{
+    margin-top:.9rem;padding:.95rem 1rem;border-radius:14px;
+    background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3);
+    display:none;
+  }
+  .titrate-result.show{display:block;animation:fadeUp .3s ease}
+  .titrate-result .cat{
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.16em;
+    color:var(--cyan);text-transform:uppercase;
+  }
+  .titrate-result .diag{
+    font-family:'DM Sans',sans-serif;font-weight:600;font-size:1rem;color:var(--mist);
+    margin:.3rem 0;letter-spacing:-.01em;
+  }
+  .titrate-result .act{font-size:.8rem;color:var(--fog);line-height:1.5}
+  .titrate-result .act b{color:var(--cyan-soft)}
+  .titrate-reset{
+    margin-top:.55rem;background:none;border:none;color:var(--cyan-soft);
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;cursor:pointer;
+    opacity:.7;padding:.3rem 0;letter-spacing:.08em;
+  }
+  .titrate-reset:hover,.titrate-reset:focus-visible{opacity:1;text-decoration:underline;outline:none}
+
+  /* HINTS+ */
+  .hints-wrap{
+    padding:1.15rem 1rem;border-radius:22px;
+    background:
+      radial-gradient(ellipse at top right,rgba(251,113,133,.12),transparent 60%),
+      linear-gradient(160deg,rgba(14,116,144,.15),rgba(4,31,46,.7));
+    border:1px solid rgba(251,113,133,.25);
+    position:relative;overflow:hidden;
+  }
+  .hints-wrap::before{
+    content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;
+    border:1px dashed rgba(251,113,133,.22);
+    animation:spinCw 70s linear infinite;pointer-events:none;
+  }
+  .hints-flag{
+    font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.2em;
+    color:var(--danger);text-transform:uppercase;
+  }
+  .hints-title{font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.15rem;margin:.25rem 0 .25rem;letter-spacing:-.015em}
+  .hints-sub{font-size:.78rem;color:var(--fog);margin-bottom:.9rem;line-height:1.55}
+  .hints-sub b{color:var(--cyan-soft);font-weight:600}
+
+  .hints-grid{display:flex;flex-direction:column;gap:.5rem}
+  .hints-item{
+    display:flex;align-items:center;gap:.75rem;padding:.7rem .8rem;
+    border-radius:14px;background:rgba(7,40,58,.48);border:1px solid rgba(34,211,238,.12);
+    cursor:pointer;transition:border-color .25s ease,background .25s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .hints-item:hover{border-color:rgba(34,211,238,.35)}
+  .hints-item:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .hints-item .letter{
+    flex-shrink:0;width:34px;height:34px;border-radius:50%;
+    display:grid;place-items:center;
+    font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;
+    background:rgba(34,211,238,.15);color:var(--cyan);
+    border:1px solid rgba(34,211,238,.35);
+    transition:background .25s ease,color .25s ease,border-color .25s ease;
+  }
+  .hints-item.on .letter{background:rgba(251,113,133,.18);color:var(--danger);border-color:rgba(251,113,133,.45)}
+  .hints-item .txt{flex:1;min-width:0}
+  .hints-item .txt b{font-family:'DM Sans',sans-serif;font-size:.86rem;color:var(--mist);font-weight:600;display:block;letter-spacing:-.005em}
+  .hints-item .txt small{display:block;font-size:.73rem;color:var(--fog);margin-top:.12rem;line-height:1.4}
+  .hints-item .toggle{
+    flex-shrink:0;width:38px;height:22px;border-radius:11px;
+    background:rgba(122,165,179,.2);position:relative;transition:background .25s ease;
+  }
+  .hints-item .toggle::after{
+    content:"";position:absolute;width:16px;height:16px;border-radius:50%;
+    background:var(--fog);top:3px;left:3px;transition:left .25s ease,background .25s ease;
+  }
+  .hints-item.on .toggle{background:rgba(251,113,133,.4)}
+  .hints-item.on .toggle::after{left:19px;background:var(--danger)}
+
+  .hints-verdict{
+    margin-top:.95rem;padding:.85rem .95rem;border-radius:14px;
+    font-size:.82rem;line-height:1.5;
+    border:1px solid;
+    display:none;
+  }
+  .hints-verdict.show{display:block;animation:fadeUp .3s ease}
+  .hints-verdict.periph{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.08);color:var(--good)}
+  .hints-verdict.central{border-color:rgba(251,113,133,.5);background:rgba(251,113,133,.1);color:var(--danger)}
+  .hints-verdict b{font-family:'DM Sans',sans-serif;font-weight:700;display:block;margin-bottom:.2rem;letter-spacing:-.01em;font-size:.88rem}
+
+  /* diferenciais */
+  .diff-grid{display:grid;gap:.6rem}
+  .diff{
+    padding:.9rem 1rem;border-radius:18px;
+    background:linear-gradient(150deg,rgba(14,116,144,.12),rgba(4,31,46,.6));
+    border:1px solid rgba(34,211,238,.15);
+    position:relative;overflow:hidden;
+  }
+  .diff.central{border-color:rgba(251,113,133,.3);background:linear-gradient(150deg,rgba(251,113,133,.08),rgba(4,31,46,.6))}
+  .diff h4{
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.16em;
+    text-transform:uppercase;margin-bottom:.5rem;
+  }
+  .diff.perip h4{color:var(--cyan)}
+  .diff.central h4{color:var(--danger)}
+  .diff.other h4{color:var(--warn)}
+  .diff ul{list-style:none;display:flex;flex-wrap:wrap;gap:.32rem}
+  .diff ul li{
+    font-size:.74rem;padding:.22rem .55rem;border-radius:999px;
+    background:rgba(7,40,58,.7);border:1px solid rgba(34,211,238,.15);
+    color:var(--fog);
+  }
+  .diff.central ul li{border-color:rgba(251,113,133,.22)}
+  .diff.other ul li{border-color:rgba(251,191,36,.22)}
+
+  /* exam checklist */
+  .exam{
+    padding:.95rem 1.05rem;border-radius:20px;
+    background:linear-gradient(160deg,rgba(14,116,144,.12),rgba(4,31,46,.6));
+    border:1px solid rgba(34,211,238,.18);
+  }
+  .exam-row{
+    display:flex;align-items:center;gap:.7rem;padding:.5rem 0;
+    border-bottom:1px dashed rgba(34,211,238,.1);
+  }
+  .exam-row:last-child{border-bottom:none}
+  .exam-row .dot{
+    flex-shrink:0;width:8px;height:8px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 8px rgba(34,211,238,.55);
+  }
+  .exam-row .k{
+    font-family:'DM Sans',sans-serif;font-weight:600;font-size:.85rem;color:var(--mist);
+    flex-shrink:0;min-width:104px;letter-spacing:-.005em;
+  }
+  .exam-row .v{font-size:.76rem;color:var(--fog);line-height:1.4}
+
+  /* conduta */
+  .conduct{display:grid;grid-template-columns:1fr;gap:.6rem}
+  @media(min-width:520px){.conduct{grid-template-columns:1fr 1fr}}
+  .cond{
+    padding:.95rem 1rem;border-radius:18px;
+    background:linear-gradient(155deg,rgba(14,116,144,.14),rgba(4,31,46,.65));
+    border:1px solid rgba(34,211,238,.2);
+  }
+  .cond.warn{border-color:rgba(251,113,133,.28);background:linear-gradient(155deg,rgba(251,113,133,.08),rgba(4,31,46,.65))}
+  .cond .tag{
+    font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.15em;
+    color:var(--cyan);text-transform:uppercase;
+  }
+  .cond.warn .tag{color:var(--danger)}
+  .cond h4{font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;margin:.3rem 0 .5rem;color:var(--mist);letter-spacing:-.01em}
+  .cond ul{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+  .cond ul li{font-size:.78rem;color:var(--fog);line-height:1.45;padding-left:.9rem;position:relative}
+  .cond ul li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--cyan);opacity:.7}
+  .cond.warn ul li::before{background:var(--danger)}
+
+  .pearl{
+    margin-top:1.3rem;padding:.95rem 1rem;border-radius:16px;
+    background:linear-gradient(145deg,rgba(34,211,238,.08),rgba(4,31,46,.7));
+    border:1px solid rgba(34,211,238,.22);
+    display:flex;gap:.75rem;align-items:flex-start;
+  }
+  .pearl .mark{
+    flex-shrink:0;width:32px;height:32px;border-radius:50%;
+    background:radial-gradient(circle,var(--cyan),var(--teal));
+    display:grid;place-items:center;box-shadow:var(--glow);
+    font-family:'DM Sans',sans-serif;font-weight:700;color:var(--ink);font-size:.9rem;
+  }
+  .pearl p{font-size:.8rem;color:var(--fog);line-height:1.55}
+  .pearl p b{color:var(--cyan-soft)}
+
+  footer{
+    margin-top:2.6rem;padding-top:1.3rem;text-align:center;
+    border-top:1px dashed rgba(34,211,238,.15);
+    font-family:'JetBrains Mono',monospace;font-size:.66rem;
+    color:var(--muted);letter-spacing:.18em;
+  }
+  footer span{color:var(--cyan-soft)}
+
+  .parallax-1{transform:translateY(calc(var(--sy,0) * -.12px))}
+</style>
+</head>
+<body>
+
+<div class="orbit-bg" aria-hidden="true"><span></span></div>
+
+<main>
+
+  <nav class="top">
+    <a class="back" href="../tontura.html" aria-label="Voltar para a página de tontura">&larr; Voltar</a>
+    <span class="badge">v2 · tontura</span>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">queixa principal</div>
+    <h1>Tontura no <em>PS</em></h1>
+    <p class="lede">TiTrATE + HINTS+ à beira do leito. Central ou periférica?</p>
+
+    <div class="labyrinth parallax-1" aria-hidden="true">
+      <div class="ring spin-a"></div>
+      <div class="ring r2 spin-b"></div>
+      <div class="ring r3 spin-c"></div>
+      <div class="ring r4 spin-a"></div>
+      <div class="core">
+        <div>
+          <div class="n">Labirinto</div>
+          <div class="k">vestibular</div>
+        </div>
+      </div>
+      <div class="node" style="top:4%;left:50%;transform:translateX(-50%)"><strong>BPPV</strong>posicional</div>
+      <div class="node" style="top:50%;right:1%;transform:translateY(-50%)"><strong>AVC</strong>fossa post.</div>
+      <div class="node" style="bottom:4%;left:50%;transform:translateX(-50%)"><strong>Neurite</strong>vestibular</div>
+      <div class="node" style="top:50%;left:1%;transform:translateY(-50%)"><strong>Ménière</strong>recorrente</div>
+    </div>
+  </header>
+
+  <!-- 1. Caracterização -->
+  <section>
+    <div class="sec-head">
+      <span class="num">01</span>
+      <h2>Caracterização</h2>
+      <p class="sub">"descreva a sensação"</p>
+    </div>
+    <div class="types" id="types" role="tablist">
+      <button class="type" type="button" data-t="vert" role="tab" aria-selected="false">
+        <h3>Vertigem</h3>
+        <div class="hint">"o ambiente gira"</div>
+        <div class="sys">Vestibular</div>
+      </button>
+      <button class="type" type="button" data-t="pre" role="tab" aria-selected="false">
+        <h3>Pré-síncope</h3>
+        <div class="hint">"quase desmaio"</div>
+        <div class="sys">Cardiovascular</div>
+      </button>
+      <button class="type" type="button" data-t="des" role="tab" aria-selected="false">
+        <h3>Desequilíbrio</h3>
+        <div class="hint">"instabilidade"</div>
+        <div class="sys">Neurológico</div>
+      </button>
+      <button class="type" type="button" data-t="ine" role="tab" aria-selected="false">
+        <h3>Inespecífica</h3>
+        <div class="hint">"cabeça leve"</div>
+        <div class="sys">Psico / metab.</div>
+      </button>
+    </div>
+    <div class="type-detail" id="typeDetail" role="tabpanel" aria-live="polite"></div>
+  </section>
+
+  <!-- 2. TiTrATE -->
+  <section>
+    <div class="sec-head">
+      <span class="num">02</span>
+      <h2>TiTrATE</h2>
+      <p class="sub">timing + trigger</p>
+    </div>
+
+    <div class="titrate">
+      <div>
+        <div class="titrate-q">① duração</div>
+        <div class="titrate-opts" id="q1">
+          <button type="button" data-v="episod">Episódica<small>segundos a horas</small></button>
+          <button type="button" data-v="aguda">Aguda contínua<small>dias, persistente</small></button>
+          <button type="button" data-v="cron">Crônica<small>semanas ou mais</small></button>
+        </div>
+      </div>
+      <div style="margin-top:1rem">
+        <div class="titrate-q">② desencadeante</div>
+        <div class="titrate-opts" id="q2">
+          <button type="button" data-v="gatilho">Com gatilho<small>posição, ortostase</small></button>
+          <button type="button" data-v="espont">Espontânea<small>sem trigger claro</small></button>
+        </div>
+      </div>
+
+      <div class="titrate-result" id="result" aria-live="polite">
+        <div class="cat" id="resCat"></div>
+        <div class="diag" id="resDiag"></div>
+        <div class="act" id="resAct"></div>
+        <button class="titrate-reset" id="resetBtn" type="button">reiniciar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. HINTS+ -->
+  <section>
+    <div class="sec-head">
+      <span class="num">03</span>
+      <h2>HINTS+</h2>
+      <p class="sub">aguda contínua</p>
+    </div>
+
+    <div class="hints-wrap">
+      <div class="hints-flag">≥ 1 achado central → AVC até prova em contrário</div>
+      <div class="hints-title">Red flags vestibulares</div>
+      <div class="hints-sub">Use apenas em vertigem <b>aguda contínua com nistagmo</b>. Se positivo, peça <b>RM-DWI</b> — TC não exclui AVC de fossa posterior.</div>
+
+      <div class="hints-grid" id="hintsGrid">
+        <div class="hints-item" data-h="hi" role="button" tabindex="0" aria-pressed="false">
+          <div class="letter">HI</div>
+          <div class="txt">
+            <b>Head Impulse normal</b>
+            <small>sem sacada corretiva → sugere central</small>
+          </div>
+          <div class="toggle" aria-hidden="true"></div>
+        </div>
+        <div class="hints-item" data-h="n" role="button" tabindex="0" aria-pressed="false">
+          <div class="letter">N</div>
+          <div class="txt">
+            <b>Nistagmo que muda direção</b>
+            <small>bidirecional com o olhar → central</small>
+          </div>
+          <div class="toggle" aria-hidden="true"></div>
+        </div>
+        <div class="hints-item" data-h="ts" role="button" tabindex="0" aria-pressed="false">
+          <div class="letter">TS</div>
+          <div class="txt">
+            <b>Test of Skew positivo</b>
+            <small>desvio vertical no cover test → central</small>
+          </div>
+          <div class="toggle" aria-hidden="true"></div>
+        </div>
+        <div class="hints-item" data-h="plus" role="button" tabindex="0" aria-pressed="false">
+          <div class="letter">+</div>
+          <div class="txt">
+            <b>Surdez unilateral nova</b>
+            <small>AICA até prova em contrário</small>
+          </div>
+          <div class="toggle" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="hints-verdict" id="verdict" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- 4. Diferenciais -->
+  <section>
+    <div class="sec-head">
+      <span class="num">04</span>
+      <h2>Diferenciais</h2>
+    </div>
+    <div class="diff-grid">
+      <div class="diff perip">
+        <h4>· periférico</h4>
+        <ul>
+          <li>BPPV</li><li>Neurite vestibular</li><li>Ménière</li>
+          <li>Labirintite</li><li>Fístula perilinfática</li>
+        </ul>
+      </div>
+      <div class="diff central">
+        <h4>· central</h4>
+        <ul>
+          <li>AVCi fossa posterior</li><li>Dissecção vertebrobasilar</li>
+          <li>Esclerose múltipla</li><li>Tumor de fossa posterior</li>
+        </ul>
+      </div>
+      <div class="diff other">
+        <h4>· outros</h4>
+        <ul>
+          <li>Hipotensão ortostática</li><li>Arritmia</li>
+          <li>Hipoglicemia</li><li>Intoxicação</li><li>Ansiedade</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Exame focado -->
+  <section>
+    <div class="sec-head">
+      <span class="num">05</span>
+      <h2>Exame focado</h2>
+    </div>
+    <div class="exam">
+      <div class="exam-row"><span class="dot"></span><span class="k">Nistagmo</span><span class="v">direção, latência, fatigabilidade</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">Dix-Hallpike</span><span class="v">BPPV de canal posterior</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">Head impulse</span><span class="v">sacada corretiva = periférico</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">Test of skew</span><span class="v">cover test — desvio vertical</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">Audição</span><span class="v">Weber / Rinne, sussurro</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">Neuro</span><span class="v">PC, força, coordenação, Romberg, tandem</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">PA ortost.</span><span class="v">deitado, sentado, em pé (3 min)</span></div>
+      <div class="exam-row"><span class="dot"></span><span class="k">Glicemia</span><span class="v">HGT à beira do leito</span></div>
+    </div>
+  </section>
+
+  <!-- 6. Conduta -->
+  <section>
+    <div class="sec-head">
+      <span class="num">06</span>
+      <h2>Conduta &amp; disposição</h2>
+    </div>
+
+    <div class="conduct">
+      <div class="cond">
+        <div class="tag">· sintomático</div>
+        <h4>Curto prazo (≤ 48-72h)</h4>
+        <ul>
+          <li>Hidratação EV se intolerância VO</li>
+          <li>Ondansetrona 4-8 mg</li>
+          <li>Dimenidrinato 50 mg / meclizina</li>
+          <li>Evitar vestibulossupressor crônico</li>
+        </ul>
+      </div>
+      <div class="cond">
+        <div class="tag">· específico</div>
+        <h4>Dirigido à causa</h4>
+        <ul>
+          <li>Epley se BPPV de canal posterior</li>
+          <li>Corticoide precoce em neurite (controverso)</li>
+          <li>RM-DWI se HINTS+ ou red flag</li>
+        </ul>
+      </div>
+      <div class="cond">
+        <div class="tag">· alta</div>
+        <h4>Domiciliar</h4>
+        <ul>
+          <li>BPPV resolvido pós-Epley</li>
+          <li>Neurite sem red flags</li>
+          <li>Ortostática corrigida, orientações</li>
+        </ul>
+      </div>
+      <div class="cond warn">
+        <div class="tag">· internação</div>
+        <h4>Urgência</h4>
+        <ul>
+          <li>HINTS+ sugestivo de AVC</li>
+          <li>Déficit focal, ataxia troncular</li>
+          <li>Cefaleia súbita, incapacidade de marcha</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pearl">
+      <div class="mark">!</div>
+      <p><b>Pérola:</b> TC simples tem <b>sensibilidade &lt; 20%</b> para AVC de fossa posterior em 24h. Com suspeita central, peça <b>RM com difusão</b> — ou reavalie HINTS+ seriadamente.</p>
+    </div>
+  </section>
+
+  <footer>MEDSTACK · <span>TONTURA v2</span> · abril 2026</footer>
+
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  // Parallax (rAF throttled)
+  const root = document.documentElement;
+  let ticking = false;
+  const onScroll = () => {
+    if(!ticking){
+      requestAnimationFrame(() => {
+        root.style.setProperty('--sy', window.scrollY);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  // Type selector
+  const typeDetails = {
+    vert:{t:'Vertigem (rotatória)',d:'Sistema <strong>vestibular</strong>. Aplique TiTrATE; se aguda contínua com nistagmo, use HINTS+. Pense BPPV, neurite, Ménière, AVC de fossa posterior.'},
+    pre :{t:'Pré-síncope',        d:'Causa <strong>cardiovascular / ortostática</strong>. PA em 3 posições, ECG, glicemia. Suspeite arritmia, hipovolemia, estenose aórtica, drogas.'},
+    des :{t:'Desequilíbrio',      d:'Causa <strong>neurológica / proprioceptiva</strong>. Marcha, Romberg, provas cerebelares. Pense AVC, neuropatia, parkinsonismo, toxicidade.'},
+    ine :{t:'Tontura inespecífica',d:'<strong>"Cabeça leve"</strong> vaga. Ansiedade, hiperventilação, causa metabólica ou medicamentosa. Exclua orgânico antes de rotular.'}
+  };
+  const typeBtns = document.querySelectorAll('.type');
+  const detailBox = document.getElementById('typeDetail');
+  typeBtns.forEach(el => {
+    el.addEventListener('click', () => {
+      const isActive = el.classList.contains('active');
+      typeBtns.forEach(x => {x.classList.remove('active');x.setAttribute('aria-selected','false')});
+      if(isActive){
+        detailBox.classList.remove('show');
+        return;
+      }
+      el.classList.add('active');
+      el.setAttribute('aria-selected','true');
+      const k = el.dataset.t, d = typeDetails[k];
+      detailBox.innerHTML = '<strong>'+d.t+'.</strong> '+d.d;
+      detailBox.classList.add('show');
+    });
+  });
+
+  // TiTrATE
+  const state = {q1:null, q2:null};
+  const diagnoseMap = {
+    'episod|gatilho':{cat:'episódica desencadeada',    d:'BPPV · Hipotensão ortostática',                   a:'<b>Dix-Hallpike</b> → Epley se canal posterior. PA em 3 posições. Glicemia.'},
+    'episod|espont' :{cat:'episódica espontânea',      d:'Ménière · Migrânea vestibular · Arritmia',        a:'Audiometria, ECG/Holter, critérios de Lempert. Alta com seguimento.'},
+    'aguda|gatilho' :{cat:'aguda desencadeada',        d:'Raro — trauma, fístula perilinfática',            a:'Valsalva, sinais otológicos, TC de temporais. Interconsulta ORL.'},
+    'aguda|espont'  :{cat:'aguda contínua espontânea', d:'Neurite vestibular vs AVC de fossa posterior',    a:'Aplique <b>HINTS+</b> abaixo. Central → RM-DWI + via AVC.'},
+    'cron|gatilho'  :{cat:'crônica desencadeada',      d:'Disfunção vestibular crônica · BPPV atípico',     a:'Reabilitação vestibular. Reavaliar BPPV.'},
+    'cron|espont'   :{cat:'crônica espontânea',        d:'PPPD (tontura postural perceptual) · ansiedade',  a:'Abordagem psico-comportamental + reabilitação. Excluir orgânico.'}
+  };
+  const q1Btns = document.querySelectorAll('#q1 button');
+  const q2Btns = document.querySelectorAll('#q2 button');
+  const result = document.getElementById('result');
+  const resCat = document.getElementById('resCat');
+  const resDiag = document.getElementById('resDiag');
+  const resAct = document.getElementById('resAct');
+  function render(){
+    q1Btns.forEach(b => b.classList.toggle('sel', b.dataset.v===state.q1));
+    q2Btns.forEach(b => b.classList.toggle('sel', b.dataset.v===state.q2));
+    if(state.q1 && state.q2){
+      const d = diagnoseMap[state.q1+'|'+state.q2];
+      resCat.textContent = d.cat;
+      resDiag.textContent = d.d;
+      resAct.innerHTML = d.a;
+      result.classList.add('show');
+    } else {
+      result.classList.remove('show');
+    }
+  }
+  q1Btns.forEach(b => b.addEventListener('click', () => {state.q1 = state.q1===b.dataset.v ? null : b.dataset.v; render()}));
+  q2Btns.forEach(b => b.addEventListener('click', () => {state.q2 = state.q2===b.dataset.v ? null : b.dataset.v; render()}));
+  document.getElementById('resetBtn').addEventListener('click', () => {state.q1 = state.q2 = null; render()});
+
+  // HINTS+ — fixed: verdict reflects actual state (previous version always showed "central" because `any` was checked first and the peripheral branch was unreachable)
+  const hintsState = {hi:false, n:false, ts:false, plus:false};
+  const verdict = document.getElementById('verdict');
+  const hintsItems = document.querySelectorAll('.hints-item');
+  function renderHints(){
+    const keys = Object.keys(hintsState);
+    const anyOn = keys.some(k => hintsState[k]);
+    hintsItems.forEach(el => {
+      const on = hintsState[el.dataset.h];
+      el.classList.toggle('on', on);
+      el.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if(!anyOn){
+      verdict.classList.remove('show');
+      return;
+    }
+    verdict.className = 'hints-verdict central show';
+    verdict.innerHTML = '<b>Padrão CENTRAL — AVC de fossa posterior até prova em contrário.</b>Ative via AVC, RM-DWI urgente, neurologia. Não rotular como labirintite.';
+  }
+  hintsItems.forEach(el => {
+    const toggle = () => {
+      const k = el.dataset.h;
+      hintsState[k] = !hintsState[k];
+      renderHints();
+    };
+    el.addEventListener('click', toggle);
+    el.addEventListener('keydown', (e) => {
+      if(e.key===' ' || e.key==='Enter'){ e.preventDefault(); toggle(); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1315 @@
+<!-- VERSION: 6 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="theme-color" content="#0f172a">
+<title>Queimaduras — Avaliação</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+  header{background:#1e293b;width:100%;padding:1rem 1.25rem;text-align:center;border-bottom:2px solid #f59e0b;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  header h1{font-size:1.1rem;font-weight:600;color:#f1f5f9;letter-spacing:.01em}
+  header .subtitle{font-size:.7rem;color:#64748b;margin-top:.15rem;letter-spacing:.02em}
+  .back-link{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#94a3b8;text-decoration:none;font-size:.8rem;font-weight:500;padding:.4rem .2rem;transition:color .2s}
+  .back-link:hover,.back-link:focus{color:#f59e0b;outline:none}
+  .container{max-width:680px;width:100%;padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+
+  /* Progress */
+  .prog{display:flex;align-items:center;gap:.3rem;padding:0 .25rem}
+  .prog-step{flex:1;height:4px;border-radius:2px;background:#1e293b;transition:background .35s ease, box-shadow .35s ease}
+  .prog-step.done{background:#f59e0b}
+  .prog-step.active{background:#fbbf24;animation:pulse 1.4s infinite;box-shadow:0 0 8px rgba(251,191,36,.35)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .prog-label{text-align:center;font-size:.65rem;color:#64748b;margin-top:.4rem;text-transform:uppercase;letter-spacing:.08em}
+  .prog-label b{color:#fde68a;font-weight:600}
+
+  /* Cards */
+  .card{background:#1e293b;border:1px solid #334155;border-radius:1rem;padding:1.5rem;animation:slideIn .35s cubic-bezier(.16,1,.3,1)}
+  @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.1rem;color:#f8fafc;margin-bottom:.2rem;letter-spacing:.01em}
+  .card .sub{font-size:.78rem;color:#94a3b8;margin-bottom:1.1rem}
+
+  /* Crumb summary: tiny pills at top of cards showing progress */
+  .crumbs{display:flex;flex-wrap:wrap;gap:.35rem;font-size:.65rem;color:#64748b;padding:.25rem}
+  .crumb{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:9999px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-weight:500}
+  .crumb b{color:#fbbf24;font-weight:700;margin-left:.2rem}
+  .crumb.warn{border-color:#7f1d1d;color:#fca5a5}
+
+  /* Options */
+  .opts{display:flex;flex-direction:column;gap:.65rem}
+  .lbl-group{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-top:.6rem}
+  .lbl-group:first-child{margin-top:0}
+  .opt{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.85rem 1rem;color:#cbd5e1;font-size:.9rem;cursor:pointer;transition:border-color .18s,background .18s,transform .18s;text-align:left;display:flex;align-items:center;gap:.75rem;width:100%;font-family:inherit}
+  .opt:hover,.opt:focus-visible{border-color:#f59e0b;background:#172040;color:#f1f5f9;outline:none}
+  .opt.sel{border-color:#f59e0b;background:#3a1f08;color:#f1f5f9;box-shadow:0 0 10px rgba(245,158,11,.12)}
+  .opt .ico{font-size:1.2rem;flex-shrink:0;width:1.6rem;text-align:center}
+  .opt .lab{flex:1;line-height:1.35}
+  .opt .lab .main{font-weight:600;color:#f1f5f9}
+  .opt .lab .desc{font-size:.72rem;color:#94a3b8;display:block;margin-top:.1rem}
+  .opt .chk{font-size:1rem;color:#f59e0b;opacity:0;transition:opacity .2s}
+  .opt.sel .chk{opacity:1}
+
+  /* Check-btn */
+  .chkbtn{background:#0f172a;border:1.5px solid #334155;border-radius:.65rem;padding:.7rem .9rem;color:#cbd5e1;font-size:.85rem;cursor:pointer;transition:border-color .18s,background .18s;text-align:left;display:flex;align-items:center;gap:.65rem;width:100%;font-family:inherit}
+  .chkbtn:hover,.chkbtn:focus-visible{border-color:#f59e0b;background:#172040;outline:none}
+  .chkbtn.on{border-color:#f59e0b;background:#3a1f08;color:#f1f5f9}
+  .chkbox{width:18px;height:18px;border:1.5px solid #475569;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;color:#1e293b;font-size:.8rem;font-weight:900}
+  .chkbtn.on .chkbox{background:#f59e0b;border-color:#f59e0b}
+
+  /* Score-style pill buttons */
+  .pill-row{display:flex;gap:.5rem}
+  .pill{flex:1;padding:.65rem .4rem;border-radius:.55rem;font-size:.8rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#94a3b8;text-align:center;transition:border-color .18s,background .18s;line-height:1.3;font-family:inherit}
+  .pill:hover,.pill:focus-visible{border-color:#f59e0b;color:#cbd5e1;background:#172040;outline:none}
+  .pill.on{border-color:#f59e0b;background:#3a1f08;color:#fde68a;font-weight:600}
+  .pill small{display:block;font-size:.6rem;color:#64748b;margin-top:.15rem}
+  .pill.on small{color:#fbbf24}
+
+  /* Nav */
+  .nav{display:flex;gap:.65rem;margin-top:1.25rem}
+  .btn{flex:1;padding:.85rem;border-radius:.65rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s,background .18s;border:none;font-family:inherit}
+  .btn.sec{background:#334155;color:#cbd5e1}.btn.sec:hover{background:#475569}
+  .btn.pri{background:#f59e0b;color:#1e293b}.btn.pri:hover{background:#fbbf24;transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,.3)}
+  .btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+  /* Body map (rule-of-9s identity) */
+  .body-map{display:flex;flex-direction:column;gap:.4rem;margin:.75rem 0;padding:.5rem;background:#0a0f1c;border:1px dashed #1e293b;border-radius:.9rem;position:relative}
+  .body-map::before{content:'RULE OF 9s';position:absolute;top:.25rem;right:.5rem;font-size:.5rem;color:#334155;letter-spacing:.12em;font-family:'SF Mono','Fira Code',monospace;font-weight:700}
+  .body-row{display:flex;gap:.4rem;justify-content:center}
+  .region{flex:1;background:#0f172a;border:1.5px solid #334155;border-radius:.7rem;padding:.55rem .4rem;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;text-align:center;position:relative;min-height:3.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .region:hover{border-color:#f59e0b;background:#172040}
+  .region.on{border-color:#f59e0b;background:#3a1f08;box-shadow:0 0 10px rgba(245,158,11,.15)}
+  .region .r-ico{font-size:1.05rem;line-height:1;margin-bottom:.15rem}
+  .region .r-name{font-size:.6rem;color:#94a3b8;line-height:1.15;white-space:pre-line}
+  .region .r-pct{font-size:.8rem;font-weight:700;color:#fbbf24;font-family:'SF Mono','Fira Code',monospace;margin-top:.15rem;transition:transform .2s}
+  .region.on .r-name{color:#fde68a}
+  .region.on .r-pct{transform:scale(1.1)}
+
+  /* Partial fraction buttons */
+  .frac{display:flex;gap:.25rem;margin-top:.35rem;justify-content:center}
+  .fb{font-size:.55rem;padding:.2rem .35rem;border-radius:4px;border:1px solid #334155;background:#0f172a;color:#64748b;cursor:pointer;font-family:'SF Mono',monospace;min-width:1.4rem;transition:border-color .18s,background .18s}
+  .fb:hover{border-color:#f59e0b;color:#cbd5e1}
+  .fb.on{border-color:#f59e0b;background:#3a1f08;color:#fde68a}
+
+  /* Total SCQ display */
+  .tbsa{text-align:center;margin:.75rem 0;padding:1.1rem .75rem;background:#0a0f1c;border-radius:.85rem;border:1.5px solid #334155;transition:border-color .3s}
+  .tbsa.has{border-color:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,.08)}
+  .tbsa .n{font-size:2.5rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;color:#fbbf24;line-height:1;transition:color .3s}
+  .tbsa .l{font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-top:.35rem}
+  .tbsa .sev{font-size:.75rem;margin-top:.35rem;font-weight:600;transition:color .3s}
+
+  /* Depth cards */
+  .depth{background:#0f172a;border:1.5px solid #334155;border-radius:.7rem;padding:.9rem;cursor:pointer;transition:border-color .18s,background .18s;position:relative;overflow:hidden}
+  .depth::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;transition:background .3s}
+  .depth:hover{border-color:#f59e0b;background:#172040}
+  .depth.sel{border-color:#f59e0b;background:#3a1f08}
+  .depth.sel::before{background:#f59e0b}
+  .depth .dt{font-size:.9rem;font-weight:600;color:#f1f5f9;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+  .depth .dd{font-size:.72rem;color:#94a3b8;line-height:1.45}
+  .depth .dtag{font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .4rem;border-radius:9999px;font-weight:700}
+  .tag-1{background:#14532d;color:#86efac}.tag-2s{background:#854d0e;color:#fde68a}
+  .tag-2d{background:#9a3412;color:#fed7aa}.tag-3{background:#7f1d1d;color:#fca5a5}
+  .tag-4{background:#4c0519;color:#fda4af}
+
+  /* Callouts (tight, single-accent) */
+  .note{border-radius:.65rem;padding:.7rem .85rem;font-size:.75rem;margin:.6rem 0;display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
+  .note .ni{flex-shrink:0;font-size:.85rem;line-height:1.3}
+  .note.info{background:#0c1a2e;border:1px solid #1e40af;color:#93c5fd}
+  .note.warn{background:#2a1a05;border:1px solid #78350f;color:#fde68a}
+  .note.danger{background:#2d0808;border:1px solid #7f1d1d;color:#fca5a5}
+  .note b{color:#f1f5f9}
+  .note.danger b{color:#fecaca}.note.warn b{color:#fef3c7}
+
+  /* Input */
+  .ig{margin-bottom:.9rem}
+  .ig label{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:.35rem}
+  .irow{display:flex;align-items:center;gap:.65rem}
+  .inpt{background:#0f172a;border:1.5px solid #334155;border-radius:.55rem;padding:.7rem .85rem;color:#f1f5f9;font-size:.95rem;font-family:'SF Mono','Fira Code','Consolas',monospace;width:100%;outline:none;transition:border-color .18s,box-shadow .18s}
+  .inpt:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+  .inpt.err{border-color:#ef4444}
+  .inpt::placeholder{color:#475569}
+  .unit{font-size:.75rem;color:#64748b;min-width:2rem}
+  .errm{font-size:.65rem;color:#fca5a5;margin-top:.2rem}
+
+  /* Result */
+  .badge{display:inline-flex;align-items:center;justify-content:center;width:4.25rem;height:4.25rem;border-radius:50%;font-size:1.35rem;font-weight:800;margin:0 auto 1rem;animation:pop .45s cubic-bezier(.16,1,.3,1)}
+  @keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .b-minor{background:#14532d;color:#86efac;border:3px solid #22c55e}
+  .b-mod{background:#78350f;color:#fcd34d;border:3px solid #f59e0b}
+  .b-major{background:#7f1d1d;color:#fca5a5;border:3px solid #ef4444;animation:pop .45s cubic-bezier(.16,1,.3,1), dangerGlow 2.2s infinite}
+  @keyframes dangerGlow{0%,100%{box-shadow:0 0 14px rgba(239,68,68,.25)}50%{box-shadow:0 0 26px rgba(239,68,68,.5)}}
+  .res-card{text-align:center;padding:1.75rem 1.25rem}
+  .res-t{font-size:1.15rem;font-weight:700;margin-bottom:.2rem}
+  .res-d{color:#94a3b8;font-size:.78rem;margin-bottom:1.25rem;line-height:1.45}
+  .disp-bar{display:flex;align-items:center;gap:.65rem;padding:.65rem .9rem;border-radius:.6rem;margin:.5rem 0 1rem;text-align:left}
+  .disp-bar.major{background:#2d0808;border:1px solid #7f1d1d;color:#fca5a5}
+  .disp-bar.mod{background:#2a1a05;border:1px solid #78350f;color:#fcd34d}
+  .disp-bar.minor{background:#052e16;border:1px solid #14532d;color:#86efac}
+  .disp-bar .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .disp-bar.major .dot{background:#ef4444;animation:blink 1.5s infinite}
+  .disp-bar.mod .dot{background:#f59e0b}
+  .disp-bar.minor .dot{background:#22c55e}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+  .disp-bar .dt{font-size:.8rem;font-weight:600}
+
+  /* Collapsibles */
+  .box{background:#1e293b;border:1px solid #334155;border-radius:.85rem;margin-bottom:.75rem;overflow:hidden;transition:border-color .2s}
+  .box-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.9rem 1.1rem;transition:background .18s}
+  .box-hdr:hover{background:#0f172a}
+  .box-hdr h3{font-size:.78rem;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .box-hdr .ar{font-size:.7rem;color:#64748b;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+  .box-hdr.open .ar{transform:rotate(180deg);color:#f59e0b}
+  .box-body{padding:0 1.1rem 1.1rem;display:none}
+  .box-body.open{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Summary rows */
+  .srow{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #0f172a;font-size:.8rem;gap:.75rem}
+  .srow:last-child{border-bottom:none}
+  .srow .k{color:#94a3b8;flex-shrink:0}
+  .srow .v{font-weight:600;color:#f1f5f9;text-align:right;word-break:break-word}
+  .srow .v.num{font-family:'SF Mono',monospace;color:#fbbf24}
+
+  /* Conduta rows */
+  .cond{display:flex;align-items:flex-start;gap:.55rem;padding:.4rem 0;font-size:.8rem;color:#cbd5e1;line-height:1.45}
+  .cond .ci{flex-shrink:0;width:1.1rem;text-align:center;font-size:.85rem}
+  .mgmt{margin-bottom:.85rem}
+  .mgmt-t{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#fbbf24;margin-bottom:.35rem;padding-bottom:.3rem;border-bottom:1px solid #1e293b;font-weight:700}
+
+  /* Parkland table */
+  .pk-box{background:#0a0f1c;border:1.5px solid #334155;border-radius:.65rem;padding:.85rem 1rem;margin:.5rem 0}
+  .pk-box.has{border-color:#f59e0b}
+  .pk-row{display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;font-size:.8rem;border-bottom:1px solid #1e293b}
+  .pk-row:last-child{border-bottom:none}
+  .pk-row .k{color:#94a3b8}
+  .pk-row .v{font-weight:700;font-family:'SF Mono',monospace;color:#fbbf24}
+  .pk-row .v.big{font-size:1rem;color:#f59e0b}
+  .pk-eq{text-align:center;font-size:.7rem;color:#64748b;margin-bottom:.6rem;font-family:'SF Mono',monospace}
+  .pk-eq b{color:#fbbf24;font-weight:700}
+
+  /* Baux meter */
+  .baux{background:#0a0f1c;border:1px solid #334155;border-radius:.65rem;padding:.7rem .95rem;margin:.75rem 0}
+  .baux-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+  .baux-hdr .kk{font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em}
+  .baux-hdr .vv{font-size:1rem;font-weight:800;font-family:'SF Mono',monospace}
+  .baux-bar{height:5px;background:#1e293b;border-radius:3px;overflow:hidden}
+  .baux-fill{height:100%;border-radius:3px;transition:width .5s ease}
+  .baux-desc{font-size:.7rem;color:#94a3b8;margin-top:.35rem}
+
+  /* Reset link */
+  .reset{font-size:.65rem;color:#64748b;cursor:pointer;text-decoration:underline;text-underline-offset:2px;margin-left:auto;transition:color .18s}
+  .reset:hover{color:#fca5a5}
+
+  /* Chips */
+  .chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.35rem}
+  .chip{font-size:.7rem;padding:.3rem .6rem;border-radius:9999px;border:1.5px solid #334155;background:#0f172a;color:#94a3b8;cursor:pointer;transition:border-color .18s,background .18s;user-select:none}
+  .chip:hover{border-color:#f59e0b;color:#cbd5e1}
+  .chip.on{border-color:#f59e0b;background:#3a1f08;color:#fde68a}
+  .chip.allergy{border-color:#7f1d1d;background:#2d0808;color:#fca5a5}
+  .chip.allergy.on{background:#7f1d1d;color:#fecaca}
+
+  /* Time input */
+  .tr{display:flex;gap:.4rem;align-items:center}
+  .tinput{background:#0f172a;border:1.5px solid #334155;border-radius:.5rem;padding:.55rem .6rem;color:#f1f5f9;font-size:.95rem;font-family:'SF Mono',monospace;width:68px;text-align:center;outline:none;transition:border-color .18s}
+  .tinput:focus{border-color:#f59e0b}
+  .tsep{color:#64748b;font-weight:700}
+
+  /* Note / copy */
+  .notepre{background:#020617;border:1px solid #1e293b;border-radius:.55rem;padding:.9rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.7rem;color:#cbd5e1;white-space:pre-wrap;line-height:1.55;max-height:380px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.6rem;padding:.7rem;border-radius:.55rem;border:1.5px solid #334155;background:#1e293b;color:#cbd5e1;font-size:.85rem;font-weight:600;cursor:pointer;transition:border-color .18s,background .18s;font-family:inherit}
+  .copy:hover{border-color:#f59e0b;background:#172040;color:#f1f5f9}
+  .copy.done{border-color:#22c55e;background:#052e16;color:#86efac}
+
+  .hint{font-size:.65rem;color:#64748b;margin-top:.25rem}
+  .hint.ok{color:#86efac}
+  .hint.err{color:#fca5a5}
+
+  .disclaimer{text-align:center;font-size:.6rem;color:#475569;padding:.75rem .5rem 1.5rem;line-height:1.55;max-width:560px}
+
+  @media(max-width:500px){
+    .container{padding:.85rem;gap:.85rem}
+    .card{padding:1.15rem}
+    header{padding:.85rem 1rem}.back-link{left:.75rem;font-size:.75rem}
+    .opt{padding:.7rem .8rem;font-size:.82rem}
+    .chkbtn{padding:.6rem .75rem;font-size:.78rem}
+    .region{padding:.45rem .3rem;min-height:3rem}
+    .region .r-ico{font-size:.95rem}
+    .region .r-name{font-size:.55rem}
+    .region .r-pct{font-size:.7rem}
+    .fb{font-size:.5rem;padding:.15rem .3rem;min-width:1.25rem}
+    .pill{font-size:.72rem;padding:.55rem .3rem}
+    .tbsa .n{font-size:2rem}
+    .btn{padding:.75rem;font-size:.84rem}
+    .cond,.srow{font-size:.76rem}
+    .depth{padding:.75rem}
+    .depth .dd{font-size:.68rem}
+    .chip{font-size:.65rem;padding:.25rem .5rem}
+    .box-hdr{padding:.8rem .95rem}
+    .box-body{padding:0 .95rem .95rem}
+  }
+  @media(max-width:360px){
+    .body-row{gap:.3rem}
+    .region{padding:.35rem .2rem;min-height:2.75rem;border-radius:.55rem}
+    .region .r-name{font-size:.5rem}
+    .region .r-pct{font-size:.62rem}
+  }
+  @media print{
+    body{background:#fff;color:#000}
+    header{background:#fff;border-bottom:2px solid #000;position:static}
+    header h1,.back-link{color:#000}
+    .card,.box,.pk-box,.tbsa,.baux{background:#fff;border-color:#666;color:#000}
+    .box-body{display:block!important}
+    .nav,.copy,.reset,.prog,.prog-label,.disclaimer{display:none}
+    .note{background:#f5f5f5;color:#000;border-color:#999}
+    .notepre{background:#fff;color:#000;max-height:none;border:1px solid #ccc}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../queimaduras.html" class="back-link" aria-label="Voltar">&larr; Voltar</a>
+  <h1>Queimaduras</h1>
+  <div class="subtitle">Classificação · SCQ · Parkland · Manejo</div>
+</header>
+<div class="container" id="app" role="main"></div>
+<script>
+// ==========================
+// DATA
+// ==========================
+const STEPS = ['Mecanismo','Profundidade','SCQ','Inalação','Paciente','Resultado'];
+
+const MECH = [
+  {id:'thermal',   ico:'🔥', lab:'Térmica',     desc:'Chama, vapor, contato com superfície quente'},
+  {id:'scald',     ico:'☕', lab:'Escaldadura', desc:'Líquidos quentes (mais comum em crianças)'},
+  {id:'chemical',  ico:'⚗️', lab:'Química',     desc:'Ácidos, álcalis, agentes orgânicos'},
+  {id:'electrical',ico:'⚡', lab:'Elétrica',    desc:'Baixa/alta tensão, raio'},
+  {id:'radiation', ico:'☢️', lab:'Radiação',    desc:'Solar, radioterapia, nuclear'},
+];
+
+const CHEM = [
+  {id:'acid',   lab:'Ácido',      desc:'Necrose coagulativa · lesão delimitada'},
+  {id:'alkali', lab:'Álcali',     desc:'Necrose liquefativa · penetra mais fundo'},
+  {id:'organic',lab:'Orgânico / HF',desc:'Fenóis, ác. fluorídrico — manejo específico'},
+];
+
+const DEPTHS = [
+  {id:'1st',   lab:'1º Grau (superficial)',    tag:'tag-1', tt:'1º',
+   desc:'Epiderme. Eritema, dor, sem bolhas. Ex: queimadura solar. Não entra na SCQ.'},
+  {id:'2nd_s', lab:'2º Grau Superficial',      tag:'tag-2s',tt:'2º S',
+   desc:'Bolhas íntegras, base rosada, dolorosa, branqueia. Cura 10–14d.'},
+  {id:'2nd_d', lab:'2º Grau Profundo',         tag:'tag-2d',tt:'2º P',
+   desc:'Bolhas rotas, base esbranquiçada, dor reduzida. Cura >21d, pode exigir enxerto.'},
+  {id:'3rd',   lab:'3º Grau (espessura total)',tag:'tag-3', tt:'3º',
+   desc:'Aspecto céreo/couro, indolor. Enxerto obrigatório.'},
+  {id:'4th',   lab:'4º Grau',                  tag:'tag-4', tt:'4º',
+   desc:'Atinge fáscia, músculo, osso. Carbonização. Alta mortalidade.'},
+];
+
+const LB = {
+  head: [{a:0,p:19},{a:1,p:17},{a:5,p:13},{a:10,p:11},{a:15,p:9},{a:999,p:7}],
+  leg_r:[{a:0,p:13},{a:1,p:13},{a:5,p:16},{a:10,p:17},{a:15,p:18},{a:999,p:18}],
+  leg_l:[{a:0,p:13},{a:1,p:13},{a:5,p:16},{a:10,p:17},{a:15,p:18},{a:999,p:18}],
+};
+
+const REGIONS = [
+  {id:'head',      ico:'🗣️', name:'Cabeça\ne pescoço',  row:0, a:9,  c:18},
+  {id:'ant_trunk', ico:'👕', name:'Tronco\nanterior',   row:1, a:18, c:18},
+  {id:'post_trunk',ico:'📦', name:'Tronco\nposterior',  row:1, a:18, c:18},
+  {id:'arm_r',     ico:'💪', name:'MSD',                row:2, a:9,  c:9},
+  {id:'arm_l',     ico:'💪', name:'MSE',                row:2, a:9,  c:9},
+  {id:'leg_r',     ico:'🦵', name:'MID',                row:3, a:18, c:14},
+  {id:'leg_l',     ico:'🦵', name:'MIE',                row:3, a:18, c:14},
+  {id:'perineum',  ico:'⚫', name:'Períneo',            row:4, a:1,  c:1},
+];
+
+const INH = [
+  {id:'singed',      lab:'Pelos nasais/faciais chamuscados'},
+  {id:'soot',        lab:'Fuligem em orofaringe ou narina'},
+  {id:'hoarse',      lab:'Rouquidão / disfonia'},
+  {id:'stridor',     lab:'Estridor'},
+  {id:'carbonaceous',lab:'Escarro carbonáceo'},
+  {id:'face_burn',   lab:'Queimadura de face / cervical'},
+  {id:'dyspnea',     lab:'Dispneia / taquidispneia'},
+  {id:'enclosed',    lab:'Incêndio em ambiente fechado'},
+  {id:'confusion',   lab:'Rebaixamento / confusão'},
+  {id:'cyanosis',    lab:'Cianose ou SpO₂ < 92%'},
+];
+
+const CRIT = [
+  {id:'hands', lab:'Mãos'},
+  {id:'feet',  lab:'Pés'},
+  {id:'joints',lab:'Articulações maiores'},
+];
+
+const COMORB = [
+  {id:'dm',    lab:'Diabetes'},
+  {id:'card',  lab:'Cardiopatia'},
+  {id:'renal', lab:'D. renal'},
+  {id:'immuno',lab:'Imunodepressão'},
+  {id:'hep',   lab:'Hepatopatia'},
+  {id:'pulm',  lab:'Pneumopatia'},
+  {id:'coag',  lab:'Coagulopatia / ACO'},
+];
+
+// ==========================
+// STATE
+// ==========================
+let step=0;
+let mech=null, elecV=null, chem=null;
+let depth=null;
+let regions=new Set(), partial={}, circ=false, crit=new Set();
+let inh=new Set();
+let sex=null, age='', weight='', bh='', bm='';
+let comorb=new Set(), sulfa=false;
+let sections={summary:true, tbsa:true, parkland:true, inhalation:false, transfer:true, mgmt:true, note:true};
+const evalStart=new Date();
+const app=document.getElementById('app');
+
+// ==========================
+// HELPERS
+// ==========================
+const $n=v=>v.toLocaleString('pt-BR');
+const isChild=()=>{const a=parseInt(age);return !isNaN(a)&&a<=14};
+const hasComorb=id=>comorb.has(id);
+
+function lbPct(id,a){
+  const t=LB[id]; if(!t||isNaN(a)||a<0) return null;
+  for(const r of t) if(a<=r.a) return r.p;
+  return t[t.length-1].p;
+}
+function rPct(r){
+  const a=parseInt(age);
+  if(isChild()){const v=lbPct(r.id,a); if(v!==null) return v; return r.c}
+  return r.a;
+}
+function scq(){
+  let t=0;
+  for(const r of REGIONS) if(regions.has(r.id)) t+=rPct(r)*(partial[r.id]||1);
+  return Math.round(t*100)/100;
+}
+function scqDisp(){const v=scq();return v%1===0?v+'%':v.toFixed(1)+'%'}
+function parkland(){
+  const w=parseFloat(weight), t=scq();
+  if(isNaN(w)||w<=0||t<=0) return null;
+  const total=Math.round(4*w*t);
+  return {total, first8:Math.round(total/2), next16:Math.round(total/2),
+          r1:Math.round(total/2/8), r2:Math.round(total/2/16)};
+}
+function burnTime(){
+  const h=parseInt(bh), m=parseInt(bm);
+  if(isNaN(h)||isNaN(m)||h<0||h>23||m<0||m>59) return null;
+  const n=new Date(), d=new Date(n.getFullYear(),n.getMonth(),n.getDate(),h,m);
+  if(d>n) d.setDate(d.getDate()-1);
+  return d;
+}
+function elapsed(){
+  const bt=burnTime(); if(!bt) return null;
+  const h=(new Date()-bt)/3600000;
+  return h>0?h:null;
+}
+function baux(){
+  const a=parseInt(age), t=scq(), bonus=inh.size>=2?17:0;
+  if(isNaN(a)) return null;
+  return a+t+bonus;
+}
+function sevOf(full){
+  const t=scq(), a=parseInt(age);
+  const deep=depth==='3rd'||depth==='4th', d2p=depth==='2nd_d';
+  if(depth==='4th') return 'major';
+  if(t>20) return 'major';
+  if(deep && t>5) return 'major';
+  if(d2p && t>10) return 'major';
+  if(mech==='electrical' && elecV==='high') return 'major';
+  if(full){
+    if(inh.size>=2) return 'major';
+    if(!isNaN(a) && (a<2||a>60) && t>10) return 'major';
+    if(regions.has('perineum') && (deep||d2p)) return 'major';
+    if(circ && (deep||d2p)) return 'major';
+    if(crit.has('hands') && deep && t>2) return 'major';
+    if(crit.has('feet') && deep && t>2) return 'major';
+    if(comorb.size>=2 && t>10) return 'major';
+  }
+  if(t>10) return 'moderate';
+  if(deep && t>=2) return 'moderate';
+  if(d2p && t>5) return 'moderate';
+  if(mech==='electrical') return 'moderate';
+  if(mech==='chemical' && t>2) return 'moderate';
+  if(circ) return 'moderate';
+  if(full){
+    if(!isNaN(a) && (a<10||a>50) && t>5) return 'moderate';
+    if(regions.has('head') && t>5) return 'moderate';
+    if(inh.size===1) return 'moderate';
+    if(crit.size>0 && (d2p||deep)) return 'moderate';
+    if(comorb.size>=1 && t>5) return 'moderate';
+  }
+  return 'minor';
+}
+const sevLab={major:'Grande Queimado', moderate:'Médio Queimado', minor:'Pequeno Queimado'};
+const sevCol={major:'#fca5a5', moderate:'#fcd34d', minor:'#86efac'};
+
+function transferCrit(){
+  const c=[], t=scq(), a=parseInt(age);
+  if(depth==='2nd_s'&&t>10) c.push('2º sup. >10% SCQ');
+  if(depth==='2nd_d'&&t>5)  c.push('2º prof. >5% SCQ');
+  if(depth==='3rd'||depth==='4th') c.push('3º/4º grau (qualquer extensão)');
+  if(mech==='electrical') c.push('Queimadura elétrica');
+  if(mech==='chemical')   c.push('Queimadura química significativa');
+  if(inh.size>=2) c.push('Lesão inalatória associada');
+  if(regions.has('head')) c.push('Face / pescoço');
+  if(regions.has('perineum')) c.push('Períneo / genitália');
+  if(crit.has('hands'))  c.push('Mãos (risco funcional)');
+  if(crit.has('feet'))   c.push('Pés (risco funcional)');
+  if(crit.has('joints')) c.push('Articulações maiores');
+  if(!isNaN(a)){
+    if(a<2) c.push('< 2 anos (alto risco)');
+    else if(a<10&&t>5) c.push('< 10 anos + SCQ > 5%');
+    else if(a>60&&t>5) c.push('> 60 anos + SCQ > 5%');
+  }
+  const anyDeep=depth==='3rd'||depth==='4th'||depth==='2nd_d';
+  if(circ) c.push('Circunferencial → síndrome compartimental / restrição ventilatória');
+  else if(anyDeep&&t>=5) c.push('Avaliar possível circunferencial → escarotomia');
+  if(comorb.size>0) c.push('Comorbidade: '+COMORB.filter(x=>comorb.has(x.id)).map(x=>x.lab).join(', '));
+  return [...new Set(c)];
+}
+function needsIV(){
+  const t=scq(), a=parseInt(age);
+  if(!isNaN(a)&&a<=14) return t>=10;
+  return t>=15;
+}
+function validAge(v){
+  const n=parseInt(v);
+  if(v===''||isNaN(n)) return {ok:v==='',msg:''};
+  if(n<0) return {ok:false,msg:'Idade não pode ser negativa'};
+  if(n>120) return {ok:false,msg:'Máximo 120 anos'};
+  return {ok:true,msg:''};
+}
+function validW(v){
+  const n=parseFloat(v);
+  if(v===''||isNaN(n)) return {ok:v==='',msg:''};
+  if(n<=0) return {ok:false,msg:'Peso deve ser > 0'};
+  if(n>350) return {ok:false,msg:'Verifique peso (>350 kg)'};
+  return {ok:true,msg:''};
+}
+const depLab=id=>(DEPTHS.find(x=>x.id===id)||{}).lab||'';
+const mechLab=id=>(MECH.find(x=>x.id===id)||{}).lab||'';
+
+// ==========================
+// PROGRESS + CRUMBS
+// ==========================
+function progHTML(i,done){
+  let h='<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="'+STEPS.length+'" aria-valuenow="'+(done?STEPS.length:i)+'">';
+  for(let k=0;k<STEPS.length;k++){
+    const c=done||k<i?'done':k===i?'active':'';
+    h+=`<div class="prog-step ${c}"></div>`;
+  }
+  h+='</div><div class="prog-label">';
+  h+=done?`<b>Concluído</b>`:`Etapa ${i+1} de ${STEPS.length} · <b>${STEPS[i]}</b>`;
+  h+='</div>';
+  return h;
+}
+function crumbsHTML(){
+  const c=[];
+  if(mech) c.push(`<span class="crumb">${mechLab(mech)}</span>`);
+  if(depth) c.push(`<span class="crumb">${DEPTHS.find(x=>x.id===depth).tt}</span>`);
+  if(regions.size>0) c.push(`<span class="crumb">SCQ <b>${scqDisp()}</b></span>`);
+  if(circ) c.push(`<span class="crumb warn">CIRC</span>`);
+  if(inh.size>0) c.push(`<span class="crumb ${inh.size>=2?'warn':''}">Inal. ${inh.size}</span>`);
+  if(c.length===0) return '';
+  return `<div class="crumbs" aria-label="Resumo parcial">${c.join('')}</div>`;
+}
+
+// ==========================
+// ROUTER
+// ==========================
+function render(){
+  if(step===0) stepMech();
+  else if(step===1) stepDepth();
+  else if(step===2) stepSCQ();
+  else if(step===3) stepInh();
+  else if(step===4) stepPat();
+  else stepResult();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ==========================
+// STEP 0: MECHANISM
+// ==========================
+function stepMech(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<h2>Mecanismo</h2><p class="sub">Selecione o mecanismo principal</p>';
+  h+='<div class="opts" role="radiogroup">';
+  for(const m of MECH){
+    h+=`<button class="opt ${mech===m.id?'sel':''}" onclick="setMech('${m.id}')" role="radio" aria-checked="${mech===m.id}">`;
+    h+=`<span class="ico">${m.ico}</span><span class="lab"><span class="main">${m.lab}</span><span class="desc">${m.desc}</span></span><span class="chk">✓</span></button>`;
+  }
+  h+='</div>';
+
+  if(mech==='electrical'){
+    h+='<div class="lbl-group">Tensão</div>';
+    h+='<div class="pill-row">';
+    h+=`<button class="pill ${elecV==='low'?'on':''}" onclick="setElec('low')">Baixa<small>&lt; 1000 V</small></button>`;
+    h+=`<button class="pill ${elecV==='high'?'on':''}" onclick="setElec('high')">Alta / Raio<small>&ge; 1000 V</small></button>`;
+    h+='</div>';
+    if(elecV==='high') h+='<div class="note danger"><span class="ni">⚡</span><span>Lesão profunda desproporcional à superfície visível. SCQ <b>subestima</b> a gravidade. Examinar pontos de entrada e saída. Risco de rabdomiólise e arritmia.</span></div>';
+    else if(elecV==='low') h+='<div class="note info"><span class="ni">ℹ️</span><span>Lesão geralmente localizada. ECG + monitor cardíaco 24h se <b>PC, ECG anormal ou passagem transtorácica</b>.</span></div>';
+  }
+
+  if(mech==='chemical'){
+    h+='<div class="lbl-group">Tipo de agente</div>';
+    h+='<div class="opts">';
+    for(const a of CHEM){
+      h+=`<button class="opt ${chem===a.id?'sel':''}" onclick="setChem('${a.id}')">`;
+      h+=`<span class="lab"><span class="main">${a.lab}</span><span class="desc">${a.desc}</span></span><span class="chk">✓</span></button>`;
+    }
+    h+='</div>';
+    if(chem==='alkali')  h+='<div class="note danger"><span class="ni">⚠️</span><span>Irrigar <b>30–60 min mín.</b> NÃO neutralizar. Manter até pH cutâneo &lt; 8.</span></div>';
+    else if(chem==='acid') h+='<div class="note warn"><span class="ni">⚠️</span><span>Irrigar <b>20–30 min mín.</b> HF → tratar como orgânico.</span></div>';
+    else if(chem==='organic') h+='<div class="note warn"><span class="ni">⚠️</span><span>Ác. fluorídrico: <b>gluconato de Ca</b> tópico/SC + monitorar Ca sérico. Fenol/fósforo: consultar protocolo específico.</span></div>';
+  }
+
+  h+='<div class="nav">';
+  const ok=mech&&(mech!=='electrical'||elecV)&&(mech!=='chemical'||chem);
+  h+=`<button class="btn pri" ${ok?'':'disabled'} onclick="next()">Próximo →</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ==========================
+// STEP 1: DEPTH
+// ==========================
+function stepDepth(){
+  let h=progHTML(1,false)+crumbsHTML();
+  h+='<div class="card">';
+  h+='<h2>Profundidade</h2><p class="sub">Selecione a maior profundidade encontrada</p>';
+  h+='<div class="note info"><span class="ni">💡</span><span>Profundidade pode ser difícil nas primeiras 24–72h. Na dúvida, classifique como mais profunda.</span></div>';
+  h+='<div class="opts" role="radiogroup">';
+  for(const d of DEPTHS){
+    h+=`<div class="depth ${depth===d.id?'sel':''}" onclick="setDepth('${d.id}')" role="radio" aria-checked="${depth===d.id}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setDepth('${d.id}')}">`;
+    h+=`<div class="dt"><span class="dtag ${d.tag}">${d.tt}</span> ${d.lab}</div>`;
+    h+=`<div class="dd">${d.desc}</div></div>`;
+  }
+  h+='</div>';
+  h+='<div class="nav">';
+  h+='<button class="btn sec" onclick="prev()">← Voltar</button>';
+  h+=`<button class="btn pri" ${depth?'':'disabled'} onclick="next()">Próximo →</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ==========================
+// STEP 2: SCQ
+// ==========================
+function stepSCQ(){
+  const t=scq();
+  let h=progHTML(2,false)+crumbsHTML();
+  h+='<div class="card">';
+  const child=isChild();
+  h+=`<h2>Superfície Corporal Queimada</h2><p class="sub">${child?'Lund-Browder (ajustado por idade)':'Regra dos 9 de Wallace'}</p>`;
+
+  if(depth==='1st'){
+    h+='<div class="note warn"><span class="ni">⚠️</span><span>1º grau <b>não entra</b> no cálculo da SCQ para ressuscitação. Registre apenas para documentação.</span></div>';
+  } else {
+    h+='<div class="note info"><span class="ni">💡</span><span>Toque para selecionar. Use ¼ · ½ · ¾ para área parcial. <b>Palma do paciente ≈ 1%</b> (útil para lesões dispersas).</span></div>';
+  }
+  if(child) h+=`<div class="note warn"><span class="ni">👶</span><span>Pediátrico (${age}a) — cabeça/MMII ajustados por Lund-Browder.</span></div>`;
+
+  // Map header + reset
+  h+='<div style="display:flex;align-items:center;font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin:.35rem 0 0">Mapa corporal';
+  if(regions.size>0) h+=`<span class="reset" onclick="resetMap()">Limpar tudo</span>`;
+  h+='</div>';
+
+  // Map
+  const rows=[[],[],[],[],[]];
+  for(const r of REGIONS) rows[r.row].push(r);
+  h+='<div class="body-map">';
+  for(const row of rows){
+    if(!row.length) continue;
+    h+='<div class="body-row">';
+    for(const r of row){
+      const on=regions.has(r.id), f=partial[r.id]||1, p=rPct(r);
+      const v=on?((p*f)%1===0?p*f:(p*f).toFixed(1)):p;
+      h+=`<div class="region ${on?'on':''}" onclick="tglRegion('${r.id}')" role="checkbox" aria-checked="${on}" aria-label="${r.name.replace('\n',' ')} ${p}%">`;
+      h+=`<div class="r-ico">${r.ico}</div><div class="r-name">${r.name}</div><div class="r-pct">${v}%</div>`;
+      if(on){
+        h+='<div class="frac" onclick="event.stopPropagation()">';
+        for(const fr of [0.25,0.5,0.75,1]){
+          const lbl=fr===1?'1':fr===0.25?'¼':fr===0.5?'½':'¾';
+          h+=`<button class="fb ${f===fr?'on':''}" onclick="event.stopPropagation();setFrac('${r.id}',${fr})" aria-label="${Math.round(fr*100)}%">${lbl}</button>`;
+        }
+        h+='</div>';
+      }
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // Total
+  h+=`<div class="tbsa ${t>0?'has':''}"><div class="n">${scqDisp()}</div><div class="l">SCQ total</div>`;
+  if(t>0){const s=sevOf(false); h+=`<div class="sev" style="color:${sevCol[s]}">${sevLab[s]} (preliminar)</div>`}
+  h+='</div>';
+
+  // Critical areas + circumferential (only if relevant)
+  if(depth!=='1st' && regions.size>0){
+    h+='<div class="lbl-group">Áreas críticas (não alteram SCQ)</div>';
+    h+='<div class="opts">';
+    for(const c of CRIT){
+      const on=crit.has(c.id);
+      h+=`<button class="chkbtn ${on?'on':''}" onclick="tglCrit('${c.id}')" aria-pressed="${on}"><span class="chkbox">${on?'✓':''}</span><span>${c.lab}</span></button>`;
+    }
+    h+='</div>';
+
+    const showCirc=['2nd_s','2nd_d','3rd','4th'].includes(depth);
+    if(showCirc){
+      h+='<div style="margin-top:.6rem">';
+      h+=`<button class="chkbtn ${circ?'on':''}" onclick="tglCirc()" aria-pressed="${circ}"><span class="chkbox">${circ?'✓':''}</span><span>Queimadura circunferencial (membro ou tórax)</span></button>`;
+      if(circ){
+        const deepCirc=['2nd_d','3rd','4th'].includes(depth);
+        h+=deepCirc
+          ? '<div class="note danger"><span class="ni">🚨</span><span><b>Circunferencial profunda:</b> risco de síndrome compartimental e/ou restrição ventilatória. Avaliar escarotomia. Monitorar pulsos (Doppler). Elevar membro.</span></div>'
+          : '<div class="note warn"><span class="ni">⚠️</span><span><b>Circunferencial superficial:</b> vigilância neurovascular. Conversão possível em 24–72h. Elevar membro.</span></div>';
+      }
+      h+='</div>';
+    }
+  }
+
+  h+='<div class="nav">';
+  h+='<button class="btn sec" onclick="prev()">← Voltar</button>';
+  h+='<button class="btn pri" onclick="next()">Próximo →</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ==========================
+// STEP 3: INHALATION
+// ==========================
+function stepInh(){
+  let h=progHTML(3,false)+crumbsHTML();
+  h+='<div class="card">';
+  h+='<h2>Lesão Inalatória</h2><p class="sub">Marque os sinais presentes</p>';
+  h+='<div class="note warn"><span class="ni">⚠️</span><span>≥2 sinais → considerar <b>IOT precoce</b>. Edema progressivo pode impedir IOT tardia.</span></div>';
+  h+='<div class="opts">';
+  for(const s of INH){
+    const on=inh.has(s.id);
+    h+=`<button class="chkbtn ${on?'on':''}" onclick="tglInh('${s.id}')" aria-pressed="${on}"><span class="chkbox">${on?'✓':''}</span><span>${s.lab}</span></button>`;
+  }
+  h+='</div>';
+
+  if(inh.size>=3) h+=`<div class="note danger"><span class="ni">🚨</span><span><b>Alta suspeita (${inh.size} sinais).</b> IOT precoce obrigatória · O₂ 100% · broncoscopia · Parkland +30–50% · CTQ.</span></div>`;
+  else if(inh.size===2) h+='<div class="note danger"><span class="ni">⚠️</span><span><b>Suspeita de lesão inalatória.</b> Considerar IOT precoce e O₂ 100%.</span></div>';
+  else if(inh.size===1) h+='<div class="note warn"><span class="ni">⚠️</span><span>1 sinal — vigilância rigorosa. Reavaliar em 2–4h.</span></div>';
+
+  if(inh.has('enclosed') && inh.size>=1) h+='<div class="note info"><span class="ni">🧪</span><span><b>Ambiente fechado:</b> dosar COHb e lactato. Materiais sintéticos → suspeitar de cianeto.</span></div>';
+
+  h+='<div class="nav">';
+  h+='<button class="btn sec" onclick="prev()">← Voltar</button>';
+  h+='<button class="btn pri" onclick="next()">Próximo →</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ==========================
+// STEP 4: PATIENT
+// ==========================
+function stepPat(){
+  let h=progHTML(4,false)+crumbsHTML();
+  h+='<div class="card">';
+  h+='<h2>Paciente</h2><p class="sub">Dados para Parkland e ajustes por faixa etária</p>';
+
+  // Sex
+  h+='<div class="lbl-group">Sexo</div>';
+  h+='<div class="pill-row">';
+  h+=`<button class="pill ${sex==='M'?'on':''}" onclick="setSex('M')">Masculino</button>`;
+  h+=`<button class="pill ${sex==='F'?'on':''}" onclick="setSex('F')">Feminino</button>`;
+  h+='</div>';
+
+  // Age
+  const vA=validAge(age);
+  h+='<div class="ig" style="margin-top:1rem"><label>Idade</label><div class="irow">';
+  h+=`<input type="number" class="inpt ${!vA.ok&&age!==''?'err':''}" id="ageI" value="${age}" placeholder="35" min="0" max="120" step="1" inputmode="numeric" oninput="setAge(this.value)">`;
+  h+='<span class="unit">anos</span></div>';
+  if(vA.msg) h+=`<div class="errm">${vA.msg}</div>`;
+  h+='</div>';
+
+  // Weight
+  const vW=validW(weight);
+  h+='<div class="ig"><label>Peso</label><div class="irow">';
+  h+=`<input type="number" class="inpt ${!vW.ok&&weight!==''?'err':''}" id="wI" value="${weight}" placeholder="70" min="1" max="350" step="0.1" inputmode="decimal" oninput="setW(this.value)">`;
+  h+='<span class="unit">kg</span></div>';
+  if(vW.msg) h+=`<div class="errm">${vW.msg}</div>`;
+  h+='</div>';
+
+  // Burn time
+  h+='<div class="ig"><label>Hora da queimadura (opcional)</label>';
+  h+='<div class="tr">';
+  h+=`<input type="number" class="tinput" id="bhI" value="${bh}" placeholder="HH" min="0" max="23" inputmode="numeric" oninput="setBH(this.value)">`;
+  h+='<span class="tsep">:</span>';
+  h+=`<input type="number" class="tinput" id="bmI" value="${bm}" placeholder="MM" min="0" max="59" inputmode="numeric" oninput="setBM(this.value)">`;
+  h+='</div>';
+  const el=elapsed();
+  if(el!==null){
+    if(el>48) h+=`<div class="hint err">Decorrido: ${el.toFixed(1)}h · verifique a hora (&gt;48h)</div>`;
+    else      h+=`<div class="hint ok">Decorrido: ${el.toFixed(1)}h</div>`;
+  }
+  h+='</div>';
+
+  // Comorbidities
+  h+='<div class="ig"><label>Comorbidades (opcional)</label><div class="chips">';
+  for(const c of COMORB) h+=`<span class="chip ${comorb.has(c.id)?'on':''}" onclick="tglCom('${c.id}')" role="checkbox" aria-checked="${comorb.has(c.id)}">${c.lab}</span>`;
+  h+='</div></div>';
+
+  // Allergy
+  h+='<div class="ig"><label>Alergias</label>';
+  h+=`<span class="chip allergy ${sulfa?'on':''}" onclick="tglSulfa()" role="checkbox" aria-checked="${sulfa}">Sulfonamidas ${sulfa?'✓':''}</span>`;
+  if(sulfa) h+='<div class="note warn" style="margin-top:.5rem"><span class="ni">⚠️</span><span><b>Sulfadiazina de prata contraindicada.</b> Alternativas: prata nanocristalina, alginato + Ag, mupirocina 2%.</span></div>';
+  h+='</div>';
+
+  // Age warnings (condensed)
+  const a=parseInt(age);
+  if(!isNaN(a) && a<2) h+='<div class="note danger"><span class="ni">👶</span><span><b>Lactente (&lt;2a):</b> maior risco de hipotermia, desidratação, hipoglicemia. Limiar de internação mais baixo. IO se IV difícil.</span></div>';
+  else if(!isNaN(a) && a<=14) h+='<div class="note info"><span class="ni">👶</span><span><b>Pediátrico:</b> DU alvo 1–2 mL/kg/h. Manutenção Holliday-Segar + glicose (adicional ao Parkland).</span></div>';
+  else if(!isNaN(a) && a>60) h+='<div class="note warn"><span class="ni">⚠️</span><span><b>Idoso (&gt;60a):</b> mortalidade maior. Pele mais fina → lesões mais profundas. Cuidado com sobrecarga hídrica.</span></div>';
+
+  // Compact comorbidity highlights (most critical only, not all 7)
+  const cWarn=[];
+  if(hasComorb('card'))   cWarn.push('cardiopatia → risco de sobrecarga, titular por DU');
+  if(hasComorb('renal'))  cWarn.push('D. renal → DU pode não guiar, monitorar eletrólitos');
+  if(hasComorb('immuno')) cWarn.push('imunodepressão → sepse precoce, limiar baixo de internação');
+  if(hasComorb('coag'))   cWarn.push('coagulopatia/ACO → reverter antes de escarotomia');
+  if(cWarn.length) h+=`<div class="note warn"><span class="ni">⚠️</span><span><b>Atenção:</b> ${cWarn.join(' · ')}.</span></div>`;
+
+  // Weight sanity check
+  if(weight!==''&&age!==''){
+    const w=parseFloat(weight), aa=parseInt(age);
+    if(!isNaN(w)&&!isNaN(aa)){
+      if(aa<=2&&w>20) h+=`<div class="note warn"><span class="ni">⚠️</span><span>Peso ${w} kg parece alto para ${aa}a — verifique.</span></div>`;
+      else if(aa<=14&&w>80) h+=`<div class="note warn"><span class="ni">⚠️</span><span>Peso ${w} kg parece alto para ${aa}a — verifique.</span></div>`;
+      if(aa>14&&w<30) h+=`<div class="note warn"><span class="ni">⚠️</span><span>Peso ${w} kg parece baixo para adulto — verifique.</span></div>`;
+    }
+  }
+
+  // Parkland preview
+  const pk=parkland();
+  if(pk && depth!=='1st'){
+    const t=scq();
+    h+=`<div class="note info"><span class="ni">💧</span><span><b>Parkland:</b> 4 × ${weight} × ${t} = <b style="color:#fbbf24">${$n(pk.total)} mL</b>/24h (RL)`;
+    if(el!==null && el<24){
+      const left=Math.max(0,8-el);
+      if(left>0){
+        const adj=Math.round(pk.first8/left);
+        h+=`<br>⏱️ ${el.toFixed(1)}h decorridas → restam ${left.toFixed(1)}h das 8h iniciais → <b>${$n(adj)} mL/h</b>`;
+      } else {
+        h+=`<br>⏱️ ${el.toFixed(1)}h decorridas → ${$n(pk.r2)} mL/h até 24h`;
+      }
+    }
+    h+='</span></div>';
+    const w=parseFloat(weight);
+    if(!isNaN(w)&&w>0&&t>0){
+      const r=pk.total/w/t;
+      if(r>5) h+=`<div class="note warn"><span class="ni">⚠️</span><span>${r.toFixed(1)} mL/kg/%SCQ · valores &gt;6 associados a fluid creep. Titular por DU.</span></div>`;
+    }
+  }
+
+  h+='<div class="nav">';
+  h+='<button class="btn sec" onclick="prev()">← Voltar</button>';
+  const ok=sex&&age!==''&&weight!==''&&validAge(age).ok&&validW(weight).ok;
+  h+=`<button class="btn pri" ${ok?'':'disabled'} onclick="next()">Ver resultado →</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ==========================
+// STEP 5: RESULT
+// ==========================
+function stepResult(){
+  const t=scq(), pk=parkland(), sev=sevOf(true), tc=transferCrit(), bx=baux();
+  if(inh.size>0 && !sections._inhOpen){ sections.inhalation=true; sections._inhOpen=true }
+
+  let h=progHTML(STEPS.length-1,true);
+  h+='<div class="card res-card">';
+  const bCls=sev==='major'?'b-major':sev==='moderate'?'b-mod':'b-minor';
+  const bIco=sev==='major'?'🔥':sev==='moderate'?'⚠':'✓';
+  h+=`<div class="badge ${bCls}">${bIco}</div>`;
+  h+=`<div class="res-t" style="color:${sevCol[sev]}">${sevLab[sev]}</div>`;
+  h+=`<div class="res-d">${mechLab(mech)} · ${depLab(depth)} · SCQ ${scqDisp()}<br>${sex==='M'?'Masc':'Fem'}, ${age}a, ${weight} kg</div>`;
+  const dispTxt=sev==='major'?'Internação em CTQ/UTI + transferência':sev==='moderate'?'Internação hospitalar':'Possível manejo ambulatorial';
+  h+=`<div class="disp-bar ${sev==='major'?'major':sev==='moderate'?'mod':'minor'}"><span class="dot"></span><span class="dt">${dispTxt}</span></div>`;
+
+  // Baux (adults)
+  const aN=parseInt(age);
+  if(bx!==null && !isNaN(aN) && aN>=15 && t>0){
+    const bCol=bx>=140?'#ef4444':bx>=100?'#f59e0b':bx>=75?'#eab308':'#22c55e';
+    const prog=bx>=140?'Muito reservado (mort. >90%)':bx>=100?'Muito elevada (~75–90%)':bx>=75?'Significativa (~50%)':'Relativamente baixa (<30%)';
+    h+=`<div class="baux"><div class="baux-hdr"><span class="kk">Índice de Baux${inh.size>=2?' Modificado':''}</span><span class="vv" style="color:${bCol}">${bx}</span></div>`;
+    h+=`<div class="baux-bar"><div class="baux-fill" style="width:${Math.min(bx/140*100,100)}%;background:${bCol}"></div></div>`;
+    h+=`<div class="baux-desc">${prog} · ${age} + ${t}${inh.size>=2?' + 17':''}</div></div>`;
+  }
+  h+='</div>';
+
+  // Boxes
+  h+=box('summary','Resumo',()=>{
+    let s='';
+    s+=row('Mecanismo', mechLab(mech)+(mech==='electrical'?' ('+(elecV==='high'?'Alta':'Baixa')+')':'')+(mech==='chemical'&&chem?' ('+CHEM.find(x=>x.id===chem).lab+')':''));
+    s+=row('Profundidade', depLab(depth));
+    s+=row('SCQ ('+(isChild()?'Lund-Browder':'R9')+')', scqDisp(), true);
+    const rn=REGIONS.filter(r=>regions.has(r.id)).map(r=>{
+      const f=partial[r.id]||1, p=rPct(r)*f;
+      return r.name.replace('\n',' ')+' ('+(p%1===0?p:p.toFixed(1))+'%)';
+    });
+    if(rn.length) s+=row('Regiões', rn.join(', '));
+    if(crit.size) s+=row('Áreas críticas', CRIT.filter(x=>crit.has(x.id)).map(x=>x.lab).join(', '));
+    if(circ) s+=rowWarn('Circunferencial', 'Sim');
+    s+=row('Sinais inalatórios', inh.size+'/'+INH.length+(inh.size>=2?' ⚠️':''));
+    s+=row('Paciente', (sex==='M'?'Masc':'Fem')+', '+age+'a, '+weight+' kg');
+    if(comorb.size) s+=row('Comorbidades', COMORB.filter(c=>comorb.has(c.id)).map(c=>c.lab).join(', '));
+    if(sulfa) s+=rowWarn('Alergia', 'Sulfonamidas');
+    if(burnTime()){
+      const el=elapsed();
+      s+=row('Hora queimadura', bh.padStart(2,'0')+':'+bm.padStart(2,'0')+' ('+(el!==null?el.toFixed(1):'?')+'h atrás)');
+    }
+    s+=`<div class="srow"><span class="k">Gravidade</span><span class="v" style="color:${sevCol[sev]};font-weight:700">${sevLab[sev]}</span></div>`;
+    return s;
+  });
+
+  h+=box('tbsa','SCQ Detalhada',()=>{
+    let s=`<div style="text-align:center;margin-bottom:.75rem"><span style="font-size:1.8rem;font-weight:800;font-family:'SF Mono',monospace;color:#fbbf24">${scqDisp()}</span><div style="font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-top:.15rem">${isChild()?'Lund-Browder':'Regra dos 9'}</div></div>`;
+    for(const r of REGIONS){
+      const on=regions.has(r.id), f=partial[r.id]||1, p=rPct(r);
+      const v=on?((p*f)%1===0?p*f:(p*f).toFixed(1)):'—';
+      s+=`<div class="srow"><span class="k">${r.ico} ${r.name.replace('\n',' ')}</span><span class="v" style="color:${on?'#fbbf24':'#475569'};font-family:'SF Mono',monospace">${on?v+'%'+(f<1?' (×'+Math.round(f*100)+'%)':''):'—'}</span></div>`;
+    }
+    return s;
+  });
+
+  if(depth!=='1st'){
+    h+=box('parkland','Parkland',()=>{
+      let s='';
+      if(!pk||t===0){s+='<p style="color:#64748b;text-align:center;padding:.5rem;font-size:.8rem">Sem indicação de ressuscitação volêmica.</p>';return s}
+      if(!needsIV()){
+        const thr=parseInt(age)<=14?10:15;
+        s+=`<div class="note info"><span class="ni">ℹ️</span><span>SCQ &lt; ${thr}% — hidratação oral pode bastar. IV se vômitos/recusa.</span></div>`;
+      }
+      s+=`<div class="pk-eq">4 × ${weight} kg × ${t}% = <b>${$n(pk.total)} mL</b></div>`;
+      s+=`<div class="pk-box has">`;
+      s+=`<div class="pk-row"><span class="k">Total 24h (RL)</span><span class="v big">${$n(pk.total)} mL</span></div>`;
+      s+=`<div class="pk-row"><span class="k">Primeiras 8h (50%)</span><span class="v">${$n(pk.first8)} mL · ${$n(pk.r1)} mL/h</span></div>`;
+      s+=`<div class="pk-row"><span class="k">Próximas 16h (50%)</span><span class="v">${$n(pk.next16)} mL · ${$n(pk.r2)} mL/h</span></div>`;
+      s+='</div>';
+      const el=elapsed();
+      if(el!==null && el<24){
+        const left=Math.max(0,8-el);
+        if(left>0){
+          const adj=Math.round(pk.first8/left);
+          s+=`<div class="note warn"><span class="ni">⏱️</span><span><b>Ajuste temporal (${el.toFixed(1)}h):</b> infundir ${$n(pk.first8)} mL em ${left.toFixed(1)}h → <b>${$n(adj)} mL/h</b> (se nada foi infundido). Próximas 16h: ${$n(pk.r2)} mL/h.</span></div>`;
+        } else {
+          const left24=Math.max(0,24-el);
+          s+=`<div class="note warn"><span class="ni">⏱️</span><span><b>Ajuste:</b> já passou das 8h iniciais. Manter ${$n(pk.r2)} mL/h (${left24.toFixed(1)}h restantes).</span></div>`;
+        }
+      } else if(el!==null && el>=24){
+        s+='<div class="note info"><span class="ni">ℹ️</span><span>&gt;24h — período Parkland encerrado. Hidratar por balanço hídrico e DU.</span></div>';
+      }
+      const a=parseInt(age);
+      if(!isNaN(a) && a<=14){
+        const w=parseFloat(weight); let m=0;
+        if(w<=10) m=w*100; else if(w<=20) m=1000+(w-10)*50; else m=1500+(w-20)*20;
+        s+=`<div class="note info"><span class="ni">👶</span><span><b>Criança:</b> manutenção (Holliday-Segar) ~${Math.round(m)} mL/24h (~${Math.round(m/24)} mL/h) com glicose. <b>Adicional</b> ao Parkland.</span></div>`;
+      }
+      s+='<div class="note warn"><span class="ni">⚠️</span><span>Tempo de 8h conta <b>da queimadura</b>, não da chegada. DU alvo: 0,5–1 mL/kg/h (adulto) · 1–2 (criança). RL preferencial. <b>NÃO usar glicosado</b>.</span></div>';
+      if(hasComorb('card')) s+='<div class="note danger"><span class="ni">❤️</span><span><b>Cardiopatia:</b> risco de sobrecarga. Monitorar PVC / ecoscopia. Considerar colóides precocemente.</span></div>';
+      if(hasComorb('renal')) s+='<div class="note danger"><span class="ni">⚠️</span><span><b>DRC:</b> DU pouco confiável. Monitorar eletrólitos 4–6h. Avaliar diálise precoce.</span></div>';
+      if(inh.size>=2) s+=`<div class="note danger"><span class="ni">🚨</span><span><b>Inalatória:</b> considerar +30–50% (~${$n(Math.round(pk.total*1.4))} mL).</span></div>`;
+      return s;
+    });
+  }
+
+  h+=box('inhalation','Lesão Inalatória',()=>{
+    let s='';
+    if(inh.size===0){s+='<p style="color:#64748b;text-align:center;padding:.5rem;font-size:.8rem">Sem sinais identificados.</p>';return s}
+    for(const x of INH) if(inh.has(x.id)) s+=`<div class="srow"><span class="k">✓ ${x.lab}</span><span class="v" style="color:#fca5a5">Presente</span></div>`;
+    if(inh.size>=2){
+      s+=`<div class="note danger"><span class="ni">🚨</span><span><b>Alta suspeita (${inh.size} sinais):</b><br>• IOT precoce (tubo ≥7.5)<br>• O₂ 100% umidificado<br>• Broncoscopia<br>• Parkland +30–50%<br>• Dosar COHb · se &gt;15% considerar HBO<br>• Ambiente fechado + sintéticos → hidroxocobalamina 5g IV<br>• Internação em CTQ</span></div>`;
+    } else {
+      s+='<div class="note warn"><span class="ni">⚠️</span><span>Vigilância rigorosa. Reavaliar 2–4h. Dosar COHb.</span></div>';
+    }
+    return s;
+  });
+
+  h+=box('transfer','Transferência (CTQ/ABA)',()=>{
+    let s='';
+    if(tc.length>0){
+      s+='<div class="note danger"><span class="ni">🚨</span><span><b>'+tc.length+' critério'+(tc.length>1?'s':'')+' para CTQ:</b></span></div>';
+      s+='<div>';
+      for(const c of tc) s+=`<div class="cond"><span class="ci">•</span><span>${c}</span></div>`;
+      s+='</div>';
+      s+='<div class="note info"><span class="ni">🏥</span><span><b>Estabilizar antes de transferir:</b> A, B, C (Parkland iniciado), analgesia, curativo provisório, sonda vesical (grande queimado), documentação fotográfica, contato prévio com CTQ.</span></div>';
+    } else {
+      s+='<div class="note info" style="background:#052e16;border-color:#14532d;color:#86efac"><span class="ni">✓</span><span>Sem critérios de transferência para CTQ.</span></div>';
+    }
+    return s;
+  });
+
+  h+=box('mgmt','Manejo Inicial',()=>buildMgmt(pk,sev));
+  h+=box('note','Nota para Prontuário',()=>buildNote(pk,sev,tc,bx));
+
+  h+='<div class="nav">';
+  h+='<button class="btn sec" onclick="prev()">← Voltar</button>';
+  h+='<button class="btn pri" onclick="restart()">↻ Recomeçar</button>';
+  h+='</div></div>';
+  h+='<div class="disclaimer">Auxiliar de decisão clínica · não substitui julgamento médico. Baseado em ABA · SBQ · ATLS.</div>';
+  app.innerHTML=h;
+}
+
+// ==========================
+// ROW HELPERS
+// ==========================
+function row(k,v,num){return `<div class="srow"><span class="k">${k}</span><span class="v ${num?'num':''}">${v}</span></div>`}
+function rowWarn(k,v){return `<div class="srow"><span class="k">${k}</span><span class="v" style="color:#fca5a5">${v}</span></div>`}
+
+function box(id,title,fn){
+  const open=sections[id];
+  let h=`<div class="box"><div class="box-hdr ${open?'open':''}" onclick="tglSec('${id}')" role="button" aria-expanded="${open}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tglSec('${id}')}"><h3>${title}</h3><span class="ar">▼</span></div>`;
+  h+=`<div class="box-body ${open?'open':''}">`;
+  if(open) h+=fn();
+  h+='</div></div>';
+  return h;
+}
+
+// ==========================
+// MANAGEMENT (condensed ABCDE)
+// ==========================
+function buildMgmt(pk,sev){
+  let s='';
+  const t=scq(), a=parseInt(age), el=elapsed();
+
+  s+='<div class="note info"><span class="ni">🏥</span><span><b>Queimados são pacientes de trauma — siga ABCDE.</b> Remover roupas, anéis e pulseiras precocemente (edema progressivo).</span></div>';
+
+  // A
+  s+='<div class="mgmt"><div class="mgmt-t">A · Via aérea</div>';
+  if(inh.size>=2 || sev==='major'){
+    s+='<div class="cond"><span class="ci">🚨</span><span>IOT precoce se sinais de inalação ou circunferencial cervical</span></div>';
+    s+='<div class="cond"><span class="ci">🌬️</span><span>O₂ 100% máscara não-reinalante (15 L/min)</span></div>';
+    if(inh.has('enclosed')) s+='<div class="cond"><span class="ci">🧪</span><span>Ambiente fechado + sintéticos → <b>hidroxocobalamina 5g IV</b> (cianeto). CO: manter O₂ 100% ≥6h; COHb &gt;25% → HBO</span></div>';
+  } else {
+    s+='<div class="cond"><span class="ci">✓</span><span>Via aérea patente. Monitorar. O₂ se necessário.</span></div>';
+  }
+  s+='</div>';
+
+  // B
+  if(circ && (regions.has('ant_trunk')||regions.has('post_trunk'))){
+    s+='<div class="mgmt"><div class="mgmt-t">B · Ventilação</div>';
+    s+='<div class="cond"><span class="ci">🚨</span><span><b>Circunferencial de tórax</b> → avaliar escarotomia torácica se restrição ventilatória</span></div>';
+    s+='<div class="cond"><span class="ci">📏</span><span>Monitorar SpO₂, FR, gasometria seriada</span></div></div>';
+  }
+
+  // C
+  s+='<div class="mgmt"><div class="mgmt-t">C · Ressuscitação volêmica</div>';
+  if(pk && needsIV() && depth!=='1st'){
+    s+=`<div class="cond"><span class="ci">💉</span><span><b>RL ${$n(pk.r1)} mL/h</b> nas primeiras 8h (da queimadura)</span></div>`;
+    s+=`<div class="cond"><span class="ci">💉</span><span>RL ${$n(pk.r2)} mL/h nas próximas 16h</span></div>`;
+    if(el!==null && el<8){
+      const left=Math.max(0,8-el);
+      const adj=left>0?Math.round(pk.first8/left):0;
+      s+=`<div class="cond"><span class="ci">⏱️</span><span><b>Ajustado:</b> ${el.toFixed(1)}h decorridas → <b>${$n(adj)} mL/h agora</b> (se nada foi infundido)</span></div>`;
+    } else if(el!==null && el>=8 && el<24){
+      s+=`<div class="cond"><span class="ci">⏱️</span><span><b>Ajustado:</b> &gt;8h (${el.toFixed(1)}h) → manter ${$n(pk.r2)} mL/h</span></div>`;
+    }
+    s+='<div class="cond"><span class="ci">📏</span><span>DU alvo: 0,5–1 mL/kg/h (adulto) · 1–2 (criança). Sonda vesical.</span></div>';
+    s+='<div class="cond"><span class="ci">⚠️</span><span>DU &lt;0,5 → +20% volume · DU &gt;1 → −20%. Evitar &gt;6 mL/kg/%SCQ/24h (fluid creep).</span></div>';
+    s+='<div class="cond"><span class="ci">❌</span><span>NÃO usar solução glicosada para ressuscitação</span></div>';
+    if(!isNaN(a) && a<=14){
+      const w=parseFloat(weight); let m=0;
+      if(w<=10) m=w*100; else if(w<=20) m=1000+(w-10)*50; else m=1500+(w-20)*20;
+      s+=`<div class="cond"><span class="ci">👶</span><span>Manutenção ped. (Holliday-Segar): ~${Math.round(m/24)} mL/h de SG5% + NaCl 0,45% · adicional ao Parkland · glicemia capilar 2–4h</span></div>`;
+    }
+  } else if(depth==='1st'){
+    s+='<div class="cond"><span class="ci">✓</span><span>Hidratação oral suficiente.</span></div>';
+  } else {
+    const thr=isChild()?10:15;
+    s+=`<div class="cond"><span class="ci">💧</span><span>SCQ &lt; ${thr}% — hidratação oral pode bastar. IV se vômitos/recusa.</span></div>`;
+  }
+  if((regions.has('arm_r')||regions.has('arm_l')||regions.has('leg_r')||regions.has('leg_l')) && depth!=='1st'){
+    s+='<div class="cond"><span class="ci">⬆️</span><span>Elevar extremidades queimadas acima do coração</span></div>';
+  }
+  s+='</div>';
+
+  // D (analgesia)
+  s+='<div class="mgmt"><div class="mgmt-t">D · Analgesia</div>';
+  if(sev==='major'){
+    s+='<div class="cond"><span class="ci">💉</span><span><b>Opioide IV:</b> Morfina 0,05–0,1 mg/kg · ou Fentanil 1–2 mcg/kg (titular por EVA)</span></div>';
+    s+='<div class="cond"><span class="ci">💊</span><span>Dipirona 1g IV · Cetoprofeno 100mg IV (adjuvantes)</span></div>';
+    s+='<div class="cond"><span class="ci">⚠️</span><span>Evitar IM (absorção errática por edema) — <b>apenas IV</b></span></div>';
+    s+='<div class="cond"><span class="ci">💊</span><span>Cetamina 0,2–0,5 mg/kg IV útil para procedimentos</span></div>';
+  } else if(sev==='moderate'){
+    s+='<div class="cond"><span class="ci">💉</span><span>Tramadol 50–100mg IV ou Morfina baixa dose se dor intensa</span></div>';
+    s+='<div class="cond"><span class="ci">💊</span><span>Dipirona 1g IV + AINE se não contraindicado</span></div>';
+  } else {
+    s+='<div class="cond"><span class="ci">💊</span><span>Dipirona 1g VO/IV ou Paracetamol 750mg + AINE</span></div>';
+    s+='<div class="cond"><span class="ci">💊</span><span>Tramadol 50–100mg VO se dor refratária</span></div>';
+  }
+  if(!isNaN(a) && a<=14) s+='<div class="cond"><span class="ci">👶</span><span><b>Ped:</b> Morfina 0,1 mg/kg IV (máx 5mg). Dipirona 15 mg/kg IV. Evitar AINE &lt;6m. Escalas FLACC/Wong-Baker/EVA.</span></div>';
+  s+='</div>';
+
+  // E (exposure/wound)
+  s+='<div class="mgmt"><div class="mgmt-t">E · Exposição / Ferida</div>';
+  s+='<div class="cond"><span class="ci">🌡️</span><span><b>Prevenir hipotermia!</b> Ambiente &gt;28°C · cobrir áreas · aquecer fluidos</span></div>';
+  s+='<div class="cond"><span class="ci">💧</span><span>Irrigação com água limpa 20min (se &lt;3h) · limpeza com SF 0,9%</span></div>';
+  if(mech==='chemical'){
+    s+='<div class="cond"><span class="ci">🚿</span><span><b>Química:</b> irrigar 30–60min · remover roupas contaminadas · <b>NÃO neutralizar</b></span></div>';
+    if(chem==='alkali') s+='<div class="cond"><span class="ci">⚠️</span><span>Álcali: irrigar até pH &lt;8 (fita de pH)</span></div>';
+    if(chem==='organic') s+='<div class="cond"><span class="ci">⚠️</span><span>HF → gluconato de Ca 2,5% gel/infiltração · Ca sérico a cada 2h</span></div>';
+    s+='<div class="cond"><span class="ci">👁️</span><span>Contato ocular → irrigar 30min + oftalmo urgente</span></div>';
+  }
+  s+='<div class="cond"><span class="ci">🧼</span><span>Clorexidina aquosa diluída ou SF 0,9%</span></div>';
+  if(depth==='2nd_s'||depth==='2nd_d') s+='<div class="cond"><span class="ci">🩹</span><span>Bolhas &lt;2cm íntegras: manter. &gt;2cm/rotas: aspirar/desbridar</span></div>';
+  if(sulfa) s+='<div class="cond"><span class="ci">🧴</span><span>Curativo (<b>alergia sulfa</b>): prata nanocristalina (Acticoat), alginato + Ag, hidrofibra + Ag, ou mupirocina 2%</span></div>';
+  else s+='<div class="cond"><span class="ci">🧴</span><span>Curativo: sulfadiazina de prata 1% · trocar 12–24h</span></div>';
+  s+='<div class="cond"><span class="ci">❌</span><span>NÃO aplicar gelo, pasta de dente, manteiga</span></div>';
+  s+='<div class="cond"><span class="ci">📷</span><span>Fotografar para documentação/referência</span></div>';
+  s+='</div>';
+
+  // Tetanus
+  s+='<div class="mgmt"><div class="mgmt-t">Profilaxia tetânica</div>';
+  s+='<div class="cond"><span class="ci">💉</span><span>dT/dTpa se última dose &gt;5 anos · SAT/IGHAT se esquema incompleto</span></div></div>';
+
+  // Escharotomy
+  if(depth==='3rd'||depth==='4th'||circ||sev==='major'){
+    s+='<div class="mgmt"><div class="mgmt-t">Escarotomia</div>';
+    s+='<div class="cond"><span class="ci">⚠️</span><span>Indicação: circunferencial de tórax (restrição) ou extremidade (síndrome compartimental)</span></div>';
+    s+='<div class="cond"><span class="ci">📏</span><span>Monitorar pulsos (Doppler), SpO₂, pressão compartimental, dor desproporcional, parestesia</span></div>';
+    s+='<div class="cond"><span class="ci">🏥</span><span>Incisão longitudinal medial + lateral pela escara até SC sã</span></div>';
+    s+='<div class="cond"><span class="ci">⏰</span><span>Nas primeiras 6h se comprometimento vascular/ventilatório</span></div>';
+    if(hasComorb('coag')) s+='<div class="cond"><span class="ci">⚠️</span><span><b>Coagulopatia:</b> corrigir antes · preparar hemoderivados</span></div>';
+    s+='</div>';
+  }
+
+  // Electrical
+  if(mech==='electrical'){
+    s+='<div class="mgmt"><div class="mgmt-t">Específico · Elétrica</div>';
+    s+='<div class="cond"><span class="ci">💓</span><span>ECG 12D + monitor contínuo 24h (arritmias)</span></div>';
+    s+='<div class="cond"><span class="ci">🧪</span><span>CPK · mioglobina · troponina</span></div>';
+    s+='<div class="cond"><span class="ci">💧</span><span>DU alvo &gt;1–2 mL/kg/h se mioglobinúria (urina escura)</span></div>';
+    s+='<div class="cond"><span class="ci">💊</span><span>Se mioglobinúria: NaHCO₃ (pH urinário &gt;6,5) + manitol 12,5–25g IV</span></div>';
+    s+='<div class="cond"><span class="ci">🦴</span><span>Avaliar lesão muscular profunda, compartimental, fraturas</span></div>';
+    s+='<div class="cond"><span class="ci">⚠️</span><span>Examinar pontos de entrada/saída · SCQ subestima gravidade real</span></div>';
+    s+='</div>';
+  }
+
+  // Labs
+  s+='<div class="mgmt"><div class="mgmt-t">Exames</div>';
+  if(sev==='major'||sev==='moderate'){
+    s+='<div class="cond"><span class="ci">🧪</span><span>Hemograma · eletrólitos · ureia/Cr · glicemia · gasometria + lactato</span></div>';
+    s+='<div class="cond"><span class="ci">🧪</span><span>Tipagem · coagulograma · albumina</span></div>';
+    if(inh.size>0) s+='<div class="cond"><span class="ci">🧪</span><span>COHb (alvo &lt;10% · &gt;25% = HBO)</span></div>';
+    if(mech==='electrical') s+='<div class="cond"><span class="ci">🧪</span><span>CPK · mioglobina · troponina · ECG</span></div>';
+    if(hasComorb('dm')) s+='<div class="cond"><span class="ci">🧪</span><span>HbA1c · glicemia capilar 2–4h</span></div>';
+    s+='<div class="cond"><span class="ci">📷</span><span>Rx tórax (edema / SDRA)</span></div>';
+  } else {
+    s+='<div class="cond"><span class="ci">🧪</span><span>Conforme necessidade. Queimadura menor raramente exige lab extenso.</span></div>';
+    if(hasComorb('dm')) s+='<div class="cond"><span class="ci">🧪</span><span>Glicemia capilar</span></div>';
+  }
+  s+='</div>';
+
+  // Profilaxias (internados)
+  if(sev==='major'||sev==='moderate'){
+    s+='<div class="mgmt"><div class="mgmt-t">Profilaxias (internados)</div>';
+    if(hasComorb('coag')) s+='<div class="cond"><span class="ci">⚠️</span><span><b>TVP:</b> coagulopatia → mecânica (meias/compressão pneumática). Discutir com hematologia.</span></div>';
+    else s+='<div class="cond"><span class="ci">💉</span><span><b>TVP:</b> Enoxaparina 40mg SC 1×/dia (após 24–48h, estabilizado). Meias compressivas.</span></div>';
+    s+='<div class="cond"><span class="ci">💊</span><span><b>Úlcera Curling:</b> Omeprazol 40mg IV 1×/dia</span></div>';
+    if(sev==='major') s+='<div class="cond"><span class="ci">🍜</span><span><b>Nutrição precoce:</b> enteral 6–12h · Curreri 25 kcal/kg + 40 kcal/%SCQ</span></div>';
+    s+='</div>';
+  }
+
+  // Disposition
+  s+='<div class="mgmt"><div class="mgmt-t">Disposição</div>';
+  if(sev==='major'){
+    s+='<div class="cond"><span class="ci">🚨</span><span><b>Internação obrigatória</b> — CTQ/UTI. Estabilizar antes de transferir.</span></div>';
+    s+='<div class="cond"><span class="ci">📞</span><span>Contatar CTQ de referência (central de regulação)</span></div>';
+  } else if(sev==='moderate'){
+    s+='<div class="cond"><span class="ci">🏥</span><span>Internação 24–48h mín. · avaliar CTQ</span></div>';
+  } else {
+    s+='<div class="cond"><span class="ci">🏠</span><span>Ambulatorial possível · revisão em 24–48h obrigatória · retorno a cada 2–3d até epitelização</span></div>';
+    s+=`<div class="cond"><span class="ci">💊</span><span>Receita: analgesia VO + curativo (${sulfa?'prata nanocristalina ou mupirocina 2%':'sulfadiazina de prata 1%'}, 1–2×/dia, lavar SF 0,9%)</span></div>`;
+    s+='<div class="cond"><span class="ci">⚠️</span><span><b>Sinais de alarme:</b> febre · aumento de dor · secreção purulenta · eritema expansivo · linfangite · mal-estar → retornar</span></div>';
+  }
+  s+='</div>';
+
+  // Abuse screening (child + elder)
+  if(!isNaN(a) && a<10){
+    s+='<div class="mgmt"><div class="mgmt-t">Rastreio maus-tratos infantis</div>';
+    s+='<div class="cond"><span class="ci">⚠️</span><span>Sinais: padrão "luva/meia" (imersão) · limites nítidos · ausência de salpicos · história incompatível · atraso no atendimento · lesões em estágios diferentes</span></div>';
+    s+='<div class="cond"><span class="ci">📋</span><span>Suspeita → notificar Conselho Tutelar (ECA Art. 13) · documentar · serviço social</span></div></div>';
+  } else if(!isNaN(a) && a>60){
+    s+='<div class="mgmt"><div class="mgmt-t">Rastreio maus-tratos idoso</div>';
+    s+='<div class="cond"><span class="ci">⚠️</span><span>Alerta: história incompatível · atraso no atendimento · lesões anteriores · cuidador hostil/ausente</span></div>';
+    s+='<div class="cond"><span class="ci">📋</span><span>Suspeita → MP ou Delegacia do Idoso (Estatuto Art. 19)</span></div></div>';
+  }
+
+  return s;
+}
+
+// ==========================
+// NOTE
+// ==========================
+function buildNote(pk,sev,tc,bx){
+  const t=scq(), a=parseInt(age);
+  const now=evalStart, pd=n=>String(n).padStart(2,'0');
+  const ts=`${pd(now.getDate())}/${pd(now.getMonth()+1)}/${now.getFullYear()} ${pd(now.getHours())}:${pd(now.getMinutes())}`;
+
+  let n='';
+  n+=`QUEIMADURA — AVALIAÇÃO ESTRUTURADA\n`;
+  n+=`Data/hora: ${ts}\n`;
+  if(burnTime()){const el=elapsed();n+=`Hora queimadura: ${bh.padStart(2,'0')}:${bm.padStart(2,'0')} (${el!==null?el.toFixed(1):'?'}h antes)\n`}
+  n+=`${'='.repeat(40)}\n\n`;
+  n+=`PACIENTE: ${sex==='M'?'Masc':'Fem'}, ${age}a, ${weight} kg\n`;
+  if(comorb.size) n+=`Comorbidades: ${COMORB.filter(c=>comorb.has(c.id)).map(c=>c.lab).join(', ')}\n`;
+  if(sulfa) n+=`Alergia: Sulfonamidas\n`;
+  n+='\n';
+
+  n+=`MECANISMO: ${mechLab(mech)}`;
+  if(mech==='electrical') n+=` (${elecV==='high'?'Alta':'Baixa'} tensão)`;
+  if(mech==='chemical'&&chem) n+=` (${CHEM.find(x=>x.id===chem).lab})`;
+  n+='\n';
+  n+=`PROFUNDIDADE: ${depLab(depth)}\n`;
+  n+=`SCQ (${isChild()?'Lund-Browder':'R9'}): ${scqDisp()}\n`;
+
+  const rn=REGIONS.filter(r=>regions.has(r.id)).map(r=>{
+    const f=partial[r.id]||1, p=rPct(r)*f;
+    return r.name.replace('\n',' ')+' ('+(p%1===0?p:p.toFixed(1))+'%)';
+  });
+  if(rn.length) n+=`Regiões: ${rn.join(', ')}\n`;
+  if(crit.size) n+=`Áreas críticas: ${CRIT.filter(c=>crit.has(c.id)).map(c=>c.lab).join(', ')}\n`;
+  if(circ) n+=`Circunferencial: SIM\n`;
+  n+=`\nGRAVIDADE: ${sevLab[sev]}\n`;
+  if(bx!==null && !isNaN(a) && a>=15 && t>0) n+=`Baux${inh.size>=2?' Mod.':''}: ${bx} (${age} + ${t}${inh.size>=2?' + 17':''})\n`;
+
+  const inP=INH.filter(s=>inh.has(s.id));
+  if(inP.length){n+=`\nINALAÇÃO: ${inP.length} sinal(is)\n`;for(const s of inP) n+=`  [+] ${s.lab}\n`;if(inP.length>=2) n+=`  >> Alta suspeita — considerar IOT precoce\n`}
+  else n+=`\nINALAÇÃO: sem sinais\n`;
+
+  if(pk && depth!=='1st' && t>0){
+    n+=`\nPARKLAND: 4 × ${weight} × ${t} = ${$n(pk.total)} mL/24h (RL)\n`;
+    n+=`  8h: ${$n(pk.first8)} mL (${$n(pk.r1)} mL/h)\n`;
+    n+=`  16h: ${$n(pk.next16)} mL (${$n(pk.r2)} mL/h)\n`;
+    n+=`  DU alvo: ${isChild()?'1-2':'0,5-1'} mL/kg/h\n`;
+    const el=elapsed();
+    if(el!==null && el<24){
+      const left=Math.max(0,8-el);
+      if(left>0){const adj=Math.round(pk.first8/left);n+=`  ** Ajuste: ${el.toFixed(1)}h decorr. → máx ${$n(adj)} mL/h (se nada infundido) **\n`}
+    }
+    if(inh.size>=2) n+=`  ** Inalatória: +30-50% (~${$n(Math.round(pk.total*1.4))} mL) **\n`;
+  }
+
+  if(tc.length){n+=`\nTRANSFERÊNCIA CTQ: ${tc.length} critério(s)\n`;for(const c of tc) n+=`  [!] ${c}\n`}
+  else n+=`\nTRANSFERÊNCIA CTQ: nenhum\n`;
+
+  n+=`\nCONDUTA INICIAL:\n`;
+  n+=`  A: ${(inh.size>=2||sev==='major')?'Avaliar IOT precoce · O2 100%':'Via aérea patente · monitorar'}\n`;
+  if(pk && needsIV() && depth!=='1st'){
+    n+=`  C: RL ${$n(pk.r1)} mL/h (8h) · ${$n(pk.r2)} mL/h (16h)\n`;
+    const el=elapsed();
+    if(el!==null && el<8){const left=Math.max(0,8-el);const adj=left>0?Math.round(pk.first8/left):0;n+=`    Ajuste temporal: máx ${$n(adj)} mL/h (${el.toFixed(1)}h decorr.)\n`}
+  } else n+=`  C: hidratação oral/IV conforme necessidade\n`;
+  n+=`  D: ${sev==='major'?'Opioide IV (morfina/fentanil) + adjuvante':sev==='moderate'?'Tramadol/morfina IV + dipirona':'Dipirona/paracetamol ± tramadol VO'}\n`;
+  n+=`  E: Ferida → curativo ${sulfa?'(SEM SULFA: prata nanocrist. ou mupirocina 2%)':'sulfadiazina de prata 1%'}\n`;
+  n+=`  Profilaxia tetânica: verificar status\n`;
+  if(mech==='electrical') n+=`  Elétrica: ECG 12D · CPK · mioglobina · monitor 24h\n`;
+  if(mech==='chemical') n+=`  Química: irrigação prolongada${chem==='alkali'?' até pH<8':''} (30-60min mín.)\n`;
+  if(inh.has('enclosed')) n+=`  Suspeita cianeto: hidroxocobalamina 5g IV\n`;
+  if(circ) n+=`  Circunferencial: pulsos distais · avaliar escarotomia\n`;
+  if(sev==='major'||sev==='moderate'){
+    n+=`  TVP: ${hasComorb('coag')?'mecânica (coagulopatia)':'enoxaparina 40mg SC'}\n`;
+    n+=`  IBP: Omeprazol 40mg IV\n`;
+  }
+  if(sev==='major') n+=`  Nutrição: enteral precoce (6-12h)\n`;
+  n+=`\nDISPOSIÇÃO: ${sev==='major'?'CTQ/UTI + transferência':sev==='moderate'?'Internação hospitalar':'Ambulatorial · revisão 24-48h'}\n`;
+
+  if(sev==='minor'){
+    n+=`\nORIENTAÇÕES DE ALTA:\n`;
+    n+=`  - Retorno em 24-48h\n  - Curativo 1-2×/dia, lavar SF 0,9%\n  - Elevar membro quando possível\n  - Sinais de alarme: febre, dor crescente, secreção purulenta, eritema expansivo\n`;
+  }
+
+  const esc=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="notepre" id="noteContent">${esc}</div><button class="copy" id="copyBtn" onclick="copyNote()">📋 Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent'); if(!el) return;
+  const text=el.textContent||el.innerText;
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text).then(showCopied).catch(()=>fbCopy(text));
+  } else fbCopy(text);
+}
+function fbCopy(text){
+  const ta=document.createElement('textarea'); ta.value=text;
+  ta.style.position='fixed'; ta.style.left='-9999px';
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand('copy');showCopied()}catch(e){}
+  document.body.removeChild(ta);
+}
+function showCopied(){
+  const b=document.getElementById('copyBtn'); if(!b) return;
+  b.textContent='✓ Copiado!'; b.classList.add('done');
+  setTimeout(()=>{if(document.getElementById('copyBtn')){b.textContent='📋 Copiar nota';b.classList.remove('done')}},2000);
+}
+
+// ==========================
+// ACTIONS
+// ==========================
+function setMech(id){mech=id;if(id!=='electrical')elecV=null;if(id!=='chemical')chem=null;render()}
+function setElec(v){elecV=v;render()}
+function setChem(id){chem=id;render()}
+function setDepth(id){depth=id;render()}
+function tglRegion(id){if(regions.has(id)){regions.delete(id);delete partial[id]}else{regions.add(id);partial[id]=1}render()}
+function setFrac(id,f){partial[id]=f;render()}
+function tglCirc(){circ=!circ;render()}
+function tglCrit(id){crit.has(id)?crit.delete(id):crit.add(id);render()}
+function tglInh(id){inh.has(id)?inh.delete(id):inh.add(id);render()}
+function setSex(v){sex=v;render()}
+function tglCom(id){comorb.has(id)?comorb.delete(id):comorb.add(id);render()}
+function tglSulfa(){sulfa=!sulfa;render()}
+function resetMap(){regions=new Set();partial={};circ=false;crit=new Set();render()}
+function tglSec(id){sections[id]=!sections[id];render()}
+
+function setAge(v){age=v;clearTimeout(setAge._t);setAge._t=setTimeout(render,350)}
+function setW(v){weight=v;clearTimeout(setW._t);setW._t=setTimeout(render,350)}
+function setBH(v){bh=v;clearTimeout(setBH._t);setBH._t=setTimeout(render,350)}
+function setBM(v){bm=v;clearTimeout(setBM._t);setBM._t=setTimeout(render,350)}
+
+function next(){
+  if(step===0 && (!mech||(mech==='electrical'&&!elecV)||(mech==='chemical'&&!chem))) return;
+  if(step===1 && !depth) return;
+  if(step===4){
+    if(!sex||age===''||weight==='') return;
+    if(!validAge(age).ok||!validW(weight).ok) return;
+  }
+  step++; render();
+}
+function prev(){if(step>0){step--;render()}}
+function restart(){
+  if(!confirm('Recomeçar? Todos os dados serão perdidos.')) return;
+  step=0;mech=null;elecV=null;chem=null;depth=null;
+  regions=new Set();partial={};circ=false;crit=new Set();
+  inh=new Set();comorb=new Set();sulfa=false;
+  sex=null;age='';weight='';bh='';bm='';
+  sections={summary:true,tbsa:true,parkland:true,inhalation:false,transfer:true,mgmt:true,note:true};
+  render();
+}
+
+// Preserve focus on re-render
+const _r=render;
+render=function(){
+  const ae=document.activeElement, aid=ae?ae.id:null, as=ae?ae.selectionStart:null;
+  _r();
+  if(aid){const el=document.getElementById(aid); if(el){el.focus(); if(typeof as==='number') try{el.setSelectionRange(as,as)}catch(e){}}}
+};
+
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('opt')){e.preventDefault();e.target.click()}
+});
+
+render();
+</script>
+</body>
+</html>

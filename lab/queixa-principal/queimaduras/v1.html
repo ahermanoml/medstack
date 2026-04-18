@@ -1,0 +1,462 @@
+<!-- VERSION: 1 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Queimaduras — v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg0:#0b1220;--bg1:#0f172a;--bg2:#1f2937;--panel:#111a2b;--line:#1f2a44;
+    --ink:#e5e7eb;--ink-dim:#9aa4b8;--ink-mute:#6b7587;
+    --f1:#fb923c;--f2:#ef4444;--f3:#7f1d1d;--cool:#38bdf8;--ok:#22c55e;--warn:#f59e0b;
+    --mono:'Space Grotesk',ui-sans-serif,system-ui;
+    --sans:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  }
+  html,body{background:var(--bg1);color:var(--ink);font-family:var(--sans);font-feature-settings:"tnum","cv11";-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(1200px 500px at 50% -200px,#1d2944 0%,var(--bg1) 60%) fixed}
+  a{color:inherit}
+  /* nav */
+  nav.top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:rgba(15,23,42,.8);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  nav.top .brand{font-family:var(--mono);letter-spacing:.02em;font-weight:600;font-size:14px;color:#cbd5e1}
+  nav.top .brand b{background:linear-gradient(90deg,var(--f1),var(--f2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  nav.top a.back{font-size:12px;color:var(--ink-dim);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+  nav.top a.back:hover{color:var(--ink);border-color:#2a3955}
+
+  main{padding:18px 14px 140px;max-width:720px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+
+  header.hero{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  header.hero .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#fca5a5}
+  header.hero h1{font-family:var(--mono);font-weight:700;font-size:28px;line-height:1.05;letter-spacing:-.01em}
+  header.hero h1 span{background:linear-gradient(90deg,var(--f1) 0%,var(--f2) 55%,var(--f3) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header.hero p{color:var(--ink-dim);font-size:13px;max-width:56ch}
+
+  /* Panel */
+  .panel{background:linear-gradient(180deg,rgba(31,41,55,.55),rgba(15,23,42,.55));border:1px solid var(--line);border-radius:18px;padding:16px;position:relative;overflow:hidden}
+  .panel h2{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#fca5a5;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .panel h2 .num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,var(--f1),var(--f2));color:#1a0a00;font-weight:800;font-size:11px}
+  .panel h3{font-size:13px;color:#e5e7eb;margin:10px 0 6px;font-weight:600}
+  .panel p,.panel li{font-size:13.5px;color:#d1d5db;line-height:1.5}
+  .panel ul{padding-left:18px;display:flex;flex-direction:column;gap:4px}
+
+  /* body map */
+  .bodymap{background:linear-gradient(180deg,#1f2937,#0f172a);border:1px solid #22304c;border-radius:16px;padding:12px;position:relative}
+  .bodymap-header{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 10px}
+  .bodymap-header .title{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#cbd5e1}
+  .bodymap-header .hint{font-size:11px;color:var(--ink-mute)}
+  .svg-wrap{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .svg-wrap figure{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .svg-wrap figcaption{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#7f8aa3;text-transform:uppercase}
+  svg.body{width:100%;height:auto;display:block;touch-action:manipulation}
+  svg.body .region{fill:#27324a;stroke:#0b1220;stroke-width:1.2;transition:fill .25s ease,filter .3s ease;cursor:pointer}
+  svg.body .region:hover{fill:#334163}
+  svg.body .region.burnt{fill:url(#flame);filter:url(#shimmer)}
+  svg.body .label{pointer-events:none;font-family:var(--mono);font-size:6px;fill:#a6b0c5;opacity:.7}
+
+  /* Totals */
+  .totals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .totals .cell{background:#0b1426;border:1px solid #1d2944;border-radius:12px;padding:10px}
+  .totals .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-mute);text-transform:uppercase}
+  .totals .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:22px;font-weight:700;color:#fff;margin-top:2px;letter-spacing:-.01em}
+  .totals .v.burn{background:linear-gradient(90deg,var(--f1),var(--f2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .totals .sub{font-size:10px;color:var(--ink-mute);margin-top:2px}
+
+  .controls{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+  button.btn{background:#0b1426;color:#e5e7eb;border:1px solid #22304c;padding:8px 12px;border-radius:10px;font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+  button.btn:hover{border-color:#334163}
+  button.btn.clear{color:#fca5a5}
+  .chip{font-size:11px;color:var(--ink-dim);padding:5px 8px;border:1px dashed #2a3955;border-radius:999px}
+
+  /* Parkland */
+  .parkland{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute)}
+  .field .row{display:flex;align-items:center;gap:6px;background:#0b1426;border:1px solid #22304c;border-radius:10px;padding:8px 10px}
+  .field .row input{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:18px;font-weight:700;width:100%}
+  .field .row .unit{font-size:11px;color:var(--ink-mute);font-family:var(--mono)}
+  .slider-row{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:#22304c;border-radius:999px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--f1),var(--f2));cursor:pointer;box-shadow:0 0 0 3px rgba(251,146,60,.18)}
+
+  .park-out{margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .park-out .cell{background:linear-gradient(180deg,rgba(127,29,29,.25),rgba(15,23,42,.2));border:1px solid #3a1f2a;border-radius:12px;padding:10px}
+  .park-out .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:#fca5a5;text-transform:uppercase}
+  .park-out .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:20px;font-weight:700;color:#fff;margin-top:2px}
+  .park-out .sub{font-size:10px;color:var(--ink-mute);margin-top:2px}
+  .park-note{margin-top:10px;font-size:11.5px;color:var(--ink-dim);line-height:1.5;background:#0b1426;border:1px solid #1d2944;border-radius:10px;padding:9px 11px}
+
+  /* Depth cards */
+  .depth-grid{display:grid;grid-template-columns:1fr;gap:8px}
+  .depth{display:grid;grid-template-columns:48px 1fr;gap:10px;padding:10px;border:1px solid #22304c;border-radius:12px;background:#0b1426}
+  .depth .swatch{border-radius:8px;height:100%;min-height:60px;border:1px solid rgba(255,255,255,.06)}
+  .sw1{background:linear-gradient(160deg,#fecaca,#fb7185)}
+  .sw2a{background:linear-gradient(160deg,#fda4af,#ef4444)}
+  .sw2b{background:linear-gradient(160deg,#be123c,#7f1d1d)}
+  .sw3{background:linear-gradient(160deg,#d6d3d1,#292524)}
+  .sw4{background:linear-gradient(160deg,#1c1917,#000)}
+  .depth .tag{font-family:var(--mono);font-size:11px;color:#fca5a5;letter-spacing:.12em;text-transform:uppercase}
+  .depth .t{font-weight:600;font-size:14px;margin-top:2px}
+  .depth .d{font-size:12.5px;color:#cbd5e1;margin-top:4px;line-height:1.45}
+
+  /* Flags */
+  .flags{display:flex;flex-direction:column;gap:8px}
+  .flag{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:flex-start;padding:10px;background:linear-gradient(180deg,rgba(239,68,68,.08),rgba(127,29,29,.05));border:1px solid rgba(239,68,68,.22);border-radius:12px}
+  .flag .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--f1),var(--f2));margin-top:6px;box-shadow:0 0 10px rgba(251,146,60,.55)}
+  .flag .txt{font-size:13px;color:#e5e7eb;line-height:1.5}
+
+  /* Agent pills */
+  .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#e5e7eb;background:#0b1426;border:1px solid #22304c;padding:5px 9px;border-radius:999px}
+  .pill.hot{border-color:rgba(239,68,68,.35);color:#fecaca;background:linear-gradient(90deg,rgba(239,68,68,.1),rgba(127,29,29,.08))}
+
+  /* Step list */
+  ol.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:8px}
+  ol.steps li{counter-increment:s;display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:flex-start;font-size:13.5px;color:#d1d5db;line-height:1.5}
+  ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:10px;color:#fca5a5;background:#0b1426;border:1px solid #22304c;border-radius:6px;padding:3px 4px;text-align:center}
+
+  .donot{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .donot div{font-size:12.5px;color:#fecaca;padding-left:18px;position:relative}
+  .donot div::before{content:"×";position:absolute;left:0;top:-2px;color:#ef4444;font-weight:800}
+
+  /* Disposition */
+  .disp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .disp{padding:10px;border:1px solid #22304c;border-radius:12px;background:#0b1426}
+  .disp .lvl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-mute);text-transform:uppercase}
+  .disp .t{font-weight:600;font-size:13.5px;margin-top:3px}
+  .disp .d{font-size:11.5px;color:var(--ink-dim);margin-top:3px;line-height:1.45}
+
+  /* Footer */
+  footer{border-top:1px solid var(--line);padding:14px;margin-top:auto;color:var(--ink-mute);font-size:11px;text-align:center;font-family:var(--mono);letter-spacing:.08em}
+  footer b{color:#fca5a5}
+
+  @media (min-width:640px){
+    header.hero h1{font-size:36px}
+    .parkland{grid-template-columns:1fr 1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="brand">medstack / <b>queimaduras</b></div>
+  <a class="back" href="../queimaduras.html">← lab</a>
+</nav>
+
+<main>
+  <header class="hero">
+    <div class="eyebrow">Emergência · Grande Queimado</div>
+    <h1>Avaliação de <span>Queimaduras</span></h1>
+    <p>Ferramenta clínica à beira-leito: caracterização, profundidade, regra dos 9, Parkland modificada e critérios ABA.</p>
+  </header>
+
+  <!-- 1. CARACTERIZAÇÃO -->
+  <section class="panel">
+    <h2><span class="num">1</span> Caracterização</h2>
+    <h3>Agente</h3>
+    <div class="pills">
+      <span class="pill">Térmico — chama</span>
+      <span class="pill">Térmico — escaldo</span>
+      <span class="pill">Térmico — contato</span>
+      <span class="pill hot">Elétrico — alta tensão</span>
+      <span class="pill">Elétrico — baixa tensão</span>
+      <span class="pill hot">Químico — ácido</span>
+      <span class="pill hot">Químico — álcali</span>
+      <span class="pill">Radiação</span>
+    </div>
+    <h3>Mecanismo e contexto</h3>
+    <ul>
+      <li><b>Ambiente fechado?</b> risco de inalação e intoxicação por CO/cianeto.</li>
+      <li><b>Explosão?</b> avaliar trauma contuso, barotrauma, ruptura timpânica.</li>
+      <li><b>Tempo desde a queimadura</b> (define início da janela de 8h da Parkland).</li>
+      <li><b>Medidas já tomadas</b> — resfriamento, retirada de roupa/adornos, analgesia prévia.</li>
+      <li><b>Comorbidades</b> — DM, cardio, DPOC, gestação, imunossupressão, extremos de idade.</li>
+    </ul>
+  </section>
+
+  <!-- 2. PROFUNDIDADE -->
+  <section class="panel">
+    <h2><span class="num">2</span> Profundidade</h2>
+    <div class="depth-grid">
+      <div class="depth"><div class="swatch sw1"></div><div><div class="tag">1º grau</div><div class="t">Epidérmica</div><div class="d">Eritema, dor, sem bolhas. <b>Não conta no %SCQ.</b></div></div></div>
+      <div class="depth"><div class="swatch sw2a"></div><div><div class="tag">2º superficial</div><div class="t">Dérmica papilar</div><div class="d">Bolhas, leito rosado úmido, enchimento capilar presente, dor intensa.</div></div></div>
+      <div class="depth"><div class="swatch sw2b"></div><div><div class="tag">2º profundo</div><div class="t">Dérmica reticular</div><div class="d">Leito pálido / mosqueado, seco, hipoestesia, risco de evolução a 3º.</div></div></div>
+      <div class="depth"><div class="swatch sw3"></div><div><div class="tag">3º grau</div><div class="t">Espessura total</div><div class="d">Esbranquiçada, marrom ou carbonizada, coriácea, <b>indolor</b>.</div></div></div>
+      <div class="depth"><div class="swatch sw4"></div><div><div class="tag">4º grau</div><div class="t">Além da pele</div><div class="d">Atinge músculo, tendão ou osso — frequentemente desvascularizado.</div></div></div>
+    </div>
+  </section>
+
+  <!-- 3. EXTENSÃO — body map -->
+  <section class="panel">
+    <h2><span class="num">3</span> Extensão — Regra dos 9</h2>
+    <p style="margin-bottom:8px">Toque nas regiões que <b>foram queimadas</b> (2º ou 3º grau). Palma da mão do paciente ≈ <b>1%</b> — use para áreas pequenas.</p>
+
+    <div class="bodymap">
+      <div class="bodymap-header">
+        <div class="title">Body Map · Rule of 9s</div>
+        <div class="hint">Toque p/ alternar</div>
+      </div>
+
+      <div class="svg-wrap">
+        <figure>
+          <svg class="body" viewBox="0 0 120 240" xmlns="http://www.w3.org/2000/svg" aria-label="Anterior">
+            <defs>
+              <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#fb923c"/>
+                <stop offset="55%" stop-color="#ef4444"/>
+                <stop offset="100%" stop-color="#7f1d1d"/>
+              </linearGradient>
+              <filter id="shimmer" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3">
+                  <animate attributeName="baseFrequency" dur="2.2s" values="0.9;1.4;0.9" repeatCount="indefinite"/>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" scale="1.2"/>
+              </filter>
+            </defs>
+            <!-- Anterior: head 4.5, chest 9, abdomen 9, each arm 4.5, each thigh 9, each leg 9, genitalia 1 -->
+            <!-- Head -->
+            <path class="region" data-pct="4.5" data-name="Cabeça ant." d="M60 6 c10 0 16 8 16 18 c0 9 -6 15 -16 15 c-10 0 -16 -6 -16 -15 c0 -10 6 -18 16 -18 z"/>
+            <!-- Neck -->
+            <path class="region" data-pct="1" data-name="Pescoço ant." d="M52 40 h16 v8 h-16 z"/>
+            <!-- Chest -->
+            <path class="region" data-pct="9" data-name="Tórax ant." d="M40 50 h40 q6 0 6 8 v26 h-52 v-26 q0 -8 6 -8 z"/>
+            <!-- Abdomen -->
+            <path class="region" data-pct="9" data-name="Abdome ant." d="M36 86 h48 v36 q0 6 -6 6 h-36 q-6 0 -6 -6 z"/>
+            <!-- Arms upper -->
+            <path class="region" data-pct="2.25" data-name="Braço D ant." d="M28 52 q-6 0 -8 8 v34 q0 6 6 6 h6 q4 0 4 -5 v-36 q0 -7 -8 -7 z"/>
+            <path class="region" data-pct="2.25" data-name="Braço E ant." d="M92 52 q6 0 8 8 v34 q0 6 -6 6 h-6 q-4 0 -4 -5 v-36 q0 -7 8 -7 z"/>
+            <!-- Forearms -->
+            <path class="region" data-pct="2.25" data-name="Antebraço D ant." d="M22 102 h14 v34 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+            <path class="region" data-pct="2.25" data-name="Antebraço E ant." d="M84 102 h14 v34 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+            <!-- Genitalia -->
+            <path class="region" data-pct="1" data-name="Genitália" d="M54 128 h12 v8 h-12 z"/>
+            <!-- Thighs -->
+            <path class="region" data-pct="4.5" data-name="Coxa D ant." d="M40 138 h18 v46 q0 4 -4 4 h-10 q-4 0 -4 -4 z"/>
+            <path class="region" data-pct="4.5" data-name="Coxa E ant." d="M62 138 h18 v46 q0 4 -4 4 h-10 q-4 0 -4 -4 z"/>
+            <!-- Legs -->
+            <path class="region" data-pct="4.5" data-name="Perna D ant." d="M42 190 h14 v42 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+            <path class="region" data-pct="4.5" data-name="Perna E ant." d="M64 190 h14 v42 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+          </svg>
+          <figcaption>Anterior</figcaption>
+        </figure>
+
+        <figure>
+          <svg class="body" viewBox="0 0 120 240" xmlns="http://www.w3.org/2000/svg" aria-label="Posterior">
+            <!-- Posterior: head 4.5, upper back 9, lower back 9, each arm 4.5, each thigh 9, each leg 9 -->
+            <path class="region" data-pct="4.5" data-name="Cabeça post." d="M60 6 c10 0 16 8 16 18 c0 9 -6 15 -16 15 c-10 0 -16 -6 -16 -15 c0 -10 6 -18 16 -18 z"/>
+            <path class="region" data-pct="1" data-name="Pescoço post." d="M52 40 h16 v8 h-16 z"/>
+            <!-- Upper back -->
+            <path class="region" data-pct="9" data-name="Dorso superior" d="M40 50 h40 q6 0 6 8 v28 h-52 v-28 q0 -8 6 -8 z"/>
+            <!-- Lower back / glúteos -->
+            <path class="region" data-pct="9" data-name="Dorso inferior" d="M36 88 h48 v42 q0 6 -6 6 h-36 q-6 0 -6 -6 z"/>
+            <!-- Arms -->
+            <path class="region" data-pct="2.25" data-name="Braço D post." d="M28 52 q-6 0 -8 8 v34 q0 6 6 6 h6 q4 0 4 -5 v-36 q0 -7 -8 -7 z"/>
+            <path class="region" data-pct="2.25" data-name="Braço E post." d="M92 52 q6 0 8 8 v34 q0 6 -6 6 h-6 q-4 0 -4 -5 v-36 q0 -7 8 -7 z"/>
+            <!-- Forearms -->
+            <path class="region" data-pct="2.25" data-name="Antebraço D post." d="M22 102 h14 v34 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+            <path class="region" data-pct="2.25" data-name="Antebraço E post." d="M84 102 h14 v34 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+            <!-- Thighs -->
+            <path class="region" data-pct="4.5" data-name="Coxa D post." d="M40 140 h18 v46 q0 4 -4 4 h-10 q-4 0 -4 -4 z"/>
+            <path class="region" data-pct="4.5" data-name="Coxa E post." d="M62 140 h18 v46 q0 4 -4 4 h-10 q-4 0 -4 -4 z"/>
+            <!-- Legs -->
+            <path class="region" data-pct="4.5" data-name="Perna D post." d="M42 192 h14 v42 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+            <path class="region" data-pct="4.5" data-name="Perna E post." d="M64 192 h14 v42 q0 4 -4 4 h-6 q-4 0 -4 -4 z"/>
+          </svg>
+          <figcaption>Posterior</figcaption>
+        </figure>
+      </div>
+
+      <div class="totals">
+        <div class="cell"><div class="k">%SCQ</div><div class="v burn" id="scqTotal">0.0%</div><div class="sub">2º + 3º grau</div></div>
+        <div class="cell"><div class="k">Regiões</div><div class="v" id="regCount">0</div><div class="sub">zonas selecionadas</div></div>
+        <div class="cell"><div class="k">Palmas ≈</div><div class="v" id="palmEq">0</div><div class="sub">× 1% do paciente</div></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn clear" id="clearBtn">Limpar mapa</button>
+        <span class="chip">Cabeça 9 · MS 9 · Tórax 9 · Abdome 9 · Dorso sup 9 · Dorso inf 9 · Coxa 9 · Perna 9 · Genital 1</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PARKLAND -->
+  <section class="panel">
+    <h2><span class="num">4</span> Reposição Volêmica — Parkland modificada</h2>
+    <div class="parkland">
+      <div class="field">
+        <label>Peso (kg)</label>
+        <div class="row"><input id="weight" type="number" inputmode="decimal" min="1" max="250" value="70"><span class="unit">kg</span></div>
+      </div>
+      <div class="field">
+        <label>%SCQ (auto do mapa)</label>
+        <div class="row"><input id="scqInput" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="0"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label>Fator (mL/kg/%)</label>
+        <div class="row"><input id="factor" type="number" inputmode="decimal" min="2" max="4" step="0.5" value="4"><span class="unit">mL</span></div>
+      </div>
+    </div>
+    <div class="slider-row">
+      <input type="range" id="factorRange" min="2" max="4" step="0.5" value="4">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink-mute)"><span>2 mL</span><span>3 mL</span><span>4 mL</span></div>
+    </div>
+
+    <div class="park-out">
+      <div class="cell"><div class="k">24 h total</div><div class="v" id="p24">0 mL</div><div class="sub">Ringer Lactato</div></div>
+      <div class="cell"><div class="k">Primeiras 8 h</div><div class="v" id="p8">0 mL</div><div class="sub"><span id="p8rate">0</span> mL/h</div></div>
+      <div class="cell"><div class="k">16 h seguintes</div><div class="v" id="p16">0 mL</div><div class="sub"><span id="p16rate">0</span> mL/h</div></div>
+    </div>
+    <div class="park-note">
+      Fórmula: <b><span id="fDisp">4</span> × peso × %SCQ</b> nas 24 h; <b>50%</b> nas primeiras 8 h contadas <b>do momento da queimadura</b> (desconte o tempo já decorrido). Titule pela <b>diurese</b>: 0.5–1 mL/kg/h adulto · 1–1.5 criança · <b>75–100 mL/h</b> em queimadura elétrica (rabdomiólise).
+    </div>
+  </section>
+
+  <!-- 5. RED FLAGS / ABA -->
+  <section class="panel">
+    <h2><span class="num">5</span> Critérios para Centro de Queimados (ABA)</h2>
+    <div class="flags">
+      <div class="flag"><div class="dot"></div><div class="txt"><b>&gt;10% SCQ</b> em adulto · <b>&gt;5%</b> em criança ou idoso</div></div>
+      <div class="flag"><div class="dot"></div><div class="txt">Queimadura de <b>espessura total &gt;5%</b></div></div>
+      <div class="flag"><div class="dot"></div><div class="txt">Face, mãos, pés, genitália, períneo ou <b>grandes articulações</b></div></div>
+      <div class="flag"><div class="dot"></div><div class="txt"><b>Lesão inalatória</b> suspeita ou confirmada</div></div>
+      <div class="flag"><div class="dot"></div><div class="txt">Queimadura <b>elétrica de alta tensão</b> ou raio</div></div>
+      <div class="flag"><div class="dot"></div><div class="txt"><b>Química</b> significativa</div></div>
+      <div class="flag"><div class="dot"></div><div class="txt">Trauma associado com queimadura aumentando risco de morbimortalidade</div></div>
+      <div class="flag"><div class="dot"></div><div class="txt">Comorbidade significativa · extremos de idade · gestante</div></div>
+    </div>
+  </section>
+
+  <!-- 6. INALATÓRIA -->
+  <section class="panel">
+    <h2><span class="num">6</span> Lesão Inalatória</h2>
+    <p>Suspeite se <b>ambiente fechado</b>, explosão, perda de consciência, ou sinais:</p>
+    <ul>
+      <li>Rouquidão, <b>estridor</b>, tosse com escarro carbonáceo</li>
+      <li>Queimadura peri-oral, chamuscamento de vibrissas ou cílios</li>
+      <li>Fuligem em orofaringe · edema de úvula</li>
+      <li>Hipoxemia, confusão, SpO₂ normal com <b>CO elevado</b> → suspeitar intoxicação</li>
+    </ul>
+    <p style="margin-top:8px"><b>Conduta:</b> O₂ 100% em máscara não reinalante; considerar <b>IOT precoce</b> antes que o edema progrida — via aérea pode tornar-se impossível em horas. Dosar carboxiemoglobina; em ambiente fechado com acidose láctica, considerar <b>cianeto</b> (hidroxocobalamina).</p>
+  </section>
+
+  <!-- 7. CONDUTA -->
+  <section class="panel">
+    <h2><span class="num">7</span> Conduta no PS</h2>
+    <ol class="steps">
+      <li><b>ABCDE</b> — via aérea primeiro; remova roupas, adornos e fontes de calor.</li>
+      <li><b>2 acessos calibrosos</b> (idealmente em pele não queimada); coletar hemograma, função renal, gasometria, lactato, CK, carboxiHb se fechado.</li>
+      <li><b>Analgesia EV potente</b> — morfina 0.05–0.1 mg/kg ou fentanil 1 µg/kg; evite IM (absorção errática).</li>
+      <li><b>Ringer Lactato</b> pela Parkland; instale <b>SVD</b> para medir diurese.</li>
+      <li><b>SNG</b> se &gt;20% SCQ (íleo paralítico esperado).</li>
+      <li><b>Profilaxia antitetânica</b> conforme esquema vacinal.</li>
+      <li><b>Curativos</b> — irrigar com água corrente em temperatura ambiente, sulfadiazina de prata 1%, cobertura estéril não aderente.</li>
+      <li><b>Escarotomia</b> se queimadura <b>circunferencial</b> em tórax (restringe ventilação) ou extremidade (síndrome compartimental).</li>
+      <li><b>Aquecimento ativo</b> — risco alto de hipotermia; mantenha sala a ≥28 °C.</li>
+    </ol>
+    <div class="donot">
+      <div>NÃO romper bolhas íntegras no PS</div>
+      <div>NÃO aplicar gelo (vasoconstrição → aprofunda lesão)</div>
+      <div>NÃO usar pomadas coloridas ou caseiras (mascaram avaliação)</div>
+      <div>NÃO subestimar via aérea em queimado de face</div>
+    </div>
+  </section>
+
+  <!-- 8. DISPOSIÇÃO -->
+  <section class="panel">
+    <h2><span class="num">8</span> Disposição</h2>
+    <div class="disp-grid">
+      <div class="disp"><div class="lvl">Alta</div><div class="t">Pequenas &lt;10% SCQ</div><div class="d">Superficiais, sem áreas nobres, boa rede de apoio. Retorno em 24–48 h.</div></div>
+      <div class="disp"><div class="lvl">Enfermaria</div><div class="t">10–20% SCQ</div><div class="d">Analgesia, curativos diários, Parkland. Sem critério ABA.</div></div>
+      <div class="disp"><div class="lvl">UTI</div><div class="t">&gt;20% SCQ · inalatória</div><div class="d">Ressuscitação agressiva, ventilação, monitor hemodinâmico.</div></div>
+      <div class="disp"><div class="lvl">Centro de Queimados</div><div class="t">Critério ABA ✚</div><div class="d">Transferência após estabilização A-B-C e início da reposição.</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  MEDSTACK · <b>queimaduras</b> · v1 — uso educacional · decisão clínica é do médico
+</footer>
+
+<script>
+(function(){
+  const regions = document.querySelectorAll('svg.body .region');
+  const scqTotal = document.getElementById('scqTotal');
+  const regCount = document.getElementById('regCount');
+  const palmEq = document.getElementById('palmEq');
+  const scqInput = document.getElementById('scqInput');
+  const weight = document.getElementById('weight');
+  const factor = document.getElementById('factor');
+  const factorRange = document.getElementById('factorRange');
+  const fDisp = document.getElementById('fDisp');
+  const p24 = document.getElementById('p24');
+  const p8 = document.getElementById('p8');
+  const p16 = document.getElementById('p16');
+  const p8rate = document.getElementById('p8rate');
+  const p16rate = document.getElementById('p16rate');
+
+  let userOverride = false;
+
+  function computeSCQ(){
+    let total = 0, count = 0;
+    regions.forEach(r=>{
+      if(r.classList.contains('burnt')){
+        total += parseFloat(r.getAttribute('data-pct'));
+        count++;
+      }
+    });
+    return {total: Math.min(total,100), count};
+  }
+
+  function fmt(n){return n.toLocaleString('pt-BR',{maximumFractionDigits:0})}
+  function fmt1(n){return n.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}
+
+  function renderTotals(){
+    const {total, count} = computeSCQ();
+    scqTotal.textContent = fmt1(total)+'%';
+    regCount.textContent = count;
+    palmEq.textContent = fmt(Math.round(total));
+    if(!userOverride){ scqInput.value = total.toFixed(1); }
+    parkland();
+  }
+
+  function parkland(){
+    const w = parseFloat(weight.value)||0;
+    const scq = parseFloat(scqInput.value)||0;
+    const f = parseFloat(factor.value)||4;
+    fDisp.textContent = f;
+    const total24 = f * w * scq;
+    const first8 = total24/2;
+    const last16 = total24/2;
+    p24.textContent = fmt(total24)+' mL';
+    p8.textContent = fmt(first8)+' mL';
+    p16.textContent = fmt(last16)+' mL';
+    p8rate.textContent = fmt(first8/8);
+    p16rate.textContent = fmt(last16/16);
+  }
+
+  regions.forEach(r=>{
+    r.addEventListener('click',()=>{
+      r.classList.toggle('burnt');
+      renderTotals();
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click',()=>{
+    regions.forEach(r=>r.classList.remove('burnt'));
+    userOverride=false;
+    renderTotals();
+  });
+
+  scqInput.addEventListener('input',()=>{userOverride=true;parkland()});
+  weight.addEventListener('input',parkland);
+  factor.addEventListener('input',()=>{factorRange.value=factor.value;parkland()});
+  factorRange.addEventListener('input',()=>{factor.value=factorRange.value;parkland()});
+
+  renderTotals();
+})();
+</script>
+</body>
+</html>

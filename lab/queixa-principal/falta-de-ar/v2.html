@@ -1,0 +1,529 @@
+<!-- VERSION: 2 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Falta de Ar — O2 Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:#0a1628;color:#cbd5e1;font-family:'Inter',-apple-system,system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.5;letter-spacing:-.005em}
+  body{background:radial-gradient(ellipse 600px 400px at 80% -10%,rgba(34,211,238,.06),transparent 60%),radial-gradient(ellipse 500px 300px at 10% 100%,rgba(34,211,238,.04),transparent 60%),#0a1628;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+  /* === NAV === */
+  .topnav{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid rgba(34,211,238,.08);background:rgba(10,22,40,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:sticky;top:0;z-index:50}
+  .topnav a{color:#64748b;text-decoration:none;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:color .2s}
+  .topnav a:hover,.topnav a:active{color:#22d3ee}
+  .topnav .brand{color:#cbd5e1;font-weight:600}
+
+  /* === HEADER === */
+  .header{padding:16px 18px 4px}
+  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .sys-label{font-size:10px;letter-spacing:.25em;color:#22d3ee;text-transform:uppercase;font-weight:600}
+  .sys-status{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#67e8f9;letter-spacing:.15em}
+  .live-dot{width:6px;height:6px;border-radius:50%;background:#22d3ee;box-shadow:0 0 8px #22d3ee;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+  .title{font-size:28px;font-weight:300;color:#e2e8f0;letter-spacing:-.03em;line-height:1.05;margin-bottom:2px}
+  .title b{font-weight:600;color:#22d3ee}
+  .subtitle{font-size:12px;color:#64748b;letter-spacing:.01em}
+
+  /* === MONITOR STRIP (breath hint + waveform merged) === */
+  .monitor{margin:14px 18px 16px;padding:16px 16px 12px;background:linear-gradient(165deg,rgba(34,211,238,.05),rgba(11,20,35,.55));border:1px solid rgba(34,211,238,.14);border-radius:14px;position:relative;overflow:hidden}
+  .monitor::before{content:"";position:absolute;top:50%;left:50%;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.09),transparent 70%);transform:translate(-50%,-50%);animation:breathe 4s ease-in-out infinite;pointer-events:none}
+  @keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(.85);opacity:.35}50%{transform:translate(-50%,-50%) scale(1.1);opacity:.7}}
+  .monitor-hint{position:relative;z-index:1;font-size:13px;color:#cbd5e1;line-height:1.55;margin-bottom:12px}
+  .monitor-hint strong{color:#e2e8f0;font-weight:500}
+  .monitor-hint .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;color:#67e8f9;text-transform:uppercase;margin-bottom:6px;font-weight:600}
+  .wave-head{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;letter-spacing:.18em;text-transform:uppercase}
+  .wave-head .hz{color:#22d3ee}
+  .wave-svg{position:relative;z-index:1;width:100%;height:52px;display:block}
+
+  /* === STEP PILLS === */
+  .steps{display:flex;gap:4px;padding:0 14px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .steps::-webkit-scrollbar{display:none}
+  .step-pill{flex:0 0 auto;padding:8px 13px;background:rgba(15,25,45,.6);border:1px solid rgba(71,85,105,.3);border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;cursor:pointer;transition:all .2s;letter-spacing:.02em;scroll-snap-align:start;white-space:nowrap}
+  .step-pill.active{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.5);color:#22d3ee}
+  .step-pill .num{color:#475569;margin-right:6px}
+  .step-pill.active .num{color:#67e8f9}
+  .step-pill .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#ef4444;margin-left:6px;vertical-align:middle;opacity:0;transition:opacity .2s;box-shadow:0 0 6px rgba(239,68,68,.6)}
+  .step-pill.has-alert .dot{opacity:1}
+
+  /* === SECTIONS === */
+  .section{padding:0 18px;margin-bottom:18px;display:none;animation:fadeIn .3s ease}
+  .section.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+  .sec-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:#22d3ee;letter-spacing:.1em;font-weight:500}
+  .sec-title{font-size:17px;font-weight:500;color:#e2e8f0;letter-spacing:-.015em}
+
+  /* === GROUPS / CHIPS === */
+  .group{margin-bottom:16px}
+  .group-label{font-size:10px;letter-spacing:.22em;color:#64748b;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{padding:10px 13px;background:rgba(15,25,45,.7);border:1px solid rgba(71,85,105,.35);border-radius:8px;font-size:13px;color:#94a3b8;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s;user-select:none;display:flex;align-items:center;gap:8px;min-height:40px}
+  .chip:active{transform:scale(.97)}
+  .chip::before{content:"";width:14px;height:14px;border:1.5px solid #475569;border-radius:4px;display:inline-block;flex-shrink:0;transition:all .15s}
+  .chip.on{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.5);color:#e2e8f0}
+  .chip.on::before{background:#22d3ee;border-color:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.5);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none'><path d='M3 7l3 3 5-6' stroke='%230a1628' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>")}
+  .chip.danger.on{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.5);color:#fecaca}
+  .chip.danger.on::before{background:#ef4444;border-color:#ef4444;box-shadow:0 0 8px rgba(239,68,68,.5)}
+
+  /* === RED FLAG BANNER === */
+  .rf-banner{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:linear-gradient(135deg,rgba(239,68,68,.05),rgba(11,20,35,.4));border:1px solid rgba(239,68,68,.22);border-radius:12px;margin-bottom:12px}
+  .rf-lbl{font-size:10px;letter-spacing:.22em;color:#fca5a5;text-transform:uppercase;font-weight:600;margin-bottom:2px}
+  .rf-hint{font-size:11px;color:#94a3b8;line-height:1.4}
+  .rf-count{text-align:right;flex-shrink:0;margin-left:12px}
+  .rf-num{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;color:#fca5a5;line-height:1;letter-spacing:-.04em;transition:color .25s}
+  .rf-num.zero{color:#475569}
+  .rf-num.hot{color:#ef4444;text-shadow:0 0 20px rgba(239,68,68,.4)}
+  .rf-slash{font-family:'JetBrains Mono',monospace;font-size:13px;color:#64748b;margin-left:1px}
+
+  /* === VITALS === */
+  .vitals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .vital{padding:12px 14px;background:rgba(15,25,45,.5);border:1px solid rgba(71,85,105,.25);border-radius:10px;transition:background .2s,border-color .2s}
+  .vital-lbl{font-size:10px;letter-spacing:.2em;color:#64748b;text-transform:uppercase;font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline}
+  .vital-range{font-size:9px;color:#475569;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;font-weight:500}
+  .vital-row{display:flex;align-items:baseline;gap:4px}
+  .vital-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#22d3ee;line-height:1;letter-spacing:-.03em;background:none;border:none;outline:none;width:100%;padding:0;min-width:0}
+  .vital-val::placeholder{color:#334155}
+  .vital-val:focus{color:#67e8f9}
+  .vital-unit{font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;font-weight:400;flex-shrink:0}
+  .vital.alert{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.05)}
+  .vital.alert .vital-val{color:#fca5a5}
+  .vital.alert .vital-lbl{color:#fca5a5}
+  .vital.ok{border-color:rgba(34,211,238,.28)}
+
+  /* === DIFFERENTIALS === */
+  .dx-list{display:flex;flex-direction:column;gap:6px}
+  .dx{padding:12px 14px;background:rgba(15,25,45,.55);border:1px solid rgba(71,85,105,.3);border-radius:10px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .dx:active{transform:scale(.99)}
+  .dx-main{flex:1;min-width:0}
+  .dx-name{font-size:14px;font-weight:500;color:#cbd5e1;margin-bottom:2px}
+  .dx-clue{font-size:11px;color:#64748b;line-height:1.4}
+  .dx-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;padding:3px 7px;border-radius:4px;background:rgba(71,85,105,.2);color:#64748b;text-transform:uppercase;flex-shrink:0}
+  .dx.selected{background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.4)}
+  .dx.selected .dx-name{color:#e2e8f0}
+  .dx.selected .dx-tag{background:rgba(34,211,238,.15);color:#67e8f9}
+
+  /* === CHECKLIST === */
+  .todo{display:flex;flex-direction:column;gap:4px}
+  .todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(15,25,45,.5);border:1px solid rgba(71,85,105,.25);border-radius:8px;cursor:pointer;transition:background .15s,border-color .15s}
+  .todo-item .box{width:16px;height:16px;border:1.5px solid #475569;border-radius:4px;flex-shrink:0;margin-top:1px;transition:all .15s;position:relative}
+  .todo-item.done{background:rgba(34,211,238,.05);border-color:rgba(34,211,238,.25)}
+  .todo-item.done .box{background:#22d3ee;border-color:#22d3ee}
+  .todo-item.done .box::after{content:"";position:absolute;top:1px;left:4px;width:4px;height:8px;border:solid #0a1628;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .todo-item.done .todo-txt{color:#64748b;text-decoration:line-through;text-decoration-color:rgba(34,211,238,.4)}
+  .todo-body{flex:1;min-width:0}
+  .todo-txt{font-size:13px;color:#cbd5e1;line-height:1.4}
+  .todo-hint{font-size:11px;color:#64748b;margin-top:2px;line-height:1.4}
+
+  /* === DISPOSITION === */
+  .disp-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .disp-opt{padding:14px 12px;background:rgba(15,25,45,.5);border:1px solid rgba(71,85,105,.3);border-radius:12px;cursor:pointer;transition:background .15s,border-color .15s;text-align:center}
+  .disp-opt .ic{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;margin-bottom:4px;letter-spacing:.02em}
+  .disp-opt.intern .ic{color:#fca5a5}
+  .disp-opt.alta .ic{color:#86efac}
+  .disp-opt .lbl{font-size:13px;font-weight:500;color:#cbd5e1;margin-bottom:2px}
+  .disp-opt .sub{font-size:10px;color:#64748b;letter-spacing:.05em}
+  .disp-opt.picked.intern{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4)}
+  .disp-opt.picked.alta{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.4)}
+  .disp-crit{padding:12px 14px;background:rgba(11,20,35,.6);border:1px dashed rgba(71,85,105,.35);border-radius:10px;font-size:12px;color:#94a3b8;line-height:1.55}
+  .disp-crit b{color:#e2e8f0;font-weight:500}
+  .disp-crit .row{margin-bottom:8px}
+  .disp-crit .row:last-child{margin-bottom:0}
+
+  /* === FOOTER NAV (fixed, compact back arrow) === */
+  .footnav{display:flex;gap:8px;padding:10px 14px calc(14px + env(safe-area-inset-bottom));position:fixed;left:0;right:0;bottom:0;background:linear-gradient(to top,#0a1628 70%,rgba(10,22,40,.85) 90%,transparent);z-index:40;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .btn{padding:13px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:.01em;cursor:pointer;transition:background .15s,transform .1s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px}
+  .btn-prev{background:rgba(15,25,45,.85);color:#94a3b8;border:1px solid rgba(71,85,105,.3);flex:0 0 50px;padding:13px 0;font-size:18px}
+  .btn-next{flex:1;background:#22d3ee;color:#0a1628;font-weight:600;box-shadow:0 0 18px rgba(34,211,238,.2)}
+  .btn-next:active{transform:scale(.98);box-shadow:0 0 10px rgba(34,211,238,.3)}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-next.done{background:#86efac;box-shadow:0 0 18px rgba(134,239,172,.25)}
+
+  /* === UTILITY === */
+  .small-note{font-size:11px;color:#64748b;font-style:italic;margin-top:10px;line-height:1.5}
+
+  @media (min-width:640px){
+    .title{font-size:32px}
+    .vitals{grid-template-columns:repeat(4,1fr)}
+    .monitor-hint{font-size:14px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="../../" class="brand">MedStack</a>
+  <a href="../../lab/queixa-principal.html">Back</a>
+</nav>
+
+<header class="header">
+  <div class="header-top">
+    <span class="sys-label">O2 · Monitor</span>
+    <span class="sys-status mono"><span class="live-dot"></span>LIVE · BEDSIDE</span>
+  </div>
+  <h1 class="title">Falta de <b>ar</b></h1>
+  <p class="subtitle">Avaliação estruturada à beira-leito</p>
+</header>
+
+<section class="monitor">
+  <p class="monitor-hint">
+    <span class="tag">Respire · observe</span><br>
+    Antes de encostar no paciente, <strong>olhe o trabalho respiratório</strong>. Tiragem, paradoxo, fala entrecortada e posição de conforto te dão o diagnóstico antes da ausculta.
+  </p>
+  <div class="wave-head mono">
+    <span>SPO2 · PLETH</span>
+    <span class="hz">60 bpm</span>
+  </div>
+  <svg class="wave-svg" viewBox="0 0 400 52" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="wgrad" x1="0" x2="1">
+        <stop offset="0" stop-color="#22d3ee" stop-opacity="0"/>
+        <stop offset=".12" stop-color="#22d3ee" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#22d3ee" stop-opacity=".9"/>
+      </linearGradient>
+    </defs>
+    <path d="M0 26 L30 26 L40 25 Q50 12 60 4 Q68 0 72 4 Q78 12 85 25 L95 26 L120 26 Q130 27 140 32 Q150 38 160 32 Q170 27 180 26 L210 26 L220 25 Q230 12 240 4 Q248 0 252 4 Q258 12 265 25 L275 26 L300 26 Q310 27 320 32 Q330 38 340 32 Q350 27 360 26 L400 26" fill="none" stroke="url(#wgrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</section>
+
+<nav class="steps" id="steps">
+  <button class="step-pill active" data-step="0"><span class="num">01</span>Caract.</button>
+  <button class="step-pill" data-step="1"><span class="num">02</span>Red flags<span class="dot"></span></button>
+  <button class="step-pill" data-step="2"><span class="num">03</span>Exame<span class="dot"></span></button>
+  <button class="step-pill" data-step="3"><span class="num">04</span>Diferenciais</button>
+  <button class="step-pill" data-step="4"><span class="num">05</span>Conduta</button>
+  <button class="step-pill" data-step="5"><span class="num">06</span>Disposição</button>
+</nav>
+
+<!-- SECTION 1 · CARACTERIZACAO -->
+<section class="section active" data-sec="0">
+  <div class="sec-head">
+    <span class="sec-num mono">// 01</span>
+    <h2 class="sec-title">Caracterização</h2>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Início</div>
+    <div class="chip-row" data-single="onset">
+      <div class="chip">Súbito</div>
+      <div class="chip">Progressivo</div>
+      <div class="chip">Crônico agudizado</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Padrão</div>
+    <div class="chip-row">
+      <div class="chip">Em repouso</div>
+      <div class="chip">Aos esforços</div>
+      <div class="chip">Ortopneia</div>
+      <div class="chip">DPN</div>
+      <div class="chip">Pós-imobilização</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Associados</div>
+    <div class="chip-row">
+      <div class="chip">Dor torácica</div>
+      <div class="chip">Febre</div>
+      <div class="chip">Tosse seca</div>
+      <div class="chip">Tosse produtiva</div>
+      <div class="chip">Sibilância</div>
+      <div class="chip">Edema MMII</div>
+      <div class="chip">Hemoptise</div>
+      <div class="chip">Palpitação</div>
+    </div>
+  </div>
+
+  <p class="small-note">Súbito + dor pleurítica → TEP ou pneumotórax. Progressivo + ortopneia/DPN → IC descompensada.</p>
+</section>
+
+<!-- SECTION 2 · RED FLAGS -->
+<section class="section" data-sec="1">
+  <div class="sec-head">
+    <span class="sec-num mono">// 02</span>
+    <h2 class="sec-title">Red flags</h2>
+  </div>
+
+  <div class="rf-banner">
+    <div>
+      <div class="rf-lbl">Alertas ativos</div>
+      <div class="rf-hint" id="rfHint">Nenhum alerta marcado</div>
+    </div>
+    <div class="rf-count">
+      <span class="rf-num mono zero" id="rfNum">0</span><span class="rf-slash mono">/9</span>
+    </div>
+  </div>
+
+  <div class="chip-row" id="redflags">
+    <div class="chip danger">Cianose central</div>
+    <div class="chip danger">Musculatura acessória</div>
+    <div class="chip danger">Tiragem</div>
+    <div class="chip danger">Estridor</div>
+    <div class="chip danger">FR &gt; 30</div>
+    <div class="chip danger">SpO2 &lt; 90% (AA)</div>
+    <div class="chip danger">Rebaix. consciência</div>
+    <div class="chip danger">Hipotensão</div>
+    <div class="chip danger">Fala entrecortada / silêncio torácico</div>
+  </div>
+
+  <p class="small-note">≥ 2 alertas → sala de emergência, prepare via aérea avançada e chame apoio.</p>
+</section>
+
+<!-- SECTION 3 · EXAME -->
+<section class="section" data-sec="2">
+  <div class="sec-head">
+    <span class="sec-num mono">// 03</span>
+    <h2 class="sec-title">Exame focado</h2>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Sinais vitais</div>
+    <div class="vitals">
+      <div class="vital" data-vital="fr">
+        <div class="vital-lbl"><span>FR</span><span class="vital-range">&lt;30</span></div>
+        <div class="vital-row">
+          <input class="vital-val mono" type="number" placeholder="—" inputmode="numeric" aria-label="Frequência respiratória">
+          <span class="vital-unit">irpm</span>
+        </div>
+      </div>
+      <div class="vital" data-vital="spo2">
+        <div class="vital-lbl"><span>SpO2</span><span class="vital-range">&ge;94</span></div>
+        <div class="vital-row">
+          <input class="vital-val mono" type="number" placeholder="—" inputmode="numeric" aria-label="Saturação de oxigênio">
+          <span class="vital-unit">%</span>
+        </div>
+      </div>
+      <div class="vital" data-vital="pas">
+        <div class="vital-lbl"><span>PAS</span><span class="vital-range">&ge;90</span></div>
+        <div class="vital-row">
+          <input class="vital-val mono" type="number" placeholder="—" inputmode="numeric" aria-label="Pressão arterial sistólica">
+          <span class="vital-unit">mmHg</span>
+        </div>
+      </div>
+      <div class="vital" data-vital="fc">
+        <div class="vital-lbl"><span>FC</span><span class="vital-range">50–130</span></div>
+        <div class="vital-row">
+          <input class="vital-val mono" type="number" placeholder="—" inputmode="numeric" aria-label="Frequência cardíaca">
+          <span class="vital-unit">bpm</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Ausculta pulmonar</div>
+    <div class="chip-row">
+      <div class="chip">MV simétrico</div>
+      <div class="chip">Sibilos difusos</div>
+      <div class="chip">Crep. bibasais</div>
+      <div class="chip">Crep. localizadas</div>
+      <div class="chip">MV abolido unilateral</div>
+      <div class="chip">Silêncio torácico</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Sinais sistêmicos</div>
+    <div class="chip-row">
+      <div class="chip">Turgência jugular</div>
+      <div class="chip">Edema MMII (cacifo)</div>
+      <div class="chip">TEC &gt; 3s</div>
+      <div class="chip">B3 / galope</div>
+      <div class="chip">Sopro novo</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 · DIFERENCIAIS -->
+<section class="section" data-sec="3">
+  <div class="sec-head">
+    <span class="sec-num mono">// 04</span>
+    <h2 class="sec-title">Diferenciais</h2>
+  </div>
+
+  <div class="dx-list" id="dxList">
+    <div class="dx"><div class="dx-main"><div class="dx-name">TEP</div><div class="dx-clue">Súbito · dessaturação sem sinais pulm. · fator de risco</div></div><span class="dx-tag mono">vasc</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">Pneumonia</div><div class="dx-clue">Febre · tosse produtiva · crepitações localizadas</div></div><span class="dx-tag mono">inf</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">Asma · DPOC exacerbação</div><div class="dx-clue">Sibilância difusa · tempo expiratório · histórico</div></div><span class="dx-tag mono">obstr</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">IC descompensada · EAP</div><div class="dx-clue">Ortopneia · DPN · crepitações bibasais · TJ</div></div><span class="dx-tag mono">card</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">Pneumotórax</div><div class="dx-clue">Súbito · dor · MV abolido unilateral · timpanismo</div></div><span class="dx-tag mono">mec</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">Acidose (Kussmaul)</div><div class="dx-clue">Taquipneia profunda · CAD · sepse · intoxicação</div></div><span class="dx-tag mono">met</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">Derrame pleural</div><div class="dx-clue">MV abolido · macicez · progressivo</div></div><span class="dx-tag mono">mec</span></div>
+    <div class="dx"><div class="dx-main"><div class="dx-name">SDRA</div><div class="dx-clue">Hipoxemia refratária · infiltrado bilateral · gatilho</div></div><span class="dx-tag mono">grav</span></div>
+  </div>
+
+  <p class="small-note">Toque para marcar hipóteses — guia a solicitação de exames.</p>
+</section>
+
+<!-- SECTION 5 · CONDUTA -->
+<section class="section" data-sec="4">
+  <div class="sec-head">
+    <span class="sec-num mono">// 05</span>
+    <h2 class="sec-title">Conduta inicial</h2>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Estabilização</div>
+    <div class="todo">
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">O2 · alvo SpO2 94–98% (88–92% se DPOC)</div><div class="todo-hint">CN → Venturi → NRM → VNI</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">Acesso venoso calibroso (2 vias se instável)</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">Monitor multiparâmetros · capnografia</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">Posição semi-sentada</div></div></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Exames</div>
+    <div class="todo">
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">Gasometria arterial + lactato</div><div class="todo-hint">Define IRpA tipo 1 vs 2</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">ECG 12 derivações</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">RX tórax à beira-leito</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">Hemograma · função renal · PCR</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">Troponina / BNP se suspeita cardíaca</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">D-dímero (PERC/Wells) · angio-TC se alto risco</div></div></div>
+      <div class="todo-item"><div class="box"></div><div class="todo-body"><div class="todo-txt">POCUS pulmão + cardíaco</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6 · DISPOSICAO -->
+<section class="section" data-sec="5">
+  <div class="sec-head">
+    <span class="sec-num mono">// 06</span>
+    <h2 class="sec-title">Disposição</h2>
+  </div>
+
+  <div class="disp-wrap">
+    <div class="disp-opt intern" data-disp="intern">
+      <div class="ic mono">[ &uarr; ]</div>
+      <div class="lbl">Internar</div>
+      <div class="sub">Leito / UTI</div>
+    </div>
+    <div class="disp-opt alta" data-disp="alta">
+      <div class="ic mono">[ &rarr; ]</div>
+      <div class="lbl">Alta</div>
+      <div class="sub">Com orientação</div>
+    </div>
+  </div>
+
+  <div class="disp-crit">
+    <div class="row"><b>Internar:</b> SpO2 &lt; 92% pós-tratamento · O2 contínuo · instabilidade · dúvida dx · comorbidade descompensada.</div>
+    <div class="row"><b>Alta:</b> melhora sustentada &ge; 2h em AA · causa tratada · retorno programado · sinais de alarme por escrito.</div>
+    <div class="row"><b>Antes de decidir:</b> reavalie SpO2, FR, trabalho respiratório, consciência.</div>
+  </div>
+</section>
+
+<div class="footnav">
+  <button class="btn btn-prev" id="btnPrev" disabled aria-label="Seção anterior">&larr;</button>
+  <button class="btn btn-next" id="btnNext">Próximo &rarr;</button>
+</div>
+
+<script>
+(function(){
+  // Chip toggles (with optional single-select per row)
+  document.querySelectorAll('.chip-row').forEach(row=>{
+    const single=row.dataset.single;
+    row.querySelectorAll('.chip').forEach(c=>{
+      c.addEventListener('click',()=>{
+        if(single){
+          row.querySelectorAll('.chip').forEach(x=>x!==c&&x.classList.remove('on'));
+        }
+        c.classList.toggle('on');
+        updateAlerts();
+      });
+    });
+  });
+
+  // Vitals: threshold checks, auto-sync alert dots
+  const thresholds={
+    fr:(v)=>v>=30,
+    spo2:(v)=>v<90,
+    pas:(v)=>v<90,
+    fc:(v)=>v>130||v<50
+  };
+  document.querySelectorAll('.vital input').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const wrap=inp.closest('.vital');
+      const k=wrap.dataset.vital;
+      const v=parseFloat(inp.value);
+      const hasVal=!isNaN(v)&&inp.value!=='';
+      const bad=hasVal&&thresholds[k]&&thresholds[k](v);
+      wrap.classList.toggle('alert',bad);
+      wrap.classList.toggle('ok',hasVal&&!bad);
+      updateAlerts();
+    });
+  });
+
+  // Red flag counter + tab alert dots
+  const rfNum=document.getElementById('rfNum');
+  const rfHint=document.getElementById('rfHint');
+  const rfContainer=document.getElementById('redflags');
+  const pills=document.querySelectorAll('.step-pill');
+  function updateAlerts(){
+    const rfOn=rfContainer.querySelectorAll('.chip.on').length;
+    rfNum.textContent=String(rfOn).padStart(2,'0').slice(-2);
+    rfNum.classList.toggle('zero',rfOn===0);
+    rfNum.classList.toggle('hot',rfOn>=2);
+    if(rfOn===0) rfHint.textContent='Nenhum alerta marcado';
+    else if(rfOn===1) rfHint.textContent='1 alerta — observar de perto';
+    else rfHint.textContent='\u2265 2 alertas \u2014 sala de emergência';
+    pills[1].classList.toggle('has-alert',rfOn>0);
+    const vAlert=document.querySelectorAll('.vital.alert').length>0;
+    pills[2].classList.toggle('has-alert',vAlert);
+  }
+
+  // Differential select
+  document.querySelectorAll('.dx').forEach(d=>{
+    d.addEventListener('click',()=>d.classList.toggle('selected'));
+  });
+
+  // Checklist
+  document.querySelectorAll('.todo-item').forEach(t=>{
+    t.addEventListener('click',()=>t.classList.toggle('done'));
+  });
+
+  // Disposition single-select
+  document.querySelectorAll('.disp-opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      document.querySelectorAll('.disp-opt').forEach(x=>x.classList.remove('picked'));
+      o.classList.add('picked');
+    });
+  });
+
+  // Step navigation
+  const sections=document.querySelectorAll('.section');
+  const btnPrev=document.getElementById('btnPrev');
+  const btnNext=document.getElementById('btnNext');
+  let cur=0;
+  function go(i){
+    cur=Math.max(0,Math.min(sections.length-1,i));
+    sections.forEach((s,n)=>s.classList.toggle('active',n===cur));
+    pills.forEach((p,n)=>p.classList.toggle('active',n===cur));
+    btnPrev.disabled=cur===0;
+    btnNext.textContent=cur===sections.length-1?'Concluir':'Próximo \u2192';
+    btnNext.classList.remove('done');
+    const active=pills[cur];
+    if(active&&active.scrollIntoView) active.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  pills.forEach(p=>p.addEventListener('click',()=>go(parseInt(p.dataset.step,10))));
+  btnPrev.addEventListener('click',()=>go(cur-1));
+  btnNext.addEventListener('click',()=>{
+    if(cur===sections.length-1){
+      btnNext.textContent='Registrado \u2713';
+      btnNext.classList.add('done');
+      setTimeout(()=>{btnNext.textContent='Concluir';btnNext.classList.remove('done');},1800);
+    } else go(cur+1);
+  });
+})();
+</script>
+</body>
+</html>

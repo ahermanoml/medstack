@@ -1,0 +1,1507 @@
+<!-- VERSION: 4 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1a">
+<title>Tontura - Avaliação Estruturada no PS</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0f1a;color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0)}
+  header{background:linear-gradient(135deg,#111827 0%,#1e293b 50%,#1a2332 100%);width:100%;padding:1.4rem 1.5rem;padding-top:calc(1.4rem + env(safe-area-inset-top,0));text-align:center;border-bottom:2px solid #2563eb;position:relative;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+  header h1{font-size:1.4rem;font-weight:700;color:#f1f5f9;letter-spacing:-.02em}
+  header p{font-size:.8rem;color:#64748b;margin-top:.3rem;letter-spacing:.02em}
+  .back-link{position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);color:#64748b;text-decoration:none;font-size:.82rem;font-weight:500;transition:color .2s;display:flex;align-items:center;gap:.3rem;min-height:44px;min-width:44px}
+  .back-link:hover{color:#93c5fd}
+  .container{max-width:680px;width:100%;padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+
+  /* Progress */
+  .progress-bar{display:flex;align-items:center;gap:3px;padding:0 .25rem}
+  .progress-step{flex:1;height:5px;border-radius:3px;background:#1e293b;transition:background .5s ease,box-shadow .5s ease}
+  .progress-step.done{background:#2563eb;box-shadow:0 0 6px rgba(37,99,235,.3)}
+  .progress-step.active{background:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.4);animation:pulse-bar 2s ease-in-out infinite}
+  @keyframes pulse-bar{0%,100%{opacity:1;box-shadow:0 0 8px rgba(96,165,250,.4)}50%{opacity:.6;box-shadow:0 0 4px rgba(96,165,250,.2)}}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.58rem;color:#475569;padding:0 .25rem;margin-top:2px}
+  .progress-labels span{transition:color .3s;min-height:28px;display:flex;align-items:center;padding:0 2px}
+  .progress-labels span.active-label{color:#93c5fd;font-weight:700}
+  .progress-labels span.done-label{color:#3b82f6;cursor:pointer}
+  .progress-labels span.done-label:hover{color:#93c5fd}
+
+  /* Cards */
+  .card{background:linear-gradient(180deg,#151d2e 0%,#1a2436 100%);border:1px solid #1e293b;border-radius:1rem;padding:1.75rem;animation:cardIn .4s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 32px rgba(0,0,0,.3)}
+  @keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .card h2{font-size:1.1rem;color:#f8fafc;margin-bottom:.3rem;font-weight:700;letter-spacing:-.01em}
+  .card .subtitle{font-size:.78rem;color:#64748b;margin-bottom:1.25rem}
+  .step-count{display:inline-flex;align-items:center;justify-content:center;background:#1e3a5f;color:#60a5fa;font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:9999px;margin-left:.5rem;vertical-align:middle;letter-spacing:.03em}
+
+  /* Option buttons */
+  .options{display:flex;flex-direction:column;gap:.6rem}
+  .option-group-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#475569;margin-top:.75rem;margin-bottom:-.1rem;font-weight:600}
+  .option-group-label:first-child{margin-top:0}
+  .option-btn{background:#0d1424;border:1.5px solid #1e293b;border-radius:.75rem;padding:.85rem 1rem;color:#94a3b8;font-size:.9rem;cursor:pointer;transition:all .2s ease;text-align:left;display:flex;align-items:center;gap:.7rem;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;min-height:52px}
+  .option-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.06),transparent);opacity:0;transition:opacity .2s}
+  .option-btn:hover{border-color:#3b82f6;color:#e2e8f0;transform:translateY(-1px);box-shadow:0 2px 12px rgba(37,99,235,.15)}
+  .option-btn:hover::before{opacity:1}
+  .option-btn:active{transform:scale(.98);transition:transform .1s}
+  .option-btn:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .option-btn.selected{border-color:#3b82f6;background:#0f2847;color:#f1f5f9;box-shadow:0 0 0 1px rgba(59,130,246,.2),0 4px 16px rgba(37,99,235,.2)}
+  .option-btn.selected::before{opacity:1}
+  .option-btn .icon{font-size:1.2rem;flex-shrink:0;width:2rem;text-align:center}
+  .option-btn .label{flex:1}
+  .option-btn .label small{display:block;font-size:.7rem;color:#64748b;margin-top:.15rem;font-weight:400;line-height:1.4}
+  .option-btn.selected .label small{color:#93c5fd}
+  .option-btn .tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;padding:.2rem .5rem;border-radius:9999px;font-weight:600;flex-shrink:0}
+  .tag-central{background:#7f1d1d;color:#fca5a5}.tag-periferico{background:#14532d;color:#86efac}.tag-neutro{background:#1e293b;color:#64748b}
+  .option-btn.selected .tag-neutro{background:#1e3a5f;color:#93c5fd}
+
+  /* Check buttons */
+  .check-btn{background:#0d1424;border:1.5px solid #1e293b;border-radius:.7rem;padding:.7rem .9rem;color:#94a3b8;font-size:.85rem;cursor:pointer;transition:all .2s ease;text-align:left;display:flex;align-items:center;gap:.65rem;-webkit-tap-highlight-color:transparent;min-height:48px}
+  .check-btn:hover{border-color:#3b82f6;color:#e2e8f0}
+  .check-btn:active{transform:scale(.98);transition:transform .1s}
+  .check-btn:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .check-btn.checked{border-color:#3b82f6;background:#0f2847;color:#f1f5f9}
+  .check-box{width:18px;height:18px;border:2px solid #334155;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.7rem;color:transparent}
+  .check-btn.checked .check-box{background:#3b82f6;border-color:#3b82f6;color:#fff}
+  .check-btn .rf-tag{font-size:.58rem;text-transform:uppercase;letter-spacing:.05em;padding:.15rem .4rem;border-radius:9999px;font-weight:700;flex-shrink:0}
+  .rf-tag.red{background:#7f1d1d;color:#fca5a5}.rf-tag.yellow{background:#78350f;color:#fcd34d}
+
+  /* Navigation */
+  .nav-row{display:flex;gap:.6rem;margin-top:1.25rem}
+  .nav-btn{flex:1;padding:.75rem;border-radius:.75rem;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;letter-spacing:.01em;-webkit-tap-highlight-color:transparent;min-height:48px}
+  .nav-btn.secondary{background:#1e293b;color:#94a3b8;border:1.5px solid #334155}
+  .nav-btn.secondary:hover{background:#334155;color:#e2e8f0;border-color:#475569}
+  .nav-btn.primary{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;box-shadow:0 2px 12px rgba(37,99,235,.3)}
+  .nav-btn.primary:hover{background:linear-gradient(135deg,#1d4ed8,#2563eb);box-shadow:0 4px 16px rgba(37,99,235,.4);transform:translateY(-1px)}
+  .nav-btn.primary:active{transform:scale(.97)}
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+  .nav-btn:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .nav-btn.skip{background:transparent;color:#475569;border:1.5px dashed #334155;flex:.6}
+  .nav-btn.skip:hover{color:#94a3b8;border-color:#475569}
+
+  /* Info box */
+  .info-box{background:linear-gradient(135deg,#0c1a33,#0f2040);border:1px solid #1e3a5f;border-radius:.6rem;padding:.75rem 1rem;margin-top:.75rem;font-size:.78rem;color:#93c5fd;line-height:1.55}
+  .info-box strong{color:#60a5fa}
+  .info-box.warn{background:linear-gradient(135deg,#1a1505,#231c08);border-color:#78350f;color:#fcd34d}
+  .info-box.warn strong{color:#fbbf24}
+  .info-box.danger{background:linear-gradient(135deg,#1a0505,#230808);border-color:#7f1d1d;color:#fca5a5}
+  .info-box.danger strong{color:#f87171}
+
+  /* Result page */
+  .result-card{text-align:center;padding:2rem 1.5rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:4.5rem;height:4.5rem;border-radius:50%;font-size:1.6rem;font-weight:800;margin-bottom:.75rem;animation:badgeIn .5s cubic-bezier(.4,0,.2,1)}
+  @keyframes badgeIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .result-badge.badge-central{background:linear-gradient(135deg,#991b1b,#7f1d1d);color:#fca5a5;border:3px solid #ef4444;box-shadow:0 0 24px rgba(239,68,68,.25)}
+  .result-badge.badge-periferico{background:linear-gradient(135deg,#166534,#14532d);color:#86efac;border:3px solid #22c55e;box-shadow:0 0 24px rgba(34,197,94,.2)}
+  .result-badge.badge-indeterminado{background:linear-gradient(135deg,#92400e,#78350f);color:#fcd34d;border:3px solid #f59e0b;box-shadow:0 0 24px rgba(245,158,11,.2)}
+  .result-title{font-size:1.2rem;font-weight:700;margin-bottom:.2rem;letter-spacing:-.01em}
+  .result-desc{color:#94a3b8;font-size:.85rem;margin-bottom:1.5rem;line-height:1.5;max-width:500px;margin-left:auto;margin-right:auto}
+
+  /* Dark box / collapsible */
+  .dark-box{background:#111827;border:1px solid #1e293b;border-radius:.75rem;padding:1.1rem;transition:border-color .2s}
+  .dark-box:hover{border-color:#334155}
+  .dark-box h3{font-size:.75rem;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;font-weight:700}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid #1a2234;font-size:.82rem}
+  .summary-row:last-child{border-bottom:none}.summary-row .criteria{color:#64748b;flex-shrink:0;margin-right:.5rem}
+  .summary-row .value{font-weight:600;display:flex;align-items:center;gap:.4rem;color:#e2e8f0;text-align:right;word-break:break-word}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .dot-central{background:#ef4444;box-shadow:0 0 4px rgba(239,68,68,.4)}
+  .dot-periferico{background:#22c55e;box-shadow:0 0 4px rgba(34,197,94,.4)}
+  .dot-neutro{background:#475569}
+
+  /* Conduta */
+  .conduta-box{border-radius:.75rem;padding:1.1rem;text-align:left;margin-bottom:0;transition:border-color .2s}
+  .conduta-box h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;font-weight:700}
+  .conduta-box.alta-prob{background:linear-gradient(180deg,#1a0808,#1f0a0a);border:1.5px solid #7f1d1d}.conduta-box.alta-prob h3{color:#fca5a5}
+  .conduta-box.mod-prob{background:linear-gradient(180deg,#1a1205,#1f1508);border:1.5px solid #78350f}.conduta-box.mod-prob h3{color:#fcd34d}
+  .conduta-box.baixa-prob{background:linear-gradient(180deg,#051a0e,#081f12);border:1.5px solid #14532d}.conduta-box.baixa-prob h3{color:#86efac}
+  .conduta-item{display:flex;align-items:flex-start;gap:.5rem;padding:.35rem 0;font-size:.82rem;color:#cbd5e1;line-height:1.45}
+  .conduta-icon{flex-shrink:0;width:1.2rem;text-align:center;font-size:.9rem}
+  .conduta-section-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#475569;font-weight:700;margin-top:.6rem;margin-bottom:.15rem}
+  .conduta-section-label:first-child{margin-top:0}
+
+  /* Scores */
+  .score-section{background:#111827;border:1px solid #1e293b;border-radius:.75rem;padding:1.1rem;text-align:left;margin-bottom:0}
+  .score-section h3{font-size:.75rem;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;font-weight:700}
+  .score-row{margin-bottom:.65rem}.score-row:last-child{margin-bottom:0}
+  .score-row-label{font-size:.78rem;color:#94a3b8;margin-bottom:.35rem;display:flex;justify-content:space-between;align-items:center}
+  .score-row-label .auto-tag{font-size:.55rem;background:#1e3a5f;color:#60a5fa;padding:.1rem .35rem;border-radius:9999px;font-weight:700}
+  .score-options{display:flex;gap:.35rem}
+  .score-opt{flex:1;padding:.45rem .25rem;border-radius:.5rem;font-size:.7rem;cursor:pointer;border:1.5px solid #1e293b;background:#0d1424;color:#475569;text-align:center;transition:all .2s;line-height:1.3;-webkit-tap-highlight-color:transparent;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-opt:hover{border-color:#3b82f6;color:#94a3b8}
+  .score-opt:active{transform:scale(.95);transition:transform .1s}
+  .score-opt:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .score-opt.picked{border-color:#3b82f6;background:#0f2847;color:#f1f5f9;font-weight:600}
+  .score-opt .pts{display:block;font-size:.55rem;color:#334155;margin-top:.1rem}.score-opt.picked .pts{color:#93c5fd}
+  .score-result{display:flex;align-items:center;gap:.85rem;padding:.85rem;border-radius:.75rem;margin-top:.75rem;animation:fadeIn .3s ease}
+  .score-result.sr-high{background:linear-gradient(135deg,#1f0808,#2a0a0a);border:1.5px solid #7f1d1d}
+  .score-result.sr-mod{background:linear-gradient(135deg,#1f1508,#2a1c0a);border:1.5px solid #78350f}
+  .score-result.sr-low{background:linear-gradient(135deg,#081f12,#0a2a16);border:1.5px solid #14532d}
+  .score-result.sr-pending{background:#111827;border:1.5px solid #1e293b}
+  .score-num{font-size:1.8rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;min-width:2.2rem;text-align:center}
+  .score-result.sr-high .score-num{color:#fca5a5}.score-result.sr-mod .score-num{color:#fcd34d}
+  .score-result.sr-low .score-num{color:#86efac}.score-result.sr-pending .score-num{color:#334155}
+  .score-info{flex:1}.score-info .score-label{font-size:.82rem;font-weight:700;color:#f1f5f9}
+  .score-info .score-detail{font-size:.72rem;color:#94a3b8;margin-top:.15rem;line-height:1.4}
+
+  /* HINTS grid */
+  .hints-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.4rem}
+  .hints-cell{background:#0d1424;border:1.5px solid #1e293b;border-radius:.6rem;padding:.6rem;text-align:center;cursor:pointer;transition:all .25s ease;font-size:.75rem;line-height:1.4;-webkit-tap-highlight-color:transparent;min-height:52px}
+  .hints-cell:hover{border-color:#3b82f6;transform:translateY(-1px)}
+  .hints-cell:active{transform:scale(.97);transition:transform .1s}
+  .hints-cell:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .hints-cell.sel-periph{border-color:#22c55e;background:#051a0e;color:#86efac;box-shadow:0 0 12px rgba(34,197,94,.1)}
+  .hints-cell.sel-central{border-color:#ef4444;background:#1a0808;color:#fca5a5;box-shadow:0 0 12px rgba(239,68,68,.1)}
+  .hints-cell .hints-label{font-size:.55rem;text-transform:uppercase;color:#334155;margin-bottom:.2rem;letter-spacing:.06em;font-weight:700}
+  .hints-cell.sel-periph .hints-label{color:#4ade80}
+  .hints-cell.sel-central .hints-label{color:#f87171}
+  .hints-header{font-size:.85rem;color:#e2e8f0;font-weight:700;margin-bottom:.2rem;display:flex;align-items:center;gap:.4rem}
+  .hints-header .h-num{display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:50%;background:#1e293b;color:#64748b;font-size:.65rem;font-weight:700}
+  .hints-result{display:flex;align-items:center;gap:.65rem;padding:.65rem .85rem;border-radius:.6rem;margin-top:.75rem;font-size:.82rem;font-weight:600;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .hints-result.hr-central{background:linear-gradient(135deg,#1a0808,#2a0a0a);border:1.5px solid #7f1d1d;color:#fca5a5}
+  .hints-result.hr-periph{background:linear-gradient(135deg,#081f12,#0a2a16);border:1.5px solid #14532d;color:#86efac}
+  .hints-result.hr-pending{background:#111827;border:1.5px solid #1e293b;color:#475569}
+  .hints-result .hr-icon{font-size:1.1rem}
+
+  /* Collapse */
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.15rem 0;-webkit-tap-highlight-color:transparent;min-height:36px}
+  .collapse-header:hover h3{color:#94a3b8}
+  .collapse-header h3{margin-bottom:0;transition:color .2s}
+  .collapse-arrow{font-size:.7rem;color:#334155;transition:transform .3s ease,color .2s}
+  .collapse-header:hover .collapse-arrow{color:#64748b}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .35s ease,opacity .3s ease}
+  .collapse-body.hidden{max-height:0!important;opacity:0;padding-top:0;margin-top:0}
+  .collapse-body.visible{max-height:4000px;opacity:1}
+
+  /* Risk meter */
+  .risk-meter{display:flex;align-items:center;gap:.65rem;margin:.75rem 0 .25rem}
+  .risk-meter-bar{flex:1;height:8px;border-radius:4px;background:linear-gradient(to right,#166534 0%,#166534 25%,#78350f 50%,#991b1b 75%,#991b1b 100%);position:relative;overflow:visible}
+  .risk-meter-marker{position:absolute;top:-5px;width:18px;height:18px;border-radius:50%;background:#f1f5f9;border:2.5px solid #0a0f1a;transform:translateX(-50%);transition:left .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(241,245,249,.3)}
+  .risk-meter-labels{display:flex;justify-content:space-between;font-size:.58rem;color:#475569;font-weight:600;letter-spacing:.03em}
+
+  /* Flags */
+  .flag-list{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem}
+  .flag-pill{font-size:.68rem;padding:.2rem .55rem;border-radius:9999px;font-weight:600;animation:fadeIn .3s ease}
+  .flag-pill.red{background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b}
+  .flag-pill.green{background:#14532d;color:#86efac;border:1px solid #166534}
+  .flag-pill.yellow{background:#78350f;color:#fcd34d;border:1px solid #92400e}
+
+  /* Note */
+  .note-box{background:#111827;border:1px solid #1e293b;border-radius:.75rem;padding:1.1rem;text-align:left}
+  .note-box h3{font-size:.75rem;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;font-weight:700}
+  .note-text{background:#060a14;border:1px solid #1e293b;border-radius:.5rem;padding:.85rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.68rem;color:#94a3b8;white-space:pre-wrap;line-height:1.65;max-height:320px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#1e293b transparent;-webkit-overflow-scrolling:touch}
+  .note-text::-webkit-scrollbar{width:4px}.note-text::-webkit-scrollbar-thumb{background:#1e293b;border-radius:2px}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.6rem;padding:.65rem;border-radius:.5rem;border:1.5px solid #1e293b;background:#0d1424;color:#94a3b8;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent;min-height:48px}
+  .copy-btn:hover{border-color:#3b82f6;background:#0f2847;color:#f1f5f9}
+  .copy-btn:active{transform:scale(.97)}
+  .copy-btn.copied{border-color:#22c55e;background:#051a0e;color:#86efac}
+
+  /* Connector */
+  .flow-connector{display:flex;justify-content:center;padding:.15rem 0}
+  .flow-connector .arrow{width:2px;height:20px;background:#1e293b;position:relative}
+  .flow-connector .arrow::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #1e293b}
+
+  /* Section gaps in result */
+  .result-sections{display:flex;flex-direction:column;gap:.75rem;width:100%;margin-top:1rem;text-align:left}
+
+  /* Medication badge */
+  .med-list{display:flex;flex-direction:column;gap:.2rem;margin-top:.35rem}
+  .med-item{font-size:.78rem;color:#cbd5e1;padding:.3rem 0;display:flex;align-items:flex-start;gap:.4rem}
+  .med-item .med-dose{color:#64748b;font-size:.7rem}
+
+  /* Emergency banner */
+  .emergency-banner{background:linear-gradient(135deg,#450a0a,#7f1d1d);border:2px solid #ef4444;border-radius:.75rem;padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;animation:emergencyPulse 2s ease-in-out infinite}
+  @keyframes emergencyPulse{0%,100%{box-shadow:0 0 8px rgba(239,68,68,.2)}50%{box-shadow:0 0 20px rgba(239,68,68,.4)}}
+  .emergency-banner .em-icon{font-size:1.5rem;flex-shrink:0}
+  .emergency-banner .em-text{font-size:.82rem;color:#fca5a5;font-weight:600;line-height:1.4}
+
+  /* Dissection warning */
+  .dissection-warn{background:linear-gradient(135deg,#1a0f05,#231508);border:1.5px solid #92400e;border-radius:.6rem;padding:.65rem .85rem;display:flex;align-items:flex-start;gap:.6rem;margin-top:.5rem;font-size:.75rem;color:#fcd34d;line-height:1.5}
+  .dissection-warn strong{color:#fbbf24}
+
+  /* Eval timestamp */
+  .eval-time{font-size:.6rem;color:#334155;text-align:center;margin-top:.25rem;letter-spacing:.03em}
+
+  /* Selection feedback flash */
+  @keyframes selectFlash{0%{box-shadow:0 0 0 0 rgba(59,130,246,.4)}50%{box-shadow:0 0 0 6px rgba(59,130,246,.15)}100%{box-shadow:0 0 0 0 rgba(59,130,246,0)}}
+  .flash-select{animation:selectFlash .4s ease-out}
+
+  /* Responsive */
+  @media(max-width:500px){
+    .container{padding:.85rem}.card{padding:1.25rem;border-radius:.85rem}
+    .option-btn{padding:.7rem .85rem;font-size:.83rem}
+    .check-btn{padding:.6rem .75rem;font-size:.78rem}
+    header h1{font-size:1.2rem}header p{font-size:.7rem}
+    .progress-labels{font-size:.5rem}
+    .progress-labels span{min-height:32px}
+    .score-opt{font-size:.62rem;padding:.4rem .15rem}
+    .hints-grid{gap:.35rem}
+    .result-title{font-size:1.05rem}
+    .result-desc{font-size:.8rem}
+    .back-link{left:1rem;font-size:.75rem}
+    header{padding:1.2rem 1rem}
+    .nav-btn{font-size:.82rem;padding:.7rem}
+    .conduta-item{font-size:.78rem}
+    .summary-row{font-size:.78rem;flex-wrap:wrap;gap:.15rem}
+    .summary-row .value{max-width:100%}
+    .emergency-banner{flex-direction:column;text-align:center;gap:.4rem}
+    .result-badge{width:3.8rem;height:3.8rem;font-size:1.3rem}
+  }
+  @media(max-width:360px){
+    .hints-grid{grid-template-columns:1fr}
+    .progress-labels{font-size:.45rem}
+    .card{padding:1rem}
+    .container{padding:.65rem}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../tontura.html" class="back-link">&larr; Voltar</a>
+  <h1>Avaliação de Tontura</h1>
+  <p>Diferenciação Periférico vs Central &middot; HINTS &middot; ABCD2</p>
+</header>
+<div class="container" id="app"></div>
+<script>
+// ===============================================
+// DATA
+// ===============================================
+const STEP_LABELS=['Tipo','Tempo','Paciente','HINTS','Sintomas','Resultado'];
+const TOTAL_STEPS=6;
+
+const DIZZINESS_TYPES=[
+  {id:'vertigo',icon:'\u{1F300}',label:'Vertigem rotatória',desc:'Sensação de rotação do ambiente ou do corpo',tag:'Vestibular'},
+  {id:'presyncope',icon:'\u{1F4AB}',label:'Pré-síncope',desc:'Sensação de desmaio iminente, escurecimento visual',tag:'Cardiovascular'},
+  {id:'disequilibrium',icon:'\u{1F6B6}',label:'Desequilíbrio',desc:'Instabilidade postural sem sensação rotatória',tag:'Multifatorial'},
+  {id:'nonspecific',icon:'\u{1F32B}\u{FE0F}',label:'Tontura inespecífica',desc:'Cabeça leve, flutuação, sem rotação ou pré-síncope',tag:'Inespecífico'},
+];
+
+const TIMING_OPTIONS=[
+  {id:'seconds',icon:'\u{26A1}',label:'Segundos',desc:'Episódios de segundos, geralmente posicionais',suggest:'VPPB'},
+  {id:'minutes',icon:'\u{23F1}\u{FE0F}',label:'Minutos a 1 hora',desc:'Episódios de minutos; pode haver flutuação auditiva',suggest:'AIT / Enxaqueca vestibular'},
+  {id:'hours',icon:'\u{23F0}',label:'Horas',desc:'Episódios de horas com sintomas auditivos',suggest:'Ménière'},
+  {id:'days',icon:'\u{1F4C5}',label:'Dias (agudo persistente)',desc:'Vertigem contínua há dias, início súbito',suggest:'Neurite vestibular / AVC'},
+  {id:'chronic',icon:'\u{1F504}',label:'Crônico / Constante',desc:'Semanas a meses, persistente',suggest:'TPPP / Central'},
+];
+
+const TRIGGER_OPTIONS=[
+  {id:'positional',icon:'\u{1F3AF}',label:'Posicional',desc:'Desencadeada por mudança de posição da cabeça'},
+  {id:'spontaneous',icon:'\u{1F4A5}',label:'Espontânea',desc:'Ocorre sem fator desencadeante claro'},
+  {id:'orthostatic',icon:'\u{1F9CD}',label:'Ortostática',desc:'Ao levantar-se (decúbito para ortostase)'},
+  {id:'valsalva',icon:'\u{1F4A8}',label:'Valsalva / Esforço',desc:'Tosse, espirro, esforço, sons altos (Tullio)'},
+  {id:'head_movement',icon:'\u{1F500}',label:'Movimentos cefálicos',desc:'Rotação/extensão cervical durante atividades'},
+];
+
+const ONSET_OPTIONS=[
+  {id:'sudden',label:'Súbito (segundos)',desc:'Início abrupto, paciente sabe dizer o momento exato'},
+  {id:'rapid',label:'Rápido (minutos)',desc:'Desenvolveu-se em minutos'},
+  {id:'gradual',label:'Gradual (horas/dias)',desc:'Instalação progressiva'},
+];
+
+const ASSOCIATED_SYMPTOMS={
+  otologic:[
+    {id:'hearing_loss',label:'Hipoacusia',flag:null},
+    {id:'tinnitus',label:'Zumbido (tinnitus)',flag:null},
+    {id:'ear_fullness',label:'Plenitude auricular',flag:null},
+    {id:'otorrhea',label:'Otorreia / Otorragia',flag:'yellow'},
+  ],
+  neurologic:[
+    {id:'headache',label:'Cefaleia intensa / súbita',flag:'red'},
+    {id:'diplopia',label:'Diplopia',flag:'red'},
+    {id:'dysarthria',label:'Disartria',flag:'red'},
+    {id:'dysphagia',label:'Disfagia',flag:'red'},
+    {id:'ataxia',label:'Ataxia / Incapacidade de deambular',flag:'red'},
+    {id:'focal_weakness',label:'Fraqueza / Dormência unilateral',flag:'red'},
+    {id:'facial_palsy',label:'Paralisia facial periférica',flag:'yellow'},
+    {id:'visual_field',label:'Alteração de campo visual',flag:'red'},
+    {id:'altered_consciousness',label:'Rebaixamento do nível de consciência',flag:'red'},
+    {id:'vertigo_nystagmus_vertical',label:'Nistagmo vertical puro (downbeat/upbeat)',flag:'red'},
+  ],
+  general:[
+    {id:'nausea',label:'Náusea / Vômitos',flag:null},
+    {id:'diaphoresis',label:'Sudorese',flag:null},
+    {id:'palpitations',label:'Palpitações',flag:null},
+    {id:'syncope',label:'Síncope',flag:'yellow'},
+    {id:'chest_pain',label:'Dor torácica',flag:'yellow'},
+    {id:'neck_pain',label:'Cervicalgia (dor cervical)',flag:'yellow'},
+    {id:'dyspnea',label:'Dispneia',flag:'yellow'},
+  ],
+};
+
+const RF_STROKE=[
+  {id:'has',label:'HAS'},
+  {id:'dm',label:'DM'},
+  {id:'dislip',label:'Dislipidemia'},
+  {id:'fa',label:'Fibrilação atrial'},
+  {id:'avc_prev',label:'AVC / AIT prévio'},
+  {id:'tab',label:'Tabagismo'},
+  {id:'idade60',label:'Idade > 60 anos'},
+  {id:'obesity',label:'Obesidade'},
+  {id:'anticoag',label:'Uso de anticoagulantes'},
+  {id:'coronario',label:'Doença coronariana'},
+];
+
+const MEDICATIONS_DIZZINESS=[
+  {id:'anti_ht',label:'Anti-hipertensivos'},
+  {id:'diuretico',label:'Diuréticos'},
+  {id:'benzo',label:'Benzodiazepínicos'},
+  {id:'anticonv',label:'Anticonvulsivantes'},
+  {id:'aminoglic',label:'Aminoglicosídeos'},
+  {id:'aines',label:'AINEs em altas doses'},
+  {id:'antidep',label:'Antidepressivos'},
+  {id:'opioid',label:'Opioides'},
+  {id:'other_med',label:'Outros ototóxicos'},
+];
+
+// ===============================================
+// STATE
+// ===============================================
+let step=0;
+let dizType=null;
+let timing=null;
+let triggers=new Set();
+let onset=null;
+let patAge=null;
+let patSex=null;
+let rfStroke=new Set();
+let meds=new Set();
+let hints={hi:null,nyst:null,skew:null};
+let dixHallpike=null;
+let symptoms=new Set();
+let sections={classification:false,timing_summary:false,hints_summary:false,diferenciais:false,flags:true,conduta:true,abcd2:true,meds_result:false,note:true};
+let abcd2={a:null,b:null,c:null,d:null,d2:null};
+let hintsSkipped=false;
+const evalStartTime=new Date();
+const app=document.getElementById('app');
+
+// ===============================================
+// HELPERS
+// ===============================================
+function progHTML(idx,allDone){
+  let h='<div class="progress-bar">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done':i===idx?'active':'';
+    h+=`<div class="progress-step ${c}"></div>`;
+  }
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done-label':i===idx?'active-label':'';
+    const click=(!allDone&&i<idx)?` onclick="goToStep(${i})"`:allDone&&i<TOTAL_STEPS-1?` onclick="goToStep(${i})"`:'';
+    h+=`<span class="${c}"${click}>${STEP_LABELS[i]}</span>`;
+  }
+  h+='</div><div class="flow-connector"><div class="arrow"></div></div>';
+  return h;
+}
+
+function collapsible(id,title,contentFn,extraClass){
+  const open=sections[id];
+  let h=`<div class="${extraClass||'dark-box'}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.65rem':'0'}">`;
+  if(open)h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+function getRedFlags(){
+  const flags=[];
+  const seen=new Set();
+  function addFlag(id,label,flag){
+    if(!seen.has(id)){seen.add(id);flags.push({id,label,flag})}
+  }
+  // Neurologic symptoms
+  for(const s of ASSOCIATED_SYMPTOMS.neurologic){
+    if(symptoms.has(s.id)&&s.flag)addFlag(s.id,s.label,s.flag);
+  }
+  // General symptoms with flags
+  if(symptoms.has('syncope'))addFlag('syncope','Síncope','yellow');
+  if(symptoms.has('chest_pain'))addFlag('chest_pain','Dor torácica','yellow');
+  if(symptoms.has('neck_pain'))addFlag('neck_pain','Cervicalgia','yellow');
+  if(symptoms.has('otorrhea'))addFlag('otorrhea','Otorreia/Otorragia','yellow');
+  if(symptoms.has('dyspnea'))addFlag('dyspnea','Dispneia','yellow');
+  // HINTS central signs
+  if(hints.hi==='c')addFlag('hi_normal','HIT normal (central)','red');
+  if(hints.nyst==='c')addFlag('nyst_dc','Nistagmo direction-changing','red');
+  if(hints.skew==='c')addFlag('skew_pos','Skew deviation presente','red');
+  // Stroke risk factors
+  if(rfStroke.has('fa'))addFlag('fa_flag','Fibrilação atrial','yellow');
+  if(rfStroke.has('avc_prev'))addFlag('avc_flag','AVC/AIT prévio','yellow');
+  // Onset context
+  if(onset==='sudden'&&dizType==='vertigo'&&(timing==='days'||timing==='hours'))addFlag('sudden_onset','Início súbito (vascular?)','yellow');
+  // Dissection warning: neck pain + vertigo + sudden onset
+  if(symptoms.has('neck_pain')&&dizType==='vertigo'&&onset==='sudden')addFlag('dissection_risk','Cervicalgia + vertigem súbita (dissecção?)','red');
+  // Facial palsy combined with vertigo raises central suspicion
+  if(symptoms.has('facial_palsy')&&dizType==='vertigo'&&(timing==='days'||timing==='hours'))addFlag('facial_palsy_avs','Paralisia facial em SVA (AICA?)','red');
+  // Multiple stroke RFs in acute presentation
+  if(rfStroke.size>=4&&dizType==='vertigo'&&(timing==='days'||timing==='hours'))addFlag('multiple_rf','Múltiplos fatores de risco vasculares em SVA','yellow');
+  return flags;
+}
+
+function getCentralScore(){
+  let score=0;
+  // HINTS
+  if(hints.hi==='c')score+=2;
+  if(hints.nyst==='c')score+=2;
+  if(hints.skew==='c')score+=2;
+  // Neuro symptoms (including facial palsy and altered consciousness)
+  const neuro=['headache','diplopia','dysarthria','dysphagia','ataxia','focal_weakness','visual_field','altered_consciousness','vertigo_nystagmus_vertical'];
+  for(const s of neuro)if(symptoms.has(s))score+=1.5;
+  // Facial palsy with vertigo is suspicious for AICA stroke
+  if(symptoms.has('facial_palsy')&&dizType==='vertigo')score+=1;
+  // Timing: acute persistent is higher risk
+  if(timing==='days'&&dizType==='vertigo')score+=1;
+  if(timing==='chronic')score+=0.5;
+  // Sudden onset in AVS
+  if(onset==='sudden'&&(timing==='days'||timing==='hours')&&dizType==='vertigo')score+=0.5;
+  // Stroke RFs
+  if(rfStroke.has('fa'))score+=1;
+  if(rfStroke.has('avc_prev'))score+=1;
+  if(rfStroke.size>=3)score+=0.5;
+  if(rfStroke.size>=5)score+=0.5;
+  // Dix-Hallpike negative with positional vertigo (atypical VPPB? central positional vertigo?)
+  if(dizType==='vertigo'&&timing==='seconds'&&triggers.has('positional')&&dixHallpike==='neg')score+=0.5;
+  // Age
+  if(patAge>=2)score+=0.5;
+  if(patAge>=3)score+=0.5;
+  // Neck pain in acute vertigo (dissection?)
+  if(symptoms.has('neck_pain')&&dizType==='vertigo'&&(timing==='days'||timing==='hours'))score+=1.5;
+  else if(symptoms.has('neck_pain'))score+=0.5;
+  return Math.min(10,score);
+}
+
+function getClassification(){
+  const cs=getCentralScore();
+  const flags=getRedFlags().filter(f=>f.flag==='red');
+  const hintsComplete=hints.hi!==null&&hints.nyst!==null&&hints.skew!==null;
+  const hintsAllPeripheral=hintsComplete&&hints.hi==='p'&&hints.nyst==='p'&&hints.skew==='p';
+  const hintsAnyCentral=hints.hi==='c'||hints.nyst==='c'||hints.skew==='c';
+  const hintsNotDone=hints.hi===null&&hints.nyst===null&&hints.skew===null;
+
+  // HIGH RISK — Central
+  if(hintsAnyCentral||flags.length>=2||cs>=5){
+    return {level:'central',title:'Alto Risco \u2014 Provável Causa Central',badge:'badge-central',icon:'\u{1F6A8}',
+      desc:'Sinais sugestivos de causa central. Considerar AVC de fossa posterior, desmielinização ou lesão expansiva. Neuroimagem obrigatória.'};
+  }
+  // INTERMEDIATE RISK
+  if(cs>=2.5||flags.length===1||(dizType==='vertigo'&&timing==='days'&&!hintsAllPeripheral&&!hintsSkipped)){
+    return {level:'indeterminado',title:'Risco Intermediário',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Não é possível excluir causa central com segurança. Investigação adicional recomendada antes da alta.'};
+  }
+  // VPPB
+  if(dizType==='vertigo'&&timing==='seconds'&&triggers.has('positional')&&dixHallpike==='pos'){
+    return {level:'periferico',title:'Periférico \u2014 VPPB Provável',badge:'badge-periferico',icon:'\u{2705}',
+      desc:'Quadro clássico de VPPB: vertigem posicional breve com Dix-Hallpike positivo. Tratar com manobra de Epley.'};
+  }
+  // Ménière
+  if(dizType==='vertigo'&&timing==='hours'&&(symptoms.has('hearing_loss')||symptoms.has('tinnitus')||symptoms.has('ear_fullness'))){
+    return {level:'periferico',title:'Periférico \u2014 Ménière Provável',badge:'badge-periferico',icon:'\u{2705}',
+      desc:'Episódios de horas com sintomas auditivos sugerem doença de Ménière. Encaminhar para otorrinolaringologia.'};
+  }
+  // Neurite vestibular
+  if(dizType==='vertigo'&&timing==='days'&&hintsAllPeripheral){
+    return {level:'periferico',title:'Periférico \u2014 Neurite Vestibular Provável',badge:'badge-periferico',icon:'\u{2705}',
+      desc:'Vertigem aguda persistente com HINTS periférico. Provável neurite vestibular. Iniciar reabilitação vestibular precoce.'};
+  }
+  // Vestibular migraine
+  if(dizType==='vertigo'&&timing==='minutes'&&!hintsAnyCentral){
+    const migraineFeatures=symptoms.has('headache')||(patSex==='F'&&patAge<=1);
+    if(migraineFeatures){
+      return {level:'indeterminado',title:'Enxaqueca Vestibular \u2014 Investigar',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+        desc:'Episódios de minutos com cefaleia ou perfil demográfico sugestivo (mulher jovem). Considerar critérios da Barany Society/IHS. Excluir AIT.'};
+    }
+  }
+  // HINTS all peripheral but not AVS pattern
+  if(hintsAllPeripheral){
+    return {level:'periferico',title:'Provável Causa Periférica',badge:'badge-periferico',icon:'\u{2705}',
+      desc:'HINTS periférico sem sinais de alarme. Baixa probabilidade de causa central.'};
+  }
+  // Presyncope
+  if(dizType==='presyncope'){
+    const hasCardiacFlags=symptoms.has('chest_pain')||symptoms.has('syncope')||symptoms.has('palpitations')||symptoms.has('dyspnea');
+    if(hasCardiacFlags){
+      return {level:'indeterminado',title:'Pré-síncope \u2014 Alto Risco Cardiovascular',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+        desc:'Pré-síncope com sinais de alarme cardiovasculares. ECG, troponina, PA ortostática. Considerar monitorização e ecocardiograma.'};
+    }
+    return {level:'indeterminado',title:'Pré-síncope \u2014 Avaliar Causa Cardiovascular',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Pré-síncope requer avaliação cardiovascular: ECG, PA ortostática, considerar arritmia, estenose aórtica, desidratação.'};
+  }
+  // Disequilibrium
+  if(dizType==='disequilibrium'){
+    if(patAge>=2){
+      return {level:'indeterminado',title:'Desequilíbrio \u2014 Causa Multifatorial',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+        desc:'Desequilíbrio em idoso é frequentemente multifatorial: neuropatia, déficit visual, sarcopenia, polifarmácia. Avaliar marcha e risco de quedas.'};
+    }
+    return {level:'indeterminado',title:'Desequilíbrio \u2014 Investigar',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Desequilíbrio sem rotação em paciente jovem. Considerar causas neurológicas (cerebelar, proprioceptiva), otológicas e medicamentosas.'};
+  }
+  // Nonspecific with medication use
+  if(dizType==='nonspecific'&&meds.size>=2){
+    return {level:'indeterminado',title:'Tontura Inespecífica \u2014 Polifarmácia',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Tontura inespecífica com uso de múltiplas medicações. Avaliar interação medicamentosa e considerar redução/substituição.'};
+  }
+  // VPPB with negative/not done Dix-Hallpike
+  if(dizType==='vertigo'&&timing==='seconds'&&triggers.has('positional')&&dixHallpike!=='pos'){
+    return {level:'indeterminado',title:'Vertigem Posicional \u2014 Investigar',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Vertigem posicional breve sem Dix-Hallpike positivo. Considerar VPPB de canal lateral (supine roll test / Pagnini-McClure), nistagmo posicional central ou VPPB atípico.'};
+  }
+  // AVS without HINTS (skipped)
+  if(dizType==='vertigo'&&timing==='days'&&hintsSkipped){
+    return {level:'indeterminado',title:'Risco Intermediário \u2014 HINTS Não Realizado',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Síndrome vestibular aguda sem HINTS realizado. Sem o exame, não é possível diferenciar causa central vs periférica com segurança. Neuroimagem recomendada.'};
+  }
+  // AVS with HINTS not done (not skipped, but also not filled)
+  if(dizType==='vertigo'&&timing==='days'&&hintsNotDone&&!hintsSkipped){
+    return {level:'indeterminado',title:'Risco Intermediário \u2014 HINTS Incompleto',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+      desc:'Síndrome vestibular aguda com HINTS incompleto. Complete o exame HINTS ou solicite neuroimagem para estratificação adequada.'};
+  }
+  return {level:'indeterminado',title:'Investigação Necessária',badge:'badge-indeterminado',icon:'\u{26A0}\u{FE0F}',
+    desc:'Classificação inconclusiva. Correlacionar com exame físico completo e exames complementares.'};
+}
+
+function getHintsInterpretation(){
+  if(hints.hi===null||hints.nyst===null||hints.skew===null)return null;
+  const centralCount=[hints.hi,hints.nyst,hints.skew].filter(v=>v==='c').length;
+  if(centralCount===0)return {level:'peripheral',text:'HINTS Periférico \u2014 Sensibilidade >96% para excluir AVC de fossa posterior (superior à TC nas primeiras 24\u201348h)',cls:'hr-periph'};
+  if(centralCount>=2)return {level:'central',text:'HINTS Central \u2014 Alta probabilidade de causa central. RM com difusão é o exame de escolha.',cls:'hr-central'};
+  return {level:'central',text:'HINTS com sinal central isolado \u2014 Não é possível excluir AVC. Prosseguir com neuroimagem.',cls:'hr-central'};
+}
+
+// ABCD2 Score
+function getABCD2(){
+  const a=abcd2.a!==null?abcd2.a:(patAge!==null&&patAge>=2?1:patAge!==null?0:null);
+  const b=abcd2.b;
+  const c=abcd2.c;
+  const d=abcd2.d;
+  const d2=abcd2.d2!==null?abcd2.d2:(rfStroke.has('dm')?1:0);
+  if([a,b,c,d,d2].some(v=>v===null))return null;
+  return a+b+c+d+d2;
+}
+
+// ===============================================
+// RENDER ROUTER
+// ===============================================
+function render(){
+  if(step===0)renderType();
+  else if(step===1)renderTiming();
+  else if(step===2)renderPatient();
+  else if(step===3)renderHints();
+  else if(step===4)renderSymptoms();
+  else renderResult();
+}
+
+// ===============================================
+// STEP 0: TYPE
+// ===============================================
+function renderType(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<h2>Qual o tipo de tontura? <span class="step-count">1/'+TOTAL_STEPS+'</span></h2>';
+  h+='<p class="subtitle">Caracterização da queixa principal do paciente</p>';
+  h+='<div class="options">';
+  for(const t of DIZZINESS_TYPES){
+    h+=`<button class="option-btn ${dizType===t.id?'selected':''}" onclick="setDizType('${t.id}')">`;
+    h+=`<span class="icon">${t.icon}</span>`;
+    h+=`<span class="label">${t.label}<small>${t.desc}</small></span>`;
+    h+=`<span class="tag tag-neutro">${t.tag}</span>`;
+    h+=`</button>`;
+  }
+  h+='</div>';
+  if(dizType==='vertigo'){
+    h+='<div class="info-box"><strong>Vertigem rotatória</strong> é o tipo mais relevante para diferenciar causa central vs periférica. As próximas etapas focarão nessa diferenciação usando timing, HINTS e red flags.</div>';
+  }else if(dizType==='presyncope'){
+    h+='<div class="info-box"><strong>Pré-síncope</strong> sugere causa cardiovascular (hipotensão ortostática, arritmia, estenose aórtica, hipovolemia). Avaliar ECG, PA ortostática e glicemia capilar. O HINTS não se aplica a este quadro.</div>';
+  }else if(dizType==='disequilibrium'){
+    h+='<div class="info-box"><strong>Desequilíbrio</strong> sem sensação rotatória é frequentemente multifatorial, especialmente em idosos: neuropatia periférica, déficit visual, sarcopenia, uso de medicações (benzodiazepínicos, anti-hipertensivos).</div>';
+  }else if(dizType==='nonspecific'){
+    h+='<div class="info-box"><strong>Tontura inespecífica</strong> pode estar associada a ansiedade, hiperventilação, hipoglicemia, anemia ou efeito medicamentoso. Investigar causas metabólicas e medicamentosas.</div>';
+  }
+  h+='<div class="nav-row">';
+  h+=`<button class="nav-btn primary" ${dizType===null?'disabled':''} onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ===============================================
+// STEP 1: TIMING & TRIGGERS
+// ===============================================
+function renderTiming(){
+  let h=progHTML(1,false);
+  h+='<div class="card">';
+  h+='<h2>Tempo, gatilho e início <span class="step-count">2/'+TOTAL_STEPS+'</span></h2>';
+  h+='<p class="subtitle">Duração, fatores desencadeantes e modo de instalação</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Duração dos episódios</div>';
+  for(const t of TIMING_OPTIONS){
+    h+=`<button class="option-btn ${timing===t.id?'selected':''}" onclick="setTiming('${t.id}')">`;
+    h+=`<span class="icon">${t.icon}</span>`;
+    h+=`<span class="label">${t.label}<small>${t.desc}</small></span>`;
+    h+=`<span class="tag tag-neutro">${t.suggest}</span>`;
+    h+=`</button>`;
+  }
+
+  h+='<div class="option-group-label" style="margin-top:1rem">Modo de instalação</div>';
+  h+='<div style="display:flex;gap:.35rem;flex-wrap:wrap">';
+  for(const o of ONSET_OPTIONS){
+    h+=`<button class="score-opt ${onset===o.id?'picked':''}" onclick="setOnset('${o.id}')" style="flex:1;min-width:0">${o.label}<span class="pts">${o.desc}</span></button>`;
+  }
+  h+='</div>';
+
+  h+='<div class="option-group-label" style="margin-top:1rem">Gatilhos <span style="font-size:.55rem;font-weight:400;text-transform:none;letter-spacing:0;color:#64748b">(marque todos aplicáveis; se nenhum, prossiga)</span></div>';
+  for(const t of TRIGGER_OPTIONS){
+    const ck=triggers.has(t.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleTrigger('${t.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+    h+=`<span class="label">${t.label}<small style="display:block;font-size:.7rem;color:#64748b;margin-top:.1rem;line-height:1.3">${t.desc}</small></span>`;
+    h+=`</button>`;
+  }
+  h+='</div>';
+
+  // Dix-Hallpike if positional + seconds
+  if(timing==='seconds'&&triggers.has('positional')){
+    h+='<div class="info-box"><strong>Padrão sugestivo de VPPB.</strong> Resultado do Dix-Hallpike:</div>';
+    h+='<div style="display:flex;gap:.35rem;margin-top:.5rem">';
+    h+=`<button class="score-opt ${dixHallpike==='pos'?'picked':''}" onclick="setDixHallpike('pos')" style="flex:1">Positivo<span class="pts">Nistagmo torsional/vertical com latência</span></button>`;
+    h+=`<button class="score-opt ${dixHallpike==='neg'?'picked':''}" onclick="setDixHallpike('neg')" style="flex:1">Negativo<span class="pts">Sem nistagmo provocado</span></button>`;
+    h+=`<button class="score-opt ${dixHallpike==='nr'?'picked':''}" onclick="setDixHallpike('nr')" style="flex:1">Não realizado<span class="pts">\u2014</span></button>`;
+    h+='</div>';
+    if(dixHallpike==='pos'){
+      h+='<div class="info-box" style="margin-top:.5rem"><strong>Dix-Hallpike positivo:</strong> Nistagmo torsional/vertical com latência de 1\u20145s, duração <60s, fatigável. Nistagmo puramente vertical (downbeat) ou sem latência sugere causa central. Canal posterior é o mais frequente.</div>';
+    }else if(dixHallpike==='neg'){
+      h+='<div class="info-box warn" style="margin-top:.5rem"><strong>Dix-Hallpike negativo com clínica posicional:</strong> Investigar VPPB de canal lateral com supine roll test (Pagnini-McClure). Se nistagmo atípico (sem latência, não fatigável, downbeat puro), considerar causa central de vertigem posicional \u2014 RM indicada.</div>';
+    }
+  }
+
+  // Valsalva warning
+  if(triggers.has('valsalva')){
+    h+='<div class="info-box warn" style="margin-top:.5rem"><strong>Atenção:</strong> Tontura desencadeada por Valsalva/sons altos pode indicar fístula perilinfática ou deiscência de canal semicircular superior (síndrome de Minor). Considerar TC de alta resolução de ossos temporais.</div>';
+  }
+
+  // Orthostatic suggestion
+  if(triggers.has('orthostatic')&&dizType==='presyncope'){
+    h+='<div class="info-box" style="margin-top:.5rem"><strong>Dica:</strong> Tontura ortostática + pré-síncope \u2014 medir PA em decúbito, sentado e em ortostase (1 min e 3 min). Queda \u226520 mmHg sistólica ou \u226510 mmHg diastólica confirma hipotensão ortostática.</div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${timing===null?'disabled':''} onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ===============================================
+// STEP 2: PATIENT
+// ===============================================
+function renderPatient(){
+  let h=progHTML(2,false);
+  h+='<div class="card">';
+  h+='<h2>Dados do paciente <span class="step-count">3/'+TOTAL_STEPS+'</span></h2>';
+  h+='<p class="subtitle">Idade, sexo, fatores de risco e medicações</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Faixa etária</div>';
+  const ageOpts=[{v:0,l:'< 45'},{v:1,l:'45\u201359'},{v:2,l:'60\u201374'},{v:3,l:'\u2265 75'}];
+  h+='<div style="display:flex;gap:.35rem">';
+  for(const o of ageOpts)h+=`<button class="score-opt ${patAge===o.v?'picked':''}" onclick="setPatAge(${o.v})" style="flex:1">${o.l}</button>`;
+  h+='</div>';
+
+  h+='<div class="option-group-label" style="margin-top:.85rem">Sexo</div>';
+  h+='<div style="display:flex;gap:.35rem">';
+  h+=`<button class="score-opt ${patSex==='M'?'picked':''}" onclick="setPatSex('M')" style="flex:1">Masculino</button>`;
+  h+=`<button class="score-opt ${patSex==='F'?'picked':''}" onclick="setPatSex('F')" style="flex:1">Feminino</button>`;
+  h+='</div>';
+
+  h+='<div class="option-group-label" style="margin-top:.85rem">Fatores de risco para AVC</div>';
+  for(const rf of RF_STROKE){
+    const ck=rfStroke.has(rf.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleRF('${rf.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span><span class="label">${rf.label}</span>`;
+    h+=`</button>`;
+  }
+
+  // Auto-age sync
+  if(patAge>=2&&!rfStroke.has('idade60')){
+    h+='<div class="info-box" style="margin-top:.35rem;font-size:.72rem"><strong>Dica:</strong> Paciente \u2265 60 anos. Considere marcar "Idade > 60 anos" nos fatores de risco.</div>';
+  }
+
+  h+='<div class="option-group-label" style="margin-top:.85rem">Medicações em uso <span style="font-size:.55rem;font-weight:400;text-transform:none;letter-spacing:0;color:#64748b">(possíveis causas de tontura)</span></div>';
+  for(const m of MEDICATIONS_DIZZINESS){
+    const ck=meds.has(m.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleMed('${m.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span><span class="label">${m.label}</span>`;
+    h+=`</button>`;
+  }
+  if(meds.size>0){
+    let medWarn='<div class="info-box warn" style="margin-top:.5rem"><strong>Medicação como causa:</strong> Considerar efeito adverso medicamentoso como diagnóstico diferencial. Revisar dose e necessidade de cada medicação assinalada.';
+    if(meds.has('aminoglic'))medWarn+=' <em>Aminoglicosídeos: risco de ototoxicidade bilateral irreversível \u2014 avaliar audiometria.</em>';
+    if(meds.has('diuretico')&&(dizType==='presyncope'||triggers.has('orthostatic')))medWarn+=' <em>Diuréticos: considerar depleção volêmica e hipotensão ortostática.</em>';
+    medWarn+='</div>';
+    h+=medWarn;
+  }
+
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  const canNext=patAge!==null&&patSex!==null;
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ===============================================
+// STEP 3: HINTS EXAM
+// ===============================================
+function renderHints(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<h2>Exame HINTS <span class="step-count">4/'+TOTAL_STEPS+'</span></h2>';
+  h+='<p class="subtitle">Head Impulse, Nistagmo, Test of Skew</p>';
+
+  const isAVS=dizType==='vertigo'&&(timing==='days'||timing==='hours');
+
+  if(!isAVS){
+    h+='<div class="info-box warn"><strong>HINTS é mais útil na Síndrome Vestibular Aguda</strong> (vertigem contínua há horas/dias). ';
+    h+='No quadro atual, o HINTS tem menor valor diagnóstico. ';
+    h+='Preencha se o exame foi realizado, ou pule esta etapa.</div>';
+  }else{
+    h+='<div class="info-box"><strong>Síndrome Vestibular Aguda detectada.</strong> O HINTS tem sensibilidade >96% para AVC de fossa posterior \u2014 superior à TC de crânio nas primeiras 24\u201348h. Realize o exame com o paciente fixando o olhar no nariz do examinador.</div>';
+  }
+
+  if(!hintsSkipped){
+    // Head Impulse Test
+    h+='<div style="margin-top:1rem"><div class="hints-header"><span class="h-num">1</span> Head Impulse Test (HIT)</div>';
+    h+='<p style="font-size:.7rem;color:#64748b;margin-bottom:.4rem;line-height:1.4">Rotação rápida da cabeça ~20\u00B0 para cada lado. Observe se há sacada de correção ao retornar o olhar ao alvo (nariz do examinador).</p>';
+    h+='<div class="hints-grid">';
+    h+=`<div class="hints-cell ${hints.hi==='p'?'sel-periph':''}" onclick="setHints('hi','p')" tabindex="0" role="button"><div class="hints-label">Periférico</div>Sacada corretiva <strong>presente</strong><br><span style="font-size:.62rem;color:#475569">(HIT anormal = lesão vestibular periférica)</span></div>`;
+    h+=`<div class="hints-cell ${hints.hi==='c'?'sel-central':''}" onclick="setHints('hi','c')" tabindex="0" role="button"><div class="hints-label">Central</div>Sem sacada corretiva<br><span style="font-size:.62rem;color:#475569">(HIT normal em paciente com vertigem = central!)</span></div>`;
+    h+='</div></div>';
+
+    // Nystagmus
+    h+='<div style="margin-top:1rem"><div class="hints-header"><span class="h-num">2</span> Nistagmo</div>';
+    h+='<p style="font-size:.7rem;color:#64748b;margin-bottom:.4rem;line-height:1.4">Avalie a direção do nistagmo no olhar primário e lateral (direita e esquerda). O nistagmo muda de direção conforme o lado do olhar?</p>';
+    h+='<div class="hints-grid">';
+    h+=`<div class="hints-cell ${hints.nyst==='p'?'sel-periph':''}" onclick="setHints('nyst','p')" tabindex="0" role="button"><div class="hints-label">Periférico</div>Unidirecional<br><span style="font-size:.62rem;color:#475569">(Fase rápida sempre para o mesmo lado)</span></div>`;
+    h+=`<div class="hints-cell ${hints.nyst==='c'?'sel-central':''}" onclick="setHints('nyst','c')" tabindex="0" role="button"><div class="hints-label">Central</div>Direction-changing<br><span style="font-size:.62rem;color:#475569">(Muda de direção conforme olhar lateral)</span></div>`;
+    h+='</div></div>';
+
+    // Test of Skew
+    h+='<div style="margin-top:1rem"><div class="hints-header"><span class="h-num">3</span> Test of Skew (Cover-Uncover)</div>';
+    h+='<p style="font-size:.7rem;color:#64748b;margin-bottom:.4rem;line-height:1.4">Cubra e descubra cada olho alternadamente enquanto o paciente fixa o olhar. Observe se há correção vertical (um olho se move para cima ou para baixo ao ser descoberto).</p>';
+    h+='<div class="hints-grid">';
+    h+=`<div class="hints-cell ${hints.skew==='p'?'sel-periph':''}" onclick="setHints('skew','p')" tabindex="0" role="button"><div class="hints-label">Periférico</div>Ausente<br><span style="font-size:.62rem;color:#475569">(Sem desvio vertical ao desocluir)</span></div>`;
+    h+=`<div class="hints-cell ${hints.skew==='c'?'sel-central':''}" onclick="setHints('skew','c')" tabindex="0" role="button"><div class="hints-label">Central</div>Presente<br><span style="font-size:.62rem;color:#475569">(Desvio vertical ao desocluir = skew deviation)</span></div>`;
+    h+='</div></div>';
+
+    // HINTS result preview
+    const hintsRes=getHintsInterpretation();
+    if(hintsRes){
+      h+=`<div class="hints-result ${hintsRes.cls}"><span class="hr-icon">${hintsRes.level==='peripheral'?'\u{2705}':'\u{1F6A8}'}</span><span>${hintsRes.text}</span></div>`;
+    }else{
+      const filled=[hints.hi,hints.nyst,hints.skew].filter(v=>v!==null).length;
+      h+=`<div class="hints-result hr-pending"><span class="hr-icon">\u{2753}</span><span>Preencha os 3 componentes para interpretação (${filled}/3)</span></div>`;
+    }
+  }else{
+    h+='<div style="text-align:center;padding:2rem 0;color:#475569;font-size:.85rem">HINTS não realizado nesta avaliação.</div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  if(!isAVS&&!hintsSkipped){
+    h+=`<button class="nav-btn skip" onclick="skipHints()">Pular HINTS</button>`;
+  }
+  if(hintsSkipped){
+    h+=`<button class="nav-btn skip" onclick="unskipHints()">Preencher HINTS</button>`;
+  }
+  h+=`<button class="nav-btn primary" onclick="next()">Próximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ===============================================
+// STEP 4: ASSOCIATED SYMPTOMS
+// ===============================================
+function renderSymptoms(){
+  let h=progHTML(4,false);
+  h+='<div class="card">';
+  h+='<h2>Sintomas associados <span class="step-count">5/'+TOTAL_STEPS+'</span></h2>';
+  h+='<p class="subtitle">Marque todos os sintomas presentes</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Sintomas otológicos</div>';
+  for(const s of ASSOCIATED_SYMPTOMS.otologic){
+    const ck=symptoms.has(s.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSymptom('${s.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span><span class="label">${s.label}</span>`;
+    if(s.flag==='yellow')h+=`<span class="rf-tag yellow">ATENÇÃO</span>`;
+    h+=`</button>`;
+  }
+
+  h+='<div class="option-group-label" style="margin-top:.65rem">Sintomas neurológicos <span style="color:#f87171;font-size:.55rem;font-weight:700">(SINAIS DE ALARME)</span></div>';
+  for(const s of ASSOCIATED_SYMPTOMS.neurologic){
+    const ck=symptoms.has(s.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSymptom('${s.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span><span class="label">${s.label}</span>`;
+    if(s.flag==='red')h+=`<span class="rf-tag red">RED FLAG</span>`;
+    else if(s.flag==='yellow')h+=`<span class="rf-tag yellow">ATENÇÃO</span>`;
+    h+=`</button>`;
+  }
+
+  h+='<div class="option-group-label" style="margin-top:.65rem">Sintomas gerais</div>';
+  for(const s of ASSOCIATED_SYMPTOMS.general){
+    const ck=symptoms.has(s.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSymptom('${s.id}')">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span><span class="label">${s.label}</span>`;
+    if(s.flag==='yellow')h+=`<span class="rf-tag yellow">ATENÇÃO</span>`;
+    h+=`</button>`;
+  }
+
+  // Live red flags counter
+  const liveFlags=getRedFlags();
+  const redCount=liveFlags.filter(f=>f.flag==='red').length;
+  const yellowCount=liveFlags.filter(f=>f.flag==='yellow').length;
+  if(redCount>0||yellowCount>0){
+    h+='<div style="margin-top:.75rem;display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">';
+    if(redCount>0)h+=`<span class="flag-pill red">${redCount} red flag${redCount>1?'s':''}</span>`;
+    if(yellowCount>0)h+=`<span class="flag-pill yellow">${yellowCount} sinal${yellowCount>1?'is':''} de atenção</span>`;
+    h+='</div>';
+  }
+
+  // Dissection warning inline
+  if(symptoms.has('neck_pain')&&dizType==='vertigo'&&(onset==='sudden'||timing==='days')){
+    h+='<div class="dissection-warn"><span style="font-size:1rem;flex-shrink:0">\u{26A0}\u{FE0F}</span><span><strong>Atenção \u2014 Dissecção arterial?</strong> Cervicalgia + vertigem de início súbito, especialmente em jovens ou pós-trauma cervical, deve levantar suspeita de dissecção de artéria vertebral. Considerar angio-TC/angio-RM de vasos cervicais.</span></div>';
+  }
+
+  // AICA warning: facial palsy + hearing loss + vertigo
+  if(symptoms.has('facial_palsy')&&symptoms.has('hearing_loss')&&dizType==='vertigo'){
+    h+='<div class="info-box danger" style="margin-top:.5rem"><strong>Atenção \u2014 Território da AICA?</strong> Paralisia facial periférica + hipoacusia + vertigem pode indicar infarto no território da artéria cerebelar anteroinferior (AICA). Neuroimagem urgente.</div>';
+  }
+
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver Resultado</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ===============================================
+// STEP 5: RESULT
+// ===============================================
+function renderResult(){
+  const cls=getClassification();
+  const flags=getRedFlags();
+  const centralScore=getCentralScore();
+  const meterPct=Math.min(100,Math.max(0,centralScore*10));
+
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  // Emergency banner for central
+  if(cls.level==='central'){
+    h+='<div class="emergency-banner"><span class="em-icon">\u{1F6A8}</span><span class="em-text">Sinais de alarme identificados. Não liberar paciente sem neuroimagem e avaliação especializada.</span></div>';
+  }
+
+  // Badge
+  h+=`<div class="result-badge ${cls.badge}">${cls.icon}</div>`;
+  h+=`<div class="result-title">${cls.title}</div>`;
+  h+=`<div class="result-desc">${cls.desc}</div>`;
+
+  // Risk meter
+  h+='<div style="text-align:left;width:100%">';
+  h+='<div style="font-size:.68rem;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;text-align:center;font-weight:700">Índice de Risco Central</div>';
+  h+=`<div class="risk-meter"><div class="risk-meter-bar"><div class="risk-meter-marker" id="riskMarker" style="left:0%"></div></div></div>`;
+  h+='<div class="risk-meter-labels"><span>Periférico</span><span>Indeterminado</span><span>Central</span></div>';
+  h+='</div>';
+
+  // Red flags pills
+  if(flags.length>0){
+    h+='<div style="text-align:left;width:100%;margin-top:1rem">';
+    h+='<div style="font-size:.68rem;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;font-weight:700">Sinais de alarme identificados</div>';
+    h+='<div class="flag-list">';
+    for(const f of flags){
+      const c=f.flag==='red'?'red':'yellow';
+      h+=`<span class="flag-pill ${c}">${f.label}</span>`;
+    }
+    h+='</div></div>';
+  }
+
+  h+='<div class="result-sections">';
+
+  // ---- COLLAPSIBLE: Classification detail ----
+  h+=collapsible('classification','Detalhes da Classificação',()=>{
+    let s='';
+    const typeObj=DIZZINESS_TYPES.find(t=>t.id===dizType);
+    s+=`<div class="summary-row"><span class="criteria">Tipo de tontura</span><span class="value">${typeObj?typeObj.label:'\u2014'}</span></div>`;
+    const timObj=TIMING_OPTIONS.find(t=>t.id===timing);
+    s+=`<div class="summary-row"><span class="criteria">Duração</span><span class="value">${timObj?timObj.label:'\u2014'}</span></div>`;
+    const onsetObj=ONSET_OPTIONS.find(o=>o.id===onset);
+    s+=`<div class="summary-row"><span class="criteria">Instalação</span><span class="value">${onsetObj?onsetObj.label:'Não informado'}</span></div>`;
+    const trigLabels=[];for(const t of TRIGGER_OPTIONS)if(triggers.has(t.id))trigLabels.push(t.label);
+    s+=`<div class="summary-row"><span class="criteria">Gatilhos</span><span class="value">${trigLabels.length>0?trigLabels.join(', '):'Nenhum'}</span></div>`;
+    if(dixHallpike)s+=`<div class="summary-row"><span class="criteria">Dix-Hallpike</span><span class="value">${dixHallpike==='pos'?'Positivo':dixHallpike==='neg'?'Negativo':'Não realizado'}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Paciente</span><span class="value">${patSex==='M'?'Masc.':'Fem.'}, ${['<45','45\u201359','60\u201374','\u226575'][patAge]} anos</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">FR para AVC</span><span class="value">${rfStroke.size} fator${rfStroke.size!==1?'es':''}</span></div>`;
+    if(meds.size>0){
+      const medLabels=[];for(const m of MEDICATIONS_DIZZINESS)if(meds.has(m.id))medLabels.push(m.label);
+      s+=`<div class="summary-row"><span class="criteria">Medicações</span><span class="value" style="text-align:right;max-width:55%">${medLabels.join(', ')}</span></div>`;
+    }
+    const symLabels=[];
+    for(const group of [ASSOCIATED_SYMPTOMS.otologic,ASSOCIATED_SYMPTOMS.neurologic,ASSOCIATED_SYMPTOMS.general])
+      for(const s2 of group)if(symptoms.has(s2.id))symLabels.push(s2.label);
+    s+=`<div class="summary-row"><span class="criteria">Sintomas</span><span class="value" style="text-align:right;max-width:55%">${symLabels.length>0?symLabels.join(', '):'Nenhum'}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Score central</span><span class="value">${centralScore.toFixed(1)} / 10</span></div>`;
+    return s;
+  });
+
+  // ---- COLLAPSIBLE: HINTS ----
+  if(!hintsSkipped&&(hints.hi!==null||hints.nyst!==null||hints.skew!==null)){
+    h+=collapsible('hints_summary','Exame HINTS',()=>{
+      let s='';
+      const hiLabel=hints.hi==='p'?'Anormal \u2014 sacada corretiva (periférico)':hints.hi==='c'?'Normal \u2014 sem sacada (central!)':'Não avaliado';
+      const nystLabel=hints.nyst==='p'?'Unidirecional (periférico)':hints.nyst==='c'?'Direction-changing (central)':'Não avaliado';
+      const skewLabel=hints.skew==='p'?'Ausente (periférico)':hints.skew==='c'?'Presente (central)':'Não avaliado';
+      const hiDot=hints.hi==='p'?'dot-periferico':hints.hi==='c'?'dot-central':'dot-neutro';
+      const nystDot=hints.nyst==='p'?'dot-periferico':hints.nyst==='c'?'dot-central':'dot-neutro';
+      const skewDot=hints.skew==='p'?'dot-periferico':hints.skew==='c'?'dot-central':'dot-neutro';
+      s+=`<div class="summary-row"><span class="criteria">Head Impulse</span><span class="value"><span class="dot ${hiDot}"></span> ${hiLabel}</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Nistagmo</span><span class="value"><span class="dot ${nystDot}"></span> ${nystLabel}</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Test of Skew</span><span class="value"><span class="dot ${skewDot}"></span> ${skewLabel}</span></div>`;
+      const hintsRes=getHintsInterpretation();
+      if(hintsRes){
+        s+=`<div class="hints-result ${hintsRes.cls}" style="margin-top:.5rem"><span class="hr-icon">${hintsRes.level==='peripheral'?'\u{2705}':'\u{1F6A8}'}</span><span>${hintsRes.text}</span></div>`;
+      }
+      return s;
+    });
+  }
+
+  // ---- COLLAPSIBLE: Conduta ----
+  h+=buildConduta(cls);
+
+  // ---- COLLAPSIBLE: Diagnósticos diferenciais ----
+  h+=buildDiferenciais(cls);
+
+  // ---- COLLAPSIBLE: ABCD2 (if TIA suspected) ----
+  const showABCD2=dizType==='vertigo'&&(timing==='minutes'||timing==='hours')&&(rfStroke.size>=2||cls.level!=='periferico');
+  if(showABCD2){
+    h+=collapsible('abcd2','Score ABCD\u00B2 (Suspeita de AIT)',()=>buildABCD2(),'score-section');
+  }
+
+  // ---- COLLAPSIBLE: Note ----
+  h+=collapsible('note','Nota para Prontuário',()=>buildNoteContent(cls,flags),'note-box');
+
+  h+='</div>'; // close result-sections
+
+  // Eval timestamp
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  h+=`<div class="eval-time">Avaliação iniciada em ${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} às ${pad(now.getHours())}:${pad(now.getMinutes())}</div>`;
+
+  // Nav
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="confirmRestart()">\u{21BB} Recomeçar</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+
+  // Animate risk meter marker after DOM paint
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      const marker=document.getElementById('riskMarker');
+      if(marker)marker.style.left=meterPct+'%';
+    });
+  });
+}
+
+// ===============================================
+// DIAGNÓSTICOS DIFERENCIAIS
+// ===============================================
+function buildDiferenciais(cls){
+  let items=[];
+  if(dizType==='vertigo'){
+    if(timing==='seconds')items=[
+      {dx:'VPPB',prob:triggers.has('positional')&&dixHallpike==='pos'?'alta':'moderada',detail:'Canal posterior (mais comum). Manobra de Epley terapêutica. Se Dix-Hallpike negativo com clínica posicional, realizar supine roll test para canal lateral.'},
+      {dx:'Hipotensão ortostática',prob:triggers.has('orthostatic')?'moderada':'baixa',detail:'Medir PA decúbito/ortostase. Queda \u226520 mmHg sistólica ou \u226510 mmHg diastólica.'},
+      {dx:'Vertigem posicional central',prob:dixHallpike==='neg'&&symptoms.size>0?'baixa':'muito baixa',detail:'Nistagmo posicional atípico (sem latência, não fatigável, downbeat puro). RM indicada.'},
+    ];
+    else if(timing==='minutes')items=[
+      {dx:'AIT vertebrobasilar',prob:rfStroke.size>=2?'moderada':'baixa',detail:'Episódios de minutos com FRs vasculares. RM com difusão, angio-TC/RM. Vertigem isolada pode ser AIT \u2014 não descartar sem investigação.'},
+      {dx:'Enxaqueca vestibular',prob:symptoms.has('headache')||(patSex==='F'&&patAge<=1)?'alta':'moderada',detail:'Episódios recorrentes com/sem cefaleia. Critérios IHS/Barany Society. Pode haver foto/fonofobia, aura visual.'},
+      {dx:'Ménière (fase inicial)',prob:symptoms.has('tinnitus')||symptoms.has('hearing_loss')?'moderada':'baixa',detail:'Flutuação auditiva, plenitude. Audiometria.'},
+    ];
+    else if(timing==='hours')items=[
+      {dx:'Doença de Ménière',prob:symptoms.has('hearing_loss')||symptoms.has('tinnitus')||symptoms.has('ear_fullness')?'alta':'moderada',detail:'Tríade: vertigem + hipoacusia flutuante + zumbido. Plenitude auricular. Critérios da AAO-HNS.'},
+      {dx:'Enxaqueca vestibular',prob:symptoms.has('headache')?'moderada':'baixa',detail:'Horas de vertigem com foto/fonofobia, aura. Pode não ter cefaleia concomitante.'},
+      {dx:'AIT vertebrobasilar',prob:rfStroke.size>=3?'moderada':'baixa',detail:'Sintomas transitórios com FRs. Neuroimagem indicada.'},
+    ];
+    else if(timing==='days')items=[
+      {dx:'Neurite vestibular',prob:cls.level==='periferico'?'alta':'moderada',detail:'Vertigem aguda contínua pós-viral. HINTS periférico. Resolução espontânea em semanas. Reabilitação vestibular precoce.'},
+      {dx:'AVC de fossa posterior',prob:cls.level==='central'?'alta':'moderada',detail:'HINTS central, FRs vasculares. RM com difusão é padrão-ouro. TC pode ser NORMAL nas primeiras 24\u201348h!'},
+      {dx:'Labirintite',prob:symptoms.has('hearing_loss')?'moderada':'baixa',detail:'Neurite vestibular + perda auditiva. Infecciosa ou pós-infecciosa.'},
+      {dx:'Dissecção de artéria vertebral',prob:symptoms.has('neck_pain')&&onset==='sudden'?'moderada':'baixa',detail:'Cervicalgia + vertigem súbita, especialmente em jovens/pós-trauma. Angio-TC/RM urgente.'},
+      {dx:'Infarto de AICA',prob:symptoms.has('hearing_loss')&&symptoms.has('facial_palsy')?'moderada':'baixa',detail:'Vertigem + hipoacusia + paralisia facial. Território da artéria cerebelar anteroinferior. RM urgente.'},
+      {dx:'Esclerose múltipla',prob:patAge<=1?'baixa':'muito baixa',detail:'Jovens com episódios recorrentes. RM com lesões desmielinizantes.'},
+    ];
+    else items=[
+      {dx:'TPPP (Tontura Postural-Perceptual Persistente)',prob:'moderada',detail:'Tontura crônica funcional. Critérios da Barany Society. Tratamento: ISRS + TCC + reabilitação vestibular.'},
+      {dx:'Causa central crônica',prob:'baixa',detail:'Tumor de fossa posterior, malformação de Chiari. RM indicada.'},
+      {dx:'Déficit vestibular bilateral',prob:meds.has('aminoglic')?'moderada':'baixa',detail:'Ototoxicidade, autoimune. vHIT bilateral anormal. Prova calórica.'},
+    ];
+  }else if(dizType==='presyncope'){
+    items=[
+      {dx:'Hipotensão ortostática',prob:triggers.has('orthostatic')?'alta':'moderada',detail:'PA decúbito vs ortostase. Queda \u226520/10 mmHg. Medir em 1 e 3 minutos.'},
+      {dx:'Arritmia cardíaca',prob:symptoms.has('palpitations')||rfStroke.has('fa')?'alta':'moderada',detail:'ECG, Holter 24h. FA, bradicardia, TVNS, BAV.'},
+      {dx:'Estenose aórtica',prob:patAge>=2?'moderada':'baixa',detail:'Sopro sistólico ejetivo, síncope ao esforço. Ecocardiograma.'},
+      {dx:'Vasovagal',prob:'moderada',detail:'Pródromo típico (palidez, sudorese, náusea), fatores precipitantes claros, recuperação rápida.'},
+      {dx:'Hipoglicemia',prob:rfStroke.has('dm')?'moderada':'baixa',detail:'Glicemia capilar. Uso de insulina/secretagogos.'},
+      {dx:'Desidratação / Hipovolemia',prob:meds.has('diuretico')?'moderada':'baixa',detail:'Uso de diuréticos, baixa ingesta, diarreia/vômitos. Avaliar turgor, mucosas, ureia/creatinina.'},
+      {dx:'TEP (embolia pulmonar)',prob:symptoms.has('chest_pain')||symptoms.has('dyspnea')?'baixa':'muito baixa',detail:'Dispneia + taquicardia + dor torácica. D-dímero, angio-TC de tórax.'},
+    ];
+  }else if(dizType==='disequilibrium'){
+    items=[
+      {dx:'Multifatorial (idoso)',prob:patAge>=2?'alta':'moderada',detail:'Neuropatia + déficit visual + sarcopenia + polifarmácia. Avaliar marcha (Timed Up and Go).'},
+      {dx:'Efeito medicamentoso',prob:meds.size>0?'alta':'moderada',detail:'Revisar BZDs, anti-HAS, diuréticos, anticonvulsivantes, opioides.'},
+      {dx:'Neuropatia periférica',prob:rfStroke.has('dm')?'moderada':'baixa',detail:'Monofilamento, reflexos aquileus. DM, alcoolismo, deficiência de B12.'},
+      {dx:'Causa cerebelar',prob:symptoms.has('ataxia')?'moderada':'baixa',detail:'Ataxia de marcha, dismetria. RM de encéfalo.'},
+    ];
+  }else{
+    items=[
+      {dx:'Ansiedade / TPPP',prob:'moderada',detail:'Tontura crônica com parestesias periorais, taquicardia, dispneia. Escalas de ansiedade (GAD-7).'},
+      {dx:'Efeito medicamentoso',prob:meds.size>0?'alta':'moderada',detail:'Revisar BZDs, anti-HAS, diuréticos, anticonvulsivantes.'},
+      {dx:'Hipoglicemia',prob:rfStroke.has('dm')?'moderada':'baixa',detail:'Glicemia capilar. Uso de insulina/secretagogos.'},
+      {dx:'Anemia',prob:'baixa',detail:'Hemograma. Tontura por baixa perfusão cerebral.'},
+      {dx:'Hipotireoidismo',prob:'baixa',detail:'TSH. Tontura inespecífica com fadiga, ganho ponderal.'},
+    ];
+  }
+
+  return collapsible('diferenciais','Diagnósticos Diferenciais',()=>{
+    let s='<div style="display:flex;flex-direction:column;gap:.4rem">';
+    for(const item of items){
+      const isHigh=item.prob==='alta';
+      const isMod=item.prob==='moderada';
+      const probColor=isHigh?'#fca5a5':isMod?'#fcd34d':'#86efac';
+      const probBg=isHigh?'#7f1d1d':isMod?'#78350f':'#14532d';
+      s+=`<div style="display:flex;align-items:flex-start;gap:.6rem;padding:.5rem .6rem;background:#0d1424;border-radius:.5rem;border:1px solid #1e293b">`;
+      s+=`<span style="font-size:.55rem;text-transform:uppercase;letter-spacing:.04em;padding:.15rem .35rem;border-radius:9999px;font-weight:700;flex-shrink:0;background:${probBg};color:${probColor};margin-top:.1rem;white-space:nowrap">${item.prob}</span>`;
+      s+=`<div><div style="font-size:.82rem;font-weight:600;color:#e2e8f0">${item.dx}</div>`;
+      s+=`<div style="font-size:.7rem;color:#64748b;margin-top:.1rem;line-height:1.4">${item.detail}</div></div></div>`;
+    }
+    s+='</div>';
+    return s;
+  });
+}
+
+// ===============================================
+// CONDUTA
+// ===============================================
+function buildConduta(cls){
+  let boxCls,title,items;
+  if(cls.level==='central'){
+    boxCls='alta-prob';title='Conduta \u2014 Suspeita de Causa Central';
+    items=[
+      {section:'Imagem',list:[
+        ['\u{1F6A8}','TC de crânio SEM contraste URGENTE (excluir hemorragia)'],
+        ['\u{1F9E0}','RM de encéfalo com difusão (padrão-ouro para AVC de fossa posterior \u2014 TC pode ser NORMAL nas primeiras 24\u201348h!)'],
+        ['\u{1F4C4}','Angio-TC ou angio-RM de vasos cervicais e intracranianos'],
+      ]},
+      {section:'Laboratório',list:[
+        ['\u{1F489}','Hemograma, glicemia, eletrólitos, ureia/creatinina, coagulograma'],
+        ['\u{1F4CB}','ECG em 12 derivações (avaliar FA, isquemia)'],
+      ]},
+      {section:'Conduta imediata',list:[
+        ['\u{1F3E5}','Avaliação por neurologia / ativar protocolo de AVC se < 4,5h do início'],
+        ['\u{26A0}\u{FE0F}','NÃO liberar paciente sem neuroimagem se HINTS central'],
+        ['\u{1F6CF}\u{FE0F}','Monitorização contínua, acesso venoso, cabeceira a 0\u00B0'],
+      ]},
+    ];
+    // Dissection-specific
+    if(symptoms.has('neck_pain')&&onset==='sudden'){
+      items.push({section:'Suspeita de dissecção',list:[
+        ['\u{1F6A8}','Angio-TC ou angio-RM de vasos cervicais com urgência'],
+        ['\u{1F48A}','Considerar anticoagulação após excluir hemorragia (discutir com neurologia)'],
+        ['\u{26A0}\u{FE0F}','Evitar manipulação cervical até exclusão de dissecção'],
+      ]});
+    }
+    // AICA territory
+    if(symptoms.has('facial_palsy')&&symptoms.has('hearing_loss')){
+      items.push({section:'Suspeita de infarto de AICA',list:[
+        ['\u{1F9E0}','RM de encéfalo com difusão + angio-RM/angio-TC'],
+        ['\u{1F442}','Audiometria (hipoacusia neurossensorial aguda)'],
+        ['\u{1F3E5}','Internação para monitorização e investigação etiológica'],
+      ]});
+    }
+  }else if(cls.level==='indeterminado'){
+    boxCls='mod-prob';title='Conduta \u2014 Risco Intermediário';
+    items=[
+      {section:'Exames',list:[
+        ['\u{1F4C4}','TC de crânio para excluir hemorragia'],
+        ['\u{1F9E0}','Considerar RM de encéfalo (TC pode ser normal em AVC de fossa posterior)'],
+        ['\u{1F4CB}','ECG em 12 derivações'],
+        ['\u{1F489}','Hemograma, glicemia, eletrólitos, função renal'],
+      ]},
+      {section:'Seguimento',list:[
+        ['\u{1F50D}','Reavaliação clínica em 24\u201348h obrigatória'],
+        ['\u{1F4DE}','Orientar sinais de alarme para retorno imediato ao PS'],
+        ['\u{1F4CB}','Documentar orientações de alta e garantir compreensão do paciente'],
+      ]},
+    ];
+    if(dizType==='presyncope'){
+      items.push({section:'Avaliação cardiovascular',list:[
+        ['\u{1FA7A}','PA ortostática (decúbito \u2192 sentado \u2192 em pé, 1 e 3 min)'],
+        ['\u{1F4C8}','Considerar Holter 24h e ecocardiograma se recorrente'],
+        ['\u{1F48A}','Revisar medicações (anti-hipertensivos, diuréticos, vasodilatadores)'],
+      ]});
+    }
+    // If HINTS was skipped in AVS, emphasize need for imaging
+    if(dizType==='vertigo'&&timing==='days'&&hintsSkipped){
+      items[0].list.splice(1,0,['\u{26A0}\u{FE0F}','HINTS não realizado em SVA \u2014 neuroimagem é obrigatória para estratificação']);
+    }
+  }else{
+    boxCls='baixa-prob';title='Conduta \u2014 Provável Causa Periférica';
+    items=[];
+    if(dixHallpike==='pos'){
+      items.push({section:'VPPB \u2014 Tratamento',list:[
+        ['\u{2705}','Manobra de Epley (reposicionamento canalicular) \u2014 canal posterior'],
+        ['\u{1F504}','Repetir manobra se nistagmo persistir (até 3x por sessão)'],
+        ['\u{1F4CB}','Orientar exercícios de Brandt-Daroff em domicílio'],
+        ['\u{1F3E0}','Alta com orientações. Retorno se persistência > 2 semanas ou sintomas novos'],
+        ['\u{26A0}\u{FE0F}','Contraindicações relativas da Epley: estenose carotídea grave, instabilidade cervical'],
+      ]});
+    }else if(timing==='days'){
+      items.push({section:'Neurite vestibular \u2014 Tratamento',list:[
+        ['\u{1F48A}','Fase aguda (48\u201372h): dimenidrinato 50mg 8/8h OU meclizina 25mg 8/8h'],
+        ['\u{1F48A}','Ondansetrona 4\u20148mg IV/VO se náusea/vômitos refratários'],
+        ['\u{26A0}\u{FE0F}','Evitar supressores vestibulares por mais de 72h (atrasa compensação central)'],
+        ['\u{1F3CB}\u{FE0F}','Iniciar reabilitação vestibular precocemente (exercícios de habituação)'],
+        ['\u{1F48A}','Considerar corticoterapia: prednisona 1mg/kg/dia por 5\u20137 dias com desmame (controverso, mas pode acelerar recuperação)'],
+        ['\u{1F4DE}','Retorno imediato se piora, surgimento de déficit focal ou cefaleia intensa'],
+      ]});
+    }else if(symptoms.has('hearing_loss')||symptoms.has('tinnitus')||symptoms.has('ear_fullness')){
+      items.push({section:'Ménière \u2014 Conduta',list:[
+        ['\u{1F442}','Encaminhar para otorrinolaringologia (audiometria + videonistagmografia)'],
+        ['\u{1F48A}','Crise: dimenidrinato 50mg + ondansetrona 4mg'],
+        ['\u{1F37D}\u{FE0F}','Orientar restrição de sódio (< 2g/dia) e evitar cafeína/álcool'],
+        ['\u{1F48A}','Considerar betaistina 24mg 12/12h (manutenção)'],
+      ]});
+    }else{
+      items.push({section:'Conduta geral',list:[
+        ['\u{1F48A}','Sintomáticos conforme quadro clínico'],
+        ['\u{1F4CB}','Orientações de segurança e sinais de alarme para retorno'],
+        ['\u{1F3E0}','Alta com reavaliação ambulatorial'],
+      ]});
+    }
+    items.push({section:'Laboratório básico',list:[
+      ['\u{1F489}','Primeiro episódio ou quadro atípico: hemograma, glicemia, eletrólitos, TSH'],
+    ]});
+  }
+
+  // Medication-related
+  if(meds.size>0){
+    const medDetails=[];
+    if(meds.has('aminoglic'))medDetails.push('Aminoglicosídeos \u2014 risco de ototoxicidade bilateral');
+    if(meds.has('diuretico'))medDetails.push('Diuréticos \u2014 risco de depleção volêmica e hipotensão');
+    if(meds.has('benzo'))medDetails.push('Benzodiazepínicos \u2014 sedação, risco de quedas em idosos');
+    const mainItem=['\u{1F48A}','Revisar necessidade e dose das medicações assinaladas como possíveis causas'];
+    const medList=[mainItem];
+    for(const d of medDetails)medList.push(['\u{26A0}\u{FE0F}',d]);
+    items.push({section:'Medicações',list:medList});
+  }
+
+  const open=sections.conduta;
+  let h=`<div class="conduta-box ${boxCls}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('conduta')"><h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.65rem':'0'}">`;
+  if(open){
+    for(const group of items){
+      h+=`<div class="conduta-section-label">${group.section}</div>`;
+      for(const[icon,text]of group.list){
+        h+=`<div class="conduta-item"><span class="conduta-icon">${icon}</span><span>${text}</span></div>`;
+      }
+    }
+  }
+  h+='</div></div>';
+  return h;
+}
+
+// ===============================================
+// ABCD2 SCORE
+// ===============================================
+function buildABCD2(){
+  let s='<p style="font-size:.72rem;color:#64748b;margin-bottom:.85rem;line-height:1.4">Estima risco de AVC em 2\u20147 dias após evento de AIT. Útil para decisão de internação vs alta monitorada.</p>';
+
+  // A - Age >=60
+  const aAuto=patAge!==null&&patAge>=2?1:(patAge!==null?0:null);
+  const aVal=abcd2.a!==null?abcd2.a:aAuto;
+  s+=`<div class="score-row"><div class="score-row-label"><span>A \u2014 Idade \u2265 60 anos</span>${aAuto!==null?'<span class="auto-tag">Auto</span>':''}</div>`;
+  s+='<div class="score-options">';
+  s+=`<button class="score-opt ${aVal===0?'picked':''}" onclick="setABCD2('a',0)">Não<span class="pts">0 pt</span></button>`;
+  s+=`<button class="score-opt ${aVal===1?'picked':''}" onclick="setABCD2('a',1)">Sim<span class="pts">1 pt</span></button>`;
+  s+='</div></div>';
+
+  // B - Blood pressure >=140/90
+  const bVal=abcd2.b;
+  s+=`<div class="score-row"><div class="score-row-label"><span>B \u2014 PA \u2265 140/90 mmHg</span></div>`;
+  s+='<div class="score-options">';
+  s+=`<button class="score-opt ${bVal===0?'picked':''}" onclick="setABCD2('b',0)">Não<span class="pts">0 pt</span></button>`;
+  s+=`<button class="score-opt ${bVal===1?'picked':''}" onclick="setABCD2('b',1)">Sim<span class="pts">1 pt</span></button>`;
+  s+='</div></div>';
+
+  // C - Clinical features
+  const cVal=abcd2.c;
+  s+=`<div class="score-row"><div class="score-row-label"><span>C \u2014 Sintomas clínicos</span></div>`;
+  s+='<div class="score-options">';
+  s+=`<button class="score-opt ${cVal===0?'picked':''}" onclick="setABCD2('c',0)">Outros<span class="pts">0 pt</span></button>`;
+  s+=`<button class="score-opt ${cVal===1?'picked':''}" onclick="setABCD2('c',1)">Fala s/ fraqueza<span class="pts">1 pt</span></button>`;
+  s+=`<button class="score-opt ${cVal===2?'picked':''}" onclick="setABCD2('c',2)">Fraqueza unilat.<span class="pts">2 pt</span></button>`;
+  s+='</div></div>';
+
+  // D - Duration
+  const dVal=abcd2.d;
+  s+=`<div class="score-row"><div class="score-row-label"><span>D \u2014 Duração dos sintomas</span></div>`;
+  s+='<div class="score-options">';
+  s+=`<button class="score-opt ${dVal===0?'picked':''}" onclick="setABCD2('d',0)">< 10 min<span class="pts">0 pt</span></button>`;
+  s+=`<button class="score-opt ${dVal===1?'picked':''}" onclick="setABCD2('d',1)">10\u201359 min<span class="pts">1 pt</span></button>`;
+  s+=`<button class="score-opt ${dVal===2?'picked':''}" onclick="setABCD2('d',2)">\u2265 60 min<span class="pts">2 pt</span></button>`;
+  s+='</div></div>';
+
+  // D2 - Diabetes
+  const d2Auto=rfStroke.has('dm')?1:0;
+  const d2Val=abcd2.d2!==null?abcd2.d2:d2Auto;
+  s+=`<div class="score-row"><div class="score-row-label"><span>D\u00B2 \u2014 Diabetes</span><span class="auto-tag">Auto</span></div>`;
+  s+='<div class="score-options">';
+  s+=`<button class="score-opt ${d2Val===0?'picked':''}" onclick="setABCD2('d2',0)">Não<span class="pts">0 pt</span></button>`;
+  s+=`<button class="score-opt ${d2Val===1?'picked':''}" onclick="setABCD2('d2',1)">Sim<span class="pts">1 pt</span></button>`;
+  s+='</div></div>';
+
+  const total=getABCD2();
+  if(total!==null){
+    let sc,sl,sd;
+    if(total<=3){sc='sr-low';sl='Baixo risco';sd=`ABCD\u00B2 ${total}/7 \u2014 Risco de AVC em 2 dias ~1%. Considerar alta com reavaliação precoce (24\u201348h).`}
+    else if(total<=5){sc='sr-mod';sl='Risco moderado';sd=`ABCD\u00B2 ${total}/7 \u2014 Risco de AVC em 2 dias ~4%. Considerar internação para investigação.`}
+    else{sc='sr-high';sl='Alto risco';sd=`ABCD\u00B2 ${total}/7 \u2014 Risco de AVC em 2 dias ~8%. Internação e investigação vascular urgente.`}
+    s+=`<div class="score-result ${sc}"><div class="score-num">${total}</div><div class="score-info"><div class="score-label">${sl}</div><div class="score-detail">${sd}</div></div></div>`;
+  }else{
+    s+='<div class="score-result sr-pending"><div class="score-num">?</div><div class="score-info"><div class="score-label">Preencha todos os campos</div><div class="score-detail">Campos com "Auto" são preenchidos pelos dados do paciente.</div></div></div>';
+  }
+  return s;
+}
+
+// ===============================================
+// NOTE
+// ===============================================
+function buildNoteContent(cls,flags){
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const ageLabels=['< 45','45\u201359','60\u201374','\u2265 75'];
+  const typeObj=DIZZINESS_TYPES.find(t=>t.id===dizType);
+  const timObj=TIMING_OPTIONS.find(t=>t.id===timing);
+  const onsetObj=ONSET_OPTIONS.find(o=>o.id===onset);
+
+  let n='';
+  n+=`TONTURA \u2014 AVALIAÇÃO ESTRUTURADA NO PS\n`;
+  n+=`Data/hora: ${ts}\n`;
+  n+=`${'='.repeat(45)}\n\n`;
+  n+=`PACIENTE: ${patSex==='M'?'Masculino':'Feminino'}, ${ageLabels[patAge]} anos\n`;
+  const rfNames=[];for(const rf of RF_STROKE)if(rfStroke.has(rf.id))rfNames.push(rf.label);
+  n+=`Fatores de risco p/ AVC: ${rfNames.length>0?rfNames.join(', '):'Nenhum identificado'}\n`;
+  if(meds.size>0){
+    const medNames=[];for(const m of MEDICATIONS_DIZZINESS)if(meds.has(m.id))medNames.push(m.label);
+    n+=`Medicações em uso: ${medNames.join(', ')}\n`;
+  }
+
+  n+=`\nQUADRO CLÍNICO\n`;
+  n+=`  Tipo: ${typeObj?typeObj.label:'\u2014'}\n`;
+  n+=`  Duração: ${timObj?timObj.label:'\u2014'}\n`;
+  n+=`  Instalação: ${onsetObj?onsetObj.label:'Não informado'}\n`;
+  const trigNames=[];for(const t of TRIGGER_OPTIONS)if(triggers.has(t.id))trigNames.push(t.label);
+  n+=`  Gatilhos: ${trigNames.length>0?trigNames.join(', '):'Nenhum especificado'}\n`;
+  if(dixHallpike)n+=`  Dix-Hallpike: ${dixHallpike==='pos'?'Positivo':dixHallpike==='neg'?'Negativo':'Não realizado'}\n`;
+
+  const symNames=[];
+  for(const group of [ASSOCIATED_SYMPTOMS.otologic,ASSOCIATED_SYMPTOMS.neurologic,ASSOCIATED_SYMPTOMS.general])
+    for(const s of group)if(symptoms.has(s.id))symNames.push(s.label);
+  n+=`  Sintomas associados: ${symNames.length>0?symNames.join(', '):'Nenhum'}\n`;
+
+  if(!hintsSkipped&&(hints.hi!==null||hints.nyst!==null||hints.skew!==null)){
+    n+=`\nEXAME HINTS\n`;
+    const hiLabel=hints.hi==='p'?'Anormal \u2014 sacada corretiva presente (periférico)':hints.hi==='c'?'Normal \u2014 sem sacada corretiva (CENTRAL)':'Não avaliado';
+    const nystLabel=hints.nyst==='p'?'Unidirecional (periférico)':hints.nyst==='c'?'Direction-changing (CENTRAL)':'Não avaliado';
+    const skewLabel=hints.skew==='p'?'Ausente (periférico)':hints.skew==='c'?'Presente \u2014 skew deviation (CENTRAL)':'Não avaliado';
+    n+=`  Head Impulse: ${hiLabel}\n`;
+    n+=`  Nistagmo: ${nystLabel}\n`;
+    n+=`  Test of Skew: ${skewLabel}\n`;
+    const hintsRes=getHintsInterpretation();
+    if(hintsRes)n+=`  Interpretação: ${hintsRes.text}\n`;
+  }else if(hintsSkipped){
+    n+=`\nEXAME HINTS: Não realizado\n`;
+  }else{
+    n+=`\nEXAME HINTS: Não preenchido\n`;
+  }
+
+  n+=`\nCLASSIFICAÇÃO: ${cls.title}\n`;
+  n+=`${cls.desc}\n`;
+  n+=`Índice de risco central: ${getCentralScore().toFixed(1)}/10\n`;
+
+  if(flags.length>0){
+    n+=`\nSINAIS DE ALARME\n`;
+    for(const f of flags){
+      const level=f.flag==='red'?'RED FLAG':'ATENÇÃO';
+      n+=`  [${level}] ${f.label}\n`;
+    }
+  }
+
+  const abcd2Total=getABCD2();
+  if(abcd2Total!==null){
+    const risk=abcd2Total<=3?'Baixo':abcd2Total<=5?'Moderado':'Alto';
+    n+=`\nABCD\u00B2: ${abcd2Total}/7 \u2014 Risco ${risk}\n`;
+  }
+
+  n+=`\nCONDUTA\n`;
+  if(cls.level==='central'){
+    n+=`  - TC crânio urgente / RM encéfalo com difusão\n`;
+    n+=`  - Angio-TC/RM vasos cervicais e intracranianos\n`;
+    n+=`  - Avaliação por neurologia / protocolo de AVC\n`;
+    n+=`  - ECG, laboratório completo, monitorização\n`;
+    if(symptoms.has('neck_pain')&&onset==='sudden'){
+      n+=`  - Investigar dissecção de artéria vertebral\n`;
+    }
+    if(symptoms.has('facial_palsy')&&symptoms.has('hearing_loss')){
+      n+=`  - Investigar infarto de AICA (paralisia facial + hipoacusia)\n`;
+    }
+  }else if(cls.level==='indeterminado'){
+    n+=`  - TC crânio para excluir hemorragia\n`;
+    n+=`  - Considerar RM encéfalo (TC pode ser normal em AVC fossa posterior)\n`;
+    n+=`  - ECG, laboratório básico\n`;
+    n+=`  - Reavaliação obrigatória em 24\u201348h\n`;
+    n+=`  - Orientações de sinais de alarme para retorno\n`;
+    if(dizType==='presyncope'){
+      n+=`  - PA ortostática, Holter se recorrente\n`;
+    }
+  }else{
+    if(dixHallpike==='pos'){
+      n+=`  - Manobra de Epley realizada\n`;
+      n+=`  - Orientações: exercícios de Brandt-Daroff\n`;
+    }else if(timing==='days'){
+      n+=`  - Sintomáticos: dimenidrinato 50mg 8/8h (máx 72h)\n`;
+      n+=`  - Reabilitação vestibular precoce\n`;
+      n+=`  - Considerar corticoterapia (prednisona 1mg/kg/dia x 5-7 dias)\n`;
+    }
+    n+=`  - Sintomáticos conforme necessidade\n`;
+    n+=`  - Orientações de sinais de alarme\n`;
+    n+=`  - Alta com acompanhamento ambulatorial\n`;
+  }
+
+  if(meds.size>0){
+    n+=`  - Revisão medicamentosa (possível causa iatrogênica)\n`;
+  }
+
+  n+=`\n${'='.repeat(45)}\n`;
+  n+=`Ferramenta de apoio à decisão clínica. Não substitui o julgamento médico.\n`;
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()"><span>\u{1F4CB}</span> Copiar nota para prontuário</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  if(!el)return;
+  const text=el.textContent||el.innerText;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(onCopySuccess).catch(fallbackCopy);
+  }else{
+    fallbackCopy();
+  }
+}
+function onCopySuccess(){
+  const btn=document.getElementById('copyBtn');
+  if(!btn)return;
+  btn.innerHTML='<span>\u2713</span> Copiado!';btn.classList.add('copied');
+  setTimeout(()=>{if(btn){btn.innerHTML='<span>\u{1F4CB}</span> Copiar nota para prontuário';btn.classList.remove('copied')}},2500);
+}
+function fallbackCopy(){
+  const el=document.getElementById('noteContent');
+  if(!el)return;
+  const range=document.createRange();
+  range.selectNodeContents(el);
+  const sel=window.getSelection();
+  sel.removeAllRanges();sel.addRange(range);
+  try{document.execCommand('copy');onCopySuccess()}catch(e){
+    sel.removeAllRanges();
+  }
+}
+
+// ===============================================
+// ACTIONS
+// ===============================================
+function setDizType(v){dizType=v;render()}
+function setTiming(v){timing=v;
+  // Clear Dix-Hallpike if timing changes away from seconds
+  if(v!=='seconds')dixHallpike=null;
+  render();
+}
+function setOnset(v){onset=onset===v?null:v;render()}
+function toggleTrigger(id){triggers.has(id)?triggers.delete(id):triggers.add(id);
+  // Clear Dix-Hallpike if positional is deselected
+  if(id==='positional'&&!triggers.has('positional'))dixHallpike=null;
+  render();
+}
+function setDixHallpike(v){dixHallpike=dixHallpike===v?null:v;render()}
+function setPatAge(v){patAge=patAge===v?null:v;render()}
+function setPatSex(v){patSex=patSex===v?null:v;render()}
+function toggleRF(id){rfStroke.has(id)?rfStroke.delete(id):rfStroke.add(id);render()}
+function toggleMed(id){meds.has(id)?meds.delete(id):meds.add(id);render()}
+function setHints(field,v){hints[field]=hints[field]===v?null:v;render()}
+function toggleSymptom(id){symptoms.has(id)?symptoms.delete(id):symptoms.add(id);render()}
+function toggleSection(id){sections[id]=!sections[id];render()}
+function setABCD2(field,v){abcd2[field]=abcd2[field]===v?null:v;render()}
+function skipHints(){hintsSkipped=true;hints={hi:null,nyst:null,skew:null};render()}
+function unskipHints(){hintsSkipped=false;render()}
+
+function goToStep(idx){
+  if(idx<step){step=idx;render();window.scrollTo({top:0,behavior:'smooth'})}
+}
+
+function next(){
+  if(step===0&&dizType===null)return;
+  if(step===1&&timing===null)return;
+  if(step===2&&(patAge===null||patSex===null))return;
+  step++;render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function prev(){if(step>0){step--;render();window.scrollTo({top:0,behavior:'smooth'})}}
+
+function confirmRestart(){
+  if(step===5){
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:999;animation:fadeIn .2s ease;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)';
+    overlay.innerHTML=`<div style="background:#1a2436;border:1px solid #334155;border-radius:.85rem;padding:1.5rem;max-width:320px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5)">
+      <div style="font-size:1.2rem;margin-bottom:.5rem">\u{26A0}\u{FE0F}</div>
+      <div style="font-size:.92rem;font-weight:600;color:#f1f5f9;margin-bottom:.35rem">Recomeçar avaliação?</div>
+      <div style="font-size:.78rem;color:#64748b;margin-bottom:1rem;line-height:1.4">Todos os dados preenchidos serão perdidos.</div>
+      <div style="display:flex;gap:.5rem">
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:.6rem;border-radius:.5rem;border:1.5px solid #334155;background:#1e293b;color:#94a3b8;font-size:.82rem;font-weight:600;cursor:pointer;min-height:44px">Cancelar</button>
+        <button onclick="this.closest('div[style*=fixed]').remove();restart()" style="flex:1;padding:.6rem;border-radius:.5rem;border:none;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;font-size:.82rem;font-weight:600;cursor:pointer;min-height:44px">Recomeçar</button>
+      </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click',(e)=>{if(e.target===overlay)overlay.remove()});
+  }else{
+    restart();
+  }
+}
+
+function restart(){
+  step=0;dizType=null;timing=null;triggers=new Set();onset=null;
+  patAge=null;patSex=null;rfStroke=new Set();meds=new Set();
+  hints={hi:null,nyst:null,skew:null};dixHallpike=null;hintsSkipped=false;
+  symptoms=new Set();
+  abcd2={a:null,b:null,c:null,d:null,d2:null};
+  sections={classification:false,timing_summary:false,hints_summary:false,diferenciais:false,flags:true,conduta:true,abcd2:true,meds_result:false,note:true};
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,831 @@
+<!-- VERSION: 2 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRAUMA // ATLS CONSOLE</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#000;
+    --panel:#0a0e14;
+    --panel2:#0d1117;
+    --line:#1a2430;
+    --line2:#222e3d;
+    --green:#10b981;
+    --green-bright:#34d399;
+    --green-dim:#065f46;
+    --amber:#f59e0b;
+    --amber-bright:#fbbf24;
+    --red:#ef4444;
+    --red-bright:#f87171;
+    --cyan:#22d3ee;
+    --text:#d1d5db;
+    --text-dim:#6b7280;
+    --text-faint:#374151;
+  }
+  html,body{background:#000;color:var(--text);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;line-height:1.4;-webkit-font-smoothing:antialiased;min-height:100vh}
+  body{padding-bottom:76px;overflow-x:hidden;position:relative}
+  /* Static scanline only — removed the moving band (distracting + battery drain) */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(16,185,129,.012) 2px,rgba(16,185,129,.012) 3px);
+  }
+
+  /* Top bar */
+  .topbar{
+    position:sticky;top:0;z-index:10;
+    background:#000;border-bottom:1px solid var(--line);
+    padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.12em;color:var(--green)}
+  .brand-dot{width:8px;height:8px;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.4s infinite}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+  .brand a{color:var(--text-dim);text-decoration:none;font-size:10px}
+  .sys-time{font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-align:right}
+  .sys-time .lbl{color:var(--text-faint)}
+  .sys-time .val{color:var(--amber);font-variant-numeric:tabular-nums}
+
+  /* Header */
+  .head{padding:12px 12px 10px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#000,#0a0e14)}
+  .head h1{font-size:20px;font-weight:800;letter-spacing:.15em;color:var(--green-bright);text-shadow:0 0 12px rgba(16,185,129,.35)}
+  .head h1 .cursor{display:inline-block;width:10px;height:16px;background:var(--green-bright);vertical-align:middle;margin-left:4px;animation:blink 1s step-end infinite}
+  .head .sub{font-size:10px;color:var(--text-dim);letter-spacing:.08em;margin-top:4px}
+  .head .sub .ok{color:var(--green)}
+  .bar-progress{height:3px;background:var(--line);overflow:hidden;margin-top:8px}
+  .bar-progress div{height:100%;background:var(--green);box-shadow:0 0 6px var(--green);transition:width .25s}
+
+  /* Alert strip */
+  .alert-strip{
+    background:#0a0e14;border-bottom:1px solid var(--line);
+    padding:8px 12px;display:flex;align-items:center;gap:10px;font-size:11px;
+  }
+  .alert-strip.crit{border-color:var(--red);background:rgba(239,68,68,.08);animation:critpulse 1.2s ease-in-out infinite}
+  @keyframes critpulse{0%,100%{background:rgba(239,68,68,.06)}50%{background:rgba(239,68,68,.16)}}
+  .alert-dot{width:10px;height:10px;background:var(--green);border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor;color:var(--green)}
+  .alert-strip.warn .alert-dot{background:var(--amber);color:var(--amber)}
+  .alert-strip.crit .alert-dot{background:var(--red);color:var(--red);animation:blink .6s infinite}
+  .alert-text{flex:1;color:var(--text-dim);letter-spacing:.05em}
+  .alert-strip.warn .alert-text{color:var(--amber-bright)}
+  .alert-strip.crit .alert-text{color:var(--red-bright);font-weight:700}
+
+  /* Vitals */
+  .vitals{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+  .vital{background:var(--panel);padding:9px 10px;position:relative;min-height:72px}
+  .vital .lbl{font-size:9px;letter-spacing:.15em;color:var(--text-dim);display:flex;justify-content:space-between;align-items:center}
+  .vital .lbl .unit{color:var(--text-faint)}
+  .vital .num{
+    font-size:30px;font-weight:700;letter-spacing:.01em;line-height:1;margin-top:6px;
+    font-variant-numeric:tabular-nums;
+    color:var(--green-bright);text-shadow:0 0 8px rgba(52,211,153,.4);
+  }
+  .vital .num.warn{color:var(--amber-bright);text-shadow:0 0 8px rgba(251,191,36,.4)}
+  .vital .num.crit{color:var(--red-bright);text-shadow:0 0 10px rgba(248,113,113,.5);animation:blink .8s infinite}
+  .vital .trend{font-size:9px;color:var(--text-faint);margin-top:3px;letter-spacing:.05em;min-height:11px}
+  .vital input[type=number]{
+    background:transparent;border:none;color:inherit;font:inherit;letter-spacing:inherit;
+    width:100%;text-shadow:inherit;outline:none;padding:0;-moz-appearance:textfield;
+  }
+  .vital input[type=number]::-webkit-outer-spin-button,
+  .vital input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+  /* Timer */
+  .timer-block{
+    padding:9px 12px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .timer-left{display:flex;flex-direction:column;gap:2px}
+  .timer-left .lbl{font-size:9px;letter-spacing:.15em;color:var(--text-dim)}
+  .timer-left .val{font-size:22px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;letter-spacing:.05em;transition:color .3s}
+  .timer-ctrls{display:flex;gap:4px}
+  .timer-btn{
+    background:var(--panel2);border:1px solid var(--line2);color:var(--green);
+    font:inherit;font-size:10px;letter-spacing:.12em;padding:10px 14px;cursor:pointer;
+    text-transform:uppercase;min-width:84px;
+  }
+  .timer-btn:active{background:var(--green-dim);color:#000}
+  .timer-btn.stop{color:var(--amber);border-color:#3a2812}
+  .timer-btn.reset{color:var(--text-dim);padding:10px 10px;min-width:auto}
+
+  /* Sections */
+  .section{border-bottom:1px solid var(--line)}
+  .sec-head{
+    padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;
+    background:linear-gradient(180deg,#0a0e14,#05080c);
+    -webkit-user-select:none;user-select:none;min-height:52px;
+  }
+  .sec-tag{
+    width:28px;height:28px;background:#000;border:1px solid var(--green-dim);
+    color:var(--green-bright);font-size:13px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    text-shadow:0 0 6px rgba(52,211,153,.6);
+  }
+  .sec-tag.done{background:var(--green-dim);color:#000;border-color:var(--green);text-shadow:none}
+  .sec-tag.warn{border-color:var(--amber);color:var(--amber);text-shadow:0 0 6px rgba(245,158,11,.5)}
+  .sec-tag.crit{border-color:var(--red);color:var(--red);text-shadow:0 0 6px rgba(239,68,68,.5);animation:blink .8s infinite}
+  .sec-title{flex:1;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--text)}
+  .sec-title small{display:block;font-size:9px;color:var(--text-dim);letter-spacing:.1em;font-weight:400;margin-top:2px}
+  .sec-meta{font-size:9px;color:var(--text-faint);letter-spacing:.08em;font-variant-numeric:tabular-nums}
+  .sec-chev{color:var(--text-faint);font-size:10px;transition:transform .15s;margin-left:4px}
+  .section.open .sec-chev{transform:rotate(90deg);color:var(--green)}
+  .sec-body{display:none;padding:10px 12px 14px;background:#05080c;border-top:1px dashed var(--line)}
+  .section.open .sec-body{display:block}
+
+  /* Checklist — bigger hit target + entire row tappable */
+  .check{
+    display:flex;align-items:flex-start;gap:10px;padding:9px 0;
+    border-bottom:1px dotted var(--line);font-size:12px;line-height:1.4;cursor:pointer;
+  }
+  .check:last-child{border-bottom:none}
+  .check input[type=checkbox]{
+    appearance:none;-webkit-appearance:none;
+    width:16px;height:16px;border:1px solid var(--green-dim);background:#000;
+    flex-shrink:0;margin-top:1px;cursor:pointer;position:relative;
+  }
+  .check input[type=checkbox]:checked{background:var(--green);border-color:var(--green);box-shadow:0 0 6px var(--green)}
+  .check input[type=checkbox]:checked::after{
+    content:"";position:absolute;left:4px;top:0px;width:5px;height:10px;
+    border:solid #000;border-width:0 2px 2px 0;transform:rotate(45deg);
+  }
+  .check label{flex:1;color:var(--text);cursor:pointer}
+  .check.critical label{color:var(--red-bright);font-weight:500}
+  .check input[type=checkbox]:checked + label{color:var(--text-dim);text-decoration:line-through;text-decoration-color:var(--green-dim)}
+  .check .hint{display:block;font-size:10px;color:var(--text-dim);margin-top:2px;letter-spacing:.02em;text-decoration:none}
+
+  /* Callout */
+  .callout{
+    margin:10px 0 4px;padding:10px 10px 10px 12px;border-left:3px solid var(--red);
+    background:rgba(239,68,68,.06);font-size:11px;
+  }
+  .callout .ttl{font-weight:700;letter-spacing:.1em;font-size:10px;margin-bottom:5px;color:var(--red-bright)}
+  .callout ul{list-style:none;padding:0}
+  .callout li{padding:3px 0;color:var(--text);font-size:11px;line-height:1.45}
+  .callout li::before{content:"▸ ";color:var(--red);font-weight:700}
+  .callout li b{color:var(--red-bright)}
+
+  .note{
+    margin:8px 0 4px;padding:8px 10px;border-left:2px solid var(--amber);
+    background:rgba(245,158,11,.04);font-size:10px;color:var(--amber-bright);letter-spacing:.03em;line-height:1.5;
+  }
+  .note.info{border-color:var(--cyan);background:rgba(34,211,238,.04);color:var(--cyan)}
+  .note b{color:#fff}
+
+  /* GCS */
+  .gcs{margin-top:2px;background:#000;border:1px solid var(--line2);padding:10px}
+  .gcs-ttl{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .gcs-ttl .l{font-size:10px;letter-spacing:.15em;color:var(--text-dim)}
+  .gcs-ttl .total{
+    font-size:28px;font-weight:800;letter-spacing:.03em;font-variant-numeric:tabular-nums;
+    color:var(--green-bright);text-shadow:0 0 10px rgba(52,211,153,.5);line-height:1;
+  }
+  .gcs-ttl .total.warn{color:var(--amber-bright);text-shadow:0 0 10px rgba(251,191,36,.5)}
+  .gcs-ttl .total.crit{color:var(--red-bright);text-shadow:0 0 12px rgba(248,113,113,.6);animation:blink .9s infinite}
+  .gcs-ttl .total small{font-size:11px;color:var(--text-faint);font-weight:400;letter-spacing:.1em;margin-left:2px}
+  .gcs-row{display:grid;grid-template-columns:28px 1fr;gap:8px;margin-bottom:6px;align-items:center}
+  .gcs-row .k{font-size:11px;color:var(--text-dim);letter-spacing:.1em;text-align:center;font-weight:700}
+  .gcs-row select{
+    width:100%;background:#000;border:1px solid var(--line2);color:var(--green);
+    font:inherit;font-size:11px;padding:8px 26px 8px 8px;outline:none;cursor:pointer;
+    appearance:none;-webkit-appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--green) 50%),linear-gradient(135deg,var(--green) 50%,transparent 50%);
+    background-position:calc(100% - 14px) 52%,calc(100% - 9px) 52%;
+    background-size:5px 5px;background-repeat:no-repeat;
+  }
+  .gcs-row select:focus{border-color:var(--green)}
+  .gcs-iot{
+    margin-top:10px;padding:8px 10px;font-size:10px;letter-spacing:.05em;line-height:1.4;
+    background:rgba(16,185,129,.08);color:var(--green-bright);border:1px dashed var(--green-dim);
+  }
+  .gcs-iot.warn{background:rgba(245,158,11,.08);color:var(--amber-bright);border-color:var(--amber)}
+  .gcs-iot.go{background:rgba(239,68,68,.12);color:var(--red-bright);border-color:var(--red);font-weight:700}
+
+  /* Pupils */
+  .pupils{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+  .pupil-card{background:#000;border:1px solid var(--line2);padding:8px}
+  .pupil-card .h{font-size:10px;letter-spacing:.12em;color:var(--text-dim);margin-bottom:7px}
+  .pupil-row{display:flex;gap:4px;margin-bottom:4px}
+  .pupil-row:last-child{margin-bottom:0}
+  .pupil-row button{
+    flex:1;min-width:0;background:#000;border:1px solid var(--line2);color:var(--text-dim);
+    font:inherit;font-size:10px;padding:6px 2px;cursor:pointer;letter-spacing:.04em;
+  }
+  .pupil-row button.on{background:var(--green-dim);color:var(--green-bright);border-color:var(--green)}
+  .pupil-row button.warn.on{background:rgba(245,158,11,.18);color:var(--amber);border-color:var(--amber)}
+
+  /* Shock table — clearer crit vs warn row colors */
+  .shock{margin-top:10px;border:1px solid var(--line2);background:#000}
+  .shock-row{
+    display:grid;grid-template-columns:44px 1fr;border-bottom:1px solid var(--line);
+    font-size:10px;letter-spacing:.04em;
+  }
+  .shock-row:last-child{border-bottom:none}
+  .shock-row .cls{
+    padding:7px 6px;font-weight:800;color:var(--text-dim);
+    border-right:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  }
+  .shock-row.active .cls{color:#000;background:var(--amber)}
+  .shock-row.active.critlv .cls{background:var(--red);color:#000;animation:blink 1s infinite}
+  .shock-row .dat{padding:7px 8px;color:var(--text);line-height:1.35}
+  .shock-row .dat small{display:block;color:var(--text-dim);font-size:9px;margin-top:2px}
+  .shock-row.active .dat{color:var(--amber-bright)}
+  .shock-row.active.critlv .dat{color:var(--red-bright)}
+
+  /* Key-value */
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+  .kv-box{background:#000;border:1px solid var(--line2);padding:7px 8px}
+  .kv-box .k{font-size:9px;letter-spacing:.12em;color:var(--text-dim)}
+  .kv-box .v{font-size:13px;color:var(--green-bright);font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+
+  .inline-input input{
+    width:100%;background:#000;border:1px solid var(--line2);color:var(--green-bright);
+    font:inherit;font-size:11px;padding:7px 8px;outline:none;letter-spacing:.04em;margin-top:4px;
+  }
+  .inline-input input:focus{border-color:var(--green)}
+
+  /* Mechanism */
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px}
+  .mech-grid button{
+    background:#000;border:1px solid var(--line2);color:var(--text-dim);
+    font:inherit;font-size:10px;padding:9px 4px;cursor:pointer;letter-spacing:.04em;
+  }
+  .mech-grid button.on{background:var(--green-dim);color:#000;border-color:var(--green);font-weight:700}
+
+  /* AMPLE */
+  .ample{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .ample-row{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:center}
+  .ample-row .k{
+    font-size:14px;font-weight:800;color:var(--amber);text-align:center;
+    text-shadow:0 0 6px rgba(245,158,11,.4);
+  }
+  .ample-row input{
+    width:100%;background:#000;border:1px solid var(--line2);color:var(--text);
+    font:inherit;font-size:11px;padding:8px;outline:none;
+  }
+  .ample-row input:focus{border-color:var(--green);color:var(--green-bright)}
+
+  .sub-lbl{font-size:10px;color:var(--text-dim);letter-spacing:.1em;margin-top:12px;margin-bottom:2px;font-weight:700}
+
+  /* Disposition */
+  .dispo{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  .dispo button{
+    background:#000;border:1px solid var(--line2);color:var(--text);
+    font:inherit;font-size:11px;padding:11px;cursor:pointer;letter-spacing:.06em;
+    text-align:left;display:flex;align-items:flex-start;gap:10px;
+  }
+  .dispo button.sel{border-color:var(--green);background:rgba(16,185,129,.08);color:var(--green-bright)}
+  .dispo button.crit.sel{border-color:var(--red);background:rgba(239,68,68,.1);color:var(--red-bright)}
+  .dispo button .idx{color:var(--text-faint);font-size:10px;flex-shrink:0;margin-top:1px;font-weight:700}
+  .dispo button.sel .idx{color:inherit}
+  .dispo button .t{flex:1}
+  .dispo button .t small{display:block;font-size:9px;color:var(--text-dim);letter-spacing:.04em;margin-top:3px;font-weight:400;line-height:1.4}
+  .dispo button.sel .t small{color:var(--text)}
+
+  /* Footer */
+  .footer{
+    position:fixed;left:0;right:0;bottom:0;background:#000;border-top:1px solid var(--line);
+    padding:8px 12px;display:flex;justify-content:space-between;align-items:center;
+    font-size:10px;letter-spacing:.08em;z-index:9;gap:8px;
+  }
+  .footer .l{color:var(--text-dim);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .footer .r{display:flex;gap:8px;align-items:center;flex-shrink:0}
+  .footer .r #fState{font-weight:700}
+
+  @media(min-width:500px){
+    body{font-size:14px}
+    .vital .num{font-size:36px}
+    .check{font-size:13px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    <span>ATLS//CONSOLE</span>
+    <a href="../trauma.html">‹ back</a>
+  </div>
+  <div class="sys-time">
+    <div><span class="lbl">SYS</span> <span class="val" id="clock">--:--:--</span></div>
+    <div><span class="lbl">ID</span> TR-<span id="caseid">0000</span></div>
+  </div>
+</div>
+
+<div class="head">
+  <h1>TRAUMA<span class="cursor"></span></h1>
+  <div class="sub">PRIMARY ► ABCDE ► SECONDARY <span class="ok">● ONLINE</span></div>
+  <div class="bar-progress"><div id="progbar" style="width:0%"></div></div>
+</div>
+
+<div class="alert-strip" id="alertStrip">
+  <span class="alert-dot"></span>
+  <span class="alert-text" id="alertText">ESTÁVEL — MONITORIZAÇÃO CONTÍNUA</span>
+</div>
+
+<div class="vitals">
+  <div class="vital"><div class="lbl"><span>FC</span><span class="unit">bpm</span></div>
+    <div class="num" id="hrNum"><input type="number" id="hr" value="88" min="0" max="300" inputmode="numeric"></div>
+    <div class="trend" id="hrTrend">NSR</div></div>
+  <div class="vital"><div class="lbl"><span>PA</span><span class="unit">mmHg</span></div>
+    <div class="num" id="bpNum"><input type="number" id="sbp" value="120" min="0" max="300" inputmode="numeric" style="width:45%"> / <input type="number" id="dbp" value="80" min="0" max="200" inputmode="numeric" style="width:40%"></div>
+    <div class="trend" id="bpTrend">MAP 93</div></div>
+  <div class="vital"><div class="lbl"><span>SpO₂</span><span class="unit">%</span></div>
+    <div class="num" id="spo2Num"><input type="number" id="spo2" value="98" min="0" max="100" inputmode="numeric"></div>
+    <div class="trend" id="spo2Trend">AR AMB</div></div>
+  <div class="vital"><div class="lbl"><span>FR</span><span class="unit">irpm</span></div>
+    <div class="num" id="rrNum"><input type="number" id="rr" value="16" min="0" max="80" inputmode="numeric"></div>
+    <div class="trend" id="rrTrend">EUPNEICO</div></div>
+</div>
+
+<div class="timer-block">
+  <div class="timer-left">
+    <span class="lbl">TEMPO DE SALA</span>
+    <span class="val" id="timer">00:00</span>
+  </div>
+  <div class="timer-ctrls">
+    <button class="timer-btn" id="timerBtn">▶ START</button>
+    <button class="timer-btn reset" id="timerReset" title="reset">↺</button>
+  </div>
+</div>
+
+<!-- 0. PREPARAÇÃO & CINEMÁTICA -->
+<div class="section" data-sec="0">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="0">0</div>
+    <div class="sec-title">PREPARAÇÃO & CINEMÁTICA<small>MECANISMO · ENERGIA · TEMPO</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="check"><input type="checkbox" id="c-prep-1"><label for="c-prep-1">EPI + equipe acionada (banco de sangue em stand-by)</label></div>
+    <div class="check"><input type="checkbox" id="c-prep-2"><label for="c-prep-2">Sala pronta: monitor, O₂, aspiração, material de VA difícil</label></div>
+
+    <div class="sub-lbl">MECANISMO</div>
+    <div class="mech-grid" id="mechGrid">
+      <button data-m="colisao">Colisão auto</button>
+      <button data-m="moto">Motocicleta</button>
+      <button data-m="queda">Queda altura</button>
+      <button data-m="pedestre">Atropelamento</button>
+      <button data-m="paf">PAF</button>
+      <button data-m="branca">Arma branca</button>
+      <button data-m="explosao">Explosão</button>
+      <button data-m="outro">Outro</button>
+    </div>
+
+    <div class="kv">
+      <div class="kv-box"><div class="k">VELOCIDADE / ALTURA</div>
+        <div class="inline-input"><input type="text" id="kine-v" placeholder="km/h · m"></div></div>
+      <div class="kv-box"><div class="k">TEMPO DO EVENTO</div>
+        <div class="inline-input"><input type="text" id="kine-t" placeholder="min" inputmode="numeric"></div></div>
+    </div>
+
+    <div class="note">ALTA ENERGIA: ejeção, óbito no local, queda &gt;6m ou &gt;3× altura, extração &gt;20min, intrusão &gt;30cm, capotagem, pedestre &gt;30 km/h.</div>
+
+    <div class="check"><input type="checkbox" id="c-prep-3"><label for="c-prep-3">Passagem SAMU/APH — tempo, procedimentos, SV de chegada</label></div>
+  </div>
+</div>
+
+<!-- A -->
+<div class="section" data-sec="A">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="A">A</div>
+    <div class="sec-title">AIRWAY + C-SPINE<small>VIA AÉREA · COLAR · IOT</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="check"><input type="checkbox" id="c-a-1"><label for="c-a-1">Colar rígido + alinhamento manual inline</label></div>
+    <div class="check"><input type="checkbox" id="c-a-2"><label for="c-a-2">Fala frases completas — via aérea patente</label></div>
+    <div class="check"><input type="checkbox" id="c-a-3"><label for="c-a-3">Sem estridor, ronco, gorgolejo</label></div>
+    <div class="check"><input type="checkbox" id="c-a-4"><label for="c-a-4">Sem trismo, sangue, vômito, corpo estranho</label></div>
+    <div class="check"><input type="checkbox" id="c-a-5"><label for="c-a-5">Aspiração + jaw-thrust se obstrução</label></div>
+
+    <div class="callout">
+      <div class="ttl">▲ IOT IMEDIATA SE:</div>
+      <ul>
+        <li>GCS ≤ 8 ou queda rápida</li>
+        <li>Incapaz de proteger VA (reflexos ausentes, vômito persistente)</li>
+        <li>IRpA, apneia, SpO₂ &lt;90% com O₂</li>
+        <li>Trauma facial grave, queimadura de VA, hematoma cervical expansivo</li>
+        <li>Choque refratário exigindo ventilação controlada</li>
+      </ul>
+    </div>
+
+    <div class="check critical"><input type="checkbox" id="c-a-iot"><label for="c-a-iot">SRI executada<span class="hint">Etomidato 0,3 mg/kg + Succinilcolina 1–1,5 mg/kg · manter estabilização cervical inline</span></label></div>
+  </div>
+</div>
+
+<!-- B -->
+<div class="section" data-sec="B">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="B">B</div>
+    <div class="sec-title">BREATHING<small>INSPEÇÃO · AUSCULTA · TRATAR ANTES DA IMAGEM</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="check"><input type="checkbox" id="c-b-1"><label for="c-b-1">Expor tórax — inspeção bilateral</label></div>
+    <div class="check"><input type="checkbox" id="c-b-2"><label for="c-b-2">Jugular · traqueia · enfisema subcutâneo</label></div>
+    <div class="check"><input type="checkbox" id="c-b-3"><label for="c-b-3">Ausculta ápices + bases</label></div>
+    <div class="check"><input type="checkbox" id="c-b-4"><label for="c-b-4">Percussão (timpanismo / macicez)</label></div>
+    <div class="check"><input type="checkbox" id="c-b-5"><label for="c-b-5">O₂ 15 L máscara não-reinalante</label></div>
+
+    <div class="callout">
+      <div class="ttl">▲ DIAGNOSTICAR E TRATAR — NÃO ESPERAR RX</div>
+      <ul>
+        <li><b>PNX hipertensivo:</b> jelco 14G 2º EIC LMC (ou 4–5º EIC LAA) → dreno</li>
+        <li><b>PNX aberto:</b> curativo 3 pontas → dreno</li>
+        <li><b>Hemotórax maciço:</b> dreno 28–32 Fr · &gt;1500 mL ou &gt;200 mL/h × 4h = toracotomia</li>
+        <li><b>Tórax instável:</b> analgesia agressiva ± VPP / IOT</li>
+        <li><b>Tamponamento:</b> FAST cardíaco → pericardiocentese / toracotomia</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- C -->
+<div class="section" data-sec="C">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="C">C</div>
+    <div class="sec-title">CIRCULATION<small>PULSO · HEMORRAGIA · REPOSIÇÃO</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="check"><input type="checkbox" id="c-c-1"><label for="c-c-1">Pulsos central e periférico — ritmo, amplitude</label></div>
+    <div class="check"><input type="checkbox" id="c-c-2"><label for="c-c-2">Perfusão: enchimento, temperatura, cor, sudorese</label></div>
+    <div class="check critical"><input type="checkbox" id="c-c-3"><label for="c-c-3">Controlar hemorragia externa (compressão / torniquete)</label></div>
+    <div class="check"><input type="checkbox" id="c-c-4"><label for="c-c-4">2 acessos 14–16G (IO se falha)</label></div>
+    <div class="check"><input type="checkbox" id="c-c-5"><label for="c-c-5">Coleta: tipagem, HMG, lactato, gaso, coagulograma, βhCG</label></div>
+    <div class="check"><input type="checkbox" id="c-c-6"><label for="c-c-6">FAST — 4 janelas (pericárdio, Morrison, esplenorrenal, suprapúbica)</label></div>
+    <div class="check"><input type="checkbox" id="c-c-7"><label for="c-c-7">Ácido tranexâmico 1 g EV (se &lt;3h do trauma)</label></div>
+
+    <div class="sub-lbl">CLASSE DE CHOQUE HEMORRÁGICO</div>
+    <div class="shock" id="shockTable">
+      <div class="shock-row" data-cls="I"><div class="cls">I</div><div class="dat">&lt;15% · até 750 mL<small>FC &lt;100 · PA normal · ansioso leve</small></div></div>
+      <div class="shock-row" data-cls="II"><div class="cls">II</div><div class="dat">15–30% · 750–1500 mL<small>FC 100–120 · PA limítrofe · ansioso</small></div></div>
+      <div class="shock-row" data-cls="III"><div class="cls">III</div><div class="dat">30–40% · 1500–2000 mL<small>FC &gt;120 · PAS baixa · confuso</small></div></div>
+      <div class="shock-row" data-cls="IV"><div class="cls">IV</div><div class="dat">&gt;40% · &gt;2000 mL<small>FC &gt;140 · PAS &lt;70 · letárgico</small></div></div>
+    </div>
+
+    <div class="note">REPOSIÇÃO: cristalóide balanceado 1 L aquecido. Sem resposta → <b>1:1:1</b> (CHAD:plasma:plaquetas). Alvo PAS 80–90 (hipotensão permissiva) até controle cirúrgico.</div>
+
+    <div class="kv">
+      <div class="kv-box"><div class="k">LACTATO</div><div class="inline-input"><input type="text" placeholder="mmol/L" inputmode="decimal"></div></div>
+      <div class="kv-box"><div class="k">BE / pH</div><div class="inline-input"><input type="text" placeholder="-4 / 7.32"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- D -->
+<div class="section" data-sec="D">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="D">D</div>
+    <div class="sec-title">DISABILITY — NEURO<small>GCS · PUPILAS · LATERALIZAÇÃO · HGT</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="gcs">
+      <div class="gcs-ttl">
+        <div class="l">GLASGOW COMA SCALE</div>
+        <div class="total" id="gcsTotal">15<small>/15</small></div>
+      </div>
+      <div class="gcs-row"><div class="k">O</div>
+        <select id="gcsE">
+          <option value="4">4 · Espontânea</option>
+          <option value="3">3 · Ao chamado</option>
+          <option value="2">2 · À dor</option>
+          <option value="1">1 · Ausente</option>
+        </select></div>
+      <div class="gcs-row"><div class="k">V</div>
+        <select id="gcsV">
+          <option value="5">5 · Orientado</option>
+          <option value="4">4 · Confuso</option>
+          <option value="3">3 · Palavras</option>
+          <option value="2">2 · Sons</option>
+          <option value="1">1 · Ausente</option>
+          <option value="T">T · Intubado</option>
+        </select></div>
+      <div class="gcs-row"><div class="k">M</div>
+        <select id="gcsM">
+          <option value="6">6 · Obedece</option>
+          <option value="5">5 · Localiza dor</option>
+          <option value="4">4 · Flexão / retirada</option>
+          <option value="3">3 · Decorticação</option>
+          <option value="2">2 · Descerebração</option>
+          <option value="1">1 · Ausente</option>
+        </select></div>
+      <div class="gcs-iot" id="gcsIot">GCS 13–15 — reavaliação seriada</div>
+    </div>
+
+    <div class="pupils">
+      <div class="pupil-card">
+        <div class="h">PUPILA D</div>
+        <div class="pupil-row" data-group="pupR-size">
+          <button data-v="normal">N</button><button class="warn" data-v="mid">MID</button><button class="warn" data-v="midr">MIDR</button>
+        </div>
+        <div class="pupil-row" data-group="pupR-react">
+          <button data-v="fot">FOT+</button><button class="warn" data-v="nfot">FOT−</button>
+        </div>
+      </div>
+      <div class="pupil-card">
+        <div class="h">PUPILA E</div>
+        <div class="pupil-row" data-group="pupL-size">
+          <button data-v="normal">N</button><button class="warn" data-v="mid">MID</button><button class="warn" data-v="midr">MIDR</button>
+        </div>
+        <div class="pupil-row" data-group="pupL-react">
+          <button data-v="fot">FOT+</button><button class="warn" data-v="nfot">FOT−</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">Anisocoria &gt;1mm ou midríase fixa unilateral = herniação até prova contrária. TC já, manitol 0,5–1 g/kg ou salina 3%, cabeceira 30°, PCO₂ 35–40.</div>
+
+    <div class="check"><input type="checkbox" id="c-d-1"><label for="c-d-1">Lateralização motora pesquisada</label></div>
+    <div class="check"><input type="checkbox" id="c-d-2"><label for="c-d-2">HGT aferido<span class="hint">Hipoglicemia mimetiza rebaixamento</span></label></div>
+  </div>
+</div>
+
+<!-- E -->
+<div class="section" data-sec="E">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="E">E</div>
+    <div class="sec-title">EXPOSURE<small>DESPIR · LOG-ROLL · NORMOTERMIA</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="check"><input type="checkbox" id="c-e-1"><label for="c-e-1">Totalmente despido (corte de roupas)</label></div>
+    <div class="check"><input type="checkbox" id="c-e-2"><label for="c-e-2">Log-roll com 4 pessoas — dorso, coluna, região glútea</label></div>
+    <div class="check"><input type="checkbox" id="c-e-3"><label for="c-e-3">Toque retal — tônus, próstata, sangue</label></div>
+    <div class="check"><input type="checkbox" id="c-e-4"><label for="c-e-4">Cobertor + soro 39°C + ambiente ≥28°C</label></div>
+    <div class="check"><input type="checkbox" id="c-e-5"><label for="c-e-5">T central aferida (&lt;36°C piora coagulopatia)</label></div>
+
+    <div class="note"><b>TRÍADE LETAL</b>: hipotermia + acidose + coagulopatia. Previna agressivamente.</div>
+  </div>
+</div>
+
+<!-- ADJUNTOS -->
+<div class="section" data-sec="ADJ">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="ADJ">+</div>
+    <div class="sec-title">ADJUNTOS<small>MONITOR · SNG · SVD · RX · FAST · ECG</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="check"><input type="checkbox" id="c-adj-1"><label for="c-adj-1">Monitor + capnografia + oximetria</label></div>
+    <div class="check"><input type="checkbox" id="c-adj-2"><label for="c-adj-2">ECG 12 derivações</label></div>
+    <div class="check"><input type="checkbox" id="c-adj-3"><label for="c-adj-3">RX tórax AP + RX pelve AP</label></div>
+    <div class="check"><input type="checkbox" id="c-adj-4"><label for="c-adj-4">FAST (ou e-FAST com tórax)</label></div>
+    <div class="check"><input type="checkbox" id="c-adj-5"><label for="c-adj-5">SNG<span class="hint">Contra: fratura de base de crânio (otorragia, guaxinim, Battle, rinorreia) → orogástrica</span></label></div>
+    <div class="check"><input type="checkbox" id="c-adj-6"><label for="c-adj-6">SVD<span class="hint">Contra: sangue no meato, hematoma perineal, próstata alta → uretrocistografia retrógrada</span></label></div>
+    <div class="check"><input type="checkbox" id="c-adj-7"><label for="c-adj-7">Analgesia (fentanil 1–2 mcg/kg titulado)</label></div>
+    <div class="check"><input type="checkbox" id="c-adj-8"><label for="c-adj-8">Profilaxia antitetânica verificada</label></div>
+  </div>
+</div>
+
+<!-- SECONDARY -->
+<div class="section" data-sec="S">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="S">S</div>
+    <div class="sec-title">SECONDARY SURVEY<small>AMPLE · CABEÇA AOS PÉS</small></div>
+    <span class="sec-meta"></span>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="note info">Só após estabilização do primário. Reavaliar ABCDE a cada piora.</div>
+    <div class="ample">
+      <div class="ample-row"><div class="k">A</div><input type="text" placeholder="Alergias — medicamentos, contraste, látex"></div>
+      <div class="ample-row"><div class="k">M</div><input type="text" placeholder="Medicamentos — anticoagulantes?"></div>
+      <div class="ample-row"><div class="k">P</div><input type="text" placeholder="Passado — comorbidades, cirurgias, gestação"></div>
+      <div class="ample-row"><div class="k">L</div><input type="text" placeholder="Last meal — última refeição"></div>
+      <div class="ample-row"><div class="k">E</div><input type="text" placeholder="Events — mecanismo detalhado"></div>
+    </div>
+
+    <div class="sub-lbl">EXAME CABEÇA-PÉS</div>
+    <div class="check"><input type="checkbox" id="c-s-1"><label for="c-s-1">Crânio / face — fraturas, sinal de Battle/guaxinim</label></div>
+    <div class="check"><input type="checkbox" id="c-s-2"><label for="c-s-2">Pescoço — dor, crepitação, enfisema</label></div>
+    <div class="check"><input type="checkbox" id="c-s-3"><label for="c-s-3">Tórax — reavaliar; clavículas, esterno, costelas</label></div>
+    <div class="check"><input type="checkbox" id="c-s-4"><label for="c-s-4">Abdome — inspeção, palpação, sinais peritoneais</label></div>
+    <div class="check"><input type="checkbox" id="c-s-5"><label for="c-s-5">Pelve — estabilidade (não manobrar se suspeita)</label></div>
+    <div class="check"><input type="checkbox" id="c-s-6"><label for="c-s-6">Períneo / genitália — sangue, hematoma</label></div>
+    <div class="check"><input type="checkbox" id="c-s-7"><label for="c-s-7">Extremidades — pulsos distais, deformidades</label></div>
+    <div class="check"><input type="checkbox" id="c-s-8"><label for="c-s-8">Dorso + coluna — dor, degrau (já no log-roll)</label></div>
+    <div class="check"><input type="checkbox" id="c-s-9"><label for="c-s-9">Neuro completo — força, sensibilidade, reflexos</label></div>
+  </div>
+</div>
+
+<!-- DISPOSITION -->
+<div class="section" data-sec="X">
+  <div class="sec-head">
+    <div class="sec-tag" data-tag="X">X</div>
+    <div class="sec-title">DISPOSIÇÃO<small>DECISÃO FINAL</small></div>
+    <span class="sec-chev">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="dispo" id="dispoBlock">
+      <button class="crit" data-d="cc"><span class="idx">1</span><span class="t">CENTRO CIRÚRGICO ▶<small>Instabilidade apesar ressuscitação · FAST+ com hemodinâmica borderline · sangramento externo ativo não controlado</small></span></button>
+      <button data-d="tc"><span class="idx">2</span><span class="t">TC / IMAGEM AVANÇADA ▶<small>Estável após primário — crânio, cervical, tórax, abdome-pelve</small></span></button>
+      <button data-d="cti"><span class="idx">3</span><span class="t">CTI ▶<small>Monitorização intensiva · ventilação · vasopressor</small></span></button>
+      <button data-d="enf"><span class="idx">4</span><span class="t">ENFERMARIA / OBSERVAÇÃO ▶<small>Lesões confirmadas sem necessidade de CTI · 24h</small></span></button>
+      <button data-d="alta"><span class="idx">5</span><span class="t">ALTA COM ORIENTAÇÕES ▶<small>Trauma menor · exame e imagem sem alterações</small></span></button>
+      <button data-d="transf"><span class="idx">6</span><span class="t">TRANSFERÊNCIA ▶<small>Recurso indisponível — estabilizar, comunicar, documentar</small></span></button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="l" id="fLeft">00/35 · ABCDE: – – – – –</div>
+  <div class="r"><span id="fState">OK</span></div>
+</div>
+
+<script>
+  const pad=n=>String(n).padStart(2,'0');
+  const $=id=>document.getElementById(id);
+  const $$=s=>document.querySelectorAll(s);
+
+  // Clock
+  function tick(){
+    const d=new Date();
+    $('clock').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+  setInterval(tick,1000);tick();
+  $('caseid').textContent=String(Math.floor(1000+Math.random()*9000));
+
+  // Section toggle
+  $$('.section').forEach(s=>{
+    s.querySelector('.sec-head').addEventListener('click',()=>s.classList.toggle('open'));
+  });
+  document.querySelector('[data-sec="A"]').classList.add('open');
+
+  // Vitals
+  const hr=$('hr'),sbp=$('sbp'),dbp=$('dbp'),spo2=$('spo2'),rr=$('rr');
+  function evalVitals(){
+    const vHr=+hr.value,vSbp=+sbp.value,vDbp=+dbp.value,vSpo2=+spo2.value,vRr=+rr.value;
+    const nums={hr:$('hrNum'),bp:$('bpNum'),sp:$('spo2Num'),rr:$('rrNum')};
+    const trd={hr:$('hrTrend'),bp:$('bpTrend'),sp:$('spo2Trend'),rr:$('rrTrend')};
+    Object.values(nums).forEach(el=>el.classList.remove('warn','crit'));
+    let alerts=[],critical=false;
+
+    if(vHr>=140){nums.hr.classList.add('crit');trd.hr.textContent='TAQUI CRÍT';alerts.push('TAQUI');critical=true}
+    else if(vHr>=120){nums.hr.classList.add('warn');trd.hr.textContent='TAQUI'}
+    else if(vHr<50&&vHr>0){nums.hr.classList.add('crit');trd.hr.textContent='BRADI CRÍT';alerts.push('BRADI');critical=true}
+    else trd.hr.textContent='NSR';
+
+    const mapV=(vSbp>0&&vDbp>0)?Math.round(vDbp+(vSbp-vDbp)/3):'--';
+    if(vSbp<=70&&vSbp>0){nums.bp.classList.add('crit');trd.bp.textContent='CHOQUE IV · MAP '+mapV;alerts.push('HIPOTENSÃO');critical=true}
+    else if(vSbp<90&&vSbp>0){nums.bp.classList.add('crit');trd.bp.textContent='HIPOTENSO · MAP '+mapV;alerts.push('HIPOTENSÃO');critical=true}
+    else if(vSbp<100){nums.bp.classList.add('warn');trd.bp.textContent='BORDERLINE · MAP '+mapV}
+    else trd.bp.textContent='MAP '+mapV;
+
+    if(vSpo2<90&&vSpo2>0){nums.sp.classList.add('crit');trd.sp.textContent='HIPÓXIA';alerts.push('HIPÓXIA');critical=true}
+    else if(vSpo2<94){nums.sp.classList.add('warn');trd.sp.textContent='BAIXA — O₂'}
+    else trd.sp.textContent='AR AMB';
+
+    if(vRr>30||(vRr<8&&vRr>0)){nums.rr.classList.add('crit');trd.rr.textContent=vRr<8?'BRADIP':'TAQUIP';alerts.push('RESP');critical=true}
+    else if(vRr>24){nums.rr.classList.add('warn');trd.rr.textContent='TAQUIPNEICO'}
+    else if(vRr<12){nums.rr.classList.add('warn');trd.rr.textContent='BRADIPNEICO'}
+    else trd.rr.textContent='EUPNEICO';
+
+    // Shock
+    $$('.shock-row').forEach(r=>r.classList.remove('active','critlv'));
+    let cls='I';
+    if(vHr>=140||(vSbp<70&&vSbp>0))cls='IV';
+    else if(vHr>=120||(vSbp<90&&vSbp>0))cls='III';
+    else if(vHr>=100||vSpo2<94||vRr>20)cls='II';
+    const row=document.querySelector('.shock-row[data-cls="'+cls+'"]');
+    if(row){row.classList.add('active');if(cls==='III'||cls==='IV')row.classList.add('critlv')}
+
+    const strip=$('alertStrip'),txt=$('alertText');
+    strip.classList.remove('crit','warn');
+    if(critical){strip.classList.add('crit');txt.textContent='⚠ CRÍTICO — '+alerts.join(' · ')}
+    else if(alerts.length){strip.classList.add('warn');txt.textContent='► ATENÇÃO — '+alerts.join(' · ')}
+    else txt.textContent='ESTÁVEL — MONITORIZAÇÃO CONTÍNUA';
+
+    const fs=$('fState');
+    fs.textContent=critical?'CRIT':alerts.length?'WARN':'OK';
+    fs.style.color=critical?'var(--red)':alerts.length?'var(--amber)':'var(--green)';
+  }
+  [hr,sbp,dbp,spo2,rr].forEach(i=>i.addEventListener('input',evalVitals));
+  evalVitals();
+
+  // GCS
+  const gE=$('gcsE'),gV=$('gcsV'),gM=$('gcsM');
+  function evalGcs(){
+    const e=+gE.value||0,v=gV.value==='T'?1:(+gV.value||0),m=+gM.value||0;
+    const total=e+v+m;
+    const el=$('gcsTotal'),iot=$('gcsIot');
+    el.classList.remove('warn','crit');iot.classList.remove('go','warn');
+    el.innerHTML=total+(gV.value==='T'?'T':'')+'<small>/15</small>';
+    if(total<=8){el.classList.add('crit');iot.classList.add('go');iot.textContent='▲ GCS ≤ 8 — IOT DEFINITIVA AGORA'}
+    else if(total<=12){el.classList.add('warn');iot.classList.add('warn');iot.textContent='GCS 9–12 — TCE moderado · TC crânio · observação rigorosa'}
+    else iot.textContent='GCS 13–15 — reavaliação seriada';
+    updateTag('D',total<=8?'crit':total<=12?'warn':null);
+  }
+  [gE,gV,gM].forEach(s=>s.addEventListener('change',evalGcs));
+  evalGcs();
+
+  // Pupils — now deselectable on repeat tap
+  $$('.pupil-row').forEach(row=>{
+    row.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',e=>{
+        e.stopPropagation();
+        const was=b.classList.contains('on');
+        row.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+        if(!was)b.classList.add('on');
+      });
+    });
+  });
+
+  // Mechanism — deselectable
+  $$('#mechGrid button').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const was=b.classList.contains('on');
+      $$('#mechGrid button').forEach(x=>x.classList.remove('on'));
+      if(!was)b.classList.add('on');
+    });
+  });
+
+  // Disposition — deselectable
+  $$('#dispoBlock button').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const was=b.classList.contains('sel');
+      $$('#dispoBlock button').forEach(x=>x.classList.remove('sel'));
+      if(!was)b.classList.add('sel');
+    });
+  });
+
+  function updateTag(sec,state){
+    const t=document.querySelector('.sec-tag[data-tag="'+sec+'"]');
+    if(!t)return;
+    t.classList.remove('done','warn','crit');
+    if(state)t.classList.add(state);
+  }
+
+  // Checklist tracking + per-section meta count
+  const allChecks=$$('input[type=checkbox]');
+  function updateChecks(){
+    let done=0;
+    allChecks.forEach(c=>{if(c.checked)done++});
+    ['0','A','B','C','E','ADJ','S'].forEach(sec=>{
+      const arr=document.querySelectorAll('[data-sec="'+sec+'"] input[type=checkbox]');
+      if(!arr.length)return;
+      const d=[...arr].filter(c=>c.checked).length;
+      updateTag(sec, d===arr.length?'done':d>0?'warn':null);
+      const m=document.querySelector('[data-sec="'+sec+'"] .sec-meta');
+      if(m)m.textContent=d+'/'+arr.length;
+    });
+    // D: count only, state driven by GCS
+    const dArr=document.querySelectorAll('[data-sec="D"] input[type=checkbox]');
+    const dDone=[...dArr].filter(c=>c.checked).length;
+    const dm=document.querySelector('[data-sec="D"] .sec-meta');
+    if(dm)dm.textContent=dDone+'/'+dArr.length;
+
+    const st=sec=>{
+      const arr=document.querySelectorAll('[data-sec="'+sec+'"] input[type=checkbox]');
+      if(!arr.length)return '–';
+      const d=[...arr].filter(c=>c.checked).length;
+      return d===0?'–':d===arr.length?'✓':'·';
+    };
+    const abcde=['A','B','C','D','E'].map(st).join(' ');
+    $('fLeft').textContent=pad(done)+'/'+pad(allChecks.length)+' · ABCDE: '+abcde;
+    $('progbar').style.width=(100*done/allChecks.length).toFixed(0)+'%';
+  }
+  allChecks.forEach(c=>c.addEventListener('change',updateChecks));
+  updateChecks();
+
+  // Timer — with reset button, fixed color transitions
+  let t0=null,ival=null,elapsed=0;
+  const timerEl=$('timer'),btn=$('timerBtn'),rBtn=$('timerReset');
+  function fmt(s){return pad(Math.floor(s/60))+':'+pad(s%60)}
+  function paintTimer(){
+    if(elapsed>=3300)timerEl.style.color='var(--red)';
+    else if(elapsed>=1800)timerEl.style.color='var(--amber-bright)';
+    else timerEl.style.color='var(--amber)';
+  }
+  btn.addEventListener('click',()=>{
+    if(ival){clearInterval(ival);ival=null;btn.textContent='▶ RESUME';btn.classList.remove('stop')}
+    else{
+      t0=Date.now()-elapsed*1000;
+      ival=setInterval(()=>{
+        elapsed=Math.floor((Date.now()-t0)/1000);
+        timerEl.textContent=fmt(elapsed);
+        paintTimer();
+      },500);
+      btn.textContent='■ PAUSE';btn.classList.add('stop');
+    }
+  });
+  rBtn.addEventListener('click',()=>{
+    if(ival){clearInterval(ival);ival=null}
+    elapsed=0;timerEl.textContent='00:00';timerEl.style.color='var(--amber)';
+    btn.textContent='▶ START';btn.classList.remove('stop');
+  });
+</script>
+</body>
+</html>

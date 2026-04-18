@@ -1,0 +1,492 @@
+<!-- VERSION: 2 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOR DE CABEÇA // ER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --ink:#0a0a0a;--paper:#fafafa;--mag:#d946ef;--vio:#7c3aed;--pink:#ec4899;
+    --lime:#d9f99d;--yellow:#fde047;--red:#ef4444;--mute:#666;
+    --shadow:4px 4px 0 0 var(--ink);--shadow-lg:6px 6px 0 0 var(--ink);--shadow-sm:2px 2px 0 0 var(--ink);
+  }
+  html,body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+  body{
+    background:
+      radial-gradient(circle at 10% 5%,rgba(217,70,239,.10),transparent 40%),
+      radial-gradient(circle at 90% 90%,rgba(124,58,237,.10),transparent 40%),
+      var(--paper);
+    padding-bottom:calc(env(safe-area-inset-bottom) + 64px);
+  }
+
+  /* NAV */
+  .topnav{position:sticky;top:0;z-index:50;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--ink);padding:.55rem .9rem;display:flex;justify-content:space-between;align-items:center;font-family:'Archivo Black',sans-serif;letter-spacing:.04em}
+  .topnav a{color:var(--paper);text-decoration:none;font-size:.72rem;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .5rem;border:2px solid var(--paper);background:var(--vio);box-shadow:var(--shadow-sm) var(--paper)}
+  .topnav .brand{font-size:.85rem;color:var(--mag);transform:rotate(-1.5deg);display:inline-block}
+  .wrap{max-width:640px;margin:0 auto;padding:1rem .9rem 1.5rem}
+
+  /* HERO */
+  .hero{position:relative;margin-top:.9rem;border:3px solid var(--ink);background:var(--paper);padding:1rem;box-shadow:var(--shadow-lg);overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--mag) 0%,var(--vio) 60%,var(--pink) 100%);opacity:.10;pointer-events:none}
+  .hero .kicker{font-family:'Space Grotesk';font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--vio);display:inline-block;padding:.2rem .45rem;border:2px solid var(--ink);background:var(--yellow);box-shadow:var(--shadow-sm);transform:rotate(-1deg)}
+  .hero h1{font-family:'Archivo Black',sans-serif;font-size:2.4rem;line-height:.92;margin-top:.7rem;letter-spacing:-.02em;text-transform:uppercase}
+  .hero h1 span.pink{color:var(--pink);display:inline-block;transform:rotate(-1deg)}
+  .hero h1 span.mag{color:var(--mag)}
+  .hero p.sub{margin-top:.6rem;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);max-width:36ch;font-weight:500}
+
+  /* SECTION HEADER */
+  section{margin-top:1.4rem;scroll-margin-top:72px}
+  .sec-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
+  .sec-num{font-family:'Archivo Black',sans-serif;font-size:1.9rem;line-height:1;color:var(--paper);background:var(--ink);padding:.15rem .5rem;border:3px solid var(--ink);box-shadow:var(--shadow);transform:rotate(-2deg)}
+  .sec-num.m{background:var(--mag)}
+  .sec-num.v{background:var(--vio)}
+  .sec-num.p{background:var(--pink)}
+  .sec-title{font-family:'Archivo Black',sans-serif;font-size:1.05rem;text-transform:uppercase;letter-spacing:-.01em;line-height:1.05}
+  .sec-hint{font-family:'Inter';font-size:.68rem;color:var(--mute);font-weight:500;margin-left:auto;text-align:right}
+
+  /* CARD */
+  .card{border:3px solid var(--ink);background:var(--paper);box-shadow:var(--shadow);padding:.95rem;margin-bottom:.75rem}
+
+  /* CHARACTERIZATION — chip groups */
+  .grp{margin-bottom:.8rem}
+  .grp:last-child{margin-bottom:0}
+  .grp-label{font-family:'Space Grotesk';font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.4rem;display:inline-block;padding:.15rem .4rem;background:var(--ink);color:var(--paper)}
+  .opts{display:flex;flex-wrap:wrap;gap:.35rem}
+  .opt{font-family:'Space Grotesk';font-size:.78rem;font-weight:600;padding:.5rem .65rem;border:2.5px solid var(--ink);background:var(--paper);box-shadow:var(--shadow-sm);cursor:pointer;transition:transform .08s,box-shadow .08s;user-select:none;min-height:40px;display:inline-flex;align-items:center}
+  .opt:active{transform:translate(2px,2px);box-shadow:0 0 0 0 var(--ink)}
+  .opt.on{background:var(--vio);color:var(--paper)}
+  .opt.on.mag{background:var(--mag)}
+  .opt.danger::before{content:"!";display:inline-block;margin-right:.35rem;font-family:'Archivo Black';color:var(--red)}
+  .opt.danger.on{background:var(--red);color:var(--paper)}
+  .opt.danger.on::before{color:var(--paper)}
+
+  /* EVA — pulse visualizer */
+  .eva{display:grid;grid-template-columns:1fr;gap:.8rem;border:3px solid var(--ink);background:var(--ink);color:var(--paper);padding:1rem;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+  .eva::before{content:"EVA";position:absolute;top:.3rem;right:.5rem;font-family:'Archivo Black';font-size:3rem;color:rgba(255,255,255,.06);letter-spacing:-.05em}
+  .pulse-stage{position:relative;height:160px;display:flex;align-items:center;justify-content:center}
+  .pulse-ring{position:absolute;border-radius:50%;border:3px solid var(--mag);will-change:transform,opacity}
+  .pulse-core{width:104px;height:104px;border-radius:50%;border:3px solid var(--paper);background:radial-gradient(circle,var(--mag),var(--vio));display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:3rem;color:var(--paper);z-index:2;box-shadow:0 0 0 3px var(--ink),0 0 30px rgba(217,70,239,.4);transition:transform .2s}
+  @keyframes throb{0%,100%{transform:scale(1)}50%{transform:scale(var(--sc,1.05))}}
+  @keyframes ring{0%{transform:scale(.8);opacity:.9}100%{transform:scale(2);opacity:0}}
+  .pulse-core{animation:throb var(--dur,2s) ease-in-out infinite}
+  .r1{width:120px;height:120px;animation:ring var(--dur,2s) ease-out infinite}
+  .r2{width:120px;height:120px;animation:ring var(--dur,2s) ease-out infinite;animation-delay:calc(var(--dur,2s) / 2)}
+  .eva-label{display:flex;justify-content:space-between;align-items:center;font-family:'Space Grotesk';font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem}
+  .eva-tier{padding:.2rem .45rem;border:2px solid var(--paper);background:var(--mag);color:var(--paper)}
+  .eva-slider{-webkit-appearance:none;appearance:none;width:100%;height:12px;background:linear-gradient(90deg,var(--lime),var(--yellow),var(--pink),var(--red));border:3px solid var(--paper);outline:none;cursor:pointer}
+  .eva-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;background:var(--paper);border:3px solid var(--ink);cursor:grab;border-radius:0;box-shadow:3px 3px 0 0 var(--mag)}
+  .eva-slider::-moz-range-thumb{width:32px;height:32px;background:var(--paper);border:3px solid var(--ink);cursor:grab;border-radius:0}
+  .eva-scale{display:flex;justify-content:space-between;font-family:'Archivo Black';font-size:.7rem;color:var(--paper);opacity:.55}
+  @media(prefers-reduced-motion:reduce){
+    .pulse-core,.r1,.r2{animation:none}
+    .snoop-tier.crit{animation:none}
+  }
+
+  /* SNOOP10 */
+  .snoop-meta{display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap}
+  .snoop-count{font-family:'Archivo Black';font-size:1.6rem;padding:.1rem .6rem;border:3px solid var(--ink);background:var(--yellow);box-shadow:var(--shadow-sm);min-width:2.4rem;text-align:center}
+  .snoop-tier{font-family:'Archivo Black';font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;padding:.35rem .6rem;border:3px solid var(--ink);background:var(--lime);color:var(--ink);box-shadow:var(--shadow-sm);transition:background .2s}
+  .snoop-tier.mid{background:var(--yellow)}
+  .snoop-tier.high{background:var(--pink);color:var(--paper)}
+  .snoop-tier.crit{background:var(--red);color:var(--paper);animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:.65}}
+  .snoop-list{display:flex;flex-direction:column;gap:.45rem}
+  .snoop-row{display:flex;gap:.55rem;align-items:flex-start;padding:.6rem;border:2.5px solid var(--ink);background:var(--paper);cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .08s,background .15s;min-height:44px}
+  .snoop-row:active{transform:translate(2px,2px);box-shadow:0 0 0 0 var(--ink)}
+  .snoop-row.on{background:var(--pink);color:var(--paper)}
+  .snoop-row.on .sp-key{background:var(--paper);color:var(--pink)}
+  .sp-key{font-family:'Archivo Black';font-size:1.05rem;background:var(--ink);color:var(--paper);border:2px solid var(--ink);padding:.15rem .4rem;min-width:2rem;text-align:center;line-height:1}
+  .sp-body strong{font-family:'Space Grotesk';font-weight:700;font-size:.8rem;display:block;margin-bottom:.15rem;text-transform:uppercase;letter-spacing:.04em}
+  .sp-body span{font-family:'Inter';font-size:.72rem;line-height:1.35;font-weight:500}
+
+  /* EXAM checklist */
+  .exam{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem}
+  .exam .opt{font-size:.72rem;padding:.5rem .4rem;text-align:center;justify-content:center;min-height:42px}
+
+  /* DIFF cards */
+  .diff-sub{font-family:'Archivo Black';font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.45rem;color:var(--vio)}
+  .diff-sub.em{color:var(--red);margin-top:.9rem}
+  .diff-grid{display:flex;flex-direction:column;gap:.55rem}
+  .diff-row{border:3px solid var(--ink);background:var(--paper);box-shadow:var(--shadow);padding:.7rem .8rem}
+  .diff-row h4{font-family:'Archivo Black';font-size:.82rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.25rem;display:flex;align-items:center;gap:.4rem}
+  .diff-row .dot{width:.85rem;height:.85rem;border:2px solid var(--ink);background:var(--mag);flex-shrink:0}
+  .diff-row.emerg .dot{background:var(--red)}
+  .diff-row.emerg{background:#fff5f5}
+  .diff-row p{font-family:'Inter';font-size:.76rem;font-weight:500;line-height:1.45}
+  .diff-row .tags{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.4rem}
+  .diff-row .tag{font-family:'Space Grotesk';font-size:.62rem;font-weight:700;padding:.12rem .35rem;border:1.5px solid var(--ink);background:var(--yellow);text-transform:uppercase;letter-spacing:.08em;display:inline-block}
+  .diff-row.emerg .tag{background:var(--red);color:var(--paper)}
+
+  /* CONDUTA steps */
+  .steps{display:flex;flex-direction:column;gap:.55rem}
+  .step{display:flex;gap:.6rem;border:3px solid var(--ink);padding:.65rem .7rem;background:var(--paper);box-shadow:var(--shadow-sm)}
+  .step .n{font-family:'Archivo Black';font-size:1.2rem;background:var(--vio);color:var(--paper);border:2px solid var(--ink);padding:.1rem .5rem;align-self:flex-start;line-height:1}
+  .step .t{font-family:'Inter';font-size:.78rem;line-height:1.45;font-weight:500}
+  .step .t b{font-family:'Space Grotesk';font-weight:700;text-transform:uppercase;font-size:.76rem;letter-spacing:.04em;display:block;margin-bottom:.15rem}
+  .step .t .warn{color:var(--red);font-weight:700}
+
+  /* DISPOSITION */
+  .disp{display:flex;flex-direction:column;gap:.5rem}
+  .disp-opt{border:3px solid var(--ink);padding:.75rem;background:var(--paper);box-shadow:var(--shadow);font-family:'Inter';font-size:.8rem;font-weight:500}
+  .disp-opt b{font-family:'Archivo Black';display:block;font-size:.88rem;text-transform:uppercase;margin-bottom:.2rem;letter-spacing:.02em}
+  .disp-opt.green{background:var(--lime)}
+  .disp-opt.yellow{background:var(--yellow)}
+  .disp-opt.pink{background:var(--pink);color:var(--paper)}
+  .disp-opt.red{background:var(--red);color:var(--paper)}
+
+  /* SUMMARY BAR */
+  .summary{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--paper);border-top:3px solid var(--ink);padding:.45rem .6rem calc(env(safe-area-inset-bottom) + .45rem);display:flex;gap:.4rem;align-items:stretch;z-index:40;font-family:'Space Grotesk';font-weight:700;text-transform:uppercase}
+  .summary .box{flex:1;display:flex;flex-direction:column;justify-content:center;gap:.1rem;padding:.3rem .3rem;border:2px solid var(--paper);text-align:center;min-width:0}
+  .summary .box small{font-size:.52rem;opacity:.75;letter-spacing:.14em;font-weight:700}
+  .summary .box b{font-family:'Archivo Black';font-size:1.05rem;letter-spacing:-.01em}
+  .summary .box.eva{background:var(--mag)}
+  .summary .box.snp{background:var(--vio)}
+  .summary .box.tier{background:var(--lime);color:var(--ink)}
+  .summary .box.tier.mid{background:var(--yellow);color:var(--ink)}
+  .summary .box.tier.high{background:var(--pink)}
+  .summary .box.tier.crit{background:var(--red)}
+  .summary .reset{flex:0 0 auto;padding:.3rem .55rem;border:2px solid var(--paper);background:transparent;color:var(--paper);font-family:'Archivo Black';font-size:1rem;letter-spacing:.08em;cursor:pointer;line-height:1}
+  .summary .reset:active{background:var(--paper);color:var(--ink)}
+
+  /* FOOTER */
+  footer{margin-top:1.6rem;text-align:center;font-family:'Space Grotesk';font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);padding:.8rem 0 .6rem}
+
+  @media(min-width:500px){
+    .hero h1{font-size:3rem}
+    .exam{grid-template-columns:repeat(3,1fr)}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="brand">MEDSTACK//</span>
+  <a href="../dor-de-cabeca.html">&larr; LAB</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="kicker">Queixa Principal // ER</span>
+    <h1>DOR<br><span class="pink">DE</span> <span class="mag">CABEÇA.</span></h1>
+    <p class="sub">Caracterize. Rastreie SNOOP10. Decida. Para o médico à beira do leito.</p>
+  </header>
+
+  <!-- 1 CARACTERIZAÇÃO -->
+  <section id="s1">
+    <div class="sec-head">
+      <div class="sec-num m">01</div>
+      <div class="sec-title">Caracterização</div>
+      <div class="sec-hint">toque para marcar</div>
+    </div>
+
+    <div class="card">
+      <div class="grp">
+        <span class="grp-label">Início</span>
+        <div class="opts" data-group="inicio">
+          <div class="opt danger" data-val="thunderclap">Súbito (thunderclap)</div>
+          <div class="opt" data-val="progressivo">Progressivo</div>
+          <div class="opt" data-val="recorrente">Recorrente</div>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="grp-label">Duração</span>
+        <div class="opts" data-group="duracao">
+          <div class="opt" data-val="<1h">&lt;1h</div>
+          <div class="opt" data-val="1-24h">1–24h</div>
+          <div class="opt" data-val=">24h">&gt;24h</div>
+          <div class="opt" data-val=">72h">&gt;72h</div>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="grp-label">Localização</span>
+        <div class="opts" data-group="local">
+          <div class="opt" data-val="unilateral">Unilateral</div>
+          <div class="opt" data-val="holo">Holocraniana</div>
+          <div class="opt" data-val="occ">Occipital</div>
+          <div class="opt" data-val="peri">Periorbitária</div>
+          <div class="opt" data-val="frontal">Frontal</div>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="grp-label">Qualidade</span>
+        <div class="opts" data-group="qual">
+          <div class="opt" data-val="puls">Pulsátil</div>
+          <div class="opt" data-val="aperto">Em aperto</div>
+          <div class="opt" data-val="facada">Em facada</div>
+          <div class="opt" data-val="queima">Em queimação</div>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="grp-label">Padrão-alerta</span>
+        <div class="opts" data-group="padrao">
+          <div class="opt danger" data-val="primeira">Primeira da vida</div>
+          <div class="opt danger" data-val="pior">Pior da vida</div>
+          <div class="opt danger" data-val="diferente">Diferente do habitual</div>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="grp-label">Sintomas associados</span>
+        <div class="opts" data-group="assoc">
+          <div class="opt mag" data-val="nausea">Náusea</div>
+          <div class="opt mag" data-val="vomito">Vômito</div>
+          <div class="opt mag" data-val="foto">Fotofobia</div>
+          <div class="opt mag" data-val="fono">Fonofobia</div>
+          <div class="opt mag" data-val="aura">Aura</div>
+          <div class="opt danger" data-val="defoc">Déficit focal</div>
+          <div class="opt danger" data-val="febre">Febre</div>
+          <div class="opt danger" data-val="nuca">Rigidez de nuca</div>
+          <div class="opt danger" data-val="cons">Alteração consciência</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 EVA -->
+  <section id="s2">
+    <div class="sec-head">
+      <div class="sec-num p">02</div>
+      <div class="sec-title">Intensidade // EVA</div>
+      <div class="sec-hint">arraste</div>
+    </div>
+    <div class="eva">
+      <div class="eva-label">
+        <span>Pulso em tempo real</span>
+        <span class="eva-tier" id="evaTier">MODERADA</span>
+      </div>
+      <div class="pulse-stage">
+        <div class="pulse-ring r1"></div>
+        <div class="pulse-ring r2"></div>
+        <div class="pulse-core" id="pulseCore">5</div>
+      </div>
+      <input type="range" min="0" max="10" value="5" class="eva-slider" id="evaSlider" aria-label="Escala visual analógica de dor">
+      <div class="eva-scale">
+        <span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 SNOOP10 -->
+  <section id="s3">
+    <div class="sec-head">
+      <div class="sec-num v">03</div>
+      <div class="sec-title">Red Flags // SNOOP10</div>
+      <div class="sec-hint">risco em tempo real</div>
+    </div>
+    <div class="card">
+      <div class="snoop-meta">
+        <div class="snoop-count" id="snoopCount">0</div>
+        <div class="snoop-tier" id="snoopTier">BAIXO RISCO</div>
+      </div>
+      <div class="snoop-list" id="snoopList"></div>
+    </div>
+  </section>
+
+  <!-- 4 EXAME -->
+  <section id="s4">
+    <div class="sec-head">
+      <div class="sec-num">04</div>
+      <div class="sec-title">Exame focado</div>
+    </div>
+    <div class="card">
+      <div class="exam" id="examList"></div>
+    </div>
+  </section>
+
+  <!-- 5 DIFERENCIAIS -->
+  <section id="s5">
+    <div class="sec-head">
+      <div class="sec-num m">05</div>
+      <div class="sec-title">Diferenciais</div>
+    </div>
+
+    <h3 class="diff-sub">Primárias</h3>
+    <div class="diff-grid">
+      <div class="diff-row"><h4><span class="dot"></span>Enxaqueca</h4><p>Unilateral pulsátil, moderada-intensa, foto/fonofobia, náusea, piora com atividade. Aura visual até 60 min.</p><div class="tags"><span class="tag">triptano</span><span class="tag">AINE</span></div></div>
+      <div class="diff-row"><h4><span class="dot"></span>Tensional</h4><p>Bilateral em aperto, leve-moderada, sem náusea. Não incapacita.</p><div class="tags"><span class="tag">AINE</span><span class="tag">paracetamol</span></div></div>
+      <div class="diff-row"><h4><span class="dot"></span>Cluster / salvas</h4><p>Unilateral periorbitária, intensa, lacrimejamento, rinorréia, miose, agitação.</p><div class="tags"><span class="tag">O2 12L</span><span class="tag">sumatriptano SC</span></div></div>
+      <div class="diff-row"><h4><span class="dot"></span>Hemicrania</h4><p>Unilateral fixa, crises breves, responde indometacina.</p><div class="tags"><span class="tag">indometacina</span></div></div>
+    </div>
+
+    <h3 class="diff-sub em">Secundárias emergentes</h3>
+    <div class="diff-grid">
+      <div class="diff-row emerg"><h4><span class="dot"></span>HSA</h4><p>Thunderclap, pior da vida, rigidez de nuca. TC sem contraste; se normal e alta suspeita → PL.</p><div class="tags"><span class="tag">TC+PL</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>AVC isq/hem</h4><p>Déficit focal, afasia, hemiparesia, ataxia. Janela para trombólise.</p><div class="tags"><span class="tag">TC + angioTC</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>Meningite / encefalite</h4><p>Febre + cefaleia + rigidez de nuca ± alteração consciência. ATB empírico precoce.</p><div class="tags"><span class="tag">PL</span><span class="tag">ATB</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>Trombose venosa</h4><p>Progressiva, piora Valsalva, déficit, convulsão. Puerpério, contraceptivo.</p><div class="tags"><span class="tag">RM+venografia</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>Arterite temporal</h4><p>&gt;50a, claudicação mandibular, artéria temporal dolorosa, VHS↑. Risco amaurose.</p><div class="tags"><span class="tag">VHS/PCR</span><span class="tag">corticoide</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>Glaucoma agudo</h4><p>Dor periorbitária, olho vermelho, midríase fixa, halos, náusea. Emergência oftalmo.</p><div class="tags"><span class="tag">Po intraocular</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>Pré-eclâmpsia</h4><p>Gestante &gt;20s ou puérpera, PA≥140/90, cefaleia, escotomas.</p><div class="tags"><span class="tag">PA</span><span class="tag">MgSO4</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>Dissecção cervical</h4><p>Cervicalgia + cefaleia + Horner ± AVC jovem. Trauma/manipulação.</p><div class="tags"><span class="tag">angioTC/RM</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>HIC por massa</h4><p>Progressiva, matinal, piora Valsalva, vômito em jato, papiledema.</p><div class="tags"><span class="tag">TC com contraste</span></div></div>
+      <div class="diff-row emerg"><h4><span class="dot"></span>HIC idiopática</h4><p>Mulher jovem obesa, papiledema, embaçamento visual, zumbido pulsátil.</p><div class="tags"><span class="tag">FO</span><span class="tag">PL</span></div></div>
+    </div>
+  </section>
+
+  <!-- 6 CONDUTA -->
+  <section id="s6">
+    <div class="sec-head">
+      <div class="sec-num p">06</div>
+      <div class="sec-title">Conduta</div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div class="t"><b>Estratifique</b>Red flag → neuroimagem urgente. TC sem contraste é o primeiro exame. Suspeita de HSA com TC normal (&gt;6h do início) → punção lombar.</div></div>
+      <div class="step"><div class="n">2</div><div class="t"><b>Analgesia</b>Primária: AINE IV (cetorolaco, cetoprofeno) + metoclopramida. Enxaqueca típica: triptano SC/nasal. <span class="warn">Evite opioides em cefaleia primária.</span></div></div>
+      <div class="step"><div class="n">3</div><div class="t"><b>PA &amp; monitorização</b>HAS severa sintomática + suspeita AVCh → reduzir com cuidado. Pré-eclâmpsia → MgSO4 + anti-hipertensivo. Sinais vitais seriados.</div></div>
+      <div class="step"><div class="n">4</div><div class="t"><b>Específico</b>Meningite: ATB empírico (ceftriaxona + ampicilina + dexametasona) ANTES da PL se houver atraso. Arterite temporal: corticoide imediato. Trombose venosa: anticoagulação.</div></div>
+    </div>
+  </section>
+
+  <!-- 7 DISPOSIÇÃO -->
+  <section id="s7">
+    <div class="sec-head">
+      <div class="sec-num v">07</div>
+      <div class="sec-title">Disposição</div>
+    </div>
+    <div class="disp">
+      <div class="disp-opt green"><b>Alta</b>Cefaleia primária típica, EVA controlada, sem red flags, orientação de retorno.</div>
+      <div class="disp-opt yellow"><b>Observação</b>Resposta parcial à analgesia ou red flag isolada em investigação.</div>
+      <div class="disp-opt pink"><b>Neuroimagem urgente</b>SNOOP10 ≥1, thunderclap, déficit focal, &gt;50a novo, imunossuprimido.</div>
+      <div class="disp-opt red"><b>Internação / UTI</b>HSA, AVC, meningite, HIC, status convulsivo, rebaixamento.</div>
+    </div>
+  </section>
+
+  <footer>MEDSTACK // DOR DE CABEÇA // V2 // 2026</footer>
+</div>
+
+<!-- LIVE SUMMARY -->
+<div class="summary">
+  <div class="box eva"><small>EVA</small><b id="sEva">5</b></div>
+  <div class="box snp"><small>SNOOP</small><b id="sSnp">0/10</b></div>
+  <div class="box tier" id="sTier"><small>RISCO</small><b id="sTierLabel">BAIXO</b></div>
+  <button class="reset" id="resetBtn" aria-label="Zerar tudo" title="Zerar">×</button>
+</div>
+
+<script>
+(function(){
+  // -------- Option toggles (caracterização) --------
+  // Single-select only for: inicio, duracao. Everything else is multi-select
+  // (clinically a headache can be both frontal+peri, or pulsátil+em facada).
+  var SINGLE = {inicio:1, duracao:1};
+  document.querySelectorAll('.opts').forEach(function(group){
+    group.addEventListener('click', function(e){
+      var t = e.target.closest('.opt'); if(!t) return;
+      var g = group.dataset.group;
+      if(SINGLE[g]){
+        var wasOn = t.classList.contains('on');
+        group.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('on'); });
+        if(!wasOn) t.classList.add('on');
+      } else {
+        t.classList.toggle('on');
+      }
+    });
+  });
+
+  // -------- EVA slider + pulse --------
+  var slider = document.getElementById('evaSlider');
+  var core = document.getElementById('pulseCore');
+  var tier = document.getElementById('evaTier');
+  var sEva = document.getElementById('sEva');
+  function updateEva(){
+    var v = parseInt(slider.value, 10);
+    core.textContent = v;
+    sEva.textContent = v;
+    var dur = Math.max(0.55, 2.4 - v * 0.18).toFixed(2) + 's';
+    var sc = (1 + v * 0.028).toFixed(3);
+    document.querySelectorAll('.pulse-core, .r1, .r2').forEach(function(el){
+      el.style.setProperty('--dur', dur);
+      el.style.setProperty('--sc', sc);
+    });
+    var c1 = '#d946ef', c2 = '#7c3aed';
+    if(v<=3){ c1='#d9f99d'; c2='#7c3aed'; tier.textContent='LEVE'; tier.style.background='#d9f99d'; tier.style.color='#0a0a0a'; }
+    else if(v<=6){ c1='#fde047'; c2='#ec4899'; tier.textContent='MODERADA'; tier.style.background='#fde047'; tier.style.color='#0a0a0a'; }
+    else if(v<=8){ c1='#ec4899'; c2='#7c3aed'; tier.textContent='INTENSA'; tier.style.background='#ec4899'; tier.style.color='#fafafa'; }
+    else { c1='#ef4444'; c2='#d946ef'; tier.textContent='EXTREMA'; tier.style.background='#ef4444'; tier.style.color='#fafafa'; }
+    core.style.background = 'radial-gradient(circle,'+c1+','+c2+')';
+    document.querySelectorAll('.pulse-ring').forEach(function(r){ r.style.borderColor = c1; });
+  }
+  slider.addEventListener('input', updateEva);
+
+  // -------- SNOOP10 --------
+  var snoop = [
+    {k:'S', t:'Systemic',            d:'Febre, perda de peso, imunossupressão, câncer, HIV'},
+    {k:'N', t:'Neurologic',          d:'Alteração consciência, déficit focal, convulsão, confusão'},
+    {k:'O', t:'Onset súbito',        d:'Thunderclap — pico em segundos. HSA até prova em contrário'},
+    {k:'O', t:'Older (>50a)',        d:'Cefaleia nova após 50 anos — arterite temporal, massa'},
+    {k:'P', t:'Pattern change',      d:'Mudança no padrão habitual, frequência ou intensidade'},
+    {k:'P', t:'Postural',            d:'Piora ortostática (hipotensão liquórica) ou em decúbito (HIC)'},
+    {k:'P', t:'Precipitada Valsalva',d:'Tosse, esforço, sexo — lesão fossa posterior, Chiari'},
+    {k:'P', t:'Papiledema',          d:'Papiledema na fundoscopia — HIC, trombose venosa, HIP'},
+    {k:'P', t:'Painful eye',         d:'Dor ocular, olho vermelho, déficit visual — glaucoma, neurite'},
+    {k:'P', t:'Posttraumatic',       d:'Após trauma — hematoma subdural, epidural, dissecção'}
+  ];
+  var list = document.getElementById('snoopList');
+  snoop.forEach(function(s, i){
+    var row = document.createElement('div');
+    row.className = 'snoop-row';
+    row.dataset.idx = i;
+    row.innerHTML = '<span class="sp-key">'+s.k+'</span><div class="sp-body"><strong>'+s.t+'</strong><span>'+s.d+'</span></div>';
+    list.appendChild(row);
+  });
+  var snoopCount = document.getElementById('snoopCount');
+  var snoopTier = document.getElementById('snoopTier');
+  var sSnp = document.getElementById('sSnp');
+  var sTier = document.getElementById('sTier');
+  var sTierLabel = document.getElementById('sTierLabel');
+  list.addEventListener('click', function(e){
+    var row = e.target.closest('.snoop-row'); if(!row) return;
+    row.classList.toggle('on');
+    updateTier();
+  });
+  function updateTier(){
+    var n = list.querySelectorAll('.snoop-row.on').length;
+    snoopCount.textContent = n;
+    sSnp.textContent = n + '/10';
+    snoopTier.classList.remove('mid','high','crit');
+    sTier.classList.remove('mid','high','crit');
+    var label, short;
+    if(n===0){ label='BAIXO RISCO'; short='BAIXO'; }
+    else if(n===1){ label='ALERTA'; short='ALERTA'; snoopTier.classList.add('mid'); sTier.classList.add('mid'); }
+    else if(n<=3){ label='ALTO RISCO'; short='ALTO'; snoopTier.classList.add('high'); sTier.classList.add('high'); }
+    else { label='CRÍTICO'; short='CRÍTICO'; snoopTier.classList.add('crit'); sTier.classList.add('crit'); }
+    snoopTier.textContent = label;
+    sTierLabel.textContent = short;
+  }
+
+  // -------- Exame focado --------
+  var exams = [
+    'Nível consciência','Pupilas','Fundoscopia','Rigidez de nuca',
+    'Kernig / Brudzinski','Déficit focal','Força','Sensibilidade',
+    'Marcha','Coordenação','A. temporal','PA','Temperatura','Glicemia'
+  ];
+  var examList = document.getElementById('examList');
+  exams.forEach(function(ex){
+    var el = document.createElement('div');
+    el.className = 'opt';
+    el.textContent = ex;
+    el.addEventListener('click', function(){ el.classList.toggle('on'); });
+    examList.appendChild(el);
+  });
+
+  // -------- Reset --------
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(!confirm('Zerar tudo?')) return;
+    document.querySelectorAll('.opt.on, .snoop-row.on').forEach(function(el){ el.classList.remove('on'); });
+    slider.value = 5;
+    updateEva();
+    updateTier();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  updateEva();
+  updateTier();
+})();
+</script>
+</body>
+</html>

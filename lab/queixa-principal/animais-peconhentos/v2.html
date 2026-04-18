@@ -1,0 +1,711 @@
+<!-- VERSION: 2 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animais Peçonhentos — Guia de Campo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ochre:#c89958;
+    --sienna:#b56336;
+    --olive:#5d6f3d;
+    --paper:#f4ecd8;
+    --paper-2:#ece2c3;
+    --ink:#2e2a22;
+    --ink-soft:#504838;
+    --rule:#9c8a64;
+    --accent:#8a5a2b;
+  }
+  html,body{background:var(--paper);color:var(--ink);min-height:100vh}
+  body{
+    font-family:'DM Sans','Helvetica Neue',sans-serif;
+    font-size:15px;line-height:1.5;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(181,99,54,.05), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(93,111,61,.05), transparent 50%);
+    padding-bottom:4.5rem;
+  }
+  .sheet{max-width:480px;margin:0 auto;padding:1rem 1.1rem 0}
+
+  /* nav */
+  .nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:.5rem 0 1rem;
+    border-bottom:1px dashed var(--rule);
+    font-family:'Crimson Pro',serif;font-size:.85rem;
+    color:var(--ink-soft);
+  }
+  .nav a{color:var(--ink-soft);text-decoration:none;border-bottom:1px dotted var(--rule)}
+  .nav .plate{font-variant:small-caps;letter-spacing:.14em;color:var(--accent)}
+
+  /* header / title plate */
+  .plate-head{
+    margin:1rem 0 .9rem;
+    text-align:center;
+    padding:.9rem .6rem 1rem;
+    border:1px solid var(--rule);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 8px, rgba(156,138,100,.06) 8px 9px),
+      var(--paper-2);
+    position:relative;
+  }
+  .plate-head::before,.plate-head::after{
+    content:"";position:absolute;left:8px;right:8px;height:1px;background:var(--rule);
+  }
+  .plate-head::before{top:6px}
+  .plate-head::after{bottom:6px}
+  .plate-head .kicker{
+    font-family:'Caveat',cursive;color:var(--sienna);font-size:1.1rem;
+    display:block;margin-bottom:.15rem;
+  }
+  .plate-head h1{
+    font-family:'Lora',serif;font-weight:700;
+    font-size:1.5rem;line-height:1.15;color:var(--ink);
+  }
+  .plate-head .folio{
+    font-family:'Crimson Pro',serif;font-size:.7rem;letter-spacing:.25em;
+    text-transform:uppercase;color:var(--accent);margin-top:.35rem;
+  }
+
+  /* section / field-guide entry */
+  section.entry{
+    margin:1rem 0;
+    padding:.9rem 1rem 1rem;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    box-shadow:inset 0 0 0 3px var(--paper),
+               inset 0 0 0 4px rgba(156,138,100,.4);
+    position:relative;
+  }
+  section.entry h2{
+    font-family:'Lora',serif;font-weight:700;
+    font-size:1.05rem;color:var(--ink);
+    border-bottom:1px dashed var(--rule);
+    padding-bottom:.35rem;margin-bottom:.65rem;
+    display:flex;align-items:baseline;gap:.5rem;
+  }
+  section.entry h2 .num{
+    font-family:'Crimson Pro',serif;font-style:italic;color:var(--sienna);
+    font-size:.9rem;
+  }
+  section.entry h3{
+    font-family:'Lora',serif;font-size:.92rem;color:var(--accent);
+    margin:.55rem 0 .3rem;font-weight:600;
+  }
+  .margin-note{
+    font-family:'Caveat',cursive;color:var(--sienna);
+    font-size:.98rem;line-height:1.15;
+    margin:.1rem 0 .55rem;
+  }
+
+  /* triagem form */
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+  label.field{display:block;margin:.5rem 0}
+  label.field > span{
+    display:block;font-family:'Crimson Pro',serif;font-size:.82rem;
+    color:var(--ink-soft);margin-bottom:.18rem;font-style:italic;
+  }
+  input[type=text],input[type=time],textarea,select{
+    width:100%;padding:.5rem .6rem;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-radius:0;
+    font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);
+    box-shadow:inset 0 1px 0 rgba(0,0,0,.03);
+  }
+  input:focus,textarea:focus,select:focus{
+    outline:none;border-color:var(--sienna);background:#fbf5e4;
+  }
+  textarea{min-height:50px;resize:vertical}
+
+  /* elapsed stamp */
+  .stamp{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:.5rem;padding:.4rem .65rem;
+    background:var(--paper-2);border:1px dashed var(--rule);
+    font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--ink-soft);
+  }
+  .stamp .tval{font-family:'Lora',serif;font-weight:700;color:var(--sienna);font-size:1rem}
+  .stamp.empty{opacity:.55}
+
+  /* picker: animal groups */
+  .picker{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;
+    margin-top:.2rem;
+  }
+  .pick{
+    cursor:pointer;
+    border:1px dashed var(--rule);
+    background:var(--paper-2);
+    padding:.6rem .5rem .5rem;
+    text-align:center;
+    transition:background .15s,border-color .15s,transform .1s;
+    position:relative;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .pick:active{transform:scale(.98)}
+  .pick svg{display:block;margin:0 auto .25rem;width:54px;height:40px}
+  .pick .name{
+    font-family:'Lora',serif;font-weight:600;font-size:.92rem;color:var(--ink);
+  }
+  .pick .latin{
+    display:block;font-family:'Crimson Pro',serif;font-style:italic;
+    font-size:.72rem;color:var(--ink-soft);margin-top:.05rem;
+  }
+  .pick:hover{background:#fbf5e4}
+  .pick.active{
+    background:#fbf5e4;border-style:solid;border-color:var(--sienna);
+    box-shadow:0 0 0 2px rgba(181,99,54,.15);
+  }
+  .pick.active::after{
+    content:"✓";position:absolute;top:.15rem;right:.4rem;
+    font-family:'Caveat',cursive;color:var(--sienna);font-size:1.1rem;
+  }
+
+  /* subgenus picker */
+  .sub-picker{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;
+    margin:.45rem 0 .7rem;
+  }
+  .sub{
+    padding:.45rem .5rem;font-family:'Lora',serif;font-size:.86rem;
+    border:1px dashed var(--rule);background:var(--paper-2);
+    cursor:pointer;text-align:left;color:var(--ink);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .sub em{font-family:'Crimson Pro',serif;font-size:.7rem;color:var(--ink-soft);display:block;font-style:italic}
+  .sub.active{border-style:solid;border-color:var(--olive);background:#fbf5e4}
+
+  /* severity segmented */
+  .severity{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    border:1px solid var(--rule);margin-top:.3rem;
+  }
+  .sev{
+    padding:.5rem .3rem;text-align:center;cursor:pointer;
+    font-family:'Lora',serif;font-size:.88rem;color:var(--ink-soft);
+    background:var(--paper-2);
+    border-right:1px solid var(--rule);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .sev:last-child{border-right:none}
+  .sev.active{background:var(--sienna);color:var(--paper)}
+  .sev small{display:block;font-family:'Crimson Pro',serif;font-style:italic;font-size:.68rem;margin-top:.05rem;opacity:.85}
+
+  /* clinical picture panel */
+  .panel{
+    margin-top:.75rem;padding:.75rem .8rem;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--olive);
+  }
+  .panel.empty{
+    border-left-color:var(--rule);
+    background:repeating-linear-gradient(45deg,transparent 0 8px,rgba(156,138,100,.05) 8px 9px);
+  }
+  .panel h4{
+    font-family:'Lora',serif;font-size:.92rem;color:var(--ink);margin:.15rem 0 .25rem;
+  }
+  .panel ul{list-style:none;padding:0;margin:.25rem 0}
+  .panel li{
+    padding:.1rem 0 .1rem 1rem;position:relative;font-size:.9rem;line-height:1.35;
+  }
+  .panel li::before{
+    content:"•";position:absolute;left:.2rem;top:.05rem;color:var(--sienna);
+  }
+  .dose{
+    margin-top:.5rem;padding:.55rem .7rem;
+    border:1px dashed var(--sienna);background:#fbf5e4;
+    font-family:'Crimson Pro',serif;
+  }
+  .dose .label{
+    display:block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:.15rem;
+  }
+  .dose .val{
+    font-family:'Lora',serif;font-weight:700;font-size:1.1rem;color:var(--ink);
+  }
+  .dose .val .amp{color:var(--sienna)}
+  .dose .note{
+    display:block;margin-top:.2rem;font-family:'Caveat',cursive;
+    color:var(--ink-soft);font-size:.95rem;line-height:1.2;
+  }
+  .dose.none .val{color:var(--ink-soft);font-style:italic;font-size:.98rem;font-weight:600}
+
+  /* red flags */
+  .flags{
+    padding:.65rem .75rem;
+    border:1px solid var(--sienna);
+    background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(181,99,54,.06) 6px 7px);
+  }
+  .flags ul{list-style:none}
+  .flags li{padding:.1rem 0 .1rem 1.1rem;position:relative;font-size:.88rem;line-height:1.35}
+  .flags li::before{content:"!";position:absolute;left:.2rem;top:0;color:var(--sienna);font-weight:700}
+
+  /* conduta comum */
+  .do-dont{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.3rem}
+  .do-dont > div{
+    padding:.5rem .55rem;border:1px dashed var(--rule);background:var(--paper-2);
+  }
+  .do-dont h4{
+    font-family:'Lora',serif;font-size:.85rem;margin-bottom:.2rem;
+    color:var(--olive);
+  }
+  .do-dont .dont h4{color:var(--sienna)}
+  .do-dont ul{list-style:none}
+  .do-dont li{font-size:.8rem;padding:.08rem 0 .08rem .85rem;position:relative;line-height:1.3}
+  .do-dont li::before{
+    content:"✓";position:absolute;left:0;color:var(--olive);top:.05rem;
+  }
+  .do-dont .dont li::before{content:"✗";color:var(--sienna)}
+
+  /* sticky dose footer */
+  .sticky{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--paper);
+    border-top:2px solid var(--sienna);
+    box-shadow:0 -6px 16px rgba(46,42,34,.12);
+    transform:translateY(120%);
+    transition:transform .25s ease;
+  }
+  .sticky.show{transform:translateY(0)}
+  .sticky-inner{
+    max-width:480px;margin:0 auto;padding:.5rem .9rem .6rem;
+    display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  }
+  .sticky .s-label{
+    font-family:'Crimson Pro',serif;font-size:.7rem;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--accent);display:block;
+  }
+  .sticky .s-val{
+    font-family:'Lora',serif;font-weight:700;color:var(--ink);font-size:1rem;
+    line-height:1.2;
+  }
+  .sticky .s-val .amp{color:var(--sienna)}
+  .sticky .s-top{
+    font-family:'Caveat',cursive;color:var(--sienna);font-size:1rem;
+    background:none;border:1px dashed var(--sienna);padding:.35rem .6rem;
+    cursor:pointer;flex-shrink:0;
+  }
+
+  /* footer */
+  footer.colophon{
+    text-align:center;margin-top:1.1rem;padding:.75rem 0;
+    font-family:'Crimson Pro',serif;font-style:italic;font-size:.78rem;
+    color:var(--ink-soft);border-top:1px dashed var(--rule);
+  }
+  footer.colophon .mark{
+    font-family:'Caveat',cursive;color:var(--sienna);font-size:1rem;display:block;margin-bottom:.15rem;
+  }
+
+  @media (min-width:480px){
+    .sheet{padding:1.2rem 1.4rem 0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .sticky{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="nav">
+    <a href="../animais-peconhentos.html">← Guia</a>
+    <span class="plate">Prancha I · v.2</span>
+    <a href="../../index.html">MedStack</a>
+  </div>
+
+  <header class="plate-head">
+    <span class="kicker">Manual Clínico de Campo</span>
+    <h1>Animais Peçonhentos</h1>
+    <div class="folio">Avaliação à beira do leito</div>
+  </header>
+
+  <!-- 1. TRIAGEM -->
+  <section class="entry">
+    <h2><span class="num">I.</span> Triagem</h2>
+    <p class="margin-note">registre o horário — a clínica evolui em janelas</p>
+
+    <div class="row2">
+      <label class="field">
+        <span>Horário da picada</span>
+        <input type="time" id="f-hora">
+      </label>
+      <label class="field">
+        <span>Local anatômico</span>
+        <input type="text" id="f-local" placeholder="dorso do pé D">
+      </label>
+    </div>
+
+    <div class="stamp empty" id="stamp">
+      <span>Tempo decorrido</span>
+      <span class="tval" id="tval">—</span>
+    </div>
+
+    <label class="field">
+      <span>Descrição do animal</span>
+      <textarea id="f-desc" placeholder="cor, tamanho, cauda, padrão — qualquer indício"></textarea>
+    </label>
+    <label class="field">
+      <span>Evolução / condutas prévias</span>
+      <textarea id="f-evo" placeholder="dor, edema, sangramento; torniquete (remover!), soro prévio…"></textarea>
+    </label>
+  </section>
+
+  <!-- 2. IDENTIFICAÇÃO -->
+  <section class="entry">
+    <h2><span class="num">II.</span> Identificação</h2>
+    <p class="margin-note">toque a silhueta correspondente</p>
+    <div class="picker" id="picker"></div>
+  </section>
+
+  <!-- 3. QUADRO CLÍNICO / DOSE -->
+  <section class="entry" id="clinica-sec">
+    <h2><span class="num">III.</span> Quadro &amp; soroterapia</h2>
+
+    <div id="subwrap" style="display:none">
+      <h3>Gênero</h3>
+      <div class="sub-picker" id="subpicker"></div>
+    </div>
+
+    <h3>Gravidade</h3>
+    <div class="severity" id="severity">
+      <div class="sev" data-sev="leve">Leve<small>só local</small></div>
+      <div class="sev active" data-sev="moderado">Moderado<small>sistêmico</small></div>
+      <div class="sev" data-sev="grave">Grave<small>órgão / choque</small></div>
+    </div>
+
+    <div class="panel empty" id="panel">
+      <h4 id="p-title">Selecione um agente acima</h4>
+      <div id="p-body">
+        <p style="font-style:italic;color:var(--ink-soft);font-size:.85rem">
+          O quadro clínico e a dose de soro aparecem aqui.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SINAIS DE ALARME -->
+  <section class="entry">
+    <h2><span class="num">IV.</span> Sinais de alarme</h2>
+    <div class="flags">
+      <ul>
+        <li>Instabilidade hemodinâmica — hipotensão, choque</li>
+        <li>Sangramento ativo; TC &gt; 20 min</li>
+        <li>Oligúria, mioglobinúria — IRA</li>
+        <li>Paralisia ascendente, falência ventilatória</li>
+        <li>Anafilaxia ao soro — suspender, adrenalina IM</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. CONDUTA COMUM -->
+  <section class="entry">
+    <h2><span class="num">V.</span> Conduta comum</h2>
+    <p class="margin-note">soro EV, ambiente monitorado</p>
+    <div class="do-dont">
+      <div class="do">
+        <h4>Fazer</h4>
+        <ul>
+          <li>Lavar com água e sabão</li>
+          <li>Elevar o membro</li>
+          <li>Analgesia e hidratação EV</li>
+          <li>Antitetânica</li>
+          <li>Monitorização</li>
+          <li>Soro específico EV</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <h4>Não fazer</h4>
+        <ul>
+          <li>Torniquete</li>
+          <li>Sucção</li>
+          <li>Incisão / cautério</li>
+          <li>Gelo</li>
+          <li>Retardar o soro</li>
+          <li>Álcool / chás</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span class="mark">— fim da prancha —</span>
+    MedStack · Laboratório clínico · v.2
+  </footer>
+
+</div>
+
+<!-- sticky dose preview -->
+<div class="sticky" id="sticky" aria-hidden="true">
+  <div class="sticky-inner">
+    <div style="min-width:0">
+      <span class="s-label" id="s-label">Dose</span>
+      <div class="s-val" id="s-val">—</div>
+    </div>
+    <button class="s-top" id="s-top" type="button">ver detalhes ↑</button>
+  </div>
+</div>
+
+<script>
+/* --------- data --------- */
+const ANIMALS = {
+  bothrops: {
+    group:'ofidismo', label:'Bothrops', latin:'jararaca, urutu',
+    picture:['Dor e edema local progressivos','Equimose, bolhas, necrose','Sangramentos: gengivorragia, hematúria, epistaxe','Coagulopatia — TC prolongado','Oligúria / IRA nos graves'],
+    serum:{ name:'SAB — antibotrópico',
+            leve:'2 a 4 ampolas', moderado:'4 a 8 ampolas', grave:'12 ampolas',
+            note:'Diluir em SF, EV em 20–60 min' } },
+  crotalus: {
+    group:'ofidismo', label:'Crotalus', latin:'cascavel',
+    picture:['Fácies miastênica — ptose, oftalmoplegia','Visão turva, diplopia','Mialgia generalizada','Mioglobinúria — urina cor de coca','IRA; dor local pouco expressiva'],
+    serum:{ name:'SAC — anticrotálico',
+            leve:'5 ampolas', moderado:'10 ampolas', grave:'20 ampolas',
+            note:'Hidratação vigorosa; alcalinização se rabdomiólise' } },
+  micrurus: {
+    group:'ofidismo', label:'Micrurus (coral)', latin:'Elapidae',
+    picture:['Neurotoxicidade pura — sem inflamação local','Ptose, disfagia, disartria','Paralisia flácida descendente','Insuficiência respiratória progressiva'],
+    serum:{ name:'SAEl — antielapídico',
+            leve:'10 ampolas', moderado:'10 ampolas', grave:'10 ampolas',
+            note:'Todos os casos = 10 ampolas; suporte ventilatório, IOT precoce' } },
+  lachesis: {
+    group:'ofidismo', label:'Lachesis', latin:'surucucu',
+    picture:['Quadro botrópico (dor, edema, sangramento)','Síndrome vagal: bradicardia, hipotensão','Diarreia, cólica, sudorese','Coagulopatia grave'],
+    serum:{ name:'SABL — antibotrópico-laquético',
+            leve:'10 ampolas', moderado:'10 ampolas', grave:'20 ampolas',
+            note:'Atropina SOS na síndrome vagal' } },
+  escorpiao: {
+    group:'escorpionismo', label:'Escorpião', latin:'Tityus',
+    picture:['Dor local intensa, parestesia irradiada','Sudorese, sialorreia, vômitos','Taquicardia, hipertensão → hipotensão','EAP, miocardite, choque (crianças!)'],
+    serum:{ name:'SAE / SAAr — antiescorpiônico',
+            leve:'— (só analgesia)', moderado:'2 a 3 ampolas', grave:'4 a 6 ampolas',
+            note:'Bloqueio com lidocaína 2 % s/ vasoconstritor' } },
+  loxosceles: {
+    group:'araneismo', label:'Loxosceles', latin:'aranha-marrom',
+    picture:['Picada indolor inicial','Lesão necrótica 24–72 h — placa marmórea','Forma hemolítica: icterícia, hemoglobinúria, IRA','Febre, mialgia'],
+    serum:{ name:'SALox — antiloxoscélico',
+            leve:'— (observar)', moderado:'5 ampolas', grave:'10 ampolas (hemolítica)',
+            note:'Prednisona 40–60 mg/dia' } },
+  phoneutria: {
+    group:'araneismo', label:'Phoneutria', latin:'armadeira',
+    picture:['Dor local intensa, irradiada','Sudorese, taquicardia','Priapismo, agitação (crianças)','Sistêmico raro em adultos'],
+    serum:{ name:'SAAr — antiaracnídico',
+            leve:'— (analgesia / bloqueio)', moderado:'2 a 4 ampolas', grave:'5 a 10 ampolas',
+            note:'Lidocaína 2 % s/ vasoconstritor — 1ª linha' } },
+  latrodectus: {
+    group:'araneismo', label:'Latrodectus', latin:'viúva-negra',
+    picture:['Dor local com sudorese fria','Cãibras, contraturas musculares','Dor abdominal em tábua','Hipertensão, taquicardia, tremores'],
+    serum:{ name:'SALatr — antilatrodéctico',
+            leve:'— (BZD / analgésico)', moderado:'1 ampola', grave:'1 a 2 ampolas',
+            note:'Gluconato de cálcio EV alivia cãibras' } },
+  lonomia: {
+    group:'lepidopterismo', label:'Lonomia', latin:'taturana',
+    picture:['Dor local em queimação ao contato','Síndrome hemorrágica 24–72 h','Gengivorragia, hematúria, equimoses','IRA, AVCh possível'],
+    serum:{ name:'SALon — antilonômico',
+            leve:'— (observar 48 h, coagulograma)', moderado:'5 ampolas', grave:'10 ampolas',
+            note:'Evitar AINE e IM; repor fibrinogênio' } }
+};
+
+/* --------- SVG silhouettes --------- */
+const ICONS = {
+  cobra: `<svg viewBox="0 0 80 50" fill="none" stroke="#2e2a22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 38 Q14 22 28 28 T50 26 Q62 24 66 14"/>
+    <path d="M66 14 Q70 10 74 14"/>
+    <circle cx="72" cy="12" r="1.2" fill="#2e2a22"/>
+    <path d="M74 14 l4 -2" />
+    <path d="M12 38 q2 4 6 4" />
+  </svg>`,
+  escorpiao: `<svg viewBox="0 0 80 50" fill="none" stroke="#2e2a22" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="32" cy="30" rx="14" ry="7"/>
+    <path d="M20 28 Q10 26 8 20"/>
+    <path d="M44 28 Q52 26 56 20"/>
+    <path d="M8 20 l-3 -2"/><path d="M8 20 l-3 2"/>
+    <path d="M56 20 l3 -2"/><path d="M56 20 l3 2"/>
+    <path d="M46 30 Q58 30 64 22 Q70 14 64 8"/>
+    <path d="M64 8 l-3 1"/><path d="M64 8 l1 -3"/>
+    <path d="M24 34 l-3 6"/><path d="M30 36 l-1 7"/>
+    <path d="M36 36 l2 7"/><path d="M42 34 l4 6"/>
+  </svg>`,
+  aranha: `<svg viewBox="0 0 80 50" fill="none" stroke="#2e2a22" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="40" cy="28" rx="10" ry="8"/>
+    <circle cx="40" cy="20" r="4"/>
+    <path d="M32 24 Q22 20 14 10"/>
+    <path d="M32 26 Q20 26 10 22"/>
+    <path d="M32 30 Q20 32 10 36"/>
+    <path d="M34 34 Q26 40 18 46"/>
+    <path d="M48 24 Q58 20 66 10"/>
+    <path d="M48 26 Q60 26 70 22"/>
+    <path d="M48 30 Q60 32 70 36"/>
+    <path d="M46 34 Q54 40 62 46"/>
+  </svg>`,
+  lonomia: `<svg viewBox="0 0 80 50" fill="none" stroke="#2e2a22" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 30 q8 -10 16 0 q8 -10 16 0 q8 -10 16 0 q8 -10 14 2"/>
+    <path d="M14 26 l-2 -6"/><path d="M22 26 l2 -7"/>
+    <path d="M30 26 l-2 -6"/><path d="M38 26 l2 -7"/>
+    <path d="M46 26 l-2 -6"/><path d="M54 26 l2 -7"/>
+    <path d="M62 26 l-2 -6"/>
+    <circle cx="72" cy="30" r="1.2" fill="#2e2a22"/>
+  </svg>`
+};
+
+const GROUPS = [
+  { key:'cobra',    label:'Cobras',    latin:'Serpentes',    icon:'cobra',
+    members:['bothrops','crotalus','micrurus','lachesis'] },
+  { key:'escorpiao',label:'Escorpião', latin:'Tityus',       icon:'escorpiao',
+    members:['escorpiao'] },
+  { key:'aranha',   label:'Aranhas',   latin:'Araneae',      icon:'aranha',
+    members:['loxosceles','phoneutria','latrodectus'] },
+  { key:'lonomia',  label:'Taturana',  latin:'Lonomia',      icon:'lonomia',
+    members:['lonomia'] }
+];
+
+/* --------- render picker --------- */
+const pickerEl = document.getElementById('picker');
+GROUPS.forEach(g=>{
+  const d = document.createElement('div');
+  d.className='pick'; d.dataset.group=g.key;
+  d.innerHTML = `${ICONS[g.icon]}<div class="name">${g.label}</div><span class="latin">${g.latin}</span>`;
+  d.addEventListener('click',()=>selectGroup(g.key));
+  pickerEl.appendChild(d);
+});
+
+/* --------- state --------- */
+let state = { group:null, animal:null, severity:'moderado' };
+
+/* --------- select group --------- */
+function selectGroup(key){
+  state.group = key;
+  document.querySelectorAll('.pick').forEach(el=>{
+    el.classList.toggle('active', el.dataset.group===key);
+  });
+  const g = GROUPS.find(x=>x.key===key);
+  const subwrap = document.getElementById('subwrap');
+  const subpicker = document.getElementById('subpicker');
+  subpicker.innerHTML='';
+  if(g.members.length>1){
+    subwrap.style.display='';
+    g.members.forEach(m=>{
+      const a = ANIMALS[m];
+      const b = document.createElement('button');
+      b.type='button';
+      b.className='sub'; b.dataset.animal=m;
+      b.innerHTML = `${a.label}<em>${a.latin}</em>`;
+      b.addEventListener('click',()=>selectAnimal(m));
+      subpicker.appendChild(b);
+    });
+    selectAnimal(g.members[0]);
+  } else {
+    subwrap.style.display='none';
+    selectAnimal(g.members[0]);
+  }
+  // smooth scroll to clinical panel
+  requestAnimationFrame(()=>{
+    document.getElementById('clinica-sec').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+
+function selectAnimal(key){
+  state.animal = key;
+  document.querySelectorAll('.sub').forEach(el=>{
+    el.classList.toggle('active', el.dataset.animal===key);
+  });
+  renderPanel();
+}
+
+/* --------- severity --------- */
+document.querySelectorAll('.sev').forEach(el=>{
+  el.addEventListener('click',()=>{
+    state.severity = el.dataset.sev;
+    document.querySelectorAll('.sev').forEach(s=>s.classList.toggle('active', s===el));
+    renderPanel();
+  });
+});
+
+/* --------- render panel --------- */
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  const sticky = document.getElementById('sticky');
+  if(!state.animal){
+    panel.classList.add('empty');
+    sticky.classList.remove('show');
+    sticky.setAttribute('aria-hidden','true');
+    return;
+  }
+  panel.classList.remove('empty');
+  const a = ANIMALS[state.animal];
+  const title = `${a.label} <em style="font-family:'Crimson Pro',serif;font-weight:400;color:var(--ink-soft);font-size:.82rem;font-style:italic">(${a.latin})</em>`;
+  document.getElementById('p-title').innerHTML = title;
+
+  const pic = `<h4>Quadro clínico</h4><ul>${a.picture.map(p=>`<li>${p}</li>`).join('')}</ul>`;
+
+  const raw = a.serum[state.severity] || '—';
+  const isNone = raw.trim().startsWith('—');
+  const ampHtml = raw.replace(/(\d+(?:\s*a\s*\d+)?)\s*ampolas?/i, m=>`<span class="amp">${m}</span>`);
+  const sev = state.severity.charAt(0).toUpperCase()+state.severity.slice(1);
+
+  const doseBlock = `
+    <div class="dose ${isNone?'none':''}">
+      <span class="label">${a.serum.name} · ${sev}</span>
+      <div class="val">${ampHtml}</div>
+      <span class="note">${a.serum.note}</span>
+    </div>`;
+  document.getElementById('p-body').innerHTML = pic + doseBlock;
+
+  // sticky footer content
+  document.getElementById('s-label').textContent = `${a.label} · ${sev}`;
+  document.getElementById('s-val').innerHTML = ampHtml;
+  updateStickyVisibility();
+}
+
+/* --------- sticky visibility: show when dose is off-screen --------- */
+const clinicaSec = document.getElementById('clinica-sec');
+const stickyEl = document.getElementById('sticky');
+function updateStickyVisibility(){
+  if(!state.animal){ stickyEl.classList.remove('show'); return; }
+  const r = clinicaSec.getBoundingClientRect();
+  const offscreen = r.bottom < 120 || r.top > window.innerHeight - 60;
+  stickyEl.classList.toggle('show', offscreen);
+  stickyEl.setAttribute('aria-hidden', offscreen?'false':'true');
+}
+document.addEventListener('scroll', updateStickyVisibility, {passive:true});
+window.addEventListener('resize', updateStickyVisibility);
+
+document.getElementById('s-top').addEventListener('click',()=>{
+  clinicaSec.scrollIntoView({behavior:'smooth',block:'start'});
+});
+
+/* --------- elapsed time stamp --------- */
+const horaInput = document.getElementById('f-hora');
+const stamp = document.getElementById('stamp');
+const tval = document.getElementById('tval');
+function fmtElapsed(){
+  const v = horaInput.value;
+  if(!v){ stamp.classList.add('empty'); tval.textContent='—'; return; }
+  const [h,m] = v.split(':').map(Number);
+  const now = new Date();
+  const then = new Date(now);
+  then.setHours(h, m, 0, 0);
+  // if "then" ainda está no futuro, assume picada foi ontem
+  if(then > now) then.setDate(then.getDate()-1);
+  const diffMin = Math.max(0, Math.round((now-then)/60000));
+  let txt;
+  if(diffMin < 60) txt = `${diffMin} min`;
+  else {
+    const hh = Math.floor(diffMin/60), mm = diffMin%60;
+    txt = mm ? `${hh} h ${mm} min` : `${hh} h`;
+  }
+  tval.textContent = txt;
+  stamp.classList.remove('empty');
+}
+horaInput.addEventListener('input', fmtElapsed);
+horaInput.addEventListener('change', fmtElapsed);
+// refresh a cada minuto
+setInterval(()=>{ if(horaInput.value) fmtElapsed(); }, 60000);
+</script>
+</body>
+</html>

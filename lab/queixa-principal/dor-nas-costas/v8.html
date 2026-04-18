@@ -1,0 +1,1372 @@
+<!-- VERSION: 8 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Dor nas Costas - Avaliacao Estruturada</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent;overflow-x:hidden;letter-spacing:-0.005em}
+  header{background:#0f172a;width:100%;padding:1rem 1.25rem .85rem;text-align:center;border-bottom:1px solid #1e293b;position:relative}
+  header h1{font-size:1.05rem;font-weight:600;color:#f1f5f9;letter-spacing:-0.01em}
+  header p{font-size:.68rem;color:#64748b;margin-top:.2rem;font-weight:400;letter-spacing:.02em}
+  .back-link{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#64748b;text-decoration:none;font-size:.78rem;font-weight:500;padding:.5rem .25rem;transition:color .2s}
+  .back-link:hover,.back-link:focus-visible{color:#e2e8f0;outline:none}
+  .container{max-width:700px;width:100%;padding:1.15rem;display:flex;flex-direction:column;gap:.85rem;padding-bottom:3rem}
+  /* ---- Spine rail ---- */
+  .spine-rail{display:flex;gap:.4rem;padding:.1rem 0;position:relative}
+  .spine-rail::before{content:'';position:absolute;left:.35rem;right:.35rem;top:3px;height:1px;background:linear-gradient(to right,#1e293b 0%,#334155 50%,#1e293b 100%);opacity:.55;z-index:0}
+  .vertebra{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:1}
+  .vert-disc{width:100%;height:7px;border-radius:3.5px;background:#1e293b;transition:background .35s ease,box-shadow .35s ease}
+  .vert-disc.done{background:#60a5fa}
+  .vert-disc.active{background:#93c5fd;box-shadow:0 0 10px rgba(147,197,253,.4);animation:vertPulse 1.8s ease-in-out infinite}
+  @keyframes vertPulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .vert-label{font-size:.52rem;color:#475569;text-transform:uppercase;letter-spacing:.06em;font-weight:500;transition:color .3s;text-align:center;line-height:1.1}
+  .vertebra.active .vert-label{color:#93c5fd}
+  .vertebra.done .vert-label{color:#60a5fa}
+  /* Context strip */
+  .context-strip{display:flex;flex-wrap:wrap;gap:.3rem}
+  .context-chip{font-size:.62rem;padding:.2rem .55rem;border-radius:9999px;background:#101d35;border:1px solid #1e293b;color:#94a3b8;display:inline-flex;align-items:center;gap:.3rem;line-height:1.3}
+  .context-chip .chip-val{color:#cbd5e1;font-weight:600}
+  .context-chip.alert{background:#2a0e0e;border-color:#7f1d1d;color:#fca5a5}
+  .context-chip.alert .chip-val{color:#fca5a5}
+  .context-chip.info{border-color:#1e40af;color:#93c5fd}
+  .context-chip.info .chip-val{color:#93c5fd}
+  /* Card */
+  .card{background:#131f38;border:1px solid #1e293b;border-radius:.9rem;padding:1.35rem;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.05rem;color:#f8fafc;font-weight:600;letter-spacing:-0.01em;margin-bottom:.2rem}
+  .card .subtitle{font-size:.74rem;color:#64748b;margin-bottom:1rem;line-height:1.5}
+  .options{display:flex;flex-direction:column;gap:.5rem}
+  .option-group-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:#64748b;margin-top:.65rem;margin-bottom:-.05rem;display:flex;align-items:center;gap:.4rem;font-weight:600}
+  .option-group-label:first-child{margin-top:0}
+  .group-line{flex:1;height:1px;background:#1e293b}
+  /* Check buttons */
+  .check-btn{background:#0f172a;border:1.5px solid #1e293b;border-radius:.65rem;padding:.68rem .85rem;color:#cbd5e1;font-size:.84rem;cursor:pointer;transition:border-color .18s,background .18s,color .18s;text-align:left;display:flex;align-items:center;gap:.7rem;-webkit-user-select:none;user-select:none;width:100%;font-family:inherit;line-height:1.35}
+  .check-btn:hover{border-color:#3b82f6;background:#101d35;color:#f1f5f9}
+  .check-btn:active{transform:scale(.985)}
+  .check-btn:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .check-btn.checked{border-color:#3b82f6;background:#172554;color:#f1f5f9}
+  .check-btn.checked.flag-critical{border-color:#ef4444;background:#2a0e0e;color:#fca5a5}
+  .check-btn.checked.flag-warn{border-color:#d97706;background:#2a1808;color:#fcd34d}
+  .check-box{width:18px;height:18px;border:1.5px solid #475569;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.7rem}
+  .check-btn.checked .check-box{background:#3b82f6;border-color:#3b82f6;color:#fff}
+  .check-btn.checked.flag-critical .check-box{background:#ef4444;border-color:#ef4444}
+  .check-btn.checked.flag-warn .check-box{background:#d97706;border-color:#d97706}
+  .check-btn .label{flex:1;min-width:0}
+  .check-desc{font-size:.66rem;color:#64748b;margin-top:.15rem;font-weight:400}
+  /* Option buttons (radios) */
+  .option-btn{background:#0f172a;border:1.5px solid #1e293b;border-radius:.65rem;padding:.78rem .9rem;color:#cbd5e1;font-size:.88rem;cursor:pointer;transition:border-color .18s,background .18s,color .18s;text-align:left;display:flex;align-items:flex-start;gap:.7rem;-webkit-user-select:none;user-select:none;width:100%;font-family:inherit;line-height:1.4}
+  .option-btn:hover{border-color:#3b82f6;background:#101d35;color:#f1f5f9}
+  .option-btn:active{transform:scale(.985)}
+  .option-btn:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .option-btn.selected{border-color:#3b82f6;background:#172554;color:#f1f5f9}
+  .option-btn .label{flex:1;min-width:0}
+  .option-btn .tag{font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;padding:.18rem .45rem;border-radius:9999px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:.1rem}
+  .tag-mec{background:#0e3a42;color:#67e8f9}.tag-nonmec{background:#3b1f6b;color:#c4b5fd}.tag-ref{background:#5c2a07;color:#fcd34d}
+  /* Score options */
+  .score-opt{flex:1;padding:.55rem .35rem;border-radius:.5rem;font-size:.72rem;cursor:pointer;border:1.5px solid #1e293b;background:#0f172a;color:#64748b;text-align:center;transition:border-color .18s,background .18s,color .18s;line-height:1.3;-webkit-user-select:none;user-select:none;font-family:inherit}
+  .score-opt:hover{border-color:#3b82f6;color:#cbd5e1}
+  .score-opt:active{transform:scale(.96)}
+  .score-opt:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .score-opt.picked{border-color:#3b82f6;background:#172554;color:#f1f5f9;font-weight:600}
+  /* EVA */
+  .eva-container{display:flex;align-items:center;gap:.9rem;margin-top:.35rem}
+  .eva-slider-wrap{flex:1;position:relative;padding:.25rem 0;min-width:0}
+  .eva-slider{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;outline:none;cursor:pointer;transition:background .2s}
+  .eva-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.4);transition:transform .15s}
+  .eva-slider::-webkit-slider-thumb:active{transform:scale(1.15)}
+  .eva-slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+  .eva-value-box{text-align:center;min-width:3rem;flex-shrink:0}
+  .eva-value{font-size:1.75rem;font-weight:700;line-height:1;transition:color .2s;font-variant-numeric:tabular-nums}
+  .eva-label{font-size:.55rem;color:#64748b;margin-top:.2rem;text-transform:uppercase;letter-spacing:.08em}
+  .eva-intensity{font-size:.62rem;font-weight:500;margin-top:.1rem;transition:color .2s}
+  .eva-anchors{display:flex;justify-content:space-between;font-size:.58rem;color:#475569;padding:0 .15rem;margin-top:.25rem}
+  /* Duration chips */
+  .duration-row{display:flex;gap:.45rem;flex-wrap:wrap}
+  .dur-chip{flex:1;min-width:0;padding:.58rem .5rem;border-radius:.55rem;font-size:.76rem;cursor:pointer;border:1.5px solid #1e293b;background:#0f172a;color:#64748b;text-align:center;transition:border-color .18s,background .18s,color .18s;line-height:1.3;-webkit-user-select:none;user-select:none;font-family:inherit}
+  .dur-chip:hover{border-color:#3b82f6;color:#cbd5e1}
+  .dur-chip:active{transform:scale(.96)}
+  .dur-chip:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .dur-chip.picked{border-color:#3b82f6;background:#172554;color:#f1f5f9;font-weight:600}
+  .dur-chip .dur-label{font-weight:600;display:block;font-size:.8rem}
+  .dur-chip .dur-range{font-size:.58rem;color:#94a3b8;display:block;margin-top:.1rem}
+  /* Nav */
+  .nav-row{display:flex;gap:.6rem;margin-top:1rem}
+  .nav-btn{flex:1;padding:.78rem;border-radius:.65rem;font-size:.86rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;-webkit-user-select:none;user-select:none;font-family:inherit;min-height:48px}
+  .nav-btn.secondary{background:#1e293b;color:#cbd5e1}.nav-btn.secondary:hover{background:#334155}
+  .nav-btn.primary{background:#3b82f6;color:#fff}.nav-btn.primary:hover{background:#2563eb}
+  .nav-btn.primary:active{transform:scale(.98);background:#1d4ed8}
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed}
+  .nav-btn:disabled:active{transform:none}
+  .nav-btn:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+  .nav-btn.danger{background:transparent;color:#94a3b8;border:1px solid #334155}.nav-btn.danger:hover{color:#fca5a5;border-color:#7f1d1d;background:#2a0e0e}
+  /* Validation hint */
+  .validation-hint{font-size:.7rem;color:#f59e0b;text-align:center;margin-top:.5rem;opacity:0;transition:opacity .25s;min-height:1.1rem;line-height:1.3}
+  .validation-hint.visible{opacity:1}
+  .validation-hint.shake{animation:shake .4s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+  /* Result */
+  .result-card{text-align:center;padding:1.6rem 1.15rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:4.4rem;height:4.4rem;border-radius:50%;font-size:1.55rem;font-weight:700;margin-bottom:.8rem;animation:badgePop .35s ease;letter-spacing:0;font-family:'SF Mono','Fira Code','Consolas',monospace}
+  @keyframes badgePop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+  .result-badge.risk-emergent{background:#2a0e0e;color:#fca5a5;border:2px solid #ef4444}
+  .result-badge.risk-urgent{background:#2a1808;color:#fcd34d;border:2px solid #d97706}
+  .result-badge.risk-routine{background:#0a2818;color:#86efac;border:2px solid #16a34a}
+  .result-title{font-size:1.18rem;font-weight:600;margin-bottom:.25rem;letter-spacing:-0.01em}
+  .result-desc{color:#94a3b8;font-size:.8rem;margin-bottom:1.2rem;line-height:1.5}
+  .dark-box{background:#0f172a;border-radius:.7rem;padding:.95rem 1rem;text-align:left;margin-bottom:.7rem;border:1px solid #1e293b;transition:border-color .2s}
+  .dark-box:hover{border-color:#334155}
+  .dark-box h3{font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.42rem 0;border-bottom:1px solid #1e293b;font-size:.8rem;gap:.5rem}
+  .summary-row:last-child{border-bottom:none}.summary-row .criteria{color:#94a3b8;flex-shrink:0}
+  .summary-row .value{font-weight:500;display:flex;align-items:center;gap:.4rem;text-align:right;max-width:58%;flex-wrap:wrap;justify-content:flex-end;color:#e2e8f0}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .dot-red{background:#ef4444}.dot-yellow{background:#f59e0b}.dot-green{background:#22c55e}.dot-blue{background:#60a5fa}
+  .conduta-box{border-radius:.7rem;padding:.95rem 1rem;text-align:left;margin-bottom:.7rem;border:1px solid}
+  .conduta-box h3{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .conduta-box.alta-prob{background:#1a0808;border-color:#7f1d1d}.conduta-box.alta-prob h3{color:#fca5a5}
+  .conduta-box.mod-prob{background:#1a1004;border-color:#78350f}.conduta-box.mod-prob h3{color:#fcd34d}
+  .conduta-box.baixa-prob{background:#081a10;border-color:#14532d}.conduta-box.baixa-prob h3{color:#86efac}
+  .conduta-item{display:flex;align-items:flex-start;gap:.55rem;padding:.38rem 0;font-size:.8rem;color:#cbd5e1;line-height:1.45;border-bottom:1px solid rgba(148,163,184,.08)}
+  .conduta-item:last-child{border-bottom:none}
+  .conduta-bullet{flex-shrink:0;width:6px;height:6px;border-radius:50%;background:currentColor;margin-top:.5rem;opacity:.5}
+  .conduta-detail{font-size:.68rem;color:#94a3b8;margin-top:.2rem;line-height:1.45}
+  .flag-count{display:inline-flex;align-items:center;gap:.35rem;padding:.22rem .6rem;border-radius:9999px;font-size:.7rem;font-weight:600;margin:.15rem .2rem .2rem}
+  .flag-count.has-flags{background:#2a0e0e;color:#fca5a5;border:1px solid #7f1d1d}
+  .flag-count.no-flags{background:#0a2818;color:#86efac;border:1px solid #14532d}
+  .neuro-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+  .neuro-grid .score-opt{padding:.55rem .4rem;font-size:.72rem}
+  .neuro-field-label{display:flex;align-items:center;gap:.4rem}
+  .neuro-field-status{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
+  .neuro-field-status.filled{background:#3b82f6}
+  .neuro-field-status.empty{background:#334155}
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.1rem 0;border-radius:.35rem;transition:opacity .2s;gap:.5rem}
+  .collapse-header:active{opacity:.7}
+  .collapse-arrow{font-size:.65rem;color:#64748b;transition:transform .3s ease;flex-shrink:0}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .3s ease, opacity .22s ease;max-height:0;opacity:0}
+  .collapse-body.visible{max-height:4000px;opacity:1;margin-top:.65rem}
+  .note-text{background:#020617;border:1px solid #1e293b;border-radius:.5rem;padding:.85rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.68rem;color:#94a3b8;white-space:pre-wrap;line-height:1.6;max-height:380px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.65rem;padding:.62rem;border-radius:.5rem;border:1.5px solid #1e293b;background:#131f38;color:#cbd5e1;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;min-height:46px}
+  .copy-btn:hover{border-color:#3b82f6;background:#172554;color:#f1f5f9}
+  .copy-btn:active{transform:scale(.98)}
+  .copy-btn.copied{border-color:#16a34a;background:#0a2818;color:#86efac}
+  .alert-banner{background:#1a0808;border:1px solid #7f1d1d;border-radius:.7rem;padding:.78rem .9rem;margin-bottom:.55rem;display:flex;align-items:flex-start;gap:.65rem;animation:fade .3s ease}
+  .alert-banner.warn{background:#1a1004;border-color:#78350f}
+  .alert-banner .alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:.4rem;background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.2)}
+  .alert-banner.warn .alert-dot{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.2)}
+  .alert-banner .alert-text{font-size:.82rem;color:#fca5a5;font-weight:600;line-height:1.35}
+  .alert-banner.warn .alert-text{color:#fcd34d}
+  .alert-banner .alert-detail{font-size:.7rem;color:#f87171;font-weight:400;margin-top:.2rem;line-height:1.4}
+  .alert-banner.warn .alert-detail{color:#fbbf24}
+  .section-label{font-size:.68rem;color:#94a3b8;font-weight:600;margin-bottom:.45rem;margin-top:.85rem;display:flex;align-items:center;gap:.5rem;letter-spacing:.02em}
+  .section-label:first-of-type{margin-top:0}
+  .section-label .sl-line{flex:1;height:1px;background:#1e293b}
+  /* Dermatome ref (collapsible) */
+  .derm-toggle{width:100%;margin-top:.6rem;padding:.55rem .75rem;background:#0f172a;border:1px solid #1e293b;border-radius:.5rem;color:#93c5fd;font-size:.72rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:inherit;transition:border-color .18s,background .18s}
+  .derm-toggle:hover,.derm-toggle:focus-visible{border-color:#3b82f6;background:#101d35;outline:none}
+  .derm-toggle .derm-arrow{font-size:.6rem;transition:transform .3s ease}
+  .derm-toggle.open .derm-arrow{transform:rotate(180deg)}
+  .dermatome-hint{background:#0f172a;border:1px solid #1e293b;border-radius:.5rem;padding:.7rem;margin-top:.4rem;font-size:.68rem;color:#94a3b8;line-height:1.45}
+  .dermatome-hint .derm-row{display:grid;grid-template-columns:2rem 1fr 1fr;gap:.5rem;padding:.22rem 0;border-bottom:1px solid #1e293b;align-items:start}
+  .dermatome-hint .derm-row:last-child{border-bottom:none}
+  .dermatome-hint .derm-row.head{font-weight:700;color:#64748b;font-size:.56rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #1e293b}
+  .dermatome-hint .derm-level{color:#93c5fd;font-weight:600;font-family:'SF Mono','Consolas',monospace;font-size:.68rem}
+  .dermatome-hint .derm-sub{color:#64748b;font-size:.6rem;display:block;margin-top:.1rem}
+  /* SI test reference */
+  .si-test-ref{background:#0f172a;border:1px solid #1e293b;border-radius:.5rem;padding:.58rem .78rem;margin-top:.45rem;font-size:.68rem;color:#94a3b8;line-height:1.55}
+  .si-test-ref strong{color:#cbd5e1}
+  .si-test-ref .test-name{color:#93c5fd;font-weight:600}
+  /* Differential */
+  .diff-box{background:#0f172a;border:1px solid #1e293b;border-radius:.5rem;padding:.65rem .85rem;margin-top:.4rem}
+  .diff-item{display:flex;align-items:flex-start;gap:.45rem;padding:.35rem 0;font-size:.76rem;color:#cbd5e1;border-bottom:1px solid #1e293b;line-height:1.4}
+  .diff-item:last-child{border-bottom:none}
+  .diff-prob{font-size:.54rem;text-transform:uppercase;letter-spacing:.07em;padding:.12rem .4rem;border-radius:9999px;font-weight:700;flex-shrink:0;margin-top:.12rem;min-width:4.2rem;text-align:center}
+  .prob-high{background:#7f1d1d;color:#fecaca}.prob-mod{background:#78350f;color:#fcd34d}.prob-low{background:#0e3a42;color:#67e8f9}
+  .skip-flags{display:block;text-align:center;margin-top:.5rem;font-size:.7rem;color:#64748b;cursor:pointer;text-decoration:underline;text-underline-offset:3px;background:none;border:none;font-family:inherit;padding:.5rem;width:100%}
+  .skip-flags:hover,.skip-flags:focus-visible{color:#94a3b8;outline:none}
+  /* Info boxes */
+  .info-box{display:flex;align-items:flex-start;gap:.45rem;padding:.55rem .72rem;border-radius:.5rem;font-size:.7rem;line-height:1.45;margin-top:.45rem;margin-bottom:.25rem}
+  .info-box.info{background:#101d35;border:1px solid #1e40af;color:#93c5fd}
+  .info-box.warn{background:#1a1004;border:1px solid #78350f;color:#fcd34d}
+  .info-box.alert{background:#1a0808;border:1px solid #7f1d1d;color:#fca5a5}
+  .info-box::before{content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;background:currentColor;margin-top:.35rem}
+  /* Disclaimer */
+  .disclaimer{text-align:center;font-size:.6rem;color:#475569;padding:.8rem;line-height:1.55;border-top:1px solid #1e293b;margin-top:.5rem}
+  /* Restart overlay */
+  .restart-overlay{position:fixed;inset:0;background:rgba(2,6,23,.75);display:flex;align-items:center;justify-content:center;z-index:1000;animation:fadeIn .18s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:1rem}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .restart-dialog{background:#131f38;border:1px solid #334155;border-radius:.8rem;padding:1.3rem;max-width:340px;width:100%;text-align:center;animation:badgePop .25s ease}
+  .restart-dialog h3{font-size:.95rem;color:#f1f5f9;margin-bottom:.4rem;font-weight:600}
+  .restart-dialog p{font-size:.78rem;color:#94a3b8;margin-bottom:1.1rem;line-height:1.45}
+  .restart-dialog .dialog-btns{display:flex;gap:.6rem}
+  .restart-dialog .dialog-btns button{flex:1;padding:.65rem;border-radius:.5rem;font-size:.82rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;min-height:44px}
+  /* Responsive */
+  @media(max-width:500px){
+    .container{padding:.85rem}
+    .card{padding:1.05rem}
+    .check-btn{padding:.58rem .7rem;font-size:.8rem}
+    .option-btn{padding:.7rem .8rem;font-size:.84rem}
+    header h1{font-size:1rem}header p{font-size:.64rem}
+    .vert-label{font-size:.46rem}
+    .score-opt{font-size:.66rem;padding:.45rem .25rem}
+    .neuro-grid{grid-template-columns:1fr}
+    .neuro-grid .score-opt{font-size:.74rem;padding:.55rem .4rem;text-align:left;padding-left:.85rem}
+    .eva-value{font-size:1.4rem}
+    .eva-value-box{min-width:2.8rem}
+    .eva-slider::-webkit-slider-thumb{width:32px;height:32px}
+    .eva-slider::-moz-range-thumb{width:32px;height:32px}
+    .duration-row{gap:.35rem}
+    .dur-chip{padding:.52rem .4rem;min-width:calc(33% - .3rem);flex:none}
+    .context-chip{font-size:.56rem;padding:.18rem .5rem}
+    .summary-row{flex-direction:column;gap:.15rem}
+    .summary-row .value{max-width:100%;text-align:left;justify-content:flex-start}
+    .nav-btn{min-height:50px;font-size:.88rem}
+    .back-link{left:.85rem;font-size:.74rem}
+    .result-card{padding:1.35rem .95rem}
+    .result-badge{width:3.7rem;height:3.7rem;font-size:1.25rem}
+    .dermatome-hint .derm-row{grid-template-columns:1.8rem 1fr 1fr}
+  }
+  @media(max-width:360px){
+    .container{padding:.7rem}
+    .card{padding:.9rem;border-radius:.7rem}
+    header h1{font-size:.94rem}
+    .vert-label{font-size:.42rem}
+    .dur-chip{min-width:100%;flex:none}
+  }
+  /* Print */
+  @media print{
+    body{background:#fff;color:#000}
+    .card{background:#fff;border-color:#ccc}
+    .dark-box{background:#f8f8f8;border-color:#ccc}
+    .conduta-box{background:#f8f8f8!important;border-color:#ccc!important}
+    .conduta-box h3{color:#333!important}
+    .conduta-item{color:#000;border-color:#eee}
+    .conduta-detail{color:#555}
+    .nav-row,.spine-rail,.back-link,.copy-btn,.skip-flags,.restart-overlay,.derm-toggle{display:none!important}
+    .collapse-body{max-height:none!important;opacity:1!important;margin-top:.5rem!important}
+    .note-text{background:#f8f8f8;color:#000;border-color:#ccc}
+    .alert-banner{background:#fef2f2!important;border-color:#fca5a5!important}
+    .alert-banner .alert-text,.alert-banner .alert-detail{color:#991b1b!important}
+    .diff-box{background:#f8f8f8;border-color:#ccc}
+    .diff-item{color:#000;border-color:#eee}
+    .summary-row{border-color:#eee}
+    .summary-row .criteria{color:#666}
+    .summary-row .value{color:#000}
+    .disclaimer{color:#666}
+    .dermatome-hint{background:#f8f8f8;border-color:#ccc;color:#000}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../dor-nas-costas.html" class="back-link" aria-label="Voltar">&larr; Voltar</a>
+  <h1>Avaliador de Dor nas Costas</h1>
+  <p>Alarme . Dor . Neurologia . Conduta</p>
+</header>
+<div class="container" id="app"></div>
+<div id="overlayRoot"></div>
+<script>
+// ============================================
+// DATA
+// ============================================
+const STEP_LABELS=['Alarme','Dor','Local','Neuro','Sintomas','Plano'];
+const TOTAL_STEPS=6;
+
+const RED_FLAGS=[
+  {id:'cauda_saddle',label:'Anestesia em sela (perineal)',group:'cauda',severity:'critical'},
+  {id:'cauda_bladder',label:'Disfuncao vesical (retencao/incontinencia)',group:'cauda',severity:'critical'},
+  {id:'cauda_bowel',label:'Disfuncao intestinal (incontinencia fecal)',group:'cauda',severity:'critical'},
+  {id:'cauda_neuro',label:'Deficit neurologico progressivo em MMII',group:'cauda',severity:'critical'},
+  {id:'fever',label:'Febre',group:'infec',severity:'warn'},
+  {id:'ivdu',label:'Uso de drogas intravenosas',group:'infec',severity:'warn'},
+  {id:'immunosupp',label:'Imunossupressao',group:'infec',severity:'warn'},
+  {id:'recent_procedure',label:'Procedimento espinhal recente',group:'infec',severity:'warn'},
+  {id:'cancer',label:'Historia de neoplasia',group:'neopl',severity:'warn'},
+  {id:'weight_loss',label:'Perda de peso inexplicada',group:'neopl',severity:'warn'},
+  {id:'age_risk',label:'Idade > 50 ou < 20 anos',group:'neopl',severity:'warn'},
+  {id:'night_pain',label:'Dor noturna que nao alivia em repouso',group:'neopl',severity:'warn'},
+  {id:'trauma',label:'Trauma significativo (ou menor em idoso/osteoporose)',group:'fratura',severity:'warn'},
+  {id:'corticoid',label:'Uso cronico de corticoides',group:'fratura',severity:'warn'},
+  {id:'osteoporosis',label:'Osteoporose conhecida',group:'fratura',severity:'warn'},
+  {id:'anticoag',label:'Uso de anticoagulantes',group:'vascular',severity:'warn'},
+  {id:'aortic_risk',label:'Historia de aneurisma / doenca vascular',group:'vascular',severity:'critical'},
+];
+
+const CAUDA_IDS=['cauda_saddle','cauda_bladder','cauda_bowel','cauda_neuro'];
+const INFEC_IDS=['fever','ivdu','immunosupp','recent_procedure'];
+const NEOPL_IDS=['cancer','weight_loss','age_risk','night_pain'];
+const FRATURA_IDS=['trauma','corticoid','osteoporosis'];
+
+const PAIN_TYPES=[
+  {id:'mechanical',label:'Mecanica',desc:'Piora com movimento, melhora com repouso.',tag:'tag-mec',tagLabel:'Mecanica'},
+  {id:'nonmechanical',label:'Nao-mecanica / Inflamatoria',desc:'Rigidez matinal > 30min, melhora com atividade, dor noturna.',tag:'tag-nonmec',tagLabel:'Inflamatoria'},
+  {id:'referred',label:'Referida / Visceral',desc:'Constante, sem relacao postural; sintomas sistemicos.',tag:'tag-ref',tagLabel:'Referida'},
+];
+
+const DURATIONS=[
+  {id:'acute',label:'Aguda',range:'< 4 sem'},
+  {id:'subacute',label:'Subaguda',range:'4-12 sem'},
+  {id:'chronic',label:'Cronica',range:'> 12 sem'},
+];
+
+const LOCATIONS=[
+  {id:'cervical',label:'Cervical',hint:'Pescoco, base do cranio'},
+  {id:'thoracic',label:'Toracica',hint:'Dorso medio, entre escapulas'},
+  {id:'lumbar',label:'Lombar',hint:'Regiao mais comum'},
+  {id:'sacral',label:'Sacral / Sacroiliaca',hint:'Nadega, articulacao SI'},
+];
+
+const IRRADIATION=[
+  {id:'none',label:'Sem irradiacao'},
+  {id:'buttock',label:'Nadega / Gluteo'},
+  {id:'posterior_thigh',label:'Face posterior da coxa'},
+  {id:'below_knee',label:'Abaixo do joelho (panturrilha / pe)'},
+  {id:'bilateral_legs',label:'Bilateral em MMII'},
+  {id:'upper_limb',label:'Membro superior (cervicalgia)'},
+  {id:'chest_abd',label:'Torax / Abdome (toracica)'},
+];
+
+const NEURO_TESTS={
+  motor:{label:'Forca motora',opts:[
+    {v:'normal',l:'5/5 Normal'},
+    {v:'leve',l:'4/5 Leve deficit'},
+    {v:'moderado',l:'3/5 Moderado'},
+    {v:'grave',l:'< 3/5 Grave'},
+  ]},
+  sensory:{label:'Alteracao sensitiva',opts:[
+    {v:'normal',l:'Normal'},
+    {v:'dermatomal',l:'Dermatomal definido'},
+    {v:'difusa',l:'Difusa / Nao-dermatomal'},
+    {v:'saddle',l:'Em sela (perineal)'},
+  ]},
+  reflex:{label:'Reflexos',opts:[
+    {v:'normal',l:'Normais / Simetricos'},
+    {v:'hipo',l:'Hiporreflexia'},
+    {v:'hiper',l:'Hiperreflexia / Clonus'},
+    {v:'assimetrico',l:'Assimetricos'},
+  ]},
+  slr:{label:'Lasegue (SLR)',opts:[
+    {v:'negative',l:'Negativo'},
+    {v:'positive_uni',l:'Positivo unilateral'},
+    {v:'positive_bi',l:'Positivo bilateral'},
+    {v:'not_done',l:'Nao realizado'},
+  ]},
+  babinski:{label:'Babinski',opts:[
+    {v:'normal',l:'Flexor (normal)'},
+    {v:'extensor',l:'Extensor (positivo)'},
+    {v:'not_done',l:'Nao avaliado'},
+  ]},
+  gait:{label:'Marcha',opts:[
+    {v:'normal',l:'Normal'},
+    {v:'antalgic',l:'Antalgica'},
+    {v:'steppage',l:'Escarvante (pe caido)'},
+    {v:'spastic',l:'Espastica'},
+    {v:'not_done',l:'Nao avaliada'},
+  ]},
+};
+
+const ASSOC_SYMPTOMS=[
+  {id:'radiculopathy',label:'Dor radicular (irradia para membro)'},
+  {id:'claudication',label:'Claudicacao neurogenica (piora ao caminhar)'},
+  {id:'morning_stiffness',label:'Rigidez matinal > 30 minutos'},
+  {id:'paresthesia',label:'Parestesias (formigamento/dormencia)'},
+  {id:'bilateral_sx',label:'Sintomas bilaterais em MMII'},
+  {id:'gait_change',label:'Alteracao de marcha'},
+  {id:'abd_pain',label:'Dor abdominal associada'},
+  {id:'urinary_sx',label:'Sintomas urinarios (sem retencao)'},
+  {id:'thoracic_pain',label:'Dor toracica associada'},
+  {id:'hip_pain',label:'Dor no quadril (coxofemoral)'},
+  {id:'night_waking',label:'Dor que acorda durante a noite'},
+];
+
+const DERMATOMES_LUMBAR=[
+  {level:'L3',motor:'Extensao do joelho',sensory:'Face medial do joelho',reflex:'Patelar'},
+  {level:'L4',motor:'Dorsiflexao do pe',sensory:'Face medial da perna',reflex:'Patelar'},
+  {level:'L5',motor:'Extensor longo do halux',sensory:'Dorso do pe (1-2 dedos)',reflex:'--'},
+  {level:'S1',motor:'Flexao plantar',sensory:'Face lateral do pe',reflex:'Aquileu'},
+];
+
+const DERMATOMES_CERVICAL=[
+  {level:'C5',motor:'Deltoide / Biceps',sensory:'Face lateral do braco',reflex:'Bicipital'},
+  {level:'C6',motor:'Extensores do punho',sensory:'Polegar + indicador',reflex:'Braquiorradial'},
+  {level:'C7',motor:'Triceps',sensory:'Dedo medio',reflex:'Tricipital'},
+  {level:'C8',motor:'Flexores dos dedos',sensory:'Dedo minimo',reflex:'--'},
+];
+
+// ============================================
+// STATE
+// ============================================
+let currentStep=0;
+let redFlags=new Set();
+let painType=null;
+let painDuration=null;
+let evaScore=5;
+let locations=new Set();
+let irradiation=new Set();
+let neuro={motor:null,sensory:null,reflex:null,slr:null,babinski:null,gait:null};
+let symptoms=new Set();
+let sections={flags:true,classification:false,location:false,neuro_detail:false,symptoms_detail:false,workup:true,conduta:true,diferencial:false,note:true};
+let dermOpen=false;
+const evalStartTime=new Date();
+let neuroSaddleAutoSynced=false;
+let validationShake=false;
+
+const app=document.getElementById('app');
+const overlayRoot=document.getElementById('overlayRoot');
+
+// ============================================
+// HELPERS
+// ============================================
+const hasCaudaEquina=()=>CAUDA_IDS.some(id=>redFlags.has(id));
+const hasInfectionRisk=()=>{
+  const n=INFEC_IDS.filter(id=>redFlags.has(id)).length;
+  return n>=1 && (redFlags.has('fever') || n>=2);
+};
+const hasCancerRisk=()=>NEOPL_IDS.filter(id=>redFlags.has(id)).length>=2 || redFlags.has('cancer');
+const hasFractureRisk=()=>FRATURA_IDS.some(id=>redFlags.has(id));
+const hasVascularRisk=()=>redFlags.has('aortic_risk');
+const hasUMN=()=>neuro.babinski==='extensor' || neuro.reflex==='hiper' || neuro.gait==='spastic';
+const flagCount=()=>redFlags.size;
+const neuroFilledCount=()=>Object.values(neuro).filter(v=>v!==null).length;
+const neuroTotalFields=()=>Object.keys(NEURO_TESTS).length;
+const isNeuroAbnormal=(key,val)=>val && val!=='normal' && val!=='negative' && val!=='not_done';
+
+function getRiskLevel(){
+  if(hasCaudaEquina()) return 'emergent';
+  if(neuro.sensory==='saddle') return 'emergent';
+  if(hasUMN() && (neuro.motor==='grave' || neuro.motor==='moderado')) return 'emergent';
+  if(hasInfectionRisk() && redFlags.has('fever') && (neuro.motor==='grave' || neuro.motor==='moderado')) return 'emergent';
+  if(hasVascularRisk() && painType==='referred') return 'emergent';
+  if(neuro.motor==='grave' && irradiation.has('bilateral_legs')) return 'emergent';
+
+  if(hasInfectionRisk()) return 'urgent';
+  if(hasCancerRisk()) return 'urgent';
+  if(hasFractureRisk()) return 'urgent';
+  if(hasVascularRisk()) return 'urgent';
+  if(neuro.motor==='grave' || neuro.motor==='moderado') return 'urgent';
+  if(hasUMN()) return 'urgent';
+  if(neuro.gait==='steppage') return 'urgent';
+  if(redFlags.has('night_pain') && redFlags.has('weight_loss')) return 'urgent';
+  if(locations.has('thoracic') && flagCount()>=1) return 'urgent';
+  if(flagCount()>=2) return 'urgent';
+
+  return 'routine';
+}
+
+function needsImaging(){
+  const r=getRiskLevel();
+  if(r==='emergent') return 'immediate';
+  if(r==='urgent') return 'urgent';
+  if(neuro.motor && neuro.motor!=='normal') return 'urgent';
+  if(hasUMN()) return 'urgent';
+  if(neuro.gait==='steppage') return 'urgent';
+  if(neuro.sensory==='dermatomal' && symptoms.has('radiculopathy')) return 'consider';
+  if(neuro.slr==='positive_bi') return 'urgent';
+  if(neuro.slr==='positive_uni' && symptoms.has('radiculopathy')) return 'consider';
+  if(painDuration==='chronic' && painType==='nonmechanical') return 'consider';
+  if(painDuration==='chronic' && evaScore>=7) return 'consider';
+  if(locations.has('thoracic') && painDuration!=='acute') return 'consider';
+  return 'none';
+}
+
+function evaColor(val){
+  if(val<=3) return '#22c55e';
+  if(val<=6) return '#f59e0b';
+  return '#ef4444';
+}
+function evaTint(val,alpha){
+  const c=evaColor(val);
+  const r=parseInt(c.slice(1,3),16), g=parseInt(c.slice(3,5),16), b=parseInt(c.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+function evaIntensityLabel(val){
+  if(val===0) return 'Sem dor';
+  if(val<=3) return 'Leve';
+  if(val<=6) return 'Moderada';
+  if(val<=8) return 'Intensa';
+  return 'Insuportavel';
+}
+function evaGradient(val){
+  const pct=(val/10)*100;
+  const col=evaColor(val);
+  return `linear-gradient(to right, #22c55e 0%, ${col} ${pct}%, #1e293b ${pct}%, #1e293b 100%)`;
+}
+
+function haptic(style){
+  if(!navigator.vibrate) return;
+  if(style==='light') navigator.vibrate(8);
+  else if(style==='medium') navigator.vibrate(18);
+  else if(style==='success') navigator.vibrate([12,40,12]);
+}
+
+// ============================================
+// CONTEXT STRIP
+// ============================================
+function buildContextStrip(){
+  if(currentStep===0) return '';
+  let chips=[];
+  const fc=flagCount();
+  chips.push({cls:fc>0?'alert':'',label:'Alarme',val:fc>0?fc:'0'});
+  if(currentStep>1 && painType){
+    const pt=PAIN_TYPES.find(p=>p.id===painType);
+    chips.push({cls:'',label:'Dor',val:pt?pt.label:'--'});
+  }
+  if(currentStep>1) chips.push({cls:'',label:'EVA',val:`${evaScore}/10`});
+  if(currentStep>2 && locations.size>0){
+    const names=[...locations].map(id=>LOCATIONS.find(x=>x.id===id)?.label||id);
+    chips.push({cls:'',label:'Local',val:names.length>2?`${names.length}`:names.join(', ')});
+  }
+  if(currentStep>3){
+    const ab=Object.entries(neuro).filter(([k,v])=>isNeuroAbnormal(k,v));
+    chips.push({cls:ab.length>0?'alert':'',label:'Neuro',val:ab.length>0?`${ab.length} alterado${ab.length>1?'s':''}`:'Normal'});
+  }
+  if(currentStep>4 && symptoms.size>0) chips.push({cls:'info',label:'Sintomas',val:symptoms.size});
+  let h='<div class="context-strip" role="status" aria-label="Resumo das etapas">';
+  for(const c of chips) h+=`<span class="context-chip ${c.cls}">${c.label}: <span class="chip-val">${c.val}</span></span>`;
+  h+='</div>';
+  return h;
+}
+
+// ============================================
+// PROGRESS (spine rail)
+// ============================================
+function progHTML(idx,allDone){
+  let h='<div class="spine-rail" role="progressbar" aria-valuenow="'+(idx+1)+'" aria-valuemin="1" aria-valuemax="'+TOTAL_STEPS+'" aria-label="Etapa '+(idx+1)+' de '+TOTAL_STEPS+'">';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const c=allDone||i<idx?'done':i===idx?'active':'';
+    h+=`<div class="vertebra ${c}"><div class="vert-disc ${c}"></div><div class="vert-label">${STEP_LABELS[i]}</div></div>`;
+  }
+  h+='</div>';
+  h+=buildContextStrip();
+  return h;
+}
+
+// ============================================
+// RENDER ROUTER
+// ============================================
+function render(){
+  // Auto-sync: saddle flag -> neuro sensory
+  if(redFlags.has('cauda_saddle') && neuro.sensory!=='saddle'){
+    neuro.sensory='saddle';
+    neuroSaddleAutoSynced=true;
+  }
+  if(!redFlags.has('cauda_saddle') && neuroSaddleAutoSynced && neuro.sensory==='saddle'){
+    neuro.sensory=null;
+    neuroSaddleAutoSynced=false;
+  }
+  if(neuro.gait && neuro.gait!=='normal' && neuro.gait!=='not_done') symptoms.add('gait_change');
+
+  if(currentStep===0) renderRedFlags();
+  else if(currentStep===1) renderPainType();
+  else if(currentStep===2) renderLocation();
+  else if(currentStep===3) renderNeuro();
+  else if(currentStep===4) renderSymptoms();
+  else renderResult();
+}
+
+// ============================================
+// STEP 0: RED FLAGS
+// ============================================
+function renderRedFlags(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<h2>Sinais de Alarme</h2>';
+  h+='<p class="subtitle">Marque todos os sinais de gravidade presentes.</p>';
+
+  if(hasCaudaEquina()){
+    h+='<div class="alert-banner" role="alert"><span class="alert-dot"></span>';
+    h+='<div><div class="alert-text">Possivel sindrome da cauda equina</div>';
+    h+='<div class="alert-detail">Avaliacao neurocirurgica urgente. RM de emergencia.</div></div></div>';
+  }
+  if(hasVascularRisk()){
+    h+='<div class="alert-banner" role="alert"><span class="alert-dot"></span>';
+    h+='<div><div class="alert-text">Risco vascular</div>';
+    h+='<div class="alert-detail">Excluir aneurisma roto / disseccao aortica.</div></div></div>';
+  }
+  if(hasInfectionRisk()){
+    h+='<div class="alert-banner warn" role="alert"><span class="alert-dot"></span>';
+    h+='<div><div class="alert-text">Risco de infeccao espinhal</div>';
+    h+='<div class="alert-detail">Espondilodiscite / abscesso epidural. Lab + RM precoces.</div></div></div>';
+  }
+
+  h+='<div class="options">';
+  const groups=[
+    {key:'cauda',label:'Cauda equina'},
+    {key:'infec',label:'Infeccao'},
+    {key:'neopl',label:'Neoplasia'},
+    {key:'fratura',label:'Fratura'},
+    {key:'vascular',label:'Vascular'},
+  ];
+  for(const grp of groups){
+    const flags=RED_FLAGS.filter(f=>f.group===grp.key);
+    h+=`<div class="option-group-label">${grp.label}<span class="group-line"></span></div>`;
+    for(const f of flags){
+      const ck=redFlags.has(f.id);
+      const sev=ck?(f.severity==='critical'?'flag-critical':'flag-warn'):'';
+      h+=`<button class="check-btn ${ck?'checked':''} ${sev}" onclick="toggleFlag('${f.id}')" aria-pressed="${ck}"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span></button>`;
+    }
+  }
+  h+='</div>';
+  h+='<button class="skip-flags" onclick="next()">Nenhum alarme &mdash; avancar</button>';
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn primary" onclick="next()">Proximo</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ============================================
+// STEP 1: PAIN TYPE + DURATION + EVA
+// ============================================
+function renderPainType(){
+  let h=progHTML(1,false);
+  h+='<div class="card">';
+  h+='<h2>Caracterizacao da Dor</h2>';
+  h+='<p class="subtitle">Tipo, duracao e intensidade.</p>';
+
+  h+='<div class="section-label">Tipo da dor<span class="sl-line"></span></div>';
+  h+='<div class="options">';
+  for(const pt of PAIN_TYPES){
+    const sel=painType===pt.id;
+    h+=`<button class="option-btn ${sel?'selected':''}" onclick="setPainType('${pt.id}')" aria-pressed="${sel}">`;
+    h+=`<span class="label"><strong>${pt.label}</strong><br><span style="font-size:.72rem;color:#94a3b8;font-weight:400">${pt.desc}</span></span>`;
+    h+=`<span class="tag ${pt.tag}">${pt.tagLabel}</span>`;
+    h+='</button>';
+  }
+  h+='</div>';
+
+  h+='<div class="section-label" style="margin-top:1.05rem">Duracao<span class="sl-line"></span></div>';
+  h+='<div class="duration-row">';
+  for(const d of DURATIONS){
+    const sel=painDuration===d.id;
+    h+=`<button class="dur-chip ${sel?'picked':''}" onclick="setDuration('${d.id}')" aria-pressed="${sel}"><span class="dur-label">${d.label}</span><span class="dur-range">${d.range}</span></button>`;
+  }
+  h+='</div>';
+
+  h+='<div class="section-label" style="margin-top:1.05rem">Intensidade (EVA)<span class="sl-line"></span></div>';
+  h+='<div class="eva-container">';
+  h+=`<div class="eva-value-box"><div class="eva-value" style="color:${evaColor(evaScore)}">${evaScore}</div><div class="eva-label">EVA</div><div class="eva-intensity" style="color:${evaColor(evaScore)}">${evaIntensityLabel(evaScore)}</div></div>`;
+  h+='<div class="eva-slider-wrap">';
+  h+=`<input type="range" min="0" max="10" value="${evaScore}" class="eva-slider" style="background:${evaGradient(evaScore)}" oninput="setEva(this.value)" aria-label="Escala de dor 0 a 10">`;
+  h+='<div class="eva-anchors"><span>0</span><span>5</span><span>10</span></div>';
+  h+='</div></div>';
+
+  const canProceed=painType && painDuration;
+  const shakeClass=validationShake&&!canProceed?'shake':'';
+  h+=`<div class="validation-hint ${!canProceed?'visible':''} ${shakeClass}" id="validationHint">${!painType?'Selecione o tipo da dor':!painDuration?'Selecione a duracao':''}</div>`;
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${canProceed?'':'disabled'} onclick="next()">Proximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+  validationShake=false;
+  updateSliderStyle();
+}
+
+function updateSliderStyle(){
+  const slider=document.querySelector('.eva-slider');
+  if(!slider) return;
+  const val=parseInt(slider.value);
+  slider.style.background=evaGradient(val);
+  const thumbColor=evaColor(val);
+  let styleEl=document.getElementById('eva-thumb-style');
+  if(!styleEl){styleEl=document.createElement('style');styleEl.id='eva-thumb-style';document.head.appendChild(styleEl)}
+  styleEl.textContent=`.eva-slider::-webkit-slider-thumb{background:${thumbColor}} .eva-slider::-moz-range-thumb{background:${thumbColor}}`;
+}
+
+// ============================================
+// STEP 2: LOCATION + IRRADIATION
+// ============================================
+function renderLocation(){
+  let h=progHTML(2,false);
+  h+='<div class="card">';
+  h+='<h2>Localizacao e Irradiacao</h2>';
+  h+='<p class="subtitle">Regiao acometida e padrao de irradiacao.</p>';
+
+  h+='<div class="section-label">Regiao principal<span class="sl-line"></span></div>';
+  h+='<div class="options">';
+  for(const loc of LOCATIONS){
+    const ck=locations.has(loc.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleLocation('${loc.id}')" aria-pressed="${ck}"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${loc.label}<div class="check-desc">${loc.hint}</div></span></button>`;
+  }
+  h+='</div>';
+
+  if(locations.has('thoracic')){
+    h+='<div class="info-box warn">Dor toracica isolada e mais preocupante. Sempre investigar causas nao-espinhais (cardiaco, pleural, esofagico).</div>';
+  }
+  if(locations.has('sacral')){
+    h+='<div class="si-test-ref">';
+    h+='<strong>Testes provocativos sacroiliacos:</strong><br>';
+    h+='<span class="test-name">FABER/Patrick</span> &middot; <span class="test-name">Gaenslen</span> &middot; <span class="test-name">Compressao/Distracao</span><br>';
+    h+='<span style="color:#64748b;font-size:.6rem">&ge; 3 testes positivos: alta especificidade</span>';
+    h+='</div>';
+  }
+
+  h+='<div class="section-label" style="margin-top:1.05rem">Irradiacao<span class="sl-line"></span></div>';
+  h+='<div class="options">';
+  for(const ir of IRRADIATION){
+    const ck=irradiation.has(ir.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleIrrad('${ir.id}')" aria-pressed="${ck}"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${ir.label}</span></button>`;
+  }
+  h+='</div>';
+
+  const canProceed=locations.size>0;
+  const shakeClass=validationShake&&!canProceed?'shake':'';
+  h+=`<div class="validation-hint ${!canProceed?'visible':''} ${shakeClass}" id="validationHint">Selecione ao menos uma regiao</div>`;
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${canProceed?'':'disabled'} onclick="next()">Proximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+  validationShake=false;
+}
+
+// ============================================
+// STEP 3: NEURO
+// ============================================
+function renderNeuro(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<h2>Avaliacao Neurologica</h2>';
+  const filled=neuroFilledCount();
+  const total=neuroTotalFields();
+  h+=`<p class="subtitle">Motor, sensitivo, reflexos, Lasegue, Babinski, marcha &middot; <span style="color:${filled===total?'#86efac':'#94a3b8'};font-weight:600">${filled}/${total}</span></p>`;
+
+  if(neuroSaddleAutoSynced && neuro.sensory==='saddle'){
+    h+='<div class="info-box info">Sensibilidade "em sela" sincronizada a partir do alarme de anestesia perineal.</div>';
+  }
+
+  h+='<div class="options">';
+  for(const key of Object.keys(NEURO_TESTS)){
+    const test=NEURO_TESTS[key];
+    const isFilled=neuro[key]!==null;
+    h+=`<div class="section-label"><span class="neuro-field-label"><span class="neuro-field-status ${isFilled?'filled':'empty'}"></span> ${test.label}</span><span class="sl-line"></span></div>`;
+    h+='<div class="neuro-grid">';
+    for(const opt of test.opts){
+      const picked=neuro[key]===opt.v;
+      h+=`<button class="score-opt ${picked?'picked':''}" onclick="setNeuro('${key}','${opt.v}')" aria-pressed="${picked}">${opt.l}</button>`;
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // Dermatomes: collapsed by default. Only show rows relevant to picked location.
+  const showCervical=locations.has('cervical');
+  const showLumbar=locations.has('lumbar') || locations.has('sacral') || !showCervical;
+  const dermLabel=showCervical && showLumbar ? 'cervicais e lombossacros'
+                   : showCervical ? 'cervicais'
+                   : 'lombossacros';
+  h+=`<button class="derm-toggle ${dermOpen?'open':''}" onclick="toggleDerm()" aria-expanded="${dermOpen}"><span>Referencia de dermatomos ${dermLabel}</span><span class="derm-arrow">\u25BE</span></button>`;
+  if(dermOpen){
+    if(showLumbar) h+=buildDermatomeTable(DERMATOMES_LUMBAR,'Lombossacros');
+    if(showCervical) h+=buildDermatomeTable(DERMATOMES_CERVICAL,'Cervicais');
+  }
+
+  const allFilled=filled===total;
+  const missing=Object.keys(NEURO_TESTS).filter(k=>neuro[k]===null).map(k=>NEURO_TESTS[k].label);
+  const shakeClass=validationShake&&!allFilled?'shake':'';
+  h+=`<div class="validation-hint ${!allFilled?'visible':''} ${shakeClass}" id="validationHint">Falta: ${missing.join(', ')}</div>`;
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+=`<button class="nav-btn primary" ${allFilled?'':'disabled'} onclick="next()">Proximo</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+  validationShake=false;
+}
+
+function buildDermatomeTable(rows,title){
+  let h='<div class="dermatome-hint">';
+  if(title) h+=`<div style="color:#93c5fd;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem">${title}</div>`;
+  h+='<div class="derm-row head"><span>Nv</span><span>Motor</span><span>Sensitivo / Reflexo</span></div>';
+  for(const d of rows){
+    h+=`<div class="derm-row"><span class="derm-level">${d.level}</span><span>${d.motor}</span><span>${d.sensory}<span class="derm-sub">Reflexo: ${d.reflex}</span></span></div>`;
+  }
+  h+='</div>';
+  return h;
+}
+
+// ============================================
+// STEP 4: SYMPTOMS
+// ============================================
+function renderSymptoms(){
+  let h=progHTML(4,false);
+  h+='<div class="card">';
+  h+='<h2>Sintomas Associados</h2>';
+  h+='<p class="subtitle">Marque todos os sintomas presentes.</p>';
+  h+='<div class="options">';
+  for(const sx of ASSOC_SYMPTOMS){
+    const ck=symptoms.has(sx.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSymptom('${sx.id}')" aria-pressed="${ck}"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${sx.label}</span></button>`;
+  }
+  h+='</div>';
+
+  const hints=[];
+  if(symptoms.has('morning_stiffness') && painType==='nonmechanical')
+    hints.push('Rigidez matinal + padrao inflamatorio: considerar espondiloartropatia (especialmente se < 45 anos).');
+  if(symptoms.has('abd_pain') && painType==='referred')
+    hints.push('Dor abdominal + padrao referido: excluir patologia visceral (renal, pancreatica, ginecologica, aortica).');
+  if(symptoms.has('gait_change') && symptoms.has('paresthesia'))
+    hints.push('Alteracao de marcha + parestesias: sugestivo de mielopatia ou compressao medular.');
+  if(symptoms.has('bilateral_sx') && symptoms.has('claudication'))
+    hints.push('Claudicacao neurogenica bilateral: padrao de estenose de canal lombar.');
+  if(symptoms.has('hip_pain') && locations.has('lumbar'))
+    hints.push('Dor no quadril + lombar: excluir coxartrose (testar rotacao interna do quadril).');
+
+  if(hints.length>0){
+    h+='<div style="margin-top:.65rem">';
+    for(const hint of hints) h+=`<div class="info-box info">${hint}</div>`;
+    h+='</div>';
+  }
+
+  if(painDuration==='chronic'){
+    h+='<div class="info-box info" style="margin-top:.65rem"><span><strong style="color:#c7d2fe">Yellow flags</strong> (dor cronica): catastrofizacao, cinesiofobia, depressao, baixa expectativa de recuperacao. Instrumentos: STarT Back, PHQ-9.</span></div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="next()">Ver Resultado</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// ============================================
+// STEP 5: RESULT
+// ============================================
+function renderResult(){
+  const risk=getRiskLevel();
+  const imaging=needsImaging();
+  const fc=flagCount();
+
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  const badgeCfg={
+    emergent:{cls:'risk-emergent',icon:'!!!',title:'Emergencia',desc:'Avaliacao imediata. Risco de lesao neurologica irreversivel ou ameaca a vida.'},
+    urgent:{cls:'risk-urgent',icon:'!',title:'Urgente',desc:'Red flags presentes. Investigar antes da alta.'},
+    routine:{cls:'risk-routine',icon:'\u2713',title:'Rotina',desc:'Sem sinais de alarme significativos. Manejo conservador inicial.'},
+  }[risk];
+
+  h+=`<div class="result-badge ${badgeCfg.cls}">${badgeCfg.icon}</div>`;
+  h+=`<div class="result-title">${badgeCfg.title}</div>`;
+  h+=`<div class="result-desc">${badgeCfg.desc}</div>`;
+
+  if(fc>0) h+=`<span class="flag-count has-flags">${fc} red flag${fc>1?'s':''}</span>`;
+  else h+=`<span class="flag-count no-flags">Sem red flags</span>`;
+  const evaCol=evaColor(evaScore);
+  h+=`<span class="flag-count" style="background:${evaTint(evaScore,.12)};color:${evaCol};border:1px solid ${evaTint(evaScore,.4)}">EVA ${evaScore}/10 &middot; ${evaIntensityLabel(evaScore)}</span>`;
+
+  if(risk==='routine' && fc===1){
+    h+='<div style="margin-top:.7rem;padding:.58rem;border-radius:.5rem;background:#0f172a;border:1px solid #1e293b;font-size:.74rem;color:#94a3b8;text-align:left;line-height:1.45">1 red flag isolado, sem padrao de alto risco. Seguimento ambulatorial com atencao.</div>';
+  }
+
+  h+=collapsible('flags','Red flags identificados',()=>{
+    let s='';
+    if(fc===0){
+      s+='<p style="color:#86efac;font-size:.8rem;text-align:center;padding:.4rem 0">Nenhum sinal de alarme identificado.</p>';
+    }else{
+      for(const f of RED_FLAGS){
+        if(redFlags.has(f.id)){
+          const dotCls=f.severity==='critical'?'dot-red':'dot-yellow';
+          s+=`<div class="summary-row"><span class="criteria">${f.label}</span><span class="value"><span class="dot ${dotCls}"></span>Presente</span></div>`;
+        }
+      }
+      if(hasCaudaEquina()) s+=syndromeLine('Sindrome da cauda equina suspeitada','alert');
+      if(hasInfectionRisk()) s+=syndromeLine('Risco de infeccao espinhal','warn');
+      if(hasCancerRisk()) s+=syndromeLine('Risco de neoplasia','warn');
+      if(hasFractureRisk()) s+=syndromeLine('Risco de fratura','warn');
+      if(hasVascularRisk()) s+=syndromeLine('Risco vascular &mdash; excluir emergencia aortica','alert');
+    }
+    return s;
+  });
+
+  h+=collapsible('classification','Classificacao clinica',()=>{
+    let s='';
+    const pt=PAIN_TYPES.find(p=>p.id===painType);
+    const ptDot=painType==='mechanical'?'dot-blue':painType==='nonmechanical'?'dot-yellow':'dot-red';
+    s+=`<div class="summary-row"><span class="criteria">Tipo de dor</span><span class="value"><span class="dot ${ptDot}"></span>${pt?pt.label:'--'}</span></div>`;
+    const d=DURATIONS.find(x=>x.id===painDuration);
+    s+=`<div class="summary-row"><span class="criteria">Duracao</span><span class="value">${d?d.label+' ('+d.range+')':'--'}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Intensidade (EVA)</span><span class="value" style="color:${evaColor(evaScore)}">${evaScore}/10 &middot; ${evaIntensityLabel(evaScore)}</span></div>`;
+    const locNames=[...locations].map(id=>LOCATIONS.find(x=>x.id===id)?.label||id);
+    s+=`<div class="summary-row"><span class="criteria">Localizacao</span><span class="value">${locNames.join(', ')||'--'}</span></div>`;
+    const irNames=[...irradiation].map(id=>IRRADIATION.find(x=>x.id===id)?.label||id);
+    s+=`<div class="summary-row"><span class="criteria">Irradiacao</span><span class="value">${irNames.length>0?irNames.join(', '):'Nao informada'}</span></div>`;
+    return s;
+  });
+
+  h+=collapsible('neuro_detail','Exame neurologico',()=>{
+    let s='';
+    for(const key of Object.keys(NEURO_TESTS)){
+      const test=NEURO_TESTS[key];
+      const val=neuro[key];
+      const optLabel=val?test.opts.find(o=>o.v===val)?.l:'--';
+      const ab=isNeuroAbnormal(key,val);
+      s+=`<div class="summary-row"><span class="criteria">${test.label}</span><span class="value"><span class="dot ${ab?'dot-yellow':'dot-green'}"></span>${optLabel}</span></div>`;
+    }
+    if(hasUMN()) s+='<div class="info-box alert" style="margin-top:.65rem">Sinais de neuronio motor superior &mdash; considerar mielopatia / compressao medular.</div>';
+    if(neuro.gait==='steppage') s+='<div class="info-box warn" style="margin-top:.4rem">Marcha escarvante (pe caido) &mdash; deficit L4-L5 significativo. RM urgente.</div>';
+    if(neuro.sensory==='dermatomal' && neuro.slr && neuro.slr.startsWith('positive')) s+='<div class="info-box info" style="margin-top:.4rem">Lasegue positivo + dermatomo definido &mdash; padrao de radiculopatia compressiva.</div>';
+    if((neuro.motor==='grave' || neuro.motor==='moderado') && irradiation.has('bilateral_legs')) s+='<div class="info-box alert" style="margin-top:.4rem">Deficit motor bilateral &mdash; alto risco de compressao medular ou cauda equina.</div>';
+    return s;
+  });
+
+  h+=collapsible('symptoms_detail','Sintomas associados',()=>{
+    let s='';
+    if(symptoms.size===0){
+      s+='<p style="color:#64748b;font-size:.8rem;text-align:center;padding:.4rem 0">Nenhum sintoma associado selecionado.</p>';
+    }else{
+      for(const sx of ASSOC_SYMPTOMS){
+        if(symptoms.has(sx.id)) s+=`<div class="summary-row"><span class="criteria">${sx.label}</span><span class="value"><span class="dot dot-blue"></span>Presente</span></div>`;
+      }
+    }
+    if(symptoms.has('morning_stiffness') && painType==='nonmechanical')
+      s+='<div class="info-box info" style="margin-top:.65rem">Rigidez matinal + dor inflamatoria: espondiloartropatia. Solicitar HLA-B27, PCR, sacroiliacas em RX/RM.</div>';
+    return s;
+  });
+
+  h+=collapsible('workup','Investigacao sugerida',()=>buildWorkup(risk,imaging));
+  h+=buildConduta(risk);
+  h+=collapsible('diferencial','Diagnosticos diferenciais',()=>buildDifferentials(risk));
+  h+=collapsible('note','Nota para prontuario',()=>buildNoteContent(risk,imaging));
+
+  h+='<div class="disclaimer">Ferramenta de apoio a decisao clinica &middot; nao substitui julgamento medico. Correlacione com a apresentacao completa.</div>';
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn danger" onclick="confirmRestart()">Recomecar</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+function syndromeLine(text,level){
+  return `<div class="info-box ${level}" style="margin-top:.55rem;font-weight:600">${text}</div>`;
+}
+
+function collapsible(id,title,contentFn){
+  const open=sections[id];
+  let h='<div class="dark-box">';
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')" role="button" aria-expanded="${open}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection('${id}')}">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BE</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':''}">`;
+  if(open)h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// ============================================
+// WORKUP
+// ============================================
+function buildWorkup(risk,imaging){
+  let s='';
+  if(risk==='emergent'){
+    s+='<div class="info-box alert" style="font-weight:600;margin-bottom:.55rem;font-size:.78rem">Imagem imediata indicada</div>';
+    s+=`<div class="summary-row"><span class="criteria">Exame prioritario</span><span class="value" style="color:#fca5a5">RM da coluna (emergencia)</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Se RM indisponivel</span><span class="value">TC da coluna</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Laboratorio</span><span class="value">HMG, PCR, VHS, hemocultura</span></div>`;
+    if(hasCaudaEquina()){
+      s+=`<div class="summary-row"><span class="criteria">Avaliacao</span><span class="value" style="color:#fca5a5">Neurocirurgia urgente</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Adicional</span><span class="value">Residuo pos-miccional (USG ou cateterismo)</span></div>`;
+    }
+    if(hasInfectionRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Avaliacao</span><span class="value" style="color:#fca5a5">Infectologia / ATB empirica</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Lab adicional</span><span class="value">Procalcitonina, lactato, urina I</span></div>`;
+    }
+    if(hasVascularRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Imagem vascular</span><span class="value" style="color:#fca5a5">AngioTC aorta</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Avaliacao</span><span class="value" style="color:#fca5a5">Cirurgia vascular de emergencia</span></div>`;
+    }
+    if(hasUMN()){
+      s+=`<div class="summary-row"><span class="criteria">Mielopatia</span><span class="value" style="color:#fca5a5">RM cervical + toracica</span></div>`;
+    }
+  } else if(risk==='urgent'){
+    s+='<div class="info-box warn" style="font-weight:600;margin-bottom:.55rem;font-size:.78rem">Investigacao complementar indicada</div>';
+    if(hasCancerRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Imagem</span><span class="value">RX coluna + RM se RX alterado</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Laboratorio</span><span class="value">HMG, VHS, PCR, FA, Ca, eletroforese</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Rastreio</span><span class="value">PSA (H) / Mamografia (M) conforme idade</span></div>`;
+    }
+    if(hasInfectionRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Imagem</span><span class="value">RM da coluna</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Laboratorio</span><span class="value">HMG, PCR, VHS, procalcitonina, hemocultura x2</span></div>`;
+    }
+    if(hasFractureRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Imagem</span><span class="value">RX coluna (AP + Perfil)</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Se alterado</span><span class="value">TC para detalhamento osseo</span></div>`;
+      if(redFlags.has('osteoporosis')||redFlags.has('corticoid'))
+        s+=`<div class="summary-row"><span class="criteria">Adicional</span><span class="value">Densitometria, Vit D, Ca, PTH</span></div>`;
+    }
+    if(hasVascularRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Imagem</span><span class="value">USG abdominal ou AngioTC</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Avaliacao</span><span class="value">Cirurgia vascular</span></div>`;
+    }
+    if(!hasCancerRisk() && !hasInfectionRisk() && !hasFractureRisk() && !hasVascularRisk()){
+      s+=`<div class="summary-row"><span class="criteria">Imagem</span><span class="value">RX coluna inicialmente</span></div>`;
+      s+=`<div class="summary-row"><span class="criteria">Laboratorio</span><span class="value">HMG, VHS, PCR basais</span></div>`;
+    }
+    if(neuro.motor && neuro.motor!=='normal') s+=`<div class="summary-row"><span class="criteria">Deficit motor</span><span class="value" style="color:#fcd34d">Considerar RM precoce</span></div>`;
+    if(hasUMN()) s+=`<div class="summary-row"><span class="criteria">Sinais NMS</span><span class="value" style="color:#fcd34d">RM para excluir mielopatia</span></div>`;
+    if(neuro.gait==='steppage') s+=`<div class="summary-row"><span class="criteria">Pe caido</span><span class="value" style="color:#fcd34d">RM + ENMG</span></div>`;
+    if(locations.has('thoracic')) s+=`<div class="summary-row"><span class="criteria">Dor toracica</span><span class="value" style="color:#fcd34d">ECG + RX torax + RM toracica</span></div>`;
+  } else {
+    s+='<div class="info-box" style="background:#081a10;border:1px solid #14532d;color:#86efac;font-weight:600;margin-bottom:.55rem;font-size:.78rem">Imagem nao indicada inicialmente</div>';
+    s+=`<div class="summary-row"><span class="criteria">Conduta inicial</span><span class="value">Manejo conservador 4-6 sem</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Imagem</span><span class="value">Apenas se sem melhora em 4-6 sem</span></div>`;
+    if(symptoms.has('radiculopathy') && (neuro.slr==='positive_uni' || neuro.slr==='positive_bi'))
+      s+=`<div class="summary-row"><span class="criteria">Radiculopatia + Lasegue+</span><span class="value" style="color:#93c5fd">RM se persistente &gt; 6 sem</span></div>`;
+    if(painType==='nonmechanical')
+      s+=`<div class="summary-row"><span class="criteria">Dor inflamatoria</span><span class="value">HLA-B27, PCR, VHS, RX sacroiliacas</span></div>`;
+    if(painDuration==='chronic')
+      s+=`<div class="summary-row"><span class="criteria">Dor cronica</span><span class="value">RX + encaminhamento ambulatorial</span></div>`;
+    if(neuro.motor==='leve')
+      s+=`<div class="summary-row"><span class="criteria">Leve deficit motor</span><span class="value" style="color:#93c5fd">Reavaliacao precoce; RM se progressao</span></div>`;
+  }
+  return s;
+}
+
+// ============================================
+// CONDUTA
+// ============================================
+function buildConduta(risk){
+  const items=getCondutaItems(risk);
+  const cls=risk==='emergent'?'alta-prob':risk==='urgent'?'mod-prob':'baixa-prob';
+  const title=risk==='emergent'?'Conduta de emergencia':risk==='urgent'?'Conduta urgente':'Manejo conservador';
+
+  const open=sections.conduta;
+  let h=`<div class="conduta-box ${cls}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('conduta')" role="button" aria-expanded="${open}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection('conduta')}"><h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BE</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':''}">`;
+  if(open){
+    for(const [text,detail] of items){
+      h+=`<div class="conduta-item"><span class="conduta-bullet"></span><span style="flex:1">${text}`;
+      if(detail) h+=`<div class="conduta-detail">${detail}</div>`;
+      h+=`</span></div>`;
+    }
+  }
+  h+='</div></div>';
+  return h;
+}
+
+function getCondutaItems(risk){
+  if(risk==='emergent'){
+    const items=[
+      ['RM de emergencia da coluna','TC se RM indisponivel'],
+      ['Avaliacao neurocirurgica imediata','Contato direto com plantonista'],
+      ['Acesso venoso + laboratorio completo','HMG, PCR, VHS, Ur, Cr, hemocultura'],
+      ['Monitorar funcao neurologica a cada 2-4h','Forca, sensibilidade, esfincteres'],
+      ['Analgesia IV','Dipirona 1g IV + Tramadol 50-100mg IV. Dexametasona 10mg IV se compressao medular.'],
+    ];
+    if(hasInfectionRisk()) items.push(['ATB empirica','Oxacilina 2g IV 4/4h + Ceftriaxona 2g IV 12/12h. Vanco se risco de MRSA.']);
+    if(hasVascularRisk()) items.push(['AngioTC aorta + cirurgia vascular','Tipagem sanguinea, reserva de hemocomponentes']);
+    if(hasCaudaEquina()) items.push(['Cateterismo vesical + residuo pos-miccional','Documentar funcao esfincteriana basal']);
+    if(hasUMN()) items.push(['RM cervical + toracica','Investigar mielopatia']);
+    return items;
+  }
+  if(risk==='urgent'){
+    const items=[
+      ['Investigacao complementar conforme red flags','Nao dar alta antes do resultado da imagem'],
+      ['Imagem da coluna','RX se fratura; RM se infeccao / neoplasia / deficit motor'],
+      ['Laboratorio: HMG, VHS, PCR','Adicionar conforme suspeita especifica'],
+      ['Analgesia escalonada','Dipirona 1g 6/6h &rarr; Cetoprofeno 100mg 12/12h &rarr; Tramadol 50mg SN'],
+      ['Reavaliacao em 48-72h','Ou antes se piora. Orientar sinais de alarme.'],
+    ];
+    if(hasCancerRisk()) items.push(['Rastreio oncologico + encaminhamento','Eletroforese, marcadores tumorais']);
+    if(locations.has('thoracic')) items.push(['Excluir causa extra-espinhal','ECG e RX torax']);
+    items.push(['Cuidado com AINEs','Contraindicados em DRC (TFG < 30), ulcera ativa, anticoagulacao. IBP se > 5 dias.']);
+    return items;
+  }
+  const items=[
+    ['Sem indicacao de imagem neste momento','Imagem precoce nao melhora desfecho em dor inespecifica'],
+    ['Analgesia regular 5-7 dias','Dipirona 1g VO 6/6h + Ibuprofeno 400mg VO 8/8h (com alimento)'],
+    ['Manter atividades conforme tolerado','Evitar repouso absoluto'],
+    ['Educacao sobre prognostico','Maioria resolve em 4-6 sem; raramente e doenca grave'],
+    ['Retorno precoce','Piora, sintomas novos, febre, ou sem melhora em 4-6 sem'],
+    ['Precaucoes com AINEs','Contraindicado em DRC, ulcera, anticoagulacao. Limitar a 5-7 dias.'],
+  ];
+  if(painType==='nonmechanical') items.push(['Considerar reumatologia','Se < 45 anos + rigidez matinal > 30min']);
+  if(symptoms.has('radiculopathy')) items.push(['Dor neuropatica','Gabapentina 300mg VO a noite; titular ate 900-1200mg/dia']);
+  if(evaScore>=7) items.push(['Dor intensa (EVA >= 7)','Ciclobenzaprina 5mg VO 8/8h por 5-7 dias; sonolencia comum']);
+  if(painDuration==='chronic'){
+    items.push(['Encaminhamento ambulatorial','Fisioterapia + avaliacao psicossocial (yellow flags)']);
+  }
+  return items;
+}
+
+// ============================================
+// DIFFERENTIALS
+// ============================================
+function buildDifferentials(risk){
+  let diffs=[];
+  if(locations.has('lumbar')){
+    diffs.push({name:'Lombalgia mecanica inespecifica',prob:risk==='routine'?'high':'mod',note:'Causa mais comum (85-90%); diagnostico de exclusao'});
+    if(symptoms.has('radiculopathy') || irradiation.has('below_knee'))
+      diffs.push({name:'Hernia discal com radiculopatia',prob:'mod',note:'Dor abaixo do joelho + Lasegue positivo; L4-L5 e L5-S1 mais comuns'});
+    if(symptoms.has('claudication'))
+      diffs.push({name:'Estenose de canal lombar',prob:'mod',note:'Claudicacao neurogenica, melhora ao fletir; > 60 anos'});
+    if(symptoms.has('hip_pain'))
+      diffs.push({name:'Dor referida do quadril (coxartrose)',prob:'low',note:'Testar rotacao interna do quadril'});
+  }
+  if(locations.has('cervical')){
+    diffs.push({name:'Cervicalgia mecanica',prob:risk==='routine'?'high':'mod',note:'Dor muscular/articular cervical'});
+    if(irradiation.has('upper_limb'))
+      diffs.push({name:'Radiculopatia cervical',prob:'mod',note:'Irradiacao dermatomal para MS; Spurling positivo'});
+    if(hasUMN())
+      diffs.push({name:'Mielopatia cervical',prob:'high',note:'Sinais de NMS &mdash; RM urgente'});
+  }
+  if(locations.has('thoracic')){
+    diffs.push({name:'Dor toracica musculoesqueletica',prob:'mod',note:'Sempre investigar alternativas (cardiaca, pleural)'});
+    if(hasUMN())
+      diffs.push({name:'Mielopatia toracica',prob:'high',note:'Sinais de NMS &mdash; RM toracica urgente'});
+    diffs.push({name:'Fratura vertebral por insuficiencia',prob:risk==='routine'?'low':'mod',note:'Idosos / osteoporose'});
+  }
+  if(locations.has('sacral')){
+    diffs.push({name:'Disfuncao sacroiliaca',prob:'mod',note:'Testes provocativos (FABER, Gaenslen, compressao)'});
+    if(painType==='nonmechanical')
+      diffs.push({name:'Espondiloartropatia',prob:'mod',note:'< 45 anos + rigidez matinal + melhora com atividade; HLA-B27'});
+  }
+
+  if(hasCaudaEquina())
+    diffs.push({name:'Sindrome da cauda equina',prob:'high',note:'Emergencia &mdash; RM + neurocirurgia imediatas'});
+  if(hasInfectionRisk())
+    diffs.push({name:'Espondilodiscite / Abscesso epidural',prob:'high',note:'Febre + dor + fator de risco'});
+  if(hasCancerRisk())
+    diffs.push({name:'Metastase vertebral',prob:'high',note:'Cancer previo + dor noturna progressiva'});
+  if(hasFractureRisk())
+    diffs.push({name:'Fratura vertebral (traumatica ou patologica)',prob:'high',note:'Trauma ou osteoporose + dor localizada'});
+  if(hasVascularRisk())
+    diffs.push({name:'Aneurisma de aorta abdominal',prob:'high',note:'Dor + doenca vascular; AngioTC urgente'});
+
+  if(painType==='referred')
+    diffs.push({name:'Dor referida visceral',prob:'mod',note:'Renal, pancreatica, ginecologica. Sem relacao postural.'});
+  if(painType==='nonmechanical' && !locations.has('sacral'))
+    diffs.push({name:'Espondiloartropatia',prob:'low',note:'< 45 anos + rigidez matinal > 30min; HLA-B27'});
+  if(neuro.sensory==='dermatomal')
+    diffs.push({name:'Herpes zoster',prob:'low',note:'Dor dermatomal unilateral; pode preceder vesiculas em 2-3 dias'});
+  if(risk==='routine' && !symptoms.has('radiculopathy') && !symptoms.has('claudication'))
+    diffs.push({name:'Distensao muscular / ligamentar',prob:'high',note:'Historia de esforco; resolucao em 2-4 sem'});
+
+  // Dedup
+  const seen=new Set();
+  diffs=diffs.filter(d=>{if(seen.has(d.name)) return false;seen.add(d.name);return true});
+  const probOrder={high:0,mod:1,low:2};
+  diffs.sort((a,b)=>probOrder[a.prob]-probOrder[b.prob]);
+
+  let s='<div class="diff-box">';
+  if(diffs.length===0){
+    s+='<p style="color:#64748b;font-size:.76rem;text-align:center;padding:.4rem 0">Avalie o quadro clinico completo.</p>';
+  }else{
+    for(const d of diffs){
+      const label={high:'Provavel',mod:'Considerar',low:'Menos prov.'}[d.prob];
+      const probCls={high:'prob-high',mod:'prob-mod',low:'prob-low'}[d.prob];
+      s+=`<div class="diff-item"><span class="diff-prob ${probCls}">${label}</span><span style="flex:1"><strong>${d.name}</strong><br><span style="font-size:.66rem;color:#94a3b8">${d.note}</span></span></div>`;
+    }
+  }
+  s+='</div>';
+  return s;
+}
+
+// ============================================
+// NOTE
+// ============================================
+function buildNoteContent(risk,imaging){
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  let n='';
+  n+=`DOR NAS COSTAS - AVALIACAO ESTRUTURADA\n`;
+  n+=`Data/hora: ${ts}\n`;
+  n+=`========================================\n\n`;
+
+  n+=`RED FLAGS: ${flagCount()} identificado(s)\n`;
+  if(flagCount()===0) n+=`  Nenhum sinal de alarme.\n`;
+  else for(const f of RED_FLAGS) if(redFlags.has(f.id)) n+=`  [!] ${f.label}\n`;
+  if(hasCaudaEquina()) n+=`  >>> SINDROME DA CAUDA EQUINA SUSPEITADA <<<\n`;
+  if(hasInfectionRisk()) n+=`  >>> RISCO DE INFECCAO ESPINHAL <<<\n`;
+  if(hasCancerRisk()) n+=`  >>> RISCO DE NEOPLASIA <<<\n`;
+  if(hasFractureRisk()) n+=`  >>> RISCO DE FRATURA <<<\n`;
+  if(hasVascularRisk()) n+=`  >>> RISCO VASCULAR <<<\n`;
+
+  const pt=PAIN_TYPES.find(p=>p.id===painType);
+  const d=DURATIONS.find(x=>x.id===painDuration);
+  n+=`\nCLASSIFICACAO:\n`;
+  n+=`  Tipo: ${pt?pt.label:'Nao classificada'}\n`;
+  n+=`  Duracao: ${d?d.label+' ('+d.range+')':'Nao informada'}\n`;
+  n+=`  EVA: ${evaScore}/10 - ${evaIntensityLabel(evaScore)}\n`;
+  const locNames=[...locations].map(id=>LOCATIONS.find(x=>x.id===id)?.label||id);
+  n+=`  Localizacao: ${locNames.join(', ')||'Nao informada'}\n`;
+  const irNames=[...irradiation].map(id=>IRRADIATION.find(x=>x.id===id)?.label||id);
+  n+=`  Irradiacao: ${irNames.length>0?irNames.join(', '):'Nenhuma'}\n`;
+
+  n+=`\nEXAME NEUROLOGICO:\n`;
+  for(const key of Object.keys(NEURO_TESTS)){
+    const test=NEURO_TESTS[key];
+    const val=neuro[key];
+    const optLabel=val?test.opts.find(o=>o.v===val)?.l:'Nao avaliado';
+    const ab=isNeuroAbnormal(key,val);
+    n+=`  ${test.label}: ${optLabel}${ab?' [ALTERADO]':''}\n`;
+  }
+  if(hasUMN()) n+=`  >>> SINAIS DE NEURONIO MOTOR SUPERIOR <<<\n`;
+  if(neuro.gait==='steppage') n+=`  >>> MARCHA ESCARVANTE - PE CAIDO <<<\n`;
+  if(neuro.sensory==='saddle') n+=`  >>> ANESTESIA EM SELA - CAUDA EQUINA <<<\n`;
+
+  n+=`\nSINTOMAS ASSOCIADOS:\n`;
+  if(symptoms.size===0) n+=`  Nenhum.\n`;
+  else for(const sx of ASSOC_SYMPTOMS) if(symptoms.has(sx.id)) n+=`  - ${sx.label}\n`;
+
+  const riskLabels={emergent:'EMERGENCIA',urgent:'URGENTE',routine:'ROTINA'};
+  n+=`\nESTRATIFICACAO: ${riskLabels[risk]}\n`;
+  const imgLabels={immediate:'IMEDIATA (RM emergencia)',urgent:'URGENTE (RM/RX)',consider:'CONSIDERAR (se persistente)',none:'NAO INDICADA (conservador)'};
+  n+=`Imagem: ${imgLabels[imaging]}\n`;
+
+  n+=`\nCONDUTA:\n`;
+  const items=getCondutaItems(risk);
+  for(const [text,detail] of items){
+    const cleanText=text.replace(/&rarr;/g,'->').replace(/&mdash;/g,'--');
+    const cleanDetail=detail?detail.replace(/&rarr;/g,'->').replace(/&mdash;/g,'--'):'';
+    n+=`  - ${cleanText}${cleanDetail?' ('+cleanDetail+')':''}\n`;
+  }
+
+  n+=`\n========================================\n`;
+  n+=`Gerado por: Avaliador de Dor nas Costas v8\n`;
+  n+=`Apoio a decisao - nao substitui julgamento clinico.\n`;
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  if(!el) return;
+  const text=el.textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(onCopySuccess).catch(()=>fallbackCopy(text));
+  }else fallbackCopy(text);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy');onCopySuccess()}catch(e){alert('Nao foi possivel copiar. Selecione o texto manualmente.')}
+  document.body.removeChild(ta);
+}
+function onCopySuccess(){
+  const btn=document.getElementById('copyBtn');
+  if(!btn) return;
+  btn.textContent='\u2713 Copiado';btn.classList.add('copied');
+  haptic('success');
+  setTimeout(()=>{btn.textContent='Copiar nota';btn.classList.remove('copied')},2000);
+}
+
+// ============================================
+// ACTIONS
+// ============================================
+function toggleFlag(id){redFlags.has(id)?redFlags.delete(id):redFlags.add(id);haptic('light');render()}
+function setPainType(id){painType=id;haptic('light');render()}
+function setDuration(id){painDuration=id;haptic('light');render()}
+function setEva(val){
+  evaScore=parseInt(val);
+  const valBox=document.querySelector('.eva-value');
+  const intBox=document.querySelector('.eva-intensity');
+  if(valBox){valBox.textContent=evaScore;valBox.style.color=evaColor(evaScore)}
+  if(intBox){intBox.textContent=evaIntensityLabel(evaScore);intBox.style.color=evaColor(evaScore)}
+  updateSliderStyle();
+  const canProceed=painType && painDuration;
+  const navBtn=document.querySelector('.nav-btn.primary');
+  if(navBtn) navBtn.disabled=!canProceed;
+  const hint=document.getElementById('validationHint');
+  if(hint){
+    if(canProceed){hint.classList.remove('visible');hint.textContent=''}
+    else{hint.classList.add('visible');hint.textContent=!painType?'Selecione o tipo da dor':'Selecione a duracao'}
+  }
+}
+function toggleLocation(id){locations.has(id)?locations.delete(id):locations.add(id);haptic('light');render()}
+function toggleIrrad(id){
+  if(id==='none'){
+    if(irradiation.has('none') && irradiation.size===1) irradiation.clear();
+    else irradiation=new Set(['none']);
+  }else{
+    irradiation.delete('none');
+    irradiation.has(id)?irradiation.delete(id):irradiation.add(id);
+  }
+  haptic('light');render();
+}
+function setNeuro(field,val){
+  if(neuro[field]===val){
+    neuro[field]=null;
+    if(field==='sensory' && val==='saddle') neuroSaddleAutoSynced=false;
+  }else{
+    neuro[field]=val;
+    if(field==='sensory') neuroSaddleAutoSynced=false;
+  }
+  haptic('light');render();
+}
+function toggleSymptom(id){symptoms.has(id)?symptoms.delete(id):symptoms.add(id);haptic('light');render()}
+function toggleSection(id){sections[id]=!sections[id];render()}
+function toggleDerm(){dermOpen=!dermOpen;render()}
+
+function next(){
+  if(currentStep===1 && (!painType || !painDuration)){
+    validationShake=true;render();
+    setTimeout(()=>document.getElementById('validationHint')?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+    haptic('medium');return;
+  }
+  if(currentStep===2 && locations.size===0){
+    validationShake=true;render();
+    setTimeout(()=>document.getElementById('validationHint')?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+    haptic('medium');return;
+  }
+  if(currentStep===3 && !Object.values(neuro).every(v=>v!==null)){
+    validationShake=true;render();
+    setTimeout(()=>document.getElementById('validationHint')?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+    haptic('medium');return;
+  }
+  currentStep++;
+  haptic('success');
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function prev(){if(currentStep>0){currentStep--;render();window.scrollTo({top:0,behavior:'smooth'})}}
+
+function confirmRestart(){
+  overlayRoot.innerHTML=`
+    <div class="restart-overlay" onclick="if(event.target===this)dismissRestart()">
+      <div class="restart-dialog">
+        <h3>Recomecar avaliacao?</h3>
+        <p>Todos os dados preenchidos serao apagados.</p>
+        <div class="dialog-btns">
+          <button style="background:#1e293b;color:#cbd5e1" onclick="dismissRestart()">Cancelar</button>
+          <button style="background:#7f1d1d;color:#fca5a5" onclick="doRestart()">Recomecar</button>
+        </div>
+      </div>
+    </div>`;
+}
+function dismissRestart(){overlayRoot.innerHTML=''}
+function doRestart(){
+  overlayRoot.innerHTML='';
+  currentStep=0;redFlags=new Set();painType=null;painDuration=null;evaScore=5;
+  locations=new Set();irradiation=new Set();
+  neuro={motor:null,sensory:null,reflex:null,slr:null,babinski:null,gait:null};
+  symptoms=new Set();neuroSaddleAutoSynced=false;validationShake=false;dermOpen=false;
+  sections={flags:true,classification:false,location:false,neuro_detail:false,symptoms_detail:false,workup:true,conduta:true,diferencial:false,note:true};
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Keyboard
+document.addEventListener('keydown',(e)=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowRight' && e.altKey){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft' && e.altKey){e.preventDefault();prev()}
+});
+
+render();
+</script>
+</body>
+</html>

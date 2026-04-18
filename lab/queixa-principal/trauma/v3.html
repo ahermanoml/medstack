@@ -1,0 +1,2171 @@
+<!-- VERSION: 3 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Trauma — Avaliação ATLS</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-text-size-adjust:100%}
+  header{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);width:100%;padding:1.5rem;text-align:center;border-bottom:2px solid #3b82f6;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  header h1{font-size:1.5rem;font-weight:700;color:#f1f5f9;letter-spacing:-.01em}
+  header p{font-size:.875rem;color:#94a3b8;margin-top:.25rem}
+  .back-link{position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);color:#94a3b8;text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s;display:flex;align-items:center;gap:.3rem;padding:.5rem;border-radius:.5rem}
+  .back-link:hover{color:#f1f5f9;background:rgba(59,130,246,.08)}
+  .timer-badge{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:.7rem;color:#64748b;font-family:'SF Mono','Fira Code',monospace;background:#0f172a;padding:.3rem .6rem;border-radius:.5rem;border:1px solid #1e293b}
+  .container{max-width:700px;width:100%;padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;padding-bottom:3rem}
+  .progress-bar{display:flex;align-items:center;gap:.35rem;padding:0 .5rem}
+  .progress-step{flex:1;height:6px;border-radius:3px;background:#1e293b;transition:background .5s ease,box-shadow .5s ease}
+  .progress-step.done{background:#3b82f6}.progress-step.active{background:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.4);animation:pulse-bar 2s ease-in-out infinite}
+  @keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.55}}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.5rem;color:#475569;padding:.35rem .5rem 0}
+  .progress-labels span{transition:color .3s,font-weight .3s}
+  .progress-labels span.active-label{color:#93c5fd;font-weight:700}.progress-labels span.done-label{color:#3b82f6;font-weight:500}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:1rem;padding:2rem;animation:cardIn .4s cubic-bezier(.22,1,.36,1);will-change:transform,opacity}
+  @keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .card h2{font-size:1.15rem;color:#f8fafc;margin-bottom:.35rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+  .card h2 .step-badge{font-size:.65rem;background:#3b82f6;color:#fff;padding:.15rem .5rem;border-radius:9999px;font-weight:700}
+  .card .subtitle{font-size:.8rem;color:#94a3b8;margin-bottom:1.25rem;line-height:1.4}
+  .options{display:flex;flex-direction:column;gap:.65rem}
+  .option-group-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-top:.75rem;margin-bottom:-.1rem;padding-bottom:.2rem;border-bottom:1px solid rgba(51,65,85,.5)}
+  .option-group-label:first-child{margin-top:0}
+  .option-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.85rem 1rem;color:#cbd5e1;font-size:.92rem;cursor:pointer;transition:all .2s cubic-bezier(.22,1,.36,1);text-align:left;display:flex;align-items:center;gap:.75rem;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;min-height:3rem}
+  .option-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--x,50%) var(--y,50%),rgba(59,130,246,.1),transparent 70%);opacity:0;transition:opacity .3s}
+  .option-btn:hover::before{opacity:1}
+  .option-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9;transform:translateX(2px)}
+  .option-btn:active{transform:scale(.98)}
+  .option-btn.selected{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9;box-shadow:0 0 0 1px rgba(59,130,246,.2),inset 0 1px 0 rgba(255,255,255,.05)}
+  .option-btn.selected::after{content:'\2713';position:absolute;right:.75rem;font-size:.75rem;color:#60a5fa;font-weight:700}
+  .option-btn .icon{font-size:1.2rem;flex-shrink:0;width:1.8rem;text-align:center}
+  .option-btn .label{flex:1}
+  .option-btn .tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:9999px;font-weight:600;flex-shrink:0}
+  .tag-red{background:#7f1d1d;color:#fca5a5}.tag-yellow{background:#78350f;color:#fcd34d}.tag-green{background:#14532d;color:#86efac}.tag-blue{background:#1e3a5f;color:#93c5fd}.tag-gray{background:#374151;color:#d1d5db}
+  .check-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.7rem 1rem;color:#cbd5e1;font-size:.88rem;cursor:pointer;transition:all .2s cubic-bezier(.22,1,.36,1);text-align:left;display:flex;align-items:center;gap:.75rem;-webkit-tap-highlight-color:transparent;min-height:2.8rem}
+  .check-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .check-btn:active{transform:scale(.98)}
+  .check-btn.checked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}
+  .check-btn.checked.alert{border-color:#ef4444;background:#450a0a;color:#fca5a5}
+  .check-box{width:20px;height:20px;border:2px solid #475569;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.75rem}
+  .check-btn.checked .check-box{background:#3b82f6;border-color:#3b82f6;transform:scale(1.05)}
+  .check-btn.checked.alert .check-box{background:#ef4444;border-color:#ef4444}
+  .nav-row{display:flex;gap:.75rem;margin-top:1.5rem}
+  .nav-btn{flex:1;padding:.85rem;border-radius:.75rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s cubic-bezier(.22,1,.36,1);border:none;-webkit-tap-highlight-color:transparent;min-height:3rem}
+  .nav-btn.secondary{background:#334155;color:#cbd5e1}.nav-btn.secondary:hover{background:#475569;transform:translateY(-1px)}
+  .nav-btn.primary{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}.nav-btn.primary:hover{background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,130,246,.4)}
+  .nav-btn.danger{background:#dc2626;color:#fff}.nav-btn.danger:hover{background:#b91c1c}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+  .nav-btn:active:not(:disabled){transform:translateY(1px)!important}
+  .score-opt{flex:1;padding:.5rem .3rem;border-radius:.5rem;font-size:.72rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s;line-height:1.3;-webkit-tap-highlight-color:transparent;min-height:2.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-opt:hover{border-color:#3b82f6;color:#cbd5e1}
+  .score-opt:active{transform:scale(.95)}
+  .score-opt.picked{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9;font-weight:600;box-shadow:0 0 0 1px rgba(59,130,246,.2)}
+  .score-opt .pts{display:block;font-size:.6rem;color:#64748b;margin-top:.15rem}.score-opt.picked .pts{color:#93c5fd}
+  .result-card{text-align:center;padding:2rem 1.5rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:5rem;height:5rem;border-radius:50%;font-size:1.4rem;font-weight:800;margin-bottom:1rem;animation:badgePop .5s cubic-bezier(.22,1,.36,1)}
+  @keyframes badgePop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .badge-red{background:#991b1b;color:#fca5a5;border:3px solid #ef4444;box-shadow:0 0 24px rgba(239,68,68,.3)}
+  .badge-yellow{background:#92400e;color:#fcd34d;border:3px solid #f59e0b;box-shadow:0 0 24px rgba(245,158,11,.2)}
+  .badge-green{background:#166534;color:#86efac;border:3px solid #22c55e;box-shadow:0 0 24px rgba(34,197,94,.2)}
+  .badge-blue{background:#1e40af;color:#93c5fd;border:3px solid #3b82f6;box-shadow:0 0 24px rgba(59,130,246,.2)}
+  .result-title{font-size:1.3rem;font-weight:700;margin-bottom:.25rem}
+  .result-desc{color:#94a3b8;font-size:.9rem;margin-bottom:1.5rem;line-height:1.5}
+  .dark-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .dark-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #1e293b;font-size:.85rem}
+  .summary-row:last-child{border-bottom:none}.summary-row .criteria{color:#94a3b8;flex-shrink:0}
+  .summary-row .value{font-weight:600;display:flex;align-items:center;gap:.4rem;text-align:right}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .dot-red{background:#ef4444}.dot-yellow{background:#f59e0b}.dot-green{background:#22c55e}.dot-blue{background:#3b82f6}.dot-gray{background:#64748b}
+  .conduta-box{border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .conduta-box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .conduta-box.alta-prob{background:#450a0a;border:1.5px solid #991b1b}.conduta-box.alta-prob h3{color:#fca5a5}
+  .conduta-box.mod-prob{background:#451a03;border:1.5px solid #78350f}.conduta-box.mod-prob h3{color:#fcd34d}
+  .conduta-box.baixa-prob{background:#052e16;border:1.5px solid #14532d}.conduta-box.baixa-prob h3{color:#86efac}
+  .conduta-box.neutra-prob{background:#1e293b;border:1.5px solid #334155}.conduta-box.neutra-prob h3{color:#94a3b8}
+  .conduta-item{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem 0;font-size:.85rem;color:#cbd5e1}
+  .conduta-icon{flex-shrink:0;width:1.2rem;text-align:center}
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.25rem 0;border-radius:.5rem;transition:background .15s}
+  .collapse-header:hover{background:rgba(59,130,246,.05)}
+  .collapse-header:active{background:rgba(59,130,246,.1)}
+  .collapse-header h3{margin-bottom:0}
+  .collapse-arrow{font-size:.75rem;color:#64748b;transition:transform .3s cubic-bezier(.22,1,.36,1);width:1.5rem;height:1.5rem;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(100,116,139,.1);flex-shrink:0}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .35s cubic-bezier(.22,1,.36,1),opacity .25s ease}
+  .collapse-body.hidden{max-height:0!important;padding-top:0;margin-top:0;opacity:0}
+  .collapse-body.visible{max-height:5000px;opacity:1}
+  .note-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .note-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .note-text{background:#020617;border:1px solid #1e293b;border-radius:.5rem;padding:1rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.72rem;color:#94a3b8;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.75rem;padding:.7rem;border-radius:.5rem;border:1.5px solid #334155;background:#1e293b;color:#cbd5e1;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;min-height:2.8rem}
+  .copy-btn:hover{border-color:#3b82f6;background:#172040;color:#f1f5f9}
+  .copy-btn:active{transform:scale(.97)}
+  .copy-btn.copied{border-color:#22c55e;background:#052e16;color:#86efac}
+  .flow-connector{display:flex;justify-content:center;padding:.25rem 0}
+  .flow-connector .arrow{width:2px;height:20px;background:linear-gradient(to bottom,#334155,#3b82f6);position:relative;border-radius:1px}
+  .flow-connector .arrow::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #3b82f6}
+  .gcs-display{display:flex;align-items:center;justify-content:center;gap:.75rem;padding:1rem;margin:.75rem 0}
+  .gcs-box{text-align:center;padding:.75rem 1.25rem;border-radius:.75rem;min-width:4.5rem;transition:all .3s}
+  .gcs-box.component{background:#1e293b;border:1px solid #334155}
+  .gcs-box.total{border:2px solid}
+  .gcs-box.total.severe{background:#450a0a;border-color:#ef4444;box-shadow:0 0 12px rgba(239,68,68,.2)}
+  .gcs-box.total.moderate{background:#451a03;border-color:#f59e0b;box-shadow:0 0 12px rgba(245,158,11,.15)}
+  .gcs-box.total.mild{background:#052e16;border-color:#22c55e;box-shadow:0 0 12px rgba(34,197,94,.15)}
+  .gcs-box.total.pending{background:#1e293b;border-color:#334155}
+  .gcs-value{font-size:1.5rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace}
+  .gcs-box.component .gcs-value{color:#93c5fd}
+  .gcs-box.total.severe .gcs-value{color:#fca5a5}
+  .gcs-box.total.moderate .gcs-value{color:#fcd34d}
+  .gcs-box.total.mild .gcs-value{color:#86efac}
+  .gcs-box.total.pending .gcs-value{color:#64748b}
+  .gcs-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-top:.2rem}
+  .gcs-plus{font-size:1.2rem;color:#475569;font-weight:700}
+  .score-row{margin-bottom:.75rem}
+  .score-row-label{font-size:.8rem;color:#94a3b8;margin-bottom:.4rem;display:flex;justify-content:space-between}
+  .score-options{display:flex;gap:.4rem}
+  .alert-banner{background:#450a0a;border:1.5px solid #991b1b;border-radius:.75rem;padding:1rem;margin-top:.75rem;margin-bottom:.25rem;display:flex;align-items:flex-start;gap:.75rem;animation:alertPulse 3s ease-in-out infinite}
+  @keyframes alertPulse{0%,100%{border-color:#991b1b}50%{border-color:#ef4444}}
+  .alert-banner .alert-icon{font-size:1.3rem;flex-shrink:0;margin-top:.1rem}
+  .alert-banner .alert-text{font-size:.82rem;color:#fca5a5;font-weight:600;line-height:1.4}
+  .warn-banner{background:#451a03;border:1.5px solid #78350f;border-radius:.75rem;padding:1rem;margin-top:.75rem;margin-bottom:.25rem;display:flex;align-items:flex-start;gap:.75rem}
+  .warn-banner .alert-icon{font-size:1.3rem;flex-shrink:0;margin-top:.1rem}
+  .warn-banner .alert-text{font-size:.82rem;color:#fcd34d;font-weight:600;line-height:1.4}
+  .vital-input{background:#0f172a;border:1.5px solid #334155;border-radius:.5rem;padding:.6rem .8rem;color:#f1f5f9;font-size:.9rem;width:100%;font-family:inherit;transition:border-color .2s,box-shadow .2s;min-height:2.5rem}
+  .vital-input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+  .vital-input::placeholder{color:#475569}
+  .vital-input.warn{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.1)}
+  .vital-input.danger{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+  .input-row{display:flex;gap:.75rem;margin-bottom:.75rem}
+  .input-group{flex:1;display:flex;flex-direction:column;gap:.3rem}
+  .input-label{font-size:.75rem;color:#94a3b8;font-weight:500}
+  .input-unit{font-size:.65rem;color:#64748b}
+  .shock-display{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:.75rem;margin-top:.75rem;transition:all .3s}
+  .shock-display.shock-i{background:#052e16;border:1px solid #14532d}
+  .shock-display.shock-ii{background:#451a03;border:1px solid #78350f}
+  .shock-display.shock-iii{background:#450a0a;border:1px solid #7f1d1d}
+  .shock-display.shock-iv{background:#450a0a;border:2px solid #ef4444;box-shadow:0 0 16px rgba(239,68,68,.2)}
+  .shock-display.shock-pending{background:#1e293b;border:1px solid #334155}
+  .shock-class{font-size:2rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;min-width:2.5rem;text-align:center}
+  .shock-display.shock-i .shock-class{color:#86efac}
+  .shock-display.shock-ii .shock-class{color:#fcd34d}
+  .shock-display.shock-iii .shock-class{color:#fca5a5}
+  .shock-display.shock-iv .shock-class{color:#fca5a5}
+  .shock-display.shock-pending .shock-class{color:#64748b}
+  .shock-info{flex:1}.shock-info .shock-label{font-size:.85rem;font-weight:600;color:#f1f5f9}
+  .shock-info .shock-detail{font-size:.75rem;color:#94a3b8;margin-top:.15rem;line-height:1.4}
+  .fast-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0}
+  .fast-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:1rem;cursor:pointer;transition:all .25s cubic-bezier(.22,1,.36,1);text-align:center;-webkit-tap-highlight-color:transparent;position:relative;min-height:5rem}
+  .fast-btn:hover{border-color:#3b82f6;background:#172040;transform:scale(1.02)}
+  .fast-btn:active{transform:scale(.98)}
+  .fast-btn.positive{border-color:#ef4444;background:#450a0a;color:#fca5a5;box-shadow:0 0 12px rgba(239,68,68,.15)}
+  .fast-btn.negative{border-color:#22c55e;background:#052e16;color:#86efac}
+  .fast-btn.indeterminate{border-color:#f59e0b;background:#451a03;color:#fcd34d}
+  .fast-btn .fast-icon{font-size:1.5rem;margin-bottom:.3rem}
+  .fast-btn .fast-label{font-size:.78rem;font-weight:600}
+  .fast-btn .fast-status{font-size:.62rem;margin-top:.25rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  .section-divider{height:1px;background:#334155;margin:.75rem 0}
+  .intervention-tag{display:inline-block;font-size:.55rem;text-transform:uppercase;letter-spacing:.05em;padding:.15rem .4rem;border-radius:9999px;font-weight:600;margin-left:.5rem}
+  .tag-intervention{background:#7f1d1d;color:#fca5a5}
+  .tag-assessment{background:#1e3a5f;color:#93c5fd}
+  .inline-note{font-size:.75rem;color:#64748b;font-style:italic;margin-top:.25rem;padding-left:2.75rem}
+  .team-activation{background:#450a0a;border:2px solid #ef4444;border-radius:.75rem;padding:1.25rem;margin-bottom:1rem;text-align:center;animation:alertPulse 3s ease-in-out infinite}
+  .team-activation h3{color:#fca5a5;font-size:1rem;margin-bottom:.5rem}
+  .team-activation p{color:#fca5a5;font-size:.85rem;line-height:1.5}
+  .imaging-item{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem 0;font-size:.85rem;color:#cbd5e1}
+  .imaging-icon{flex-shrink:0;width:1.2rem;text-align:center}
+  .tab-bar{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+  .tab-btn{flex:1;padding:.55rem .5rem;border-radius:.5rem;font-size:.7rem;font-weight:600;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#64748b;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent;min-width:fit-content;min-height:2.2rem}
+  .tab-btn.active{border-color:#3b82f6;background:#1e3a5f;color:#f1f5f9}
+  .tab-btn:hover{border-color:#3b82f6}
+  .tab-btn:active{transform:scale(.95)}
+  .tab-btn .tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:1rem;height:1rem;border-radius:9999px;font-size:.55rem;margin-left:.25rem;background:#ef4444;color:#fff;font-weight:700}
+  .si-display{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;margin-top:.5rem;font-size:.82rem}
+  .si-display.si-normal{background:#052e16;border:1px solid #14532d;color:#86efac}
+  .si-display.si-elevated{background:#451a03;border:1px solid #78350f;color:#fcd34d}
+  .si-display.si-critical{background:#450a0a;border:1px solid #7f1d1d;color:#fca5a5}
+  .si-display.si-pending{background:#1e293b;border:1px solid #334155;color:#64748b}
+  .si-value{font-size:1.2rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;min-width:3rem;text-align:center}
+  .si-info{flex:1;font-size:.78rem;line-height:1.4}
+  .step-summary{font-size:.72rem;color:#64748b;background:#0f172a;border-radius:.5rem;padding:.5rem .75rem;margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.5rem}
+  .step-summary .chip{background:#1e293b;padding:.2rem .5rem;border-radius:9999px;font-size:.65rem;color:#94a3b8;border:1px solid #334155}
+  .step-summary .chip.alert-chip{background:#450a0a;border-color:#7f1d1d;color:#fca5a5}
+  .step-summary .chip.ok-chip{background:#052e16;border-color:#14532d;color:#86efac}
+  .step-summary .chip.info-chip{background:#1e3a5f;border-color:#1e40af;color:#93c5fd}
+  .conduta-section{margin-top:1.25rem}
+  .conduta-section h3{font-size:.85rem;color:#f1f5f9;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+  .conduta-list{display:flex;flex-direction:column;gap:.5rem}
+  .conduta-card{background:#0f172a;border:1px solid #334155;border-radius:.5rem;padding:.75rem 1rem;font-size:.82rem;color:#cbd5e1;display:flex;align-items:flex-start;gap:.5rem;line-height:1.4}
+  .conduta-card.urgent{border-color:#7f1d1d;background:#1a0505}
+  .conduta-card.warning{border-color:#78350f;background:#1a0f05}
+  .conduta-card .c-icon{flex-shrink:0;font-size:1rem}
+  .conduta-card .c-text strong{color:#f1f5f9}
+  .ample-grid{display:grid;grid-template-columns:auto 1fr;gap:.3rem .75rem;font-size:.82rem}
+  .ample-grid .ample-letter{font-weight:700;color:#93c5fd;font-size:.9rem}
+  .ample-grid .ample-label{color:#94a3b8}
+  .ample-input{background:#0f172a;border:1.5px solid #334155;border-radius:.5rem;padding:.5rem .75rem;color:#f1f5f9;font-size:.82rem;width:100%;font-family:inherit;transition:border-color .2s;margin-top:.15rem;margin-bottom:.35rem;min-height:2.2rem}
+  .ample-input:focus{outline:none;border-color:#3b82f6}
+  .ample-input::placeholder{color:#475569}
+  .critical-skip{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.75rem;padding:.65rem;border-radius:.5rem;border:1.5px solid #ef4444;background:rgba(69,10,10,.6);color:#fca5a5;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+  .critical-skip:hover{background:rgba(69,10,10,.9);border-color:#f87171}
+  .critical-skip:active{transform:scale(.97)}
+  @media(max-width:500px){
+    .container{padding:.75rem}.card{padding:1.25rem;border-radius:.75rem}
+    .option-btn{padding:.7rem .85rem;font-size:.83rem;min-height:2.8rem}.check-btn{padding:.6rem .8rem;font-size:.78rem;min-height:2.5rem}
+    header{padding:1rem 1.5rem}
+    header h1{font-size:1.15rem}.progress-labels{font-size:.42rem}
+    .score-opt{font-size:.58rem;padding:.4rem .15rem;min-height:2.2rem}
+    .gcs-display{gap:.4rem;flex-wrap:wrap}.gcs-box{min-width:3.2rem;padding:.5rem .65rem}
+    .gcs-value{font-size:1.15rem}
+    .fast-grid{gap:.5rem}.fast-btn{padding:.75rem;min-height:4.5rem}
+    .input-row{flex-direction:column;gap:.5rem}
+    .tab-btn{font-size:.6rem;padding:.45rem .35rem}
+    .timer-badge{display:none}
+    .nav-btn{padding:.75rem;font-size:.85rem}
+    .result-desc{font-size:.82rem}
+    .back-link{left:.75rem;font-size:.78rem}
+    .summary-row{font-size:.8rem;flex-wrap:wrap;gap:.25rem}
+    .summary-row .value{font-size:.78rem}
+  }
+  @media(max-width:360px){
+    .card{padding:1rem}
+    header h1{font-size:1.05rem}
+    .option-btn{font-size:.78rem;padding:.6rem .7rem}
+    .check-btn{font-size:.73rem;padding:.55rem .7rem}
+    .score-opt{font-size:.52rem;padding:.35rem .1rem}
+    .tab-btn{font-size:.55rem;padding:.35rem .25rem}
+    .gcs-box{min-width:2.8rem;padding:.4rem .5rem}
+    .gcs-value{font-size:1rem}
+    .gcs-plus{font-size:.9rem}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../trauma.html" class="back-link">&larr; Voltar</a>
+  <h1>Avaliação de Trauma</h1>
+  <p>ATLS — Primary + Secondary Survey</p>
+  <div class="timer-badge" id="evalTimer">00:00</div>
+</header>
+<div class="container" id="app"></div>
+<script>
+// =======================================
+// STEP LABELS & CONSTANTS
+// =======================================
+const STEP_LABELS=['Mecanismo','A-Via Aérea','B-Ventilação','C-Circulação','D-Neuro','E-Exposição','FAST','2º Survey','AMPLE','Sinais Vitais','Resultado'];
+const TOTAL_STEPS=STEP_LABELS.length;
+const evalStartTime=new Date();
+
+// Timer update
+setInterval(()=>{
+  const el=document.getElementById('evalTimer');
+  if(!el)return;
+  const diff=Math.floor((Date.now()-evalStartTime.getTime())/1000);
+  const m=Math.floor(diff/60);
+  const s=diff%60;
+  el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+},1000);
+
+// =======================================
+// STATE
+// =======================================
+let currentStep=0;
+let sections={mechanism:true,primary:true,gcs:true,fast:true,secondary:true,vitals:true,shock:true,activation:true,imaging:true,conduta:true,note:true};
+
+// Step 0: Mechanism
+let mechanism={
+  type:null,
+  energy:null,
+  details:new Set(),
+  mvcSpeed:null,
+  fallHeight:null
+};
+
+// Step 1: Airway
+let airway={
+  patent:null,
+  cspine:null,
+  findings:new Set(),
+  interventions:new Set()
+};
+
+// Step 2: Breathing
+let breathing={
+  status:null,
+  findings:new Set(),
+  interventions:new Set()
+};
+
+// Step 3: Circulation
+let circulation={
+  pulse:null,
+  skinStatus:null,
+  bleeding:new Set(),
+  interventions:new Set()
+};
+
+// Step 4: Disability (Neuro)
+let disability={
+  gcsEye:null,
+  gcsVerbal:null,
+  gcsMotor:null,
+  pupils:null,
+  laterality:null,
+  findings:new Set()
+};
+
+// Step 5: Exposure
+let exposure={
+  tempStatus:null,
+  findings:new Set(),
+  interventions:new Set()
+};
+
+// Step 6: FAST
+let fast={
+  ruq:null,
+  luq:null,
+  suprapubic:null,
+  pericardial:null
+};
+
+// Step 7: Secondary survey
+let secondary={
+  head:new Set(),
+  neck:new Set(),
+  chest:new Set(),
+  abdomen:new Set(),
+  pelvis:new Set(),
+  extremities:new Set(),
+  spine:new Set(),
+  skin:new Set()
+};
+
+// Step 8: AMPLE History
+let ample={
+  allergies:'',
+  medications:'',
+  pastHistory:'',
+  lastMeal:'',
+  events:''
+};
+
+// Step 9: Vital signs
+let vitals={
+  hr:'',
+  sbp:'',
+  dbp:'',
+  rr:'',
+  spo2:'',
+  temp:'',
+  glic:'',
+  mentalStatus:null
+};
+
+const app=document.getElementById('app');
+
+// =======================================
+// HELPERS
+// =======================================
+function gcsTotal(){
+  if(disability.gcsEye===null||disability.gcsVerbal===null||disability.gcsMotor===null)return null;
+  return disability.gcsEye+disability.gcsVerbal+disability.gcsMotor;
+}
+
+function gcsCategory(total){
+  if(total===null)return'pending';
+  if(total<=8)return'severe';
+  if(total<=12)return'moderate';
+  return'mild';
+}
+
+function shockIndex(){
+  const hr=parseInt(vitals.hr);
+  const sbp=parseInt(vitals.sbp);
+  if(isNaN(hr)||isNaN(sbp)||sbp===0)return null;
+  return (hr/sbp).toFixed(2);
+}
+
+function shockClass(){
+  const hr=parseInt(vitals.hr);
+  const sbp=parseInt(vitals.sbp);
+  const rr=parseInt(vitals.rr);
+  // Require at least HR and SBP to classify shock
+  if(isNaN(hr)&&isNaN(sbp))return null;
+  // Class IV: extreme hemodynamic compromise
+  if((!isNaN(hr)&&hr>140)||(!isNaN(sbp)&&sbp<70)){
+    if(vitals.mentalStatus==='pain'||vitals.mentalStatus==='unresponsive')return 4;
+    if(!isNaN(hr)&&hr>140&&!isNaN(sbp)&&sbp<70)return 4;
+  }
+  // Class IV fallback: combined criteria
+  if(!isNaN(hr)&&hr>120&&!isNaN(sbp)&&sbp<90&&(vitals.mentalStatus==='pain'||vitals.mentalStatus==='unresponsive'))return 4;
+  // Class III
+  if((!isNaN(hr)&&hr>120&&!isNaN(sbp)&&sbp<90)||(!isNaN(rr)&&rr>=30&&rr<=40&&!isNaN(sbp)&&sbp<90))return 3;
+  if(!isNaN(hr)&&hr>120&&!isNaN(sbp)&&sbp<100)return 3;
+  // Class II
+  if(!isNaN(hr)&&hr>100&&!isNaN(sbp)&&sbp<=120)return 2;
+  if(!isNaN(rr)&&rr>=20&&rr<30&&!isNaN(hr)&&hr>100)return 2;
+  // Class I
+  return 1;
+}
+
+function shockInfo(cls){
+  const data={
+    1:{label:'Classe I',detail:'Perda < 750 mL (< 15%). Reposição com cristaloide.',css:'shock-i'},
+    2:{label:'Classe II',detail:'Perda 750–1500 mL (15–30%). Cristaloide + considerar hemoderivados.',css:'shock-ii'},
+    3:{label:'Classe III',detail:'Perda 1500–2000 mL (30–40%). Hemoderivados + cristaloide. Ácido tranexâmico se < 3h.',css:'shock-iii'},
+    4:{label:'Classe IV',detail:'Perda > 2000 mL (> 40%). Protocolo de transfusão maciça. Risco iminente de morte.',css:'shock-iv'}
+  };
+  return data[cls]||{label:'?',detail:'Preencha sinais vitais.',css:'shock-pending'};
+}
+
+function hasLethalTriad(){
+  const hypo=exposure.tempStatus==='hypothermic';
+  const shock=shockClass()>=3;
+  const coag=circulation.interventions.has('massive_transfusion')||circulation.interventions.has('blood_products');
+  return hypo&&(shock||coag);
+}
+
+function hasBeckTriad(){
+  // Beck's triad: JVD + hypotension + muffled (pericardial effusion)
+  const jvd=breathing.findings.has('distended_neck_veins')||secondary.neck.has('jvd');
+  const hypo=!isNaN(parseInt(vitals.sbp))&&parseInt(vitals.sbp)<90;
+  const pericardial=fast.pericardial==='positive';
+  return jvd&&(hypo||pericardial);
+}
+
+function isTraumaTeamActivation(){
+  const criteria=[];
+  const gcs=gcsTotal();
+  if(gcs!==null&&gcs<=8)criteria.push('GCS \u2264 8');
+  if(vitals.sbp&&parseInt(vitals.sbp)<90)criteria.push('PAS < 90 mmHg');
+  if(vitals.rr&&(parseInt(vitals.rr)<10||parseInt(vitals.rr)>29))criteria.push('FR < 10 ou > 29');
+  if(mechanism.type==='penetrating')criteria.push('Trauma penetrante');
+  if(mechanism.details.has('mvc_ejection'))criteria.push('Ejeção do veículo');
+  if(mechanism.details.has('mvc_death_occupant'))criteria.push('Morte de ocupante');
+  if(mechanism.details.has('fall_gt6m'))criteria.push('Queda > 6 metros');
+  if(mechanism.details.has('pedestrian'))criteria.push('Atropelamento');
+  if(airway.patent==='obstructed')criteria.push('Via aérea obstruída');
+  if(breathing.status==='absent')criteria.push('Ventilação ausente');
+  if(circulation.pulse==='absent')criteria.push('Pulso ausente');
+  if(fast.pericardial==='positive')criteria.push('FAST pericárdico +');
+  if(fast.ruq==='positive'||fast.luq==='positive'||fast.suprapubic==='positive')criteria.push('FAST abdominal +');
+  if(disability.pupils==='fixed_bilateral')criteria.push('Pupilas fixas bilaterais');
+  if(secondary.pelvis.has('instability'))criteria.push('Instabilidade pélvica');
+  if(circulation.interventions.has('massive_transfusion'))criteria.push('Protocolo de transfusão maciça');
+  if(exposure.findings.has('amputation'))criteria.push('Amputação traumática');
+  if(exposure.findings.has('open_fracture'))criteria.push('Fratura exposta');
+  const sc=shockClass();
+  if(sc>=3)criteria.push('Choque hemorrágico Classe '+sc);
+  const si=shockIndex();
+  if(si!==null&&parseFloat(si)>=1.0)criteria.push('Índice de choque \u2265 1.0 ('+si+')');
+  return criteria;
+}
+
+function hasCriticalFindings(){
+  // Returns true if any immediately life-threatening finding is present
+  if(airway.patent==='obstructed')return true;
+  if(breathing.status==='absent')return true;
+  if(circulation.pulse==='absent')return true;
+  const gcs=gcsTotal();
+  if(gcs!==null&&gcs<=8)return true;
+  if(disability.pupils==='fixed_unilateral'||disability.pupils==='fixed_bilateral')return true;
+  return false;
+}
+
+function suggestedImaging(){
+  const imgs=[];
+  imgs.push({icon:'\u{1F4F7}',text:'RX Tórax AP',reason:'Rotina de trauma',cat:'img'});
+  imgs.push({icon:'\u{1F4F7}',text:'RX Pelve AP',reason:'Rotina de trauma',cat:'img'});
+
+  if(airway.cspine!=='cleared'){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Coluna Cervical',reason:'C-spine não liberada',cat:'img'});
+  }
+
+  const gcs=gcsTotal();
+  if(gcs!==null&&gcs<=14){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Crânio sem contraste',reason:'GCS \u2264 14',cat:'img'});
+  }
+  if(disability.findings.has('raccoon_eyes')||disability.findings.has('battle_sign')||disability.findings.has('csf_otorrhea')||disability.findings.has('csf_rhinorrhea')){
+    if(!imgs.some(i=>i.text.includes('Crânio'))){
+      imgs.push({icon:'\u{1FA7B}',text:'TC Crânio sem contraste',reason:'Sinais de fratura de base de crânio',cat:'img'});
+    }
+  }
+  if(disability.pupils==='fixed_unilateral'||disability.pupils==='unequal'){
+    if(!imgs.some(i=>i.text.includes('Crânio'))){
+      imgs.push({icon:'\u{1FA7B}',text:'TC Crânio sem contraste (urgente)',reason:'Anisocoria \u2014 risco de herniação',cat:'img'});
+    }
+  }
+
+  if(mechanism.energy==='high'||breathing.findings.has('subcutaneous_emphysema')||breathing.findings.has('flail_chest')){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Tórax com contraste',reason:'Mecanismo de alta energia / achados torácicos',cat:'img'});
+  }
+
+  if(fast.ruq==='positive'||fast.luq==='positive'||fast.suprapubic==='positive'){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Abdome/Pelve com contraste',reason:'FAST positivo',cat:'img'});
+  }
+  if(mechanism.energy==='high'&&!imgs.some(i=>i.text.includes('Abdome'))){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Abdome/Pelve com contraste',reason:'Alta energia \u2014 descartar lesão intra-abdominal',cat:'img'});
+  }
+  if(secondary.abdomen.has('seatbelt_sign')&&!imgs.some(i=>i.text.includes('Abdome'))){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Abdome/Pelve com contraste',reason:'Sinal do cinto de segurança',cat:'img'});
+  }
+
+  if(secondary.pelvis.has('instability')){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Pelve com reconstrução 3D',reason:'Instabilidade pélvica',cat:'img'});
+    imgs.push({icon:'\u{1FA78}',text:'Angio-TC / Angiografia pélvica',reason:'Avaliar sangramento pélvico ativo',cat:'img'});
+  }
+
+  if(secondary.spine.has('thoracic_tender')||secondary.spine.has('lumbar_tender')||secondary.spine.has('step_off')){
+    imgs.push({icon:'\u{1FA7B}',text:'TC Coluna Toracolombar',reason:'Dor/deformidade em coluna',cat:'img'});
+  }
+
+  if(secondary.extremities.has('upper_deformity')){
+    imgs.push({icon:'\u{1F4F7}',text:'RX de extremidades superiores (áreas de deformidade)',reason:'Deformidade em MMSS',cat:'img'});
+  }
+  if(secondary.extremities.has('lower_deformity')){
+    imgs.push({icon:'\u{1F4F7}',text:'RX de extremidades inferiores (áreas de deformidade)',reason:'Deformidade em MMII',cat:'img'});
+  }
+
+  // Cervical vascular
+  if(secondary.neck.has('penetrating_wound')){
+    imgs.push({icon:'\u{1FA78}',text:'Angio-TC cervical',reason:'Ferida penetrante cervical \u2014 avaliar lesão vascular',cat:'img'});
+  }
+
+  // Widened mediastinum
+  if(secondary.chest.has('widened_mediastinum')){
+    imgs.push({icon:'\u{1FA78}',text:'Angio-TC de Aorta torácica',reason:'Suspeita de alargamento de mediastino \u2014 descartar lesão aórtica traumática',cat:'img'});
+  }
+
+  // Labs
+  imgs.push({icon:'\u{1F9EA}',text:'Hemograma completo, Tipo sanguíneo + Prova cruzada',reason:'Rotina de trauma',cat:'lab'});
+  imgs.push({icon:'\u{1F9EA}',text:'Gasometria arterial + Lactato',reason:'Avaliação perfusional',cat:'lab'});
+  imgs.push({icon:'\u{1F9EA}',text:'Coagulograma (TP, TTPA, Fibrinogênio)',reason:'Avaliar coagulopatia traumática',cat:'lab'});
+  imgs.push({icon:'\u{1F9EA}',text:'Ureia, Creatinina, Eletrólitos',reason:'Função renal e distúrbios eletrolíticos',cat:'lab'});
+  imgs.push({icon:'\u{1F9EA}',text:'Beta-HCG (se mulher em idade fértil)',reason:'Descartar gravidez',cat:'lab'});
+
+  if(vitals.glic){
+    const g=parseFloat(vitals.glic);
+    if(g<70||g>200)imgs.push({icon:'\u{1F9EA}',text:'Glicemia capilar de controle',reason:g<70?'Hipoglicemia detectada':'Hiperglicemia detectada',cat:'lab'});
+  }
+
+  const sc=shockClass();
+  if(sc>=2){
+    imgs.push({icon:'\u{1F9EA}',text:'Tromboelastografia (TEG/ROTEM) se disponível',reason:'Choque hemorrágico',cat:'lab'});
+  }
+
+  // Crush injury -> CK + urine
+  if(secondary.extremities.has('crush_injury')){
+    imgs.push({icon:'\u{1F9EA}',text:'CPK, Mioglobina sérica, EAS',reason:'Esmagamento \u2014 avaliar rabdomiólise',cat:'lab'});
+  }
+
+  // Urine
+  if(secondary.pelvis.has('blood_meatus')){
+    imgs.push({icon:'\u{1F9EA}',text:'Uretrocistografia retrógrada',reason:'Sangue em meato \u2014 avaliar lesão uretral antes de cateter',cat:'img'});
+  }else if(sc>=2||secondary.abdomen.size>0){
+    imgs.push({icon:'\u{1F9EA}',text:'Sondagem vesical + débito urinário',reason:'Monitorar perfusão renal',cat:'lab'});
+  }
+
+  return imgs;
+}
+
+function suggestConduta(){
+  const items=[];
+  const gcs=gcsTotal();
+  const sc=shockClass();
+  const si=shockIndex();
+
+  // Airway management
+  if(airway.patent==='obstructed'||airway.patent==='compromised'){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Via aérea definitiva:</strong> IOT com sequência rápida (ISR). Preparar via cirúrgica como backup.',urgent:true});
+  }
+  if(gcs!==null&&gcs<=8&&!airway.interventions.has('orotracheal')&&!airway.interventions.has('surgical_airway')){
+    items.push({icon:'\u{1F6A8}',text:'<strong>GCS \u2264 8:</strong> Indicação formal de intubação orotraqueal para proteção de via aérea.',urgent:true});
+  }
+
+  // Breathing
+  if(breathing.findings.has('deviated_trachea')&&(breathing.findings.has('decreased_breath_left')||breathing.findings.has('decreased_breath_right'))){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Pneumotórax hipertensivo:</strong> Descompressão com agulha (2º EIC, LMC) seguida de drenagem em selo d\'água (5º EIC, LAM).',urgent:true});
+  }
+  if(breathing.findings.has('open_wound')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Pneumotórax aberto:</strong> Curativo de 3 pontas / valvulado seguido de drenagem torácica.',warn:true});
+  }
+  if(breathing.findings.has('flail_chest')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Tórax instável:</strong> Analgesia agressiva (bloqueio intercostal/peridural), ventilação não-invasiva ou IOT se insuficiência respiratória.',warn:true});
+  }
+
+  // Circulation / hemorrhage
+  if(sc>=3){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Choque hemorrágico grave (Classe '+sc+'):</strong> Ativar protocolo de transfusão maciça (1:1:1 \u2014 CH:PFC:Plaq). Ácido tranexâmico 1g IV se < 3h do trauma.',urgent:true});
+  }else if(sc===2){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Choque Classe II:</strong> Reposição com cristaloide aquecido (RL). Reavaliar resposta. Preparar hemoderivados.',warn:true});
+  }
+
+  // Beck's triad / tamponade
+  if(fast.pericardial==='positive'){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Tamponamento cardíaco:</strong> Pericardiocentese de emergência ou toracotomia de reanimação. Chamar cirurgia cardiotorácica.',urgent:true});
+  }else if(hasBeckTriad()){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Tríade de Beck (TJP + Hipotensão + Bulhas abafadas):</strong> Suspeita de tamponamento cardíaco. FAST subxifoideo urgente. Se positivo, pericardiocentese ou toracotomia.',urgent:true});
+  }
+
+  if((fast.ruq==='positive'||fast.luq==='positive'||fast.suprapubic==='positive')&&sc>=3){
+    items.push({icon:'\u{1F6A8}',text:'<strong>FAST + e instável:</strong> Laparotomia exploradora de emergência. NÃO aguardar TC.',urgent:true});
+  }else if(fast.ruq==='positive'||fast.luq==='positive'||fast.suprapubic==='positive'){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>FAST + e estável:</strong> TC de abdome/pelve com contraste para estadiamento. Cirurgia de sobreaviso.',warn:true});
+  }
+
+  if(secondary.pelvis.has('instability')){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Fratura pélvica instável:</strong> Cinta pélvica imediata (nível dos trocanteres). Não repetir compressão. Angioembolização ou packing pré-peritoneal se sangramento refratário.',urgent:true});
+  }
+
+  if(circulation.bleeding.has('external_uncontrolled')){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Hemorragia externa não controlada:</strong> Pressão direta + torniquete em extremidades. Considerar agentes hemostáticos tópicos.',urgent:true});
+  }
+
+  // Neuro
+  if(disability.pupils==='fixed_unilateral'){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Herniação cerebral:</strong> Manitol 1g/kg IV ou NaCl 23,4% 30mL IV. Cabeceira a 30\u00B0. TC crânio urgente. Neurocirurgia.',urgent:true});
+  }
+  if(disability.findings.has('seizure')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Convulsão pós-traumática:</strong> Fenitoína 20mg/kg IV (ataque) ou Levetiracetam 20mg/kg IV. Profilaxia por 7 dias se TCE grave.',warn:true});
+  }
+
+  // Lethal triad
+  if(hasLethalTriad()){
+    items.push({icon:'\u{1F6A8}',text:'<strong>TRÍADE LETAL (Hipotermia + Acidose + Coagulopatia):</strong> Cirurgia de controle de danos (damage control). Aquecer ativamente. Corrigir coagulopatia com hemoderivados.',urgent:true});
+  }
+
+  // Exposure
+  if(exposure.tempStatus==='hypothermic'){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Hipotermia:</strong> Aquecimento ativo (cobertores térmicos, fluidos IV aquecidos a 39\u00B0C, ambiente aquecido).',warn:true});
+  }
+  if(exposure.findings.has('impaled_object')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Objeto empalado:</strong> NÃO remover no PS. Estabilizar o objeto. Remoção em centro cirúrgico com controle vascular.',warn:true});
+  }
+  if(exposure.findings.has('open_fracture')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Fratura exposta:</strong> ATB profilático (Cefazolina 2g IV). Irrigação com SF. Curativo estéril. Imobilização. Ortopedia.',warn:true});
+  }
+  if(exposure.findings.has('burns')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Queimaduras:</strong> Calcular SCQ (regra dos 9). Parkland: 4mL x kg x %SCQ nas primeiras 24h. Avaliar necessidade de escarotomia.',warn:true});
+  }
+
+  // Compartment syndrome
+  if(secondary.extremities.has('compartment_syndrome')){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Síndrome compartimental:</strong> Fasciotomia de emergência. Medir pressão compartimental se dúvida (> 30 mmHg ou delta < 30 em relação à PAD).',urgent:true});
+  }
+
+  // Crush injury / rhabdomyolysis
+  if(secondary.extremities.has('crush_injury')){
+    items.push({icon:'\u26A0\uFE0F',text:'<strong>Lesão por esmagamento:</strong> Hidratação agressiva com SF 0,9% (1–1,5 L/h). Monitorar CPK, K+ e mioglobinúria. Alcalinizar urina se necessário.',warn:true});
+  }
+
+  // Tetanus
+  if(secondary.skin.has('tetanus_needed')){
+    items.push({icon:'\u{1F489}',text:'<strong>Profilaxia tétano:</strong> Verificar cartão vacinal. dT + IGHAT se indicado (ferida contaminada e vacinação incompleta).',warn:false});
+  }
+
+  // Penetrating trauma specifics
+  if(mechanism.type==='penetrating'&&secondary.neck.has('penetrating_wound')){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Ferida penetrante cervical:</strong> Avaliar zona (I/II/III). Angio-TC. Exploração cirúrgica se instável ou sinais duros (sangramento ativo, hematoma expansivo).',urgent:true});
+  }
+
+  // Widened mediastinum
+  if(secondary.chest.has('widened_mediastinum')){
+    items.push({icon:'\u{1F6A8}',text:'<strong>Alargamento de mediastino:</strong> Suspeita de lesão aórtica traumática. Angio-TC de aorta torácica urgente. Controle pressórico (PAS 80–100 mmHg, FC < 80). Cirurgia vascular/endovascular.',urgent:true});
+  }
+
+  // General
+  if(!circulation.interventions.has('iv_access_2')&&!circulation.interventions.has('iv_access_central')){
+    items.push({icon:'\u{1F4A7}',text:'<strong>Acesso venoso:</strong> Obter 2 acessos IV calibrosos (14-16G) em MMSS. Se falha, considerar acesso intraósseo ou central.',warn:false});
+  }
+
+  // Anticoagulant reversal
+  if(ample.medications){
+    const meds=ample.medications.toLowerCase();
+    if(meds.includes('varfarina')||meds.includes('warfarina')||meds.includes('marevan')){
+      items.push({icon:'\u26A0\uFE0F',text:'<strong>Reversão de varfarina:</strong> Vitamina K 10mg IV + CCP (Complexo Protrombínico) 25–50 UI/kg. INR alvo < 1.5.',warn:true});
+    }
+    if(meds.includes('rivaroxaban')||meds.includes('xarelto')||meds.includes('apixaban')||meds.includes('eliquis')||meds.includes('doac')){
+      items.push({icon:'\u26A0\uFE0F',text:'<strong>Reversão de DOAC:</strong> Andexanet alfa se disponível (anti-Xa). Caso contrário, CCP 50 UI/kg. Considerar ácido tranexâmico.',warn:true});
+    }
+    if(meds.includes('dabigatran')||meds.includes('pradaxa')){
+      items.push({icon:'\u26A0\uFE0F',text:'<strong>Reversão de dabigatrana:</strong> Idarucizumab (Praxbind) 5g IV. Se indisponível, CCP 50 UI/kg.',warn:true});
+    }
+  }
+
+  // Low acuity
+  if(items.length===0){
+    items.push({icon:'\u2705',text:'<strong>Trauma de baixa complexidade:</strong> Observação clínica, reavaliação seriada, exames complementares conforme indicação. Reavaliação em 30–60 min.',warn:false});
+  }
+
+  return items;
+}
+
+// =======================================
+// PROGRESS BAR
+// =======================================
+function progHTML(idx,allDone){
+  let h='<div class="progress-bar">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done':i===idx?'active':'';h+=`<div class="progress-step ${c}"></div>`}
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done-label':i===idx?'active-label':'';h+=`<span class="${c}">${STEP_LABELS[i]}</span>`}
+  h+='</div><div class="flow-connector"><div class="arrow"></div></div>';
+  return h;
+}
+
+// =======================================
+// COLLAPSIBLE
+// =======================================
+function collapsible(id,title,contentFn,extraClass){
+  const open=sections[id];
+  let h=`<div class="${extraClass||'dark-box'}">`;
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}" style="margin-top:${open?'.75rem':'0'}">`;
+  if(open)h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// =======================================
+// RENDER ROUTER
+// =======================================
+function render(){
+  // Preserve focused input field
+  const activeEl=document.activeElement;
+  const wasFocusedInput=activeEl&&activeEl.tagName==='INPUT';
+  let focusFieldName=null;
+  let focusCursorPos=null;
+  if(wasFocusedInput&&activeEl.getAttribute('data-field')){
+    focusFieldName=activeEl.getAttribute('data-field');
+    focusCursorPos=activeEl.selectionStart;
+  }
+
+  switch(currentStep){
+    case 0:renderMechanism();break;
+    case 1:renderAirway();break;
+    case 2:renderBreathing();break;
+    case 3:renderCirculation();break;
+    case 4:renderDisability();break;
+    case 5:renderExposure();break;
+    case 6:renderFAST();break;
+    case 7:renderSecondary();break;
+    case 8:renderAMPLE();break;
+    case 9:renderVitals();break;
+    default:renderResult();break;
+  }
+
+  // Restore focus
+  if(focusFieldName){
+    const el=document.querySelector(`[data-field="${focusFieldName}"]`);
+    if(el){
+      el.focus();
+      if(focusCursorPos!==null&&el.setSelectionRange){
+        try{el.setSelectionRange(focusCursorPos,focusCursorPos)}catch(e){}
+      }
+    }
+  }
+
+  if(!wasFocusedInput){
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+// =======================================
+// STEP 0: MECHANISM OF INJURY
+// =======================================
+function renderMechanism(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">1/'+TOTAL_STEPS+'</span> Mecanismo de Trauma</h2>';
+  h+='<p class="subtitle">Identificação da cinética e classificação de energia</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Tipo de trauma</div>';
+  h+=optBtn('mechanism_type','blunt','\u{1F44A}','Contuso (fechado)','tag-blue','Contuso',mechanism.type==='blunt');
+  h+=optBtn('mechanism_type','penetrating','\u{1FA78}','Penetrante','tag-red','Penetrante',mechanism.type==='penetrating');
+
+  h+='<div class="option-group-label">Energia do trauma</div>';
+  h+=optBtn('mechanism_energy','high','\u26A1','Alta energia','tag-red','Alto risco',mechanism.energy==='high');
+  h+=optBtn('mechanism_energy','low','\u{1F4A2}','Baixa energia','tag-green','Menor risco',mechanism.energy==='low');
+
+  h+='<div class="option-group-label">Detalhes do mecanismo (marque todos aplicáveis)</div>';
+  const mechDetails=[
+    {id:'mvc_frontal',icon:'\u{1F697}',label:'Colisão frontal'},
+    {id:'mvc_lateral',icon:'\u{1F698}',label:'Colisão lateral'},
+    {id:'mvc_rollover',icon:'\u{1F504}',label:'Capotamento'},
+    {id:'mvc_ejection',icon:'\u{1F4A8}',label:'Ejeção do veículo'},
+    {id:'mvc_death_occupant',icon:'\u2620\uFE0F',label:'Morte de outro ocupante'},
+    {id:'motorcycle',icon:'\u{1F3CD}\uFE0F',label:'Acidente motociclístico'},
+    {id:'fall_gt6m',icon:'\u2B07\uFE0F',label:'Queda > 6 metros'},
+    {id:'fall_lt6m',icon:'\u{1F9CE}',label:'Queda < 6 metros / da própria altura'},
+    {id:'pedestrian',icon:'\u{1F6B6}',label:'Atropelamento'},
+    {id:'bicycle',icon:'\u{1F6B2}',label:'Acidente ciclista'},
+    {id:'assault_firearm',icon:'\u{1F52B}',label:'Projétil de arma de fogo (PAF)'},
+    {id:'assault_weapon',icon:'\u{1F52A}',label:'Arma branca (FAB)'},
+    {id:'assault_blunt',icon:'\u{1F91C}',label:'Agressão física (contundente)'},
+    {id:'explosion',icon:'\u{1F4A5}',label:'Explosão (blast)'},
+    {id:'crush',icon:'\u{1F3D7}\uFE0F',label:'Esmagamento / soterramento'},
+    {id:'drowning',icon:'\u{1F30A}',label:'Afogamento / submersão'},
+    {id:'animal',icon:'\u{1F40E}',label:'Acidente com animal'}
+  ];
+  for(const d of mechDetails){
+    const ck=mechanism.details.has(d.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleMechDetail('${d.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="icon" style="font-size:1rem;width:1.5rem;text-align:center">${d.icon}</span><span class="label">${d.label}</span></button>`;
+  }
+
+  h+='</div>';
+
+  // Auto-suggest high energy
+  if(mechanism.energy===null&&mechanism.details.size>0){
+    const highEnergyDetails=['mvc_frontal','mvc_lateral','mvc_rollover','mvc_ejection','mvc_death_occupant','motorcycle','fall_gt6m','pedestrian','assault_firearm','explosion','crush'];
+    const hasHighEnergy=[...mechanism.details].some(d=>highEnergyDetails.includes(d));
+    if(hasHighEnergy){
+      h+='<div class="warn-banner" style="margin-top:.5rem"><span class="alert-icon">\u26A0\uFE0F</span><span class="alert-text">Mecanismo sugere alta energia. Considere selecionar "Alta energia" acima.</span></div>';
+    }
+  }
+
+  // Step summary chips
+  if(mechanism.type||mechanism.energy||mechanism.details.size>0){
+    h+='<div class="step-summary">';
+    if(mechanism.type)h+=`<span class="chip ${mechanism.type==='penetrating'?'alert-chip':'ok-chip'}">${mechanism.type==='blunt'?'Contuso':'Penetrante'}</span>`;
+    if(mechanism.energy)h+=`<span class="chip ${mechanism.energy==='high'?'alert-chip':'ok-chip'}">${mechanism.energy==='high'?'Alta energia':'Baixa energia'}</span>`;
+    if(mechanism.details.size>0)h+=`<span class="chip">${mechanism.details.size} detalhe(s)</span>`;
+    h+='</div>';
+  }
+
+  h+=navRow(false, mechanism.type!==null && mechanism.energy!==null);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 1: AIRWAY (with C-spine)
+// =======================================
+function renderAirway(){
+  let h=progHTML(1,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">2/'+TOTAL_STEPS+'</span> A \u2014 Via Aérea + Coluna Cervical</h2>';
+  h+='<p class="subtitle">Primary Survey \u2014 Proteção da via aérea com controle de coluna cervical</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Status da via aérea</div>';
+  h+=optBtn('airway_patent','patent','\u2705','Pérvia e protegida','tag-green','OK',airway.patent==='patent');
+  h+=optBtn('airway_patent','compromised','\u26A0\uFE0F','Comprometida (risco)','tag-yellow','Atenção',airway.patent==='compromised');
+  h+=optBtn('airway_patent','obstructed','\u{1F6D1}','Obstruída','tag-red','Crítico',airway.patent==='obstructed');
+
+  if(airway.patent==='obstructed'){
+    h+='<div class="alert-banner"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">VIA AÉREA OBSTRUÍDA \u2014 Prioridade absoluta! Jaw thrust com estabilização cervical. Se falha, IOT ou cricotireoidostomia cirúrgica.</span></div>';
+  }
+
+  h+='<div class="option-group-label">Coluna cervical</div>';
+  h+=optBtn('airway_cspine','immobilized','\u{1F9F1}','Imobilizada (colar cervical)','tag-green','Protegida',airway.cspine==='immobilized');
+  h+=optBtn('airway_cspine','not_immobilized','\u26A0\uFE0F','Não imobilizada','tag-yellow','Risco',airway.cspine==='not_immobilized');
+  h+=optBtn('airway_cspine','cleared','\u2714\uFE0F','Liberada (NEXUS/Canadian C-Spine Rule)','tag-blue','Liberada',airway.cspine==='cleared');
+
+  h+='<div class="option-group-label">Achados (marque se presente)</div>';
+  const airFindings=[
+    {id:'stridor',label:'Estridor'},
+    {id:'hoarseness',label:'Rouquidão / disfonia'},
+    {id:'facial_trauma',label:'Trauma facial significativo'},
+    {id:'neck_swelling',label:'Edema cervical / hematoma'},
+    {id:'foreign_body',label:'Corpo estranho em via aérea'},
+    {id:'burns_face',label:'Queimadura facial / inalação (vibrissas chamuscadas)'},
+    {id:'blood_airway',label:'Sangue / secreção em orofaringe'},
+    {id:'gcs_lte8',label:'GCS \u2264 8 (incapaz de proteger VA)'}
+  ];
+  for(const f of airFindings){
+    const ck=airway.findings.has(f.id);
+    h+=`<button class="check-btn ${ck?'checked alert':''}" onclick="toggleSetField('airway','findings','${f.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span></button>`;
+  }
+
+  h+='<div class="option-group-label">Intervenções realizadas</div>';
+  const airInterv=[
+    {id:'jaw_thrust',label:'Jaw thrust (subluxação mandibular)'},
+    {id:'chin_lift',label:'Chin lift (elevação do mento)'},
+    {id:'orotracheal',label:'Intubação orotraqueal (ISR)'},
+    {id:'nasotracheal',label:'Intubação nasotraqueal'},
+    {id:'surgical_airway',label:'Cricotireoidostomia cirúrgica'},
+    {id:'suction',label:'Aspiração de VA'},
+    {id:'collar',label:'Colar cervical aplicado'}
+  ];
+  for(const i of airInterv){
+    const ck=airway.interventions.has(i.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSetField('airway','interventions','${i.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${i.label}</span><span class="intervention-tag tag-intervention">Intervenção</span></button>`;
+  }
+
+  h+='</div>';
+
+  // Step summary
+  if(airway.patent||airway.cspine||airway.findings.size>0||airway.interventions.size>0){
+    h+='<div class="step-summary">';
+    if(airway.patent==='patent')h+='<span class="chip ok-chip">VA pérvia</span>';
+    if(airway.patent==='compromised')h+='<span class="chip alert-chip">VA comprometida</span>';
+    if(airway.patent==='obstructed')h+='<span class="chip alert-chip">VA obstruída</span>';
+    if(airway.cspine)h+=`<span class="chip info-chip">C-Spine: ${airway.cspine==='immobilized'?'imobilizada':airway.cspine==='cleared'?'liberada':'não imobilizada'}</span>`;
+    if(airway.findings.size>0)h+=`<span class="chip">${airway.findings.size} achado(s)</span>`;
+    if(airway.interventions.size>0)h+=`<span class="chip info-chip">${airway.interventions.size} intervenção(ões)</span>`;
+    h+='</div>';
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 2: BREATHING
+// =======================================
+function renderBreathing(){
+  let h=progHTML(2,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">3/'+TOTAL_STEPS+'</span> B \u2014 Ventilação e Respiração</h2>';
+  h+='<p class="subtitle">Primary Survey \u2014 Inspeção, palpação, ausculta e percussão torácica</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Status respiratório</div>';
+  h+=optBtn('breathing_status','normal','\u2705','Ventilação normal e bilateral','tag-green','OK',breathing.status==='normal');
+  h+=optBtn('breathing_status','abnormal','\u26A0\uFE0F','Ventilação anormal','tag-yellow','Atenção',breathing.status==='abnormal');
+  h+=optBtn('breathing_status','absent','\u{1F6D1}','Ventilação ausente / apneia','tag-red','Crítico',breathing.status==='absent');
+
+  h+='<div class="option-group-label">Achados (marque se presente)</div>';
+  const bFindings=[
+    {id:'tachypnea',label:'Taquipneia (FR > 20)'},
+    {id:'hypoxia',label:'Hipóxia (SpO\u2082 < 94%)'},
+    {id:'asymmetry',label:'Assimetria de expansibilidade'},
+    {id:'crepitus',label:'Crepitação à palpação'},
+    {id:'subcutaneous_emphysema',label:'Enfisema subcutâneo'},
+    {id:'flail_chest',label:'Tórax instável (flail chest)'},
+    {id:'open_wound',label:'Ferida torácica aberta (sucking wound)'},
+    {id:'deviated_trachea',label:'Desvio de traqueia'},
+    {id:'distended_neck_veins',label:'Turgência jugular'},
+    {id:'hyperresonance',label:'Hipertimpanismo à percussão'},
+    {id:'decreased_breath_left',label:'MV diminuído à esquerda'},
+    {id:'decreased_breath_right',label:'MV diminuído à direita'}
+  ];
+  for(const f of bFindings){
+    const ck=breathing.findings.has(f.id);
+    h+=`<button class="check-btn ${ck?'checked alert':''}" onclick="toggleSetField('breathing','findings','${f.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span></button>`;
+  }
+
+  // Alert for tension pneumothorax
+  if(breathing.findings.has('deviated_trachea')&&(breathing.findings.has('decreased_breath_left')||breathing.findings.has('decreased_breath_right'))&&breathing.findings.has('distended_neck_veins')){
+    h+='<div class="alert-banner"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">Tríade clássica de PNEUMOTÓRAX HIPERTENSIVO \u2014 Descompressão imediata com agulha (2º EIC, LMC) seguida de drenagem torácica (5º EIC, LAM)!</span></div>';
+  }
+  // Alert for hemothorax signs
+  if((breathing.findings.has('decreased_breath_left')||breathing.findings.has('decreased_breath_right'))&&!breathing.findings.has('deviated_trachea')&&breathing.findings.has('hypoxia')){
+    h+='<div class="warn-banner"><span class="alert-icon">\u26A0\uFE0F</span><span class="alert-text">MV diminuído + hipóxia sem desvio de traqueia \u2014 Considerar HEMOTÓRAX. Drenagem torácica em selo d\'água (5º EIC, LAM).</span></div>';
+  }
+  // Flail chest alert
+  if(breathing.findings.has('flail_chest')){
+    h+='<div class="warn-banner"><span class="alert-icon">\u26A0\uFE0F</span><span class="alert-text">TÓRAX INSTÁVEL \u2014 Risco de contusão pulmonar subjacente. Analgesia multimodal (bloqueio, peridural). Monitorizar para deterioração.</span></div>';
+  }
+
+  h+='<div class="option-group-label">Intervenções realizadas</div>';
+  const bInterv=[
+    {id:'o2_mask',label:'O\u2082 via máscara não-reinalante (10-15 L/min)'},
+    {id:'o2_nasal',label:'O\u2082 via cânula nasal'},
+    {id:'bvm',label:'Ventilação com ambu (BVM)'},
+    {id:'chest_tube_left',label:'Drenagem torácica à esquerda'},
+    {id:'chest_tube_right',label:'Drenagem torácica à direita'},
+    {id:'needle_decompression_left',label:'Descompressão com agulha à esquerda'},
+    {id:'needle_decompression_right',label:'Descompressão com agulha à direita'},
+    {id:'occlusive_dressing',label:'Curativo de três pontas / valvulado'},
+    {id:'intubation',label:'Intubação orotraqueal'}
+  ];
+  for(const i of bInterv){
+    const ck=breathing.interventions.has(i.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSetField('breathing','interventions','${i.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${i.label}</span><span class="intervention-tag tag-intervention">Intervenção</span></button>`;
+  }
+
+  h+='</div>';
+
+  // Step summary
+  if(breathing.status||breathing.findings.size>0||breathing.interventions.size>0){
+    h+='<div class="step-summary">';
+    if(breathing.status==='normal')h+='<span class="chip ok-chip">Ventilação normal</span>';
+    if(breathing.status==='abnormal')h+='<span class="chip alert-chip">Ventilação anormal</span>';
+    if(breathing.status==='absent')h+='<span class="chip alert-chip">Apneia</span>';
+    if(breathing.findings.size>0)h+=`<span class="chip">${breathing.findings.size} achado(s)</span>`;
+    if(breathing.interventions.size>0)h+=`<span class="chip info-chip">${breathing.interventions.size} intervenção(ões)</span>`;
+    h+='</div>';
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 3: CIRCULATION
+// =======================================
+function renderCirculation(){
+  let h=progHTML(3,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">4/'+TOTAL_STEPS+'</span> C \u2014 Circulação e Hemorragia</h2>';
+  h+='<p class="subtitle">Primary Survey \u2014 Identificar e controlar fontes de sangramento</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Pulso central</div>';
+  h+=optBtn('circ_pulse','strong','\u2764\uFE0F','Forte e regular','tag-green','OK',circulation.pulse==='strong');
+  h+=optBtn('circ_pulse','weak','\u{1FA7A}','Fraco / filiforme','tag-yellow','Atenção',circulation.pulse==='weak');
+  h+=optBtn('circ_pulse','absent','\u{1F6D1}','Ausente','tag-red','Crítico',circulation.pulse==='absent');
+
+  if(circulation.pulse==='absent'){
+    h+='<div class="alert-banner"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">PULSO CENTRAL AUSENTE \u2014 Iniciar RCP. Considerar causas reversíveis (4Hs e 4Ts). Em trauma penetrante, considerar toracotomia de reanimação.</span></div>';
+  }
+
+  h+='<div class="option-group-label">Perfusão periférica</div>';
+  h+=optBtn('circ_skin','warm_dry','\u{1F44B}','Quente, seca, corada, TEC < 2s','tag-green','Normal',circulation.skinStatus==='warm_dry');
+  h+=optBtn('circ_skin','cool_clammy','\u{1F976}','Fria, pegajosa, pálida, TEC > 2s','tag-yellow','Choque',circulation.skinStatus==='cool_clammy');
+  h+=optBtn('circ_skin','mottled','\u{1F7E3}','Mosqueada / livedo reticular','tag-red','Grave',circulation.skinStatus==='mottled');
+  h+=optBtn('circ_skin','cyanotic','\u{1F535}','Cianótica','tag-red','Crítico',circulation.skinStatus==='cyanotic');
+
+  h+='<div class="option-group-label">Fontes de sangramento (marque todas)</div>';
+  h+='<p style="font-size:.72rem;color:#475569;margin-top:-.15rem;margin-bottom:.25rem">Lembrar: sangramento pode ser oculto em tórax, abdome, pelve, retroperitônio e MMII (fêmur)</p>';
+  const bleedSites=[
+    {id:'scalp',label:'Couro cabeludo'},
+    {id:'face',label:'Face'},
+    {id:'neck',label:'Pescoço'},
+    {id:'chest',label:'Tórax'},
+    {id:'abdomen',label:'Abdome'},
+    {id:'pelvis',label:'Pelve / perineal'},
+    {id:'retroperitoneal',label:'Retroperitoneal (suspeito)'},
+    {id:'extremity_upper',label:'Extremidade superior'},
+    {id:'extremity_lower',label:'Extremidade inferior / fêmur'},
+    {id:'external_controlled',label:'Hemorragia externa controlada'},
+    {id:'external_uncontrolled',label:'Hemorragia externa NÃO controlada'}
+  ];
+  for(const b of bleedSites){
+    const ck=circulation.bleeding.has(b.id);
+    const isAlert=b.id==='external_uncontrolled';
+    h+=`<button class="check-btn ${ck?(isAlert?'checked alert':'checked'):''}" onclick="toggleSetField('circulation','bleeding','${b.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${b.label}</span></button>`;
+  }
+
+  h+='<div class="option-group-label">Intervenções realizadas</div>';
+  const cInterv=[
+    {id:'iv_access_2',label:'2 acessos IV calibrosos (14-16G)'},
+    {id:'iv_access_central',label:'Acesso venoso central'},
+    {id:'io_access',label:'Acesso intraósseo'},
+    {id:'tourniquet',label:'Torniquete'},
+    {id:'pelvic_binder',label:'Cinta pélvica'},
+    {id:'direct_pressure',label:'Pressão direta sobre ferida'},
+    {id:'crystalloid',label:'Cristaloide (Ringer Lactato aquecido)'},
+    {id:'blood_products',label:'Hemoderivados (concentrado hemácias)'},
+    {id:'tranexamic',label:'Ácido tranexâmico (1g IV em 10 min)'},
+    {id:'massive_transfusion',label:'Protocolo de transfusão maciça (PTM)'}
+  ];
+  for(const i of cInterv){
+    const ck=circulation.interventions.has(i.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSetField('circulation','interventions','${i.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${i.label}</span><span class="intervention-tag tag-intervention">Intervenção</span></button>`;
+  }
+
+  h+='</div>';
+
+  // Step summary
+  if(circulation.pulse||circulation.skinStatus||circulation.bleeding.size>0||circulation.interventions.size>0){
+    h+='<div class="step-summary">';
+    if(circulation.pulse==='strong')h+='<span class="chip ok-chip">Pulso forte</span>';
+    if(circulation.pulse==='weak')h+='<span class="chip alert-chip">Pulso fraco</span>';
+    if(circulation.pulse==='absent')h+='<span class="chip alert-chip">Pulso ausente</span>';
+    if(circulation.bleeding.size>0)h+=`<span class="chip ${circulation.bleeding.has('external_uncontrolled')?'alert-chip':''}">${circulation.bleeding.size} foco(s) de sangramento</span>`;
+    if(circulation.interventions.size>0)h+=`<span class="chip info-chip">${circulation.interventions.size} intervenção(ões)</span>`;
+    h+='</div>';
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 4: DISABILITY (Neuro + GCS)
+// =======================================
+function renderDisability(){
+  let h=progHTML(4,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">5/'+TOTAL_STEPS+'</span> D \u2014 Disfunção Neurológica</h2>';
+  h+='<p class="subtitle">Primary Survey \u2014 Glasgow + Pupilas + Lateralidade</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Escala de Coma de Glasgow (GCS)</div>';
+
+  // Eye
+  h+='<div class="score-row"><div class="score-row-label"><span>Abertura Ocular (O)</span><span style="font-weight:600;color:#93c5fd">'+(disability.gcsEye||'?')+'</span></div>';
+  h+='<div class="score-options">';
+  const eyeOpts=[{v:1,l:'Nenhuma'},{v:2,l:'À dor'},{v:3,l:'À voz'},{v:4,l:'Espont.'}];
+  for(const o of eyeOpts)h+=`<button class="score-opt ${disability.gcsEye===o.v?'picked':''}" onclick="setGCS('eye',${o.v})">${o.l}<span class="pts">${o.v}</span></button>`;
+  h+='</div></div>';
+
+  // Verbal
+  h+='<div class="score-row"><div class="score-row-label"><span>Resposta Verbal (V)</span><span style="font-weight:600;color:#93c5fd">'+(disability.gcsVerbal||'?')+'</span></div>';
+  h+='<div class="score-options">';
+  const verbOpts=[{v:1,l:'Nenhuma'},{v:2,l:'Sons'},{v:3,l:'Palavras'},{v:4,l:'Confusa'},{v:5,l:'Orientada'}];
+  for(const o of verbOpts)h+=`<button class="score-opt ${disability.gcsVerbal===o.v?'picked':''}" onclick="setGCS('verbal',${o.v})">${o.l}<span class="pts">${o.v}</span></button>`;
+  h+='</div></div>';
+
+  // Motor
+  h+='<div class="score-row"><div class="score-row-label"><span>Resposta Motora (M)</span><span style="font-weight:600;color:#93c5fd">'+(disability.gcsMotor||'?')+'</span></div>';
+  h+='<div class="score-options">';
+  const motOpts=[{v:1,l:'Nenhuma'},{v:2,l:'Extensão'},{v:3,l:'Flexão anorm.'},{v:4,l:'Retirada'},{v:5,l:'Localiza'},{v:6,l:'Obedece'}];
+  for(const o of motOpts)h+=`<button class="score-opt ${disability.gcsMotor===o.v?'picked':''}" onclick="setGCS('motor',${o.v})">${o.l}<span class="pts">${o.v}</span></button>`;
+  h+='</div></div>';
+
+  // GCS Display
+  const gcs=gcsTotal();
+  const cat=gcsCategory(gcs);
+  h+='<div class="gcs-display">';
+  h+=`<div class="gcs-box component"><div class="gcs-value">${disability.gcsEye||'?'}</div><div class="gcs-label">Ocular</div></div>`;
+  h+='<span class="gcs-plus">+</span>';
+  h+=`<div class="gcs-box component"><div class="gcs-value">${disability.gcsVerbal||'?'}</div><div class="gcs-label">Verbal</div></div>`;
+  h+='<span class="gcs-plus">+</span>';
+  h+=`<div class="gcs-box component"><div class="gcs-value">${disability.gcsMotor||'?'}</div><div class="gcs-label">Motor</div></div>`;
+  h+='<span class="gcs-plus">=</span>';
+  h+=`<div class="gcs-box total ${cat}"><div class="gcs-value">${gcs||'?'}</div><div class="gcs-label">Total</div></div>`;
+  h+='</div>';
+
+  if(gcs!==null){
+    const catLabel=cat==='severe'?'Grave (\u2264 8) \u2014 Indicação de IOT para proteção de VA':cat==='moderate'?'Moderado (9-12) \u2014 Observação rigorosa + TC crânio':'Leve (13-15)';
+    const catColor=cat==='severe'?'#fca5a5':cat==='moderate'?'#fcd34d':'#86efac';
+    h+=`<div style="text-align:center;font-size:.85rem;font-weight:600;color:${catColor};margin-bottom:.75rem">${catLabel}</div>`;
+  }
+
+  // Pupils
+  h+='<div class="option-group-label">Pupilas</div>';
+  h+=optBtn('disability_pupils','equal_reactive','\u{1F441}\uFE0F','Isocóricas e fotorreagentes (PIRRLA)','tag-green','Normal',disability.pupils==='equal_reactive');
+  h+=optBtn('disability_pupils','unequal','\u{1F441}\uFE0F','Anisocoria (diferença > 1mm)','tag-yellow','Atenção',disability.pupils==='unequal');
+  h+=optBtn('disability_pupils','fixed_unilateral','\u{1F534}','Fixa unilateral (midríase)','tag-red','Herniação?',disability.pupils==='fixed_unilateral');
+  h+=optBtn('disability_pupils','fixed_bilateral','\u{1F534}','Fixas bilaterais (midríase)','tag-red','Crítico',disability.pupils==='fixed_bilateral');
+
+  if(disability.pupils==='fixed_unilateral'){
+    h+='<div class="alert-banner"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">MIDRÍASE FIXA UNILATERAL \u2014 Suspeita de herniação uncal! Manitol 1g/kg IV ou NaCl 23,4% 30mL. Cabeceira 30\u00B0. TC crânio URGENTE. Neurocirurgia.</span></div>';
+  }
+
+  if(disability.pupils==='unequal'||disability.pupils==='fixed_unilateral'){
+    h+='<div class="option-group-label">Lateralidade da anisocoria</div>';
+    h+='<div style="display:flex;gap:.5rem">';
+    h+=`<button class="score-opt ${disability.laterality==='left'?'picked':''}" onclick="setLaterality('left')" style="flex:1">Esquerda (midríase à E)</button>`;
+    h+=`<button class="score-opt ${disability.laterality==='right'?'picked':''}" onclick="setLaterality('right')" style="flex:1">Direita (midríase à D)</button>`;
+    h+='</div>';
+  }
+
+  h+='<div class="option-group-label">Achados neurológicos</div>';
+  const neuroFindings=[
+    {id:'posturing_decorticate',label:'Postura de decorticação (flexão anormal)'},
+    {id:'posturing_decerebrate',label:'Postura de descerebração (extensão anormal)'},
+    {id:'seizure',label:'Convulsão / atividade epiléptica'},
+    {id:'focal_deficit',label:'Déficit focal motor/sensitivo'},
+    {id:'raccoon_eyes',label:'Equimose periorbital (olhos de guaxinim)'},
+    {id:'battle_sign',label:'Equimose mastoídea (sinal de Battle)'},
+    {id:'csf_otorrhea',label:'Otorreia liquórica (fístula LCR)'},
+    {id:'csf_rhinorrhea',label:'Rinorreia liquórica (fístula LCR)'}
+  ];
+  for(const f of neuroFindings){
+    const ck=disability.findings.has(f.id);
+    h+=`<button class="check-btn ${ck?'checked alert':''}" onclick="toggleSetField('disability','findings','${f.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span></button>`;
+  }
+
+  // Base of skull fracture alert
+  if(disability.findings.has('raccoon_eyes')||disability.findings.has('battle_sign')||disability.findings.has('csf_otorrhea')||disability.findings.has('csf_rhinorrhea')){
+    h+='<div class="warn-banner"><span class="alert-icon">\u26A0\uFE0F</span><span class="alert-text">Sinais de FRATURA DE BASE DE CRÂNIO \u2014 Contraindicação relativa a sondagem nasogástrica e intubação nasotraqueal. Preferir via oral.</span></div>';
+  }
+
+  h+='</div>';
+
+  // Step summary
+  if(gcs!==null||disability.pupils||disability.findings.size>0){
+    h+='<div class="step-summary">';
+    if(gcs!==null){
+      const chipClass=gcs<=8?'alert-chip':gcs<=12?'alert-chip':'ok-chip';
+      h+=`<span class="chip ${chipClass}">GCS ${gcs}</span>`;
+    }
+    if(disability.pupils){
+      const pLabel={equal_reactive:'Pupilas normais',unequal:'Anisocoria',fixed_unilateral:'Midríase fixa unilateral',fixed_bilateral:'Midríase fixa bilateral'};
+      const pClass=disability.pupils==='equal_reactive'?'ok-chip':'alert-chip';
+      h+=`<span class="chip ${pClass}">${pLabel[disability.pupils]}</span>`;
+    }
+    if(disability.findings.size>0)h+=`<span class="chip">${disability.findings.size} achado(s)</span>`;
+    h+='</div>';
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 5: EXPOSURE
+// =======================================
+function renderExposure(){
+  let h=progHTML(5,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">6/'+TOTAL_STEPS+'</span> E \u2014 Exposição e Ambiente</h2>';
+  h+='<p class="subtitle">Primary Survey \u2014 Despir completamente, prevenir hipotermia, log roll</p>';
+  h+='<div class="options">';
+
+  h+='<div class="option-group-label">Temperatura</div>';
+  h+=optBtn('exposure_temp','normothermic','\u{1F321}\uFE0F','Normotérmico (36–37,5\u00B0C)','tag-green','OK',exposure.tempStatus==='normothermic');
+  h+=optBtn('exposure_temp','hypothermic','\u{2744}\uFE0F','Hipotermia (< 36\u00B0C)','tag-red','Risco',exposure.tempStatus==='hypothermic');
+  h+=optBtn('exposure_temp','not_measured','\u2753','Não aferida','tag-gray','Pendente',exposure.tempStatus==='not_measured');
+
+  if(exposure.tempStatus==='hypothermic'){
+    h+='<div class="warn-banner"><span class="alert-icon">\u26A0\uFE0F</span><span class="alert-text">HIPOTERMIA \u2014 Componente da tríade letal do trauma. Iniciar aquecimento ativo imediato (cobertores, fluidos aquecidos a 39\u00B0C, ambiente).</span></div>';
+  }
+
+  h+='<div class="option-group-label">Achados na exposição completa</div>';
+  const eFindings=[
+    {id:'burns',label:'Queimaduras'},
+    {id:'deformity_upper',label:'Deformidade em MMSS'},
+    {id:'deformity_lower',label:'Deformidade em MMII'},
+    {id:'pelvic_instability',label:'Instabilidade pélvica à compressão'},
+    {id:'open_fracture',label:'Fratura exposta'},
+    {id:'amputation',label:'Amputação traumática'},
+    {id:'degloving',label:'Desenluvamento (degloving)'},
+    {id:'impaled_object',label:'Objeto empalado (NÃO remover!)'},
+    {id:'abrasions',label:'Escoriações'},
+    {id:'lacerations',label:'Lacerações'},
+    {id:'contusions',label:'Equimoses / contusões'},
+    {id:'swelling',label:'Edema significativo'},
+    {id:'log_roll_done',label:'Log roll realizado (4 pessoas)'},
+    {id:'rectal_done',label:'Toque retal realizado'},
+    {id:'spine_tenderness',label:'Dor à palpação de coluna'}
+  ];
+  for(const f of eFindings){
+    const ck=exposure.findings.has(f.id);
+    const isAlert=['open_fracture','amputation','pelvic_instability','degloving','impaled_object'].includes(f.id);
+    h+=`<button class="check-btn ${ck?(isAlert?'checked alert':'checked'):''}" onclick="toggleSetField('exposure','findings','${f.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${f.label}</span></button>`;
+  }
+
+  h+='<div class="option-group-label">Intervenções realizadas</div>';
+  const eInterv=[
+    {id:'warming_blankets',label:'Cobertores térmicos / manta'},
+    {id:'warming_fluids',label:'Fluidos aquecidos (39\u00B0C)'},
+    {id:'logroll',label:'Log roll com proteção de coluna'},
+    {id:'remove_clothing',label:'Remoção completa de roupas'},
+    {id:'wound_care',label:'Curativo de feridas'},
+    {id:'splint',label:'Imobilização de fraturas / talas'}
+  ];
+  for(const i of eInterv){
+    const ck=exposure.interventions.has(i.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleSetField('exposure','interventions','${i.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${i.label}</span><span class="intervention-tag tag-intervention">Intervenção</span></button>`;
+  }
+
+  h+='</div>';
+
+  // Critical findings skip option
+  if(hasCriticalFindings()){
+    h+='<div class="critical-skip" onclick="currentStep=TOTAL_STEPS;render()">\u{1F6A8} Achados críticos detectados \u2014 Ir diretamente ao Resultado</div>';
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 6: FAST EXAM
+// =======================================
+function renderFAST(){
+  let h=progHTML(6,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">7/'+TOTAL_STEPS+'</span> FAST \u2014 Ultrassom à Beira-leito</h2>';
+  h+='<p class="subtitle">Focused Assessment with Sonography for Trauma \u2014 4 janelas</p>';
+
+  h+='<div class="fast-grid">';
+  const quadrants=[
+    {id:'ruq',label:'Hepatorrenal (Morrison)',icon:'\u{1FAC0}'},
+    {id:'luq',label:'Esplenorrenal (LUQ)',icon:'\u{1FAC0}'},
+    {id:'suprapubic',label:'Suprapúbico (Douglas)',icon:'\u{1FAC0}'},
+    {id:'pericardial',label:'Subxifoideo (Pericárdio)',icon:'\u2764\uFE0F'}
+  ];
+  for(const q of quadrants){
+    const val=fast[q.id];
+    let btnClass='fast-btn';
+    let statusText='Toque para avaliar';
+    if(val==='positive'){btnClass+=' positive';statusText='\u2716 POSITIVO';}
+    else if(val==='negative'){btnClass+=' negative';statusText='\u2713 Negativo';}
+    else if(val==='indeterminate'){btnClass+=' indeterminate';statusText='\u2014 Indeterminado';}
+    h+=`<div class="${btnClass}" onclick="cycleFAST('${q.id}')">`;
+    h+=`<div class="fast-icon">${q.icon}</div>`;
+    h+=`<div class="fast-label">${q.label}</div>`;
+    h+=`<div class="fast-status">${statusText}</div>`;
+    h+='</div>';
+  }
+  h+='</div>';
+  h+='<p style="font-size:.72rem;color:#64748b;text-align:center;margin-top:.35rem">\u21BB Clique para alternar: Não avaliado \u2192 Negativo \u2192 Positivo \u2192 Indeterminado</p>';
+
+  // FAST summary alerts
+  const anyPositive=[fast.ruq,fast.luq,fast.suprapubic,fast.pericardial].some(v=>v==='positive');
+  if(anyPositive){
+    h+='<div class="alert-banner"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">FAST POSITIVO \u2014 ';
+    if(fast.pericardial==='positive')h+='Líquido pericárdico: tamponamento cardíaco? Pericardiocentese ou toracotomia de emergência. ';
+    if(fast.ruq==='positive'||fast.luq==='positive'||fast.suprapubic==='positive'){
+      h+='Líquido livre abdominal: ';
+      h+='Se instável \u2192 laparotomia exploradora. ';
+      h+='Se estável \u2192 TC com contraste para estadiamento. ';
+    }
+    h+='</span></div>';
+  }
+
+  // eFAST note
+  h+='<div style="margin-top:.75rem;padding:.75rem;background:#0f172a;border-radius:.5rem;border:1px solid #1e293b">';
+  h+='<p style="font-size:.72rem;color:#64748b;line-height:1.5"><strong style="color:#94a3b8">eFAST (Extended):</strong> Incluir avaliação de pneumotórax bilateral (ausência de deslizamento pleural / lung sliding). Achados já cobertos na etapa B (Ventilação).</p>';
+  h+='</div>';
+
+  // FAST summary chips
+  const evaluated=[fast.ruq,fast.luq,fast.suprapubic,fast.pericardial].filter(v=>v!==null).length;
+  if(evaluated>0){
+    h+='<div class="step-summary">';
+    h+=`<span class="chip">${evaluated}/4 avaliados</span>`;
+    if(anyPositive)h+='<span class="chip alert-chip">FAST positivo</span>';
+    else if(evaluated===4)h+='<span class="chip ok-chip">FAST negativo</span>';
+    h+='</div>';
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 7: SECONDARY SURVEY
+// =======================================
+function renderSecondary(){
+  let h=progHTML(7,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">8/'+TOTAL_STEPS+'</span> Secondary Survey \u2014 Head-to-Toe</h2>';
+  h+='<p class="subtitle">Exame sistemático da cabeça aos pés. Realizável somente após primary survey completo e estabilização.</p>';
+
+  const regions=[
+    {key:'head',label:'Cabeça/Face',shortLabel:'Cabeça',items:[
+      {id:'scalp_lac',l:'Laceração de couro cabeludo'},
+      {id:'skull_deformity',l:'Deformidade / afundamento craniano'},
+      {id:'facial_fracture',l:'Suspeita de fratura facial (Le Fort)'},
+      {id:'eye_injury',l:'Lesão ocular / hifema'},
+      {id:'ear_injury',l:'Lesão otológica / hemotímpano'},
+      {id:'dental_injury',l:'Lesão dentária / avulsão'}
+    ]},
+    {key:'neck',label:'Pescoço',shortLabel:'Pescoço',items:[
+      {id:'c_spine_tender',l:'Dor à palpação de coluna cervical'},
+      {id:'tracheal_deviation',l:'Desvio de traqueia'},
+      {id:'jvd',l:'Turgência jugular (TJP)'},
+      {id:'subcutaneous_emphysema',l:'Enfisema subcutâneo'},
+      {id:'carotid_bruit',l:'Sopro carotídeo'},
+      {id:'penetrating_wound',l:'Ferida penetrante cervical'},
+      {id:'expanding_hematoma',l:'Hematoma cervical expansivo'}
+    ]},
+    {key:'chest',label:'Tórax',shortLabel:'Tórax',items:[
+      {id:'rib_fracture',l:'Fratura de costela(s)'},
+      {id:'sternal_fracture',l:'Fratura esternal'},
+      {id:'flail_segment',l:'Segmento flail / tórax instável'},
+      {id:'crepitus',l:'Crepitação'},
+      {id:'chest_wall_tender',l:'Dor à palpação da parede'},
+      {id:'pneumothorax_signs',l:'Sinais de pneumotórax'},
+      {id:'hemothorax_signs',l:'Sinais de hemotórax'},
+      {id:'widened_mediastinum',l:'Suspeita de alargamento de mediastino'}
+    ]},
+    {key:'abdomen',label:'Abdome',shortLabel:'Abdome',items:[
+      {id:'distension',l:'Distensão abdominal'},
+      {id:'rigidity',l:'Rigidez / defesa involuntária'},
+      {id:'guarding',l:'Dor à descompressão (Blumberg)'},
+      {id:'tenderness_ruq',l:'Dor QSD'},
+      {id:'tenderness_luq',l:'Dor QSE'},
+      {id:'tenderness_rlq',l:'Dor QID'},
+      {id:'tenderness_llq',l:'Dor QIE'},
+      {id:'ecchymosis_flank',l:'Equimose em flancos (Grey-Turner)'},
+      {id:'cullen_sign',l:'Equimose periumbilical (Cullen)'},
+      {id:'seatbelt_sign',l:'Sinal do cinto de segurança'},
+      {id:'evisceration',l:'Evisceração'}
+    ]},
+    {key:'pelvis',label:'Pelve e Períneo',shortLabel:'Pelve',items:[
+      {id:'instability',l:'Instabilidade pélvica (comprimir 1x apenas!)'},
+      {id:'perineal_ecchymosis',l:'Equimose perineal'},
+      {id:'blood_meatus',l:'Sangue no meato uretral'},
+      {id:'high_riding_prostate',l:'Próstata elevada ao toque retal'},
+      {id:'vaginal_bleeding',l:'Sangramento vaginal'}
+    ]},
+    {key:'extremities',label:'Extremidades',shortLabel:'Extrem.',items:[
+      {id:'upper_deformity',l:'Deformidade / fratura em MMSS'},
+      {id:'upper_neurovascular',l:'Comprometimento neurovascular em MMSS'},
+      {id:'lower_deformity',l:'Deformidade / fratura em MMII'},
+      {id:'lower_neurovascular',l:'Comprometimento neurovascular em MMII'},
+      {id:'compartment_syndrome',l:'Suspeita de síndrome compartimental (5 Ps)'},
+      {id:'open_fracture',l:'Fratura exposta'},
+      {id:'crush_injury',l:'Lesão por esmagamento (risco de rabdomiólise)'}
+    ]},
+    {key:'spine',label:'Coluna Vertebral',shortLabel:'Coluna',items:[
+      {id:'cervical_tender',l:'Dor cervical à palpação'},
+      {id:'thoracic_tender',l:'Dor torácica à palpação'},
+      {id:'lumbar_tender',l:'Dor lombar à palpação'},
+      {id:'step_off',l:'Degrau palpável (step-off)'},
+      {id:'neuro_deficit',l:'Déficit neurológico segmentar (nível)'}
+    ]},
+    {key:'skin',label:'Pele e Tecidos Moles',shortLabel:'Pele',items:[
+      {id:'burns_partial',l:'Queimaduras de espessura parcial (2º grau)'},
+      {id:'burns_full',l:'Queimaduras de espessura total (3º grau)'},
+      {id:'degloving',l:'Desenluvamento (degloving)'},
+      {id:'large_laceration',l:'Lacerações extensas (> 10 cm)'},
+      {id:'contaminated_wound',l:'Feridas contaminadas / sujas'},
+      {id:'tetanus_needed',l:'Profilaxia de tétano necessária'}
+    ]}
+  ];
+
+  // Tab navigation for regions
+  h+='<div class="tab-bar">';
+  const activeRegion=window._activeSecondaryRegion||'head';
+  for(const r of regions){
+    const count=secondary[r.key].size;
+    const label=r.shortLabel||r.label;
+    h+=`<button class="tab-btn ${activeRegion===r.key?'active':''}" onclick="switchSecondaryRegion('${r.key}')">${label}${count>0?'<span class="tab-count">'+count+'</span>':''}</button>`;
+  }
+  h+='</div>';
+
+  const region=regions.find(r=>r.key===activeRegion);
+  if(region){
+    h+=`<p style="font-size:.8rem;color:#94a3b8;margin-bottom:.5rem;font-weight:600">${region.label}</p>`;
+    h+='<div class="options">';
+    for(const item of region.items){
+      const ck=secondary[region.key].has(item.id);
+      h+=`<button class="check-btn ${ck?'checked alert':''}" onclick="toggleSecondary('${region.key}','${item.id}')"><span class="check-box">${ck?'\u2713':''}</span><span class="label">${item.l}</span></button>`;
+    }
+    h+='</div>';
+  }
+
+  // Total findings count
+  let totalFindings=0;
+  for(const r of regions)totalFindings+=secondary[r.key].size;
+  if(totalFindings>0){
+    h+=`<div style="margin-top:.75rem;text-align:center;font-size:.75rem;color:#94a3b8"><strong>${totalFindings}</strong> achado(s) no secondary survey</div>`;
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 8: AMPLE HISTORY
+// =======================================
+function renderAMPLE(){
+  let h=progHTML(8,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">9/'+TOTAL_STEPS+'</span> História AMPLE</h2>';
+  h+='<p class="subtitle">Informações complementares essenciais \u2014 colher com paciente ou acompanhante</p>';
+
+  h+='<div class="ample-grid">';
+
+  h+='<div class="ample-letter">A</div><div class="ample-label">Alergias</div>';
+  h+=`<div style="grid-column:1/3"><input class="ample-input" data-field="ample_allergies" value="${escHTML(ample.allergies)}" placeholder="Medicamentos, alimentos, látex..." oninput="setAmple('allergies',this.value)"></div>`;
+
+  h+='<div class="ample-letter">M</div><div class="ample-label">Medicamentos em uso</div>';
+  h+=`<div style="grid-column:1/3"><input class="ample-input" data-field="ample_medications" value="${escHTML(ample.medications)}" placeholder="Anticoagulantes, antiplaquetários, insulina..." oninput="setAmple('medications',this.value)"></div>`;
+
+  h+='<div class="ample-letter">P</div><div class="ample-label">Passado médico / cirúrgico</div>';
+  h+=`<div style="grid-column:1/3"><input class="ample-input" data-field="ample_pastHistory" value="${escHTML(ample.pastHistory)}" placeholder="Comorbidades, cirurgias prévias, gestação..." oninput="setAmple('pastHistory',this.value)"></div>`;
+
+  h+='<div class="ample-letter">L</div><div class="ample-label">Última refeição (Last meal)</div>';
+  h+=`<div style="grid-column:1/3"><input class="ample-input" data-field="ample_lastMeal" value="${escHTML(ample.lastMeal)}" placeholder="Horário e tipo da última refeição..." oninput="setAmple('lastMeal',this.value)"></div>`;
+
+  h+='<div class="ample-letter">E</div><div class="ample-label">Eventos / ambiente do trauma</div>';
+  h+=`<div style="grid-column:1/3"><input class="ample-input" data-field="ample_events" value="${escHTML(ample.events)}" placeholder="Circunstâncias, uso de cinto, airbag, capacete..." oninput="setAmple('events',this.value)"></div>`;
+
+  h+='</div>';
+
+  // Key medications alert
+  h+='<div style="margin-top:1rem;padding:.75rem;background:#0f172a;border-radius:.5rem;border:1px solid #1e293b">';
+  h+='<p style="font-size:.72rem;color:#64748b;line-height:1.5"><strong style="color:#f59e0b">\u26A0\uFE0F Atenção especial:</strong> Anticoagulantes (varfarina, DOACs), antiplaquetários (AAS, clopidogrel), insulina/hipoglicemiantes e betabloqueadores podem mascarar sinais clínicos e alterar conduta.</p>';
+  h+='</div>';
+
+  // Dynamic warning for detected anticoagulants
+  if(ample.medications){
+    const meds=ample.medications.toLowerCase();
+    const detectedMeds=[];
+    if(meds.includes('varfarina')||meds.includes('warfarina')||meds.includes('marevan'))detectedMeds.push('Varfarina');
+    if(meds.includes('rivaroxaban')||meds.includes('xarelto'))detectedMeds.push('Rivaroxabana');
+    if(meds.includes('apixaban')||meds.includes('eliquis'))detectedMeds.push('Apixabana');
+    if(meds.includes('dabigatran')||meds.includes('pradaxa'))detectedMeds.push('Dabigatrana');
+    if(meds.includes('clopidogrel')||meds.includes('plavix'))detectedMeds.push('Clopidogrel');
+    if(meds.includes('enoxaparina')||meds.includes('clexane'))detectedMeds.push('Enoxaparina');
+    if(detectedMeds.length>0){
+      h+='<div class="alert-banner" style="margin-top:.75rem"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">Detectado uso de anticoagulante/antiplaquetário: <strong>'+detectedMeds.join(', ')+'</strong>. Considerar reversão se sangramento ativo ou necessidade cirúrgica.</span></div>';
+    }
+  }
+
+  h+=navRow(true,true);
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// STEP 9: VITAL SIGNS
+// =======================================
+function renderVitals(){
+  let h=progHTML(9,false);
+  h+='<div class="card">';
+  h+='<h2><span class="step-badge">10/'+TOTAL_STEPS+'</span> Sinais Vitais + Choque</h2>';
+  h+='<p class="subtitle">Parâmetros hemodinâmicos e classificação do choque hemorrágico</p>';
+
+  h+='<div class="input-row">';
+  h+=inputField('FC (bpm)','hr',vitals.hr,'80','bpm');
+  h+=inputField('PAS (mmHg)','sbp',vitals.sbp,'120','mmHg');
+  h+=inputField('PAD (mmHg)','dbp',vitals.dbp,'80','mmHg');
+  h+='</div>';
+  h+='<div class="input-row">';
+  h+=inputField('FR (irpm)','rr',vitals.rr,'16','irpm');
+  h+=inputField('SpO\u2082 (%)','spo2',vitals.spo2,'98','%');
+  h+=inputField('Temp (\u00B0C)','temp',vitals.temp,'36,5','\u00B0C');
+  h+='</div>';
+  h+='<div class="input-row">';
+  h+=inputField('Glicemia (mg/dL)','glic',vitals.glic,'100','mg/dL');
+  h+='<div class="input-group" style="flex:2"></div>';
+  h+='</div>';
+
+  h+='<div class="option-group-label">Status mental (AVPU)</div>';
+  h+='<div style="display:flex;gap:.4rem;margin-top:.5rem">';
+  const avpu=[{v:'alert',l:'A - Alerta'},{v:'verbal',l:'V - Verbal'},{v:'pain',l:'P - Dor'},{v:'unresponsive',l:'U - Irresponsivo'}];
+  for(const a of avpu)h+=`<button class="score-opt ${vitals.mentalStatus===a.v?'picked':''}" onclick="setVital('mentalStatus','${a.v}')" style="flex:1">${a.l}</button>`;
+  h+='</div>';
+
+  // Vital sign abnormality warnings
+  const hr=parseInt(vitals.hr),sbp=parseInt(vitals.sbp),rr=parseInt(vitals.rr),spo2=parseInt(vitals.spo2),temp=parseFloat(vitals.temp),glic=parseFloat(vitals.glic);
+  const warnings=[];
+  if(!isNaN(hr)&&(hr>120||hr<50))warnings.push(hr>120?'Taquicardia acentuada (FC > 120)':'Bradicardia (FC < 50)');
+  if(!isNaN(sbp)&&sbp<90)warnings.push('Hipotensão (PAS < 90 mmHg)');
+  if(!isNaN(rr)&&(rr<10||rr>30))warnings.push(rr<10?'Bradipneia (FR < 10)':'Taquipneia acentuada (FR > 30)');
+  if(!isNaN(spo2)&&spo2<90)warnings.push('Hipoxemia grave (SpO\u2082 < 90%)');
+  if(!isNaN(temp)&&temp<35)warnings.push('Hipotermia significativa (< 35\u00B0C)');
+  if(!isNaN(glic)&&glic<60)warnings.push('Hipoglicemia grave (< 60 mg/dL)');
+  if(warnings.length>0){
+    h+='<div class="alert-banner" style="margin-top:.75rem"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">'+warnings.join(' | ')+'</span></div>';
+  }
+
+  // Shock Index
+  const si=shockIndex();
+  if(si!==null){
+    const siVal=parseFloat(si);
+    const siClass=siVal>=1.0?'si-critical':siVal>=0.7?'si-elevated':'si-normal';
+    const siLabel=siVal>=1.0?'Elevado \u2014 Alta probabilidade de choque. Considerar hemoderivados precoces.':siVal>=0.7?'Limítrofe \u2014 Monitorar de perto. Reavaliar em série.':'Normal \u2014 Baixo risco hemodinâmico.';
+    h+=`<div class="si-display ${siClass}">`;
+    h+=`<div><div class="si-value">${si}</div><div style="font-size:.6rem;text-align:center;margin-top:.1rem;opacity:.7">IC</div></div>`;
+    h+=`<div class="si-info"><strong>Índice de Choque (FC/PAS):</strong><br>${siLabel}</div>`;
+    h+='</div>';
+  }
+
+  // Shock classification
+  const sc=shockClass();
+  const sinfo=sc?shockInfo(sc):shockInfo(null);
+  h+=`<div class="shock-display ${sinfo.css}" style="margin-top:.75rem">`;
+  h+=`<div class="shock-class">${sc||'?'}</div>`;
+  h+=`<div class="shock-info"><div class="shock-label">Choque Hemorrágico ${sinfo.label}</div><div class="shock-detail">${sinfo.detail}</div></div>`;
+  h+='</div>';
+
+  if(sc>=3){
+    h+='<div class="alert-banner" style="margin-top:.75rem"><span class="alert-icon">\u{1F6A8}</span><span class="alert-text">Choque hemorrágico grave \u2014 Hemoderivados imediatos e PTM (1:1:1). Ácido tranexâmico 1g IV se < 3h do trauma. Identificar e controlar fonte de sangramento.</span></div>';
+  }
+
+  h+=navRow(true,true,'Ver Resultado');
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// RESULT PAGE
+// =======================================
+function renderResult(){
+  const gcs=gcsTotal();
+  const sc=shockClass();
+  const si=shockIndex();
+  const activationCriteria=isTraumaTeamActivation();
+  const imgs=suggestedImaging();
+  const condutas=suggestConduta();
+
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  // Severity badge
+  let severity,badgeClass,badgeIcon;
+  if(activationCriteria.length>=3||sc>=3||(gcs!==null&&gcs<=8)){
+    severity='Crítico';badgeClass='badge-red';badgeIcon='\u{1F6A8}';
+  }else if(activationCriteria.length>=1||sc>=2||(gcs!==null&&gcs<=12)){
+    severity='Grave';badgeClass='badge-yellow';badgeIcon='\u26A0\uFE0F';
+  }else if(mechanism.energy==='high'){
+    severity='Moderado';badgeClass='badge-blue';badgeIcon='\u{1F4CB}';
+  }else{
+    severity='Leve';badgeClass='badge-green';badgeIcon='\u2714\uFE0F';
+  }
+
+  h+=`<div class="result-badge ${badgeClass}">${badgeIcon}</div>`;
+  h+=`<div class="result-title">Trauma ${severity}</div>`;
+  h+=`<div class="result-desc">${mechanism.type==='blunt'?'Contuso':'Penetrante'} \u2014 ${mechanism.energy==='high'?'Alta energia':'Baixa energia'}${gcs!==null?' \u2014 GCS '+gcs:''}${sc?' \u2014 Choque Classe '+sc:''}${si?' \u2014 IC '+si:''}</div>`;
+
+  // Elapsed time
+  const elapsed=Math.floor((Date.now()-evalStartTime.getTime())/1000);
+  const eMin=Math.floor(elapsed/60);
+  const eSec=elapsed%60;
+  h+=`<div style="font-size:.72rem;color:#64748b;margin-bottom:1rem">Tempo de avaliação: ${String(eMin).padStart(2,'0')}:${String(eSec).padStart(2,'0')}</div>`;
+
+  // Lethal triad warning
+  if(hasLethalTriad()){
+    h+='<div class="team-activation" style="background:#2d0000;border-color:#ff0000;margin-bottom:1rem">';
+    h+='<h3 style="color:#ff6b6b">\u2620\uFE0F TRÍADE LETAL DO TRAUMA</h3>';
+    h+='<p style="color:#ff9999">Hipotermia + Acidose + Coagulopatia \u2014 Cirurgia de controle de danos (damage control). Aquecer. Corrigir coagulopatia. Controlar hemorragia.</p>';
+    h+='</div>';
+  }
+
+  // Trauma Team Activation
+  if(activationCriteria.length>0){
+    h+='<div class="team-activation">';
+    h+='<h3>\u{1F6A8} Ativação do Time de Trauma</h3>';
+    h+=`<p>${activationCriteria.join(' \u2022 ')}</p>`;
+    h+='</div>';
+  }
+
+  // COLLAPSIBLE: Conduta / Management
+  h+=collapsible('conduta','Conduta Sugerida',()=>{
+    let s='<div class="conduta-list">';
+    for(const c of condutas){
+      const cls=c.urgent?'conduta-card urgent':c.warn?'conduta-card warning':'conduta-card';
+      s+=`<div class="${cls}"><span class="c-icon">${c.icon}</span><span class="c-text">${c.text}</span></div>`;
+    }
+    s+='</div>';
+    return s;
+  });
+
+  // COLLAPSIBLE: Mechanism summary
+  h+=collapsible('mechanism','Mecanismo de Trauma',()=>{
+    let s='';
+    s+=`<div class="summary-row"><span class="criteria">Tipo</span><span class="value"><span class="dot ${mechanism.type==='penetrating'?'dot-red':'dot-blue'}"></span> ${mechanism.type==='blunt'?'Contuso':'Penetrante'}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Energia</span><span class="value"><span class="dot ${mechanism.energy==='high'?'dot-red':'dot-green'}"></span> ${mechanism.energy==='high'?'Alta':'Baixa'}</span></div>`;
+    if(mechanism.details.size>0){
+      const detailLabels={
+        mvc_frontal:'Colisão frontal',mvc_lateral:'Colisão lateral',mvc_rollover:'Capotamento',
+        mvc_ejection:'Ejeção do veículo',mvc_death_occupant:'Morte de ocupante',
+        motorcycle:'Acidente motociclístico',
+        fall_gt6m:'Queda > 6m',fall_lt6m:'Queda < 6m',pedestrian:'Atropelamento',
+        bicycle:'Acidente ciclista',assault_firearm:'PAF',assault_weapon:'Arma branca (FAB)',
+        assault_blunt:'Agressão física',explosion:'Explosão',crush:'Esmagamento',drowning:'Afogamento',animal:'Acidente com animal'
+      };
+      for(const d of mechanism.details){
+        s+=`<div class="summary-row"><span class="criteria">Detalhe</span><span class="value">${detailLabels[d]||d}</span></div>`;
+      }
+    }
+    return s;
+  });
+
+  // COLLAPSIBLE: Primary Survey
+  h+=collapsible('primary','Primary Survey (ABCDE)',()=>{
+    let s='';
+    const aColor=airway.patent==='obstructed'?'dot-red':airway.patent==='compromised'?'dot-yellow':'dot-green';
+    const aLabel=airway.patent==='obstructed'?'Obstruída':airway.patent==='compromised'?'Comprometida':airway.patent==='patent'?'Pérvia':'Não avaliada';
+    s+=`<div class="summary-row"><span class="criteria">A - Via Aérea</span><span class="value"><span class="dot ${aColor}"></span> ${aLabel}</span></div>`;
+    const cLabel=airway.cspine==='immobilized'?'Imobilizada':airway.cspine==='cleared'?'Liberada':'Não imobilizada';
+    s+=`<div class="summary-row"><span class="criteria">C-Spine</span><span class="value">${cLabel}</span></div>`;
+
+    const bColor=breathing.status==='absent'?'dot-red':breathing.status==='abnormal'?'dot-yellow':'dot-green';
+    const bLabel=breathing.status==='absent'?'Ausente':breathing.status==='abnormal'?'Anormal':breathing.status==='normal'?'Normal':'Não avaliada';
+    s+=`<div class="summary-row"><span class="criteria">B - Ventilação</span><span class="value"><span class="dot ${bColor}"></span> ${bLabel}</span></div>`;
+
+    const cColor=circulation.pulse==='absent'?'dot-red':circulation.pulse==='weak'?'dot-yellow':'dot-green';
+    const cpLabel=circulation.pulse==='absent'?'Ausente':circulation.pulse==='weak'?'Fraco':circulation.pulse==='strong'?'Forte':'Não avaliado';
+    s+=`<div class="summary-row"><span class="criteria">C - Pulso</span><span class="value"><span class="dot ${cColor}"></span> ${cpLabel}</span></div>`;
+    const skinLabel={warm_dry:'Quente/Seca',cool_clammy:'Fria/Pegajosa',mottled:'Mosqueada',cyanotic:'Cianótica'};
+    if(circulation.skinStatus)s+=`<div class="summary-row"><span class="criteria">Perfusão</span><span class="value">${skinLabel[circulation.skinStatus]||'N/A'}</span></div>`;
+
+    if(gcs!==null){
+      const gcsColor=gcs<=8?'dot-red':gcs<=12?'dot-yellow':'dot-green';
+      s+=`<div class="summary-row"><span class="criteria">D - GCS</span><span class="value"><span class="dot ${gcsColor}"></span> ${gcs} (O${disability.gcsEye}V${disability.gcsVerbal}M${disability.gcsMotor})</span></div>`;
+    }
+    const pupilLabel={equal_reactive:'Isocóricas/Fotorreagentes',unequal:'Anisocoria',fixed_unilateral:'Fixa unilateral',fixed_bilateral:'Fixas bilaterais'};
+    if(disability.pupils)s+=`<div class="summary-row"><span class="criteria">Pupilas</span><span class="value">${pupilLabel[disability.pupils]||'N/A'}</span></div>`;
+
+    const tLabel={normothermic:'Normotérmico',hypothermic:'Hipotérmico',not_measured:'Não aferida'};
+    if(exposure.tempStatus)s+=`<div class="summary-row"><span class="criteria">E - Temperatura</span><span class="value">${tLabel[exposure.tempStatus]||'N/A'}</span></div>`;
+
+    const allInterv=[];
+    const intervLabels={
+      jaw_thrust:'Jaw thrust',chin_lift:'Chin lift',orotracheal:'IOT',nasotracheal:'INT',surgical_airway:'Cricotireoidostomia',suction:'Aspiração',collar:'Colar cervical',
+      o2_mask:'O\u2082 máscara',o2_nasal:'O\u2082 cânula',bvm:'BVM',chest_tube_left:'Drenagem E',chest_tube_right:'Drenagem D',needle_decompression_left:'Descompressão agulha E',needle_decompression_right:'Descompressão agulha D',occlusive_dressing:'Curativo 3 pontas',intubation:'IOT',
+      iv_access_2:'2 acessos IV',iv_access_central:'Acesso central',io_access:'Acesso IO',tourniquet:'Torniquete',pelvic_binder:'Cinta pélvica',direct_pressure:'Pressão direta',crystalloid:'Cristaloide',blood_products:'Hemoderivados',tranexamic:'TXA',massive_transfusion:'PTM',
+      warming_blankets:'Cobertores térmicos',warming_fluids:'Fluidos aquecidos',logroll:'Log roll',remove_clothing:'Remoção roupas',wound_care:'Curativo feridas',splint:'Imobilização'
+    };
+    for(const i of airway.interventions)allInterv.push(intervLabels[i]||i);
+    for(const i of breathing.interventions)allInterv.push(intervLabels[i]||i);
+    for(const i of circulation.interventions)allInterv.push(intervLabels[i]||i);
+    for(const i of exposure.interventions)allInterv.push(intervLabels[i]||i);
+    if(allInterv.length>0){
+      s+=`<div class="summary-row" style="margin-top:.5rem;border-top:1px solid #334155;padding-top:.75rem"><span class="criteria" style="font-weight:600">Intervenções</span><span class="value" style="text-align:right;font-size:.8rem;max-width:60%">${allInterv.join(', ')}</span></div>`;
+    }
+
+    return s;
+  });
+
+  // COLLAPSIBLE: GCS
+  h+=collapsible('gcs','Glasgow Coma Scale',()=>{
+    if(gcs===null)return'<p style="color:#64748b;text-align:center;font-size:.85rem">GCS não calculado.</p>';
+    const cat=gcsCategory(gcs);
+    let s='<div class="gcs-display">';
+    s+=`<div class="gcs-box component"><div class="gcs-value">${disability.gcsEye}</div><div class="gcs-label">Ocular</div></div>`;
+    s+='<span class="gcs-plus">+</span>';
+    s+=`<div class="gcs-box component"><div class="gcs-value">${disability.gcsVerbal}</div><div class="gcs-label">Verbal</div></div>`;
+    s+='<span class="gcs-plus">+</span>';
+    s+=`<div class="gcs-box component"><div class="gcs-value">${disability.gcsMotor}</div><div class="gcs-label">Motor</div></div>`;
+    s+='<span class="gcs-plus">=</span>';
+    s+=`<div class="gcs-box total ${cat}"><div class="gcs-value">${gcs}</div><div class="gcs-label">Total</div></div>`;
+    s+='</div>';
+    const catLabel=cat==='severe'?'TCE Grave (\u2264 8)':cat==='moderate'?'TCE Moderado (9-12)':'TCE Leve (13-15)';
+    const catColor=cat==='severe'?'#fca5a5':cat==='moderate'?'#fcd34d':'#86efac';
+    s+=`<div style="text-align:center;font-size:.85rem;font-weight:600;color:${catColor}">${catLabel}</div>`;
+    return s;
+  });
+
+  // COLLAPSIBLE: FAST
+  h+=collapsible('fast','FAST',()=>{
+    const labels={ruq:'Hepatorrenal (Morrison)',luq:'Esplenorrenal (LUQ)',suprapubic:'Suprapúbico (Douglas)',pericardial:'Subxifoideo (Pericárdio)'};
+    const statusLabels={positive:'POSITIVO',negative:'Negativo',indeterminate:'Indeterminado'};
+    let s='';
+    for(const q of ['ruq','luq','suprapubic','pericardial']){
+      const val=fast[q];
+      const color=val==='positive'?'dot-red':val==='negative'?'dot-green':'dot-gray';
+      s+=`<div class="summary-row"><span class="criteria">${labels[q]}</span><span class="value"><span class="dot ${color}"></span> ${statusLabels[val]||'Não avaliado'}</span></div>`;
+    }
+    return s;
+  });
+
+  // COLLAPSIBLE: Vitals + Shock
+  h+=collapsible('shock','Sinais Vitais e Choque',()=>{
+    let s='';
+    if(vitals.hr)s+=`<div class="summary-row"><span class="criteria">FC</span><span class="value">${vitals.hr} bpm</span></div>`;
+    if(vitals.sbp)s+=`<div class="summary-row"><span class="criteria">PA</span><span class="value">${vitals.sbp}/${vitals.dbp||'--'} mmHg</span></div>`;
+    if(vitals.rr)s+=`<div class="summary-row"><span class="criteria">FR</span><span class="value">${vitals.rr} irpm</span></div>`;
+    if(vitals.spo2)s+=`<div class="summary-row"><span class="criteria">SpO\u2082</span><span class="value">${vitals.spo2}%</span></div>`;
+    if(vitals.temp)s+=`<div class="summary-row"><span class="criteria">Temperatura</span><span class="value">${vitals.temp}\u00B0C</span></div>`;
+    if(vitals.glic)s+=`<div class="summary-row"><span class="criteria">Glicemia</span><span class="value">${vitals.glic} mg/dL</span></div>`;
+    const avpuLabel={alert:'Alerta',verbal:'Resposta verbal',pain:'Resposta à dor',unresponsive:'Irresponsivo'};
+    if(vitals.mentalStatus)s+=`<div class="summary-row"><span class="criteria">AVPU</span><span class="value">${avpuLabel[vitals.mentalStatus]}</span></div>`;
+
+    if(si!==null){
+      const siVal=parseFloat(si);
+      const siColor=siVal>=1.0?'dot-red':siVal>=0.7?'dot-yellow':'dot-green';
+      s+=`<div class="summary-row"><span class="criteria">Índice de Choque (IC)</span><span class="value"><span class="dot ${siColor}"></span> ${si}</span></div>`;
+    }
+
+    if(sc){
+      const sinfo2=shockInfo(sc);
+      s+=`<div class="shock-display ${sinfo2.css}" style="margin-top:.75rem">`;
+      s+=`<div class="shock-class">${sc}</div>`;
+      s+=`<div class="shock-info"><div class="shock-label">Choque Hemorrágico ${sinfo2.label}</div><div class="shock-detail">${sinfo2.detail}</div></div></div>`;
+    }
+    return s;
+  });
+
+  // COLLAPSIBLE: Secondary survey summary
+  h+=collapsible('secondary','Secondary Survey',()=>{
+    const regionLabels={head:'Cabeça/Face',neck:'Pescoço',chest:'Tórax',abdomen:'Abdome',pelvis:'Pelve',extremities:'Extremidades',spine:'Coluna',skin:'Pele'};
+    const itemLabels={
+      scalp_lac:'Laceração couro cabeludo',skull_deformity:'Deformidade craniana',facial_fracture:'Fratura facial (Le Fort)',eye_injury:'Lesão ocular',ear_injury:'Lesão otológica',dental_injury:'Lesão dentária',
+      c_spine_tender:'Dor cervical',tracheal_deviation:'Desvio traqueia',jvd:'Turgência jugular',subcutaneous_emphysema:'Enfisema subcutâneo',carotid_bruit:'Sopro carotídeo',penetrating_wound:'Ferida penetrante',expanding_hematoma:'Hematoma expansivo',
+      rib_fracture:'Fratura costela',sternal_fracture:'Fratura esternal',flail_segment:'Tórax instável',crepitus:'Crepitação',chest_wall_tender:'Dor parede torácica',pneumothorax_signs:'Sinais pneumotórax',hemothorax_signs:'Sinais hemotórax',widened_mediastinum:'Alargamento mediastino',
+      distension:'Distensão',rigidity:'Rigidez',guarding:'Blumberg +',tenderness_ruq:'Dor QSD',tenderness_luq:'Dor QSE',tenderness_rlq:'Dor QID',tenderness_llq:'Dor QIE',ecchymosis_flank:'Grey-Turner',cullen_sign:'Cullen',seatbelt_sign:'Sinal cinto',evisceration:'Evisceração',
+      instability:'Instabilidade pélvica',perineal_ecchymosis:'Equimose perineal',blood_meatus:'Sangue meato',high_riding_prostate:'Próstata elevada',vaginal_bleeding:'Sangramento vaginal',
+      upper_deformity:'Deformidade MMSS',upper_neurovascular:'Neurovascular MMSS',lower_deformity:'Deformidade MMII',lower_neurovascular:'Neurovascular MMII',compartment_syndrome:'Síndrome compartimental',open_fracture:'Fratura exposta',crush_injury:'Esmagamento',
+      cervical_tender:'Dor cervical',thoracic_tender:'Dor torácica',lumbar_tender:'Dor lombar',step_off:'Step-off',neuro_deficit:'Déficit neurológico',
+      burns_partial:'Queimadura parcial',burns_full:'Queimadura total',degloving:'Degloving',large_laceration:'Laceração extensa',contaminated_wound:'Ferida contaminada',tetanus_needed:'Tétano necessário'
+    };
+    let s='';
+    let anyFindings=false;
+    for(const key of Object.keys(regionLabels)){
+      if(secondary[key].size>0){
+        anyFindings=true;
+        const items=[...secondary[key]].map(id=>itemLabels[id]||id).join(', ');
+        s+=`<div class="summary-row"><span class="criteria">${regionLabels[key]}</span><span class="value" style="text-align:right;max-width:60%;font-size:.8rem">${items}</span></div>`;
+      }
+    }
+    if(!anyFindings)s+='<p style="color:#64748b;text-align:center;font-size:.85rem">Sem achados significativos no exame secundário.</p>';
+    return s;
+  });
+
+  // COLLAPSIBLE: Imaging + Workup
+  h+=collapsible('imaging','Exames Sugeridos',()=>{
+    let s='';
+    const imgItems=imgs.filter(i=>i.cat==='img');
+    const labItems=imgs.filter(i=>i.cat==='lab');
+    if(imgItems.length>0){
+      s+='<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:.5rem;font-weight:600">Imagem</div>';
+      for(const img of imgItems){
+        s+=`<div class="imaging-item"><span class="imaging-icon">${img.icon}</span><span><strong>${img.text}</strong><br><span style="font-size:.72rem;color:#64748b">${img.reason}</span></span></div>`;
+      }
+    }
+    if(labItems.length>0){
+      s+='<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin:1rem 0 .5rem;font-weight:600;border-top:1px solid #1e293b;padding-top:.75rem">Laboratório</div>';
+      for(const lab of labItems){
+        s+=`<div class="imaging-item"><span class="imaging-icon">${lab.icon}</span><span><strong>${lab.text}</strong><br><span style="font-size:.72rem;color:#64748b">${lab.reason}</span></span></div>`;
+      }
+    }
+    return s;
+  });
+
+  // COLLAPSIBLE: Note
+  h+=collapsible('note','Nota para prontuário',()=>buildNote());
+
+  // Nav
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()">Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="restart()">Nova avaliação</button>';
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =======================================
+// NOTE GENERATOR
+// =======================================
+function buildNote(){
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const gcs=gcsTotal();
+  const sc=shockClass();
+  const si=shockIndex();
+
+  let n='';
+  n+=`AVALIAÇÃO DE TRAUMA - ATLS\n`;
+  n+=`Data/hora: ${ts}\n`;
+  const elapsed=Math.floor((Date.now()-evalStartTime.getTime())/1000);
+  const eMin=Math.floor(elapsed/60);
+  n+=`Tempo de avaliação: ${eMin} min\n`;
+  n+=`========================================\n\n`;
+
+  // Mechanism
+  n+=`MECANISMO DE TRAUMA\n`;
+  n+=`Tipo: ${mechanism.type==='blunt'?'Contuso (fechado)':'Penetrante'}\n`;
+  n+=`Energia: ${mechanism.energy==='high'?'Alta energia':'Baixa energia'}\n`;
+  if(mechanism.details.size>0){
+    const detailLabels={
+      mvc_frontal:'Colisão frontal',mvc_lateral:'Colisão lateral',mvc_rollover:'Capotamento',
+      mvc_ejection:'Ejeção do veículo',mvc_death_occupant:'Morte de outro ocupante',
+      motorcycle:'Acidente motociclístico',
+      fall_gt6m:'Queda > 6 metros',fall_lt6m:'Queda < 6 metros',pedestrian:'Atropelamento',
+      bicycle:'Acidente ciclista',assault_firearm:'Projétil de arma de fogo (PAF)',assault_weapon:'Arma branca (FAB)',
+      assault_blunt:'Agressão física',explosion:'Explosão',crush:'Esmagamento',drowning:'Afogamento',animal:'Acidente com animal'
+    };
+    n+=`Detalhes: ${[...mechanism.details].map(d=>detailLabels[d]||d).join(', ')}\n`;
+  }
+
+  // Primary Survey
+  n+=`\nPRIMARY SURVEY (ABCDE)\n`;
+  n+=`----------------------------------------\n`;
+
+  const aLabel=airway.patent==='obstructed'?'OBSTRUÍDA':airway.patent==='compromised'?'COMPROMETIDA':'Pérvia';
+  n+=`A - Via Aérea: ${aLabel}\n`;
+  n+=`    C-Spine: ${airway.cspine==='immobilized'?'Imobilizada':airway.cspine==='cleared'?'Liberada':'Não imobilizada'}\n`;
+  if(airway.findings.size>0){
+    const fLabels={stridor:'Estridor',hoarseness:'Rouquidão',facial_trauma:'Trauma facial',neck_swelling:'Edema cervical',foreign_body:'Corpo estranho',burns_face:'Queimadura facial/inalação',blood_airway:'Sangue em orofaringe',gcs_lte8:'GCS <= 8'};
+    n+=`    Achados: ${[...airway.findings].map(f=>fLabels[f]||f).join(', ')}\n`;
+  }
+  if(airway.interventions.size>0){
+    const iLabels={jaw_thrust:'Jaw thrust',chin_lift:'Chin lift',orotracheal:'IOT (ISR)',nasotracheal:'INT',surgical_airway:'Cricotireoidostomia',suction:'Aspiração',collar:'Colar cervical'};
+    n+=`    Intervenções: ${[...airway.interventions].map(i=>iLabels[i]||i).join(', ')}\n`;
+  }
+
+  const bLabel=breathing.status==='absent'?'AUSENTE':breathing.status==='abnormal'?'ANORMAL':'Normal';
+  n+=`B - Ventilação: ${bLabel}\n`;
+  if(breathing.findings.size>0){
+    const fLabels={tachypnea:'Taquipneia',hypoxia:'Hipóxia',asymmetry:'Assimetria',crepitus:'Crepitação',subcutaneous_emphysema:'Enfisema subcutâneo',flail_chest:'Tórax instável',open_wound:'Ferida torácica aberta',deviated_trachea:'Desvio traqueia',distended_neck_veins:'Turgência jugular',hyperresonance:'Hipertimpanismo',decreased_breath_left:'MV diminuído E',decreased_breath_right:'MV diminuído D'};
+    n+=`    Achados: ${[...breathing.findings].map(f=>fLabels[f]||f).join(', ')}\n`;
+  }
+  if(breathing.interventions.size>0){
+    const iLabels={o2_mask:'O\u2082 máscara NR',o2_nasal:'O\u2082 cânula',bvm:'BVM',chest_tube_left:'Drenagem E',chest_tube_right:'Drenagem D',needle_decompression_left:'Descompressão agulha E',needle_decompression_right:'Descompressão agulha D',occlusive_dressing:'Curativo 3 pontas',intubation:'IOT'};
+    n+=`    Intervenções: ${[...breathing.interventions].map(i=>iLabels[i]||i).join(', ')}\n`;
+  }
+
+  const cpLabel=circulation.pulse==='absent'?'AUSENTE':circulation.pulse==='weak'?'FRACO':'Forte';
+  n+=`C - Circulação: Pulso ${cpLabel}\n`;
+  const skinLabels={warm_dry:'Quente/seca/corada, TEC < 2s',cool_clammy:'Fria/pegajosa/pálida, TEC > 2s',mottled:'Mosqueada',cyanotic:'Cianótica'};
+  if(circulation.skinStatus)n+=`    Perfusão: ${skinLabels[circulation.skinStatus]}\n`;
+  if(circulation.bleeding.size>0){
+    const bLabels={scalp:'Couro cabeludo',face:'Face',neck:'Pescoço',chest:'Tórax',abdomen:'Abdome',pelvis:'Pelve',retroperitoneal:'Retroperitoneal',extremity_upper:'MMSS',extremity_lower:'MMII/fêmur',external_controlled:'Externa controlada',external_uncontrolled:'Externa NÃO controlada'};
+    n+=`    Sangramento: ${[...circulation.bleeding].map(b=>bLabels[b]||b).join(', ')}\n`;
+  }
+  if(circulation.interventions.size>0){
+    const iLabels={iv_access_2:'2 acessos IV (14-16G)',iv_access_central:'Acesso central',io_access:'Acesso IO',tourniquet:'Torniquete',pelvic_binder:'Cinta pélvica',direct_pressure:'Pressão direta',crystalloid:'Cristaloide (RL aquecido)',blood_products:'Hemoderivados',tranexamic:'TXA 1g IV',massive_transfusion:'PTM ativado'};
+    n+=`    Intervenções: ${[...circulation.interventions].map(i=>iLabels[i]||i).join(', ')}\n`;
+  }
+
+  if(gcs!==null){
+    n+=`D - Neurológico: GCS ${gcs} (O${disability.gcsEye}V${disability.gcsVerbal}M${disability.gcsMotor})\n`;
+    const catLabel=gcs<=8?'TCE Grave':gcs<=12?'TCE Moderado':'TCE Leve';
+    n+=`    Classificação: ${catLabel}\n`;
+  }else{
+    n+=`D - Neurológico: GCS não calculado\n`;
+  }
+  const pupilLabels={equal_reactive:'Isocóricas e fotorreagentes',unequal:'Anisocoria',fixed_unilateral:'Fixa unilateral',fixed_bilateral:'Fixas bilaterais'};
+  if(disability.pupils)n+=`    Pupilas: ${pupilLabels[disability.pupils]}\n`;
+  if(disability.laterality&&(disability.pupils==='unequal'||disability.pupils==='fixed_unilateral'))n+=`    Lateralidade: Midríase à ${disability.laterality==='left'?'esquerda':'direita'}\n`;
+  if(disability.findings.size>0){
+    const fLabels={posturing_decorticate:'Decorticação',posturing_decerebrate:'Descerebração',seizure:'Convulsão',focal_deficit:'Déficit focal',raccoon_eyes:'Equimose periorbital',battle_sign:'Battle',csf_otorrhea:'Otorreia liquórica',csf_rhinorrhea:'Rinorreia liquórica'};
+    n+=`    Achados: ${[...disability.findings].map(f=>fLabels[f]||f).join(', ')}\n`;
+  }
+
+  const tLabels={normothermic:'Normotérmico',hypothermic:'Hipotérmico',not_measured:'Não aferida'};
+  n+=`E - Exposição: ${tLabels[exposure.tempStatus]||'Não avaliada'}\n`;
+  if(exposure.findings.size>0){
+    const fLabels={burns:'Queimaduras',deformity_upper:'Deformidade MMSS',deformity_lower:'Deformidade MMII',pelvic_instability:'Instab. pélvica',open_fracture:'Fratura exposta',amputation:'Amputação',degloving:'Degloving',impaled_object:'Objeto empalado',abrasions:'Escoriações',lacerations:'Lacerações',contusions:'Equimoses',swelling:'Edema',log_roll_done:'Log roll feito',rectal_done:'Toque retal feito',spine_tenderness:'Dor coluna'};
+    n+=`    Achados: ${[...exposure.findings].map(f=>fLabels[f]||f).join(', ')}\n`;
+  }
+
+  // FAST
+  n+=`\nFAST\n`;
+  n+=`----------------------------------------\n`;
+  const fastLabels={ruq:'Hepatorrenal (Morrison)',luq:'Esplenorrenal (LUQ)',suprapubic:'Suprapúbico (Douglas)',pericardial:'Subxifoideo (Pericárdio)'};
+  const statusLabels={positive:'POSITIVO',negative:'Negativo',indeterminate:'Indeterminado'};
+  for(const q of ['ruq','luq','suprapubic','pericardial']){
+    n+=`${fastLabels[q]}: ${statusLabels[fast[q]]||'Não avaliado'}\n`;
+  }
+
+  // AMPLE
+  if(ample.allergies||ample.medications||ample.pastHistory||ample.lastMeal||ample.events){
+    n+=`\nHISTÓRIA AMPLE\n`;
+    n+=`----------------------------------------\n`;
+    if(ample.allergies)n+=`Alergias: ${ample.allergies}\n`;
+    if(ample.medications)n+=`Medicamentos: ${ample.medications}\n`;
+    if(ample.pastHistory)n+=`Passado: ${ample.pastHistory}\n`;
+    if(ample.lastMeal)n+=`Última refeição: ${ample.lastMeal}\n`;
+    if(ample.events)n+=`Eventos: ${ample.events}\n`;
+  }
+
+  // Vitals
+  n+=`\nSINAIS VITAIS\n`;
+  n+=`----------------------------------------\n`;
+  if(vitals.hr)n+=`FC: ${vitals.hr} bpm\n`;
+  if(vitals.sbp)n+=`PA: ${vitals.sbp}/${vitals.dbp||'--'} mmHg\n`;
+  if(vitals.rr)n+=`FR: ${vitals.rr} irpm\n`;
+  if(vitals.spo2)n+=`SpO\u2082: ${vitals.spo2}%\n`;
+  if(vitals.temp)n+=`Temp: ${vitals.temp}\u00B0C\n`;
+  if(vitals.glic)n+=`Glicemia: ${vitals.glic} mg/dL\n`;
+  const avpuLabels={alert:'Alerta',verbal:'Resposta verbal',pain:'Resposta à dor',unresponsive:'Irresponsivo'};
+  if(vitals.mentalStatus)n+=`AVPU: ${avpuLabels[vitals.mentalStatus]}\n`;
+  if(si)n+=`Índice de Choque (IC): ${si}\n`;
+  if(sc)n+=`Choque hemorrágico: Classe ${sc} - ${shockInfo(sc).detail}\n`;
+
+  // Secondary Survey
+  const regionLabels={head:'Cabeça/Face',neck:'Pescoço',chest:'Tórax',abdomen:'Abdome',pelvis:'Pelve',extremities:'Extremidades',spine:'Coluna',skin:'Pele'};
+  const itemLabels={
+    scalp_lac:'Laceração couro cabeludo',skull_deformity:'Deformidade craniana',facial_fracture:'Fratura facial',eye_injury:'Lesão ocular',ear_injury:'Lesão otológica',dental_injury:'Lesão dentária',
+    c_spine_tender:'Dor cervical',tracheal_deviation:'Desvio traqueia',jvd:'Turgência jugular',subcutaneous_emphysema:'Enfisema subcutâneo',carotid_bruit:'Sopro carotídeo',penetrating_wound:'Ferida penetrante',expanding_hematoma:'Hematoma expansivo',
+    rib_fracture:'Fratura costela',sternal_fracture:'Fratura esternal',flail_segment:'Tórax instável',crepitus:'Crepitação',chest_wall_tender:'Dor parede',pneumothorax_signs:'Sinais pneumotórax',hemothorax_signs:'Sinais hemotórax',widened_mediastinum:'Alargamento mediastino',
+    distension:'Distensão',rigidity:'Rigidez',guarding:'Blumberg +',tenderness_ruq:'Dor QSD',tenderness_luq:'Dor QSE',tenderness_rlq:'Dor QID',tenderness_llq:'Dor QIE',ecchymosis_flank:'Grey-Turner',cullen_sign:'Cullen',seatbelt_sign:'Sinal cinto',evisceration:'Evisceração',
+    instability:'Instabilidade pélvica',perineal_ecchymosis:'Equimose perineal',blood_meatus:'Sangue meato',high_riding_prostate:'Próstata elevada',vaginal_bleeding:'Sangramento vaginal',
+    upper_deformity:'Deformidade MMSS',upper_neurovascular:'Neurovascular MMSS',lower_deformity:'Deformidade MMII',lower_neurovascular:'Neurovascular MMII',compartment_syndrome:'Síndrome compartimental',open_fracture:'Fratura exposta',crush_injury:'Esmagamento',
+    cervical_tender:'Dor cervical',thoracic_tender:'Dor torácica',lumbar_tender:'Dor lombar',step_off:'Step-off',neuro_deficit:'Déficit neurológico',
+    burns_partial:'Queimadura parcial',burns_full:'Queimadura total',degloving:'Degloving',large_laceration:'Laceração extensa',contaminated_wound:'Ferida contaminada',tetanus_needed:'Tétano necessário'
+  };
+  let hasSecondary=false;
+  for(const key of Object.keys(regionLabels)){
+    if(secondary[key].size>0)hasSecondary=true;
+  }
+  if(hasSecondary){
+    n+=`\nSECONDARY SURVEY\n`;
+    n+=`----------------------------------------\n`;
+    for(const key of Object.keys(regionLabels)){
+      if(secondary[key].size>0){
+        n+=`${regionLabels[key]}: ${[...secondary[key]].map(id=>itemLabels[id]||id).join(', ')}\n`;
+      }
+    }
+  }
+
+  // Activation criteria
+  const criteria=isTraumaTeamActivation();
+  if(criteria.length>0){
+    n+=`\nATIVAÇÃO DO TIME DE TRAUMA\n`;
+    n+=`----------------------------------------\n`;
+    for(const c of criteria)n+=`- ${c}\n`;
+  }
+
+  // Lethal triad
+  if(hasLethalTriad()){
+    n+=`\n*** TRÍADE LETAL: Hipotermia + Acidose + Coagulopatia ***\n`;
+    n+=`Indicação de cirurgia de controle de danos (damage control)\n`;
+  }
+
+  // Conduta
+  const condutas=suggestConduta();
+  if(condutas.length>0){
+    n+=`\nCONDUTA\n`;
+    n+=`----------------------------------------\n`;
+    for(const c of condutas){
+      const cleanText=c.text.replace(/<[^>]*>/g,'');
+      n+=`- ${cleanText}\n`;
+    }
+  }
+
+  // Imaging
+  const imgs=suggestedImaging();
+  n+=`\nEXAMES SOLICITADOS\n`;
+  n+=`----------------------------------------\n`;
+  const imgItems=imgs.filter(i=>i.cat==='img');
+  const labItems=imgs.filter(i=>i.cat==='lab');
+  if(imgItems.length>0){
+    n+=`Imagem:\n`;
+    for(const img of imgItems)n+=`  - ${img.text} (${img.reason})\n`;
+  }
+  if(labItems.length>0){
+    n+=`Laboratório:\n`;
+    for(const lab of labItems)n+=`  - ${lab.text} (${lab.reason})\n`;
+  }
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()">Copiar nota completa</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='\u2713 Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar nota completa';btn.classList.remove('copied')},2000);
+  }).catch(()=>{
+    // Fallback for older browsers / non-HTTPS
+    const range=document.createRange();
+    range.selectNodeContents(el);
+    const sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    try{document.execCommand('copy');const btn=document.getElementById('copyBtn');btn.textContent='\u2713 Copiado!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copiar nota completa';btn.classList.remove('copied')},2000);}catch(e){}
+    sel.removeAllRanges();
+  });
+}
+
+// =======================================
+// REUSABLE UI BUILDERS
+// =======================================
+function optBtn(action,value,icon,label,tagClass,tagText,isSelected){
+  return `<button class="option-btn ${isSelected?'selected':''}" onclick="handleOption('${action}','${value}')"><span class="icon">${icon}</span><span class="label">${label}</span><span class="tag ${tagClass}">${tagText}</span></button>`;
+}
+
+function navRow(showBack,canNext,nextLabel){
+  let h='<div class="nav-row">';
+  if(showBack)h+='<button class="nav-btn secondary" onclick="prev()">\u2190 Voltar</button>';
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()">${nextLabel||'Próximo \u2192'}</button>`;
+  h+='</div>';
+  return h;
+}
+
+function inputField(label,field,value,placeholder,unit){
+  let inputClass='vital-input';
+  const v=parseFloat(value);
+  if(!isNaN(v)){
+    if(field==='hr'&&(v>120||v<50))inputClass+=' danger';
+    else if(field==='hr'&&v>100)inputClass+=' warn';
+    else if(field==='sbp'&&v<90)inputClass+=' danger';
+    else if(field==='sbp'&&v<100)inputClass+=' warn';
+    else if(field==='rr'&&(v<10||v>30))inputClass+=' danger';
+    else if(field==='rr'&&(v<12||v>20))inputClass+=' warn';
+    else if(field==='spo2'&&v<90)inputClass+=' danger';
+    else if(field==='spo2'&&v<94)inputClass+=' warn';
+    else if(field==='temp'&&v<35)inputClass+=' danger';
+    else if(field==='temp'&&(v<36||v>38))inputClass+=' warn';
+    else if(field==='glic'&&(v<60||v>250))inputClass+=' danger';
+    else if(field==='glic'&&(v<70||v>200))inputClass+=' warn';
+  }
+  return `<div class="input-group"><span class="input-label">${label}</span><input type="number" inputmode="decimal" class="${inputClass}" data-field="vital_${field}" value="${value}" placeholder="${placeholder}" onchange="setVitalInput('${field}',this.value);render()" oninput="setVitalInput('${field}',this.value)"><span class="input-unit">${unit}</span></div>`;
+}
+
+function escHTML(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+}
+
+// =======================================
+// ACTIONS
+// =======================================
+function handleOption(action,value){
+  switch(action){
+    case'mechanism_type':mechanism.type=mechanism.type===value?null:value;break;
+    case'mechanism_energy':mechanism.energy=mechanism.energy===value?null:value;break;
+    case'airway_patent':airway.patent=airway.patent===value?null:value;break;
+    case'airway_cspine':airway.cspine=airway.cspine===value?null:value;break;
+    case'breathing_status':breathing.status=breathing.status===value?null:value;break;
+    case'circ_pulse':circulation.pulse=circulation.pulse===value?null:value;break;
+    case'circ_skin':circulation.skinStatus=circulation.skinStatus===value?null:value;break;
+    case'disability_pupils':
+      if(disability.pupils===value){disability.pupils=null;disability.laterality=null;}
+      else{disability.pupils=value;if(value==='equal_reactive'||value==='fixed_bilateral')disability.laterality=null;}
+      break;
+    case'exposure_temp':exposure.tempStatus=exposure.tempStatus===value?null:value;break;
+  }
+  render();
+}
+
+function toggleMechDetail(id){mechanism.details.has(id)?mechanism.details.delete(id):mechanism.details.add(id);render()}
+
+function toggleSetField(obj,field,id){
+  const map={airway,breathing,circulation,exposure,disability};
+  const target=map[obj];
+  if(!target)return;
+  target[field].has(id)?target[field].delete(id):target[field].add(id);
+  render();
+}
+
+function setGCS(component,value){
+  if(component==='eye')disability.gcsEye=disability.gcsEye===value?null:value;
+  else if(component==='verbal')disability.gcsVerbal=disability.gcsVerbal===value?null:value;
+  else if(component==='motor')disability.gcsMotor=disability.gcsMotor===value?null:value;
+  render();
+}
+
+function setLaterality(side){disability.laterality=disability.laterality===side?null:side;render()}
+
+function cycleFAST(quadrant){
+  const order=[null,'negative','positive','indeterminate'];
+  const current=fast[quadrant];
+  const idx=order.indexOf(current);
+  fast[quadrant]=order[(idx+1)%order.length];
+  render();
+}
+
+function toggleSecondary(region,item){
+  secondary[region].has(item)?secondary[region].delete(item):secondary[region].add(item);
+  render();
+}
+
+window._activeSecondaryRegion='head';
+function switchSecondaryRegion(key){window._activeSecondaryRegion=key;render()}
+
+function setVitalInput(field,value){vitals[field]=value;}
+function setVital(field,value){vitals[field]=value;render()}
+function setAmple(field,value){ample[field]=value;}
+
+function toggleSection(id){sections[id]=!sections[id];render()}
+
+function next(){if(currentStep<=TOTAL_STEPS-1){currentStep++;render()}}
+function prev(){if(currentStep>0){currentStep--;render()}}
+function restart(){
+  if(!confirm('Iniciar nova avaliação? Todos os dados atuais serão perdidos.'))return;
+  currentStep=0;
+  mechanism={type:null,energy:null,details:new Set(),mvcSpeed:null,fallHeight:null};
+  airway={patent:null,cspine:null,findings:new Set(),interventions:new Set()};
+  breathing={status:null,findings:new Set(),interventions:new Set()};
+  circulation={pulse:null,skinStatus:null,bleeding:new Set(),interventions:new Set()};
+  disability={gcsEye:null,gcsVerbal:null,gcsMotor:null,pupils:null,laterality:null,findings:new Set()};
+  exposure={tempStatus:null,findings:new Set(),interventions:new Set()};
+  fast={ruq:null,luq:null,suprapubic:null,pericardial:null};
+  secondary={head:new Set(),neck:new Set(),chest:new Set(),abdomen:new Set(),pelvis:new Set(),extremities:new Set(),spine:new Set(),skin:new Set()};
+  ample={allergies:'',medications:'',pastHistory:'',lastMeal:'',events:''};
+  vitals={hr:'',sbp:'',dbp:'',rr:'',spo2:'',temp:'',glic:'',mentalStatus:null};
+  sections={mechanism:true,primary:true,gcs:true,fast:true,secondary:true,vitals:true,shock:true,activation:true,imaging:true,conduta:true,note:true};
+  window._activeSecondaryRegion='head';
+  render();
+}
+
+// Keyboard navigation
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key==='Enter'){
+    e.preventDefault();
+    if(currentStep<TOTAL_STEPS)next();
+  }
+  if(e.key==='ArrowLeft'||e.key==='Backspace'){e.preventDefault();prev();}
+});
+
+// Init
+render();
+</script>
+</body>
+</html>

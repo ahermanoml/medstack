@@ -1,0 +1,1907 @@
+<!-- VERSION: 5 -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="theme-color" content="#0f172a">
+<title>Queimaduras - Avaliacao e Manejo</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+  header{background:linear-gradient(135deg,#1e293b,#334155);width:100%;padding:1.5rem;text-align:center;border-bottom:2px solid #f59e0b;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  header h1{font-size:1.5rem;font-weight:600;color:#f1f5f9}
+  header p{font-size:.875rem;color:#94a3b8;margin-top:.25rem}
+  .back-link{position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);color:#94a3b8;text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s;padding:.5rem}
+  .back-link:hover{color:#f1f5f9}
+  .container{max-width:700px;width:100%;padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+
+  /* Progress bar */
+  .progress-bar{display:flex;align-items:center;gap:.35rem;padding:0 .5rem}
+  .progress-step{flex:1;height:6px;border-radius:3px;background:#1e293b;transition:background .4s ease, box-shadow .4s ease}
+  .progress-step.done{background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.3)}
+  .progress-step.active{background:#fbbf24;animation:pulse-bar 1.5s infinite;box-shadow:0 0 8px rgba(251,191,36,0.4)}
+  @keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.5}}
+  .progress-labels{display:flex;justify-content:space-between;font-size:.55rem;color:#64748b;padding:0 .5rem;margin-top:.25rem}
+  .progress-labels span{transition:color .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;flex:1}
+  .progress-labels span.active-label{color:#fde68a;font-weight:600}.progress-labels span.done-label{color:#f59e0b}
+  .progress-pct{text-align:center;font-size:.6rem;color:#64748b;margin-top:.15rem}
+  .flow-connector{display:flex;justify-content:center;padding:.25rem 0}
+  .flow-connector .arrow{width:2px;height:24px;background:#334155;position:relative}
+  .flow-connector .arrow::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #334155}
+
+  /* Cards */
+  .card{background:#1e293b;border:1px solid #334155;border-radius:1rem;padding:2rem;animation:fadeSlideIn .4s cubic-bezier(.16,1,.3,1)}
+  @keyframes fadeSlideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .card h2{font-size:1.15rem;color:#f8fafc;margin-bottom:.35rem}
+  .card .subtitle{font-size:.8rem;color:#94a3b8;margin-bottom:1.25rem}
+  .step-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.65rem;color:#64748b;background:#0f172a;padding:.2rem .6rem;border-radius:9999px;margin-bottom:.75rem;border:1px solid #1e293b}
+
+  /* Options */
+  .options{display:flex;flex-direction:column;gap:.75rem}
+  .option-group-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-top:.5rem;margin-bottom:-.25rem}
+  .option-group-label:first-child{margin-top:0}
+  .option-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.9rem 1.1rem;color:#cbd5e1;font-size:.95rem;cursor:pointer;transition:all .2s ease;text-align:left;display:flex;align-items:center;gap:.75rem;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+  .option-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--x,50%) var(--y,50%),rgba(245,158,11,0.08),transparent 60%);opacity:0;transition:opacity .3s}
+  .option-btn:hover::before{opacity:1}
+  .option-btn:hover{border-color:#f59e0b;background:#172040;color:#f1f5f9;transform:translateX(2px)}
+  .option-btn.selected{border-color:#f59e0b;background:#422006;color:#f1f5f9;box-shadow:0 0 12px rgba(245,158,11,0.15)}
+  .option-btn .icon{font-size:1.25rem;flex-shrink:0;width:2rem;text-align:center}
+  .option-btn .label{flex:1}
+  .option-btn .tag{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:9999px;font-weight:600;flex-shrink:0}
+  .option-btn .selected-check{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:#f59e0b;font-size:1rem;opacity:0;transition:opacity .2s}
+  .option-btn.selected .selected-check{opacity:1}
+
+  /* Checkbox buttons */
+  .check-btn{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.75rem 1rem;color:#cbd5e1;font-size:.9rem;cursor:pointer;transition:all .2s ease;text-align:left;display:flex;align-items:center;gap:.75rem;-webkit-tap-highlight-color:transparent}
+  .check-btn:hover{border-color:#f59e0b;background:#172040;color:#f1f5f9}
+  .check-btn.checked{border-color:#f59e0b;background:#422006;color:#f1f5f9}
+  .check-box{width:20px;height:20px;border:2px solid #475569;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.75rem}
+  .check-btn.checked .check-box{background:#f59e0b;border-color:#f59e0b}
+
+  /* Navigation */
+  .nav-row{display:flex;gap:.75rem;margin-top:1.25rem}
+  .nav-btn{flex:1;padding:.8rem;border-radius:.75rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s ease;border:none;-webkit-tap-highlight-color:transparent}
+  .nav-btn.secondary{background:#334155;color:#cbd5e1}.nav-btn.secondary:hover{background:#475569}
+  .nav-btn.primary{background:#f59e0b;color:#1e293b}.nav-btn.primary:hover{background:#d97706;transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+  /* Result */
+  .result-card{text-align:center;padding:2rem 1.5rem}
+  .result-badge{display:inline-flex;align-items:center;justify-content:center;width:5rem;height:5rem;border-radius:50%;font-size:1.5rem;font-weight:800;margin-bottom:1rem;animation:badgePop .5s cubic-bezier(.16,1,.3,1)}
+  @keyframes badgePop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .result-badge.sev-minor{background:#166534;color:#86efac;border:3px solid #22c55e;box-shadow:0 0 20px rgba(34,197,94,0.2)}
+  .result-badge.sev-moderate{background:#92400e;color:#fcd34d;border:3px solid #f59e0b;box-shadow:0 0 20px rgba(245,158,11,0.2)}
+  .result-badge.sev-major{background:#991b1b;color:#fca5a5;border:3px solid #ef4444;box-shadow:0 0 20px rgba(239,68,68,0.3);animation:badgePop .5s cubic-bezier(.16,1,.3,1), dangerPulse 2s infinite}
+  @keyframes dangerPulse{0%,100%{box-shadow:0 0 20px rgba(239,68,68,0.3)}50%{box-shadow:0 0 30px rgba(239,68,68,0.5)}}
+  .result-title{font-size:1.3rem;font-weight:700;margin-bottom:.25rem}
+  .result-desc{color:#94a3b8;font-size:.9rem;margin-bottom:1.5rem}
+
+  /* Dark boxes / collapsibles */
+  .dark-box{background:#1e293b;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem;border:1px solid #334155;transition:border-color .3s}
+  .dark-box:hover{border-color:#475569}
+  .dark-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #1e293b;font-size:.85rem}
+  .summary-row:last-child{border-bottom:none}.summary-row .criteria{color:#94a3b8}
+  .summary-row .value{font-weight:600;display:flex;align-items:center;gap:.4rem}
+  .conduta-box{border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .conduta-box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .conduta-box.alta-prob{background:#450a0a;border:1.5px solid #991b1b}.conduta-box.alta-prob h3{color:#fca5a5}
+  .conduta-box.mod-prob{background:#451a03;border:1.5px solid #78350f}.conduta-box.mod-prob h3{color:#fcd34d}
+  .conduta-box.baixa-prob{background:#052e16;border:1.5px solid #14532d}.conduta-box.baixa-prob h3{color:#86efac}
+  .conduta-item{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem 0;font-size:.85rem;color:#cbd5e1}
+  .conduta-icon{flex-shrink:0;width:1.2rem;text-align:center}
+  .collapse-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.25rem 0;border-radius:.5rem;transition:background .2s;-webkit-tap-highlight-color:transparent}
+  .collapse-header:hover{background:rgba(255,255,255,.03)}
+  .collapse-header h3{margin-bottom:0;transition:color .2s}
+  .collapse-header:hover h3{color:#94a3b8}
+  .collapse-arrow{font-size:.8rem;color:#64748b;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+  .collapse-arrow.open{transform:rotate(180deg)}
+  .collapse-body{overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s ease,margin-top .3s ease}
+  .collapse-body.hidden{max-height:0!important;opacity:0;margin-top:0}
+  .collapse-body.visible{max-height:5000px;opacity:1;margin-top:.75rem}
+
+  /* Body map */
+  .body-map{display:flex;flex-direction:column;gap:.5rem;margin:1rem 0}
+  .body-row{display:flex;gap:.5rem}
+  .body-region{flex:1;background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:.6rem .5rem;cursor:pointer;transition:all .25s ease;text-align:center;position:relative;overflow:hidden;min-height:4rem;-webkit-tap-highlight-color:transparent}
+  .body-region::after{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(245,158,11,0.15),transparent 70%);opacity:0;transition:opacity .3s}
+  .body-region:hover{border-color:#f59e0b;background:#172040}
+  .body-region.active{border-color:#f59e0b;background:#422006;box-shadow:0 0 10px rgba(245,158,11,0.15)}
+  .body-region.active::after{opacity:1}
+  .body-region .region-icon{font-size:1.3rem;display:block;margin-bottom:.2rem}
+  .body-region .region-name{font-size:.65rem;color:#94a3b8;display:block;line-height:1.2}
+  .body-region .region-pct{font-size:.85rem;font-weight:700;color:#fbbf24;display:block;margin-top:.15rem;font-family:'SF Mono','Fira Code',monospace;transition:transform .2s}
+  .body-region.active .region-name{color:#fde68a}
+  .body-region.active .region-pct{transform:scale(1.1)}
+  .tbsa-total{text-align:center;margin:1rem 0;padding:1rem;background:#0f172a;border-radius:.75rem;border:1.5px solid #334155;transition:border-color .3s}
+  .tbsa-total.has-value{border-color:#f59e0b}
+  .tbsa-total .number{font-size:2.5rem;font-weight:800;font-family:'SF Mono','Fira Code',monospace;color:#fbbf24;transition:all .3s}
+  .tbsa-total .label{font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:.25rem}
+  .tbsa-total .severity-hint{font-size:.75rem;margin-top:.35rem;font-weight:600;transition:color .3s}
+
+  /* Input fields */
+  .input-group{margin-bottom:1rem}
+  .input-group label{display:block;font-size:.8rem;color:#94a3b8;margin-bottom:.4rem;font-weight:500}
+  .input-row{display:flex;align-items:center;gap:.75rem}
+  .input-field{background:#0f172a;border:1.5px solid #334155;border-radius:.5rem;padding:.7rem .9rem;color:#f1f5f9;font-size:1rem;font-family:'SF Mono','Fira Code','Consolas',monospace;width:100%;outline:none;transition:border-color .2s,box-shadow .2s}
+  .input-field:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.15)}
+  .input-field::placeholder{color:#475569}
+  .input-field.input-error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,0.15)}
+  .input-unit{font-size:.8rem;color:#64748b;min-width:2.5rem}
+  .input-hint{font-size:.65rem;color:#475569;margin-top:.25rem}
+  .input-error-msg{font-size:.65rem;color:#fca5a5;margin-top:.25rem}
+
+  /* Parkland result */
+  .parkland-result{background:#0f172a;border-radius:.75rem;padding:1.25rem;margin-top:1rem;border:1.5px solid #334155}
+  .parkland-result.active{border-color:#f59e0b}
+  .parkland-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #1e293b;font-size:.85rem}
+  .parkland-row:last-child{border-bottom:none}
+  .parkland-row .pk-label{color:#94a3b8}
+  .parkland-row .pk-value{font-weight:700;font-family:'SF Mono','Fira Code',monospace;color:#fbbf24}
+  .parkland-row .pk-value.highlight{font-size:1.1rem;color:#f59e0b}
+
+  /* Score opt buttons */
+  .score-opt{flex:1;padding:.6rem .4rem;border-radius:.5rem;font-size:.8rem;cursor:pointer;border:1.5px solid #334155;background:#0f172a;color:#94a3b8;text-align:center;transition:all .2s ease;line-height:1.3;-webkit-tap-highlight-color:transparent}
+  .score-opt:hover{border-color:#f59e0b;color:#cbd5e1;background:#172040}
+  .score-opt.picked{border-color:#f59e0b;background:#422006;color:#f1f5f9;font-weight:600;box-shadow:0 0 8px rgba(245,158,11,0.15)}
+
+  /* Depth cards */
+  .depth-card{background:#0f172a;border:1.5px solid #334155;border-radius:.75rem;padding:1rem;cursor:pointer;transition:all .25s ease;margin-bottom:.5rem;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+  .depth-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;transition:background .3s}
+  .depth-card:hover{border-color:#f59e0b;background:#172040;transform:translateX(2px)}
+  .depth-card.selected{border-color:#f59e0b;background:#422006;box-shadow:0 0 12px rgba(245,158,11,0.15)}
+  .depth-card.selected::before{background:#f59e0b}
+  .depth-card .depth-title{font-size:.95rem;font-weight:600;color:#f1f5f9;margin-bottom:.35rem;display:flex;align-items:center;gap:.5rem}
+  .depth-card .depth-desc{font-size:.75rem;color:#94a3b8;line-height:1.5}
+  .depth-card .depth-clinical{font-size:.7rem;color:#64748b;line-height:1.4;margin-top:.35rem;padding-top:.35rem;border-top:1px solid #1e293b}
+  .depth-card .depth-tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.15rem .45rem;border-radius:9999px;font-weight:600}
+  .tag-1{background:#166534;color:#86efac}
+  .tag-2s{background:#854d0e;color:#fde68a}
+  .tag-2d{background:#9a3412;color:#fed7aa}
+  .tag-3{background:#991b1b;color:#fca5a5}
+  .tag-4{background:#4c0519;color:#fda4af}
+
+  /* Transfer criteria */
+  .criteria-met{background:#450a0a;border:1.5px solid #991b1b;border-radius:.75rem;padding:1rem;margin-top:.75rem}
+  .criteria-met h4{font-size:.85rem;color:#fca5a5;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+  .criteria-met ul{list-style:none;padding:0}
+  .criteria-met li{font-size:.8rem;color:#fca5a5;padding:.25rem 0;display:flex;align-items:flex-start;gap:.5rem}
+  .criteria-met li::before{content:'\26A0';flex-shrink:0}
+  .criteria-none{background:#052e16;border:1.5px solid #14532d;border-radius:.75rem;padding:1rem;margin-top:.75rem}
+  .criteria-none h4{font-size:.85rem;color:#86efac;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem}
+  .criteria-none p{font-size:.8rem;color:#86efac}
+
+  /* Severity indicator */
+  .severity-indicator{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;margin:.75rem 0;transition:all .3s}
+  .severity-indicator.minor{background:#052e16;border:1.5px solid #14532d}
+  .severity-indicator.moderate{background:#451a03;border:1.5px solid #78350f}
+  .severity-indicator.major{background:#450a0a;border:1.5px solid #991b1b}
+  .severity-indicator .sev-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+  .severity-indicator.minor .sev-dot{background:#22c55e}
+  .severity-indicator.moderate .sev-dot{background:#f59e0b}
+  .severity-indicator.major .sev-dot{background:#ef4444;animation:dotBlink 1.5s infinite}
+  @keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.4}}
+  .severity-indicator .sev-text{font-size:.85rem;font-weight:600}
+  .severity-indicator.minor .sev-text{color:#86efac}
+  .severity-indicator.moderate .sev-text{color:#fcd34d}
+  .severity-indicator.major .sev-text{color:#fca5a5}
+
+  /* Management */
+  .mgmt-section{margin-bottom:1rem}
+  .mgmt-section-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:.5rem}
+
+  /* Callouts */
+  .info-callout{background:#172554;border:1px solid #1e40af;border-radius:.75rem;padding:.75rem 1rem;font-size:.8rem;color:#93c5fd;margin:.75rem 0;display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
+  .info-callout .callout-icon{flex-shrink:0}
+  .warning-callout{background:#451a03;border:1px solid #78350f;border-radius:.75rem;padding:.75rem 1rem;font-size:.8rem;color:#fde68a;margin:.75rem 0;display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
+  .warning-callout .callout-icon{flex-shrink:0}
+  .danger-callout{background:#450a0a;border:1px solid #991b1b;border-radius:.75rem;padding:.75rem 1rem;font-size:.8rem;color:#fca5a5;margin:.75rem 0;display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
+  .danger-callout .callout-icon{flex-shrink:0}
+
+  /* Nota para prontuario */
+  .note-box{background:#0f172a;border-radius:.75rem;padding:1.25rem;text-align:left;margin-bottom:1.25rem}
+  .note-box h3{font-size:.8rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+  .note-text{background:#020617;border:1px solid #1e293b;border-radius:.5rem;padding:1rem;font-family:'SF Mono','Fira Code','Consolas',monospace;font-size:.72rem;color:#94a3b8;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:.75rem;padding:.7rem;border-radius:.5rem;border:1.5px solid #334155;background:#1e293b;color:#cbd5e1;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s ease;-webkit-tap-highlight-color:transparent}
+  .copy-btn:hover{border-color:#f59e0b;background:#172040;color:#f1f5f9;transform:translateY(-1px)}
+  .copy-btn.copied{border-color:#22c55e;background:#052e16;color:#86efac}
+
+  /* Quick summary bar during data collection */
+  .quick-summary{background:#0f172a;border:1px solid #334155;border-radius:.75rem;padding:.6rem 1rem;font-size:.75rem;color:#64748b;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .quick-summary .qs-item{display:flex;align-items:center;gap:.3rem}
+  .quick-summary .qs-value{color:#cbd5e1;font-weight:600}
+  .quick-summary .qs-sep{color:#334155}
+
+  /* Time input */
+  .time-input-group{display:flex;gap:.5rem;align-items:center;margin:.5rem 0}
+  .time-input{background:#0f172a;border:1.5px solid #334155;border-radius:.5rem;padding:.5rem .6rem;color:#f1f5f9;font-size:.9rem;font-family:'SF Mono','Fira Code',monospace;width:80px;text-align:center;outline:none;transition:border-color .2s}
+  .time-input:focus{border-color:#f59e0b}
+  .time-sep{color:#64748b;font-weight:600;font-size:1.1rem}
+
+  /* Pediatric toggle */
+  .toggle-row{display:flex;align-items:center;gap:.75rem;padding:.5rem 0}
+  .toggle-switch{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0}
+  .toggle-switch input{opacity:0;width:0;height:0}
+  .toggle-slider{position:absolute;inset:0;background:#334155;border-radius:12px;transition:all .3s}
+  .toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;background:#94a3b8;border-radius:50%;transition:all .3s}
+  .toggle-switch input:checked+.toggle-slider{background:#f59e0b}
+  .toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);background:#1e293b}
+  .toggle-label{font-size:.85rem;color:#94a3b8}
+
+  /* Partial percentage */
+  .partial-pct{display:flex;gap:.3rem;margin-top:.35rem;justify-content:center}
+  .pct-btn{font-size:.6rem;padding:.2rem .4rem;border-radius:4px;border:1px solid #334155;background:#0f172a;color:#64748b;cursor:pointer;transition:all .2s;font-family:'SF Mono','Fira Code',monospace;min-width:1.6rem;text-align:center;-webkit-tap-highlight-color:transparent}
+  .pct-btn:hover{border-color:#f59e0b;color:#cbd5e1}
+  .pct-btn.active{border-color:#f59e0b;background:#422006;color:#fde68a}
+
+  /* Animated counter */
+  @keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .count-anim{animation:countUp .3s ease}
+
+  /* Baux score meter */
+  .baux-bar{height:6px;background:#1e293b;border-radius:3px;margin:.5rem 0;overflow:hidden}
+  .baux-fill{height:100%;border-radius:3px;transition:width .5s ease, background .5s ease}
+
+  /* Circumferential tag */
+  .circ-tag{font-size:.55rem;background:#991b1b;color:#fca5a5;padding:.1rem .35rem;border-radius:4px;margin-left:.3rem;vertical-align:middle;font-weight:600;letter-spacing:.03em}
+
+  /* Comorbidity chips */
+  .comorb-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+  .comorb-chip{font-size:.75rem;padding:.35rem .65rem;border-radius:9999px;border:1.5px solid #334155;background:#0f172a;color:#94a3b8;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;user-select:none}
+  .comorb-chip:hover{border-color:#f59e0b;color:#cbd5e1}
+  .comorb-chip.active{border-color:#f59e0b;background:#422006;color:#fde68a}
+
+  /* Lund-Browder age hint */
+  .lb-hint{font-size:.6rem;color:#475569;text-align:center;margin-top:.25rem}
+
+  /* Disclaimer footer */
+  .disclaimer{text-align:center;font-size:.6rem;color:#475569;padding:1rem .5rem 2rem;line-height:1.5;max-width:600px}
+  .disclaimer a{color:#64748b;text-decoration:underline}
+
+  /* Clear-all / reset-regions helper */
+  .reset-link{font-size:.7rem;color:#64748b;cursor:pointer;text-decoration:underline;text-underline-offset:2px;transition:color .2s;margin-left:auto}
+  .reset-link:hover{color:#fca5a5}
+
+  /* Allergy warning chip */
+  .allergy-chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;padding:.2rem .5rem;border-radius:9999px;border:1px solid #991b1b;background:#450a0a;color:#fca5a5;cursor:pointer;transition:all .2s;user-select:none}
+  .allergy-chip.active{background:#991b1b;color:#fecaca;border-color:#dc2626}
+
+  @media(max-width:500px){
+    .container{padding:.75rem}.card{padding:1.25rem}
+    header{padding:1rem .75rem}
+    header h1{font-size:1.15rem}.back-link{left:.75rem;font-size:.8rem}
+    .option-btn{padding:.75rem .9rem;font-size:.85rem}.check-btn{padding:.65rem .85rem;font-size:.8rem}
+    .progress-labels{font-size:.45rem}
+    .body-region{padding:.5rem .3rem;min-height:3.5rem}
+    .body-region .region-icon{font-size:1rem}
+    .body-region .region-name{font-size:.55rem}
+    .body-region .region-pct{font-size:.7rem}
+    .pct-btn{font-size:.5rem;padding:.15rem .3rem;min-width:1.3rem}
+    .score-opt{font-size:.65rem;padding:.45rem .2rem}
+    .quick-summary{font-size:.65rem;padding:.5rem .75rem}
+    .depth-card{padding:.85rem}
+    .depth-card .depth-desc{font-size:.7rem}
+    .depth-card .depth-clinical{font-size:.65rem}
+    .tbsa-total .number{font-size:2rem}
+    .nav-btn{padding:.7rem;font-size:.85rem}
+    .result-desc{font-size:.8rem}
+    .conduta-item{font-size:.8rem}
+    .summary-row{font-size:.8rem}
+    .comorb-chip{font-size:.65rem;padding:.25rem .5rem}
+  }
+
+  @media(max-width:360px){
+    .body-row{gap:.3rem}
+    .body-region{padding:.4rem .2rem;border-radius:.5rem;min-height:3rem}
+    .body-region .region-icon{font-size:.85rem;margin-bottom:.1rem}
+    .body-region .region-name{font-size:.5rem}
+    .body-region .region-pct{font-size:.65rem}
+    .partial-pct{gap:.2rem}
+    .pct-btn{font-size:.45rem;padding:.1rem .25rem;min-width:1.1rem}
+    .progress-labels{font-size:.4rem;gap:.1rem}
+  }
+
+  /* Print styles */
+  @media print{
+    body{background:#fff;color:#000}
+    header{background:#fff;border-bottom:2px solid #000;position:static}
+    header h1,header p,.back-link{color:#000}
+    .card,.dark-box,.conduta-item,.summary-row,.parkland-row{background:#fff;border-color:#ccc;color:#000}
+    .dark-box h3,.mgmt-section-title{color:#333}
+    .summary-row .criteria,.conduta-icon,.pk-label{color:#555}
+    .summary-row .value,.pk-value,.conduta-item span{color:#000}
+    .info-callout,.warning-callout,.danger-callout{background:#f5f5f5;border-color:#999;color:#000}
+    .collapse-body.hidden{max-height:none!important;opacity:1;margin-top:.75rem}
+    .nav-row,.copy-btn,.disclaimer,.progress-bar,.progress-labels,.progress-pct,.flow-connector,.quick-summary{display:none}
+    .note-text{background:#fff;border:1px solid #ccc;color:#000}
+    .severity-indicator{border-color:#666;background:#f5f5f5}
+    .severity-indicator .sev-text{color:#000}
+    .criteria-met{background:#fff;border-color:#c00}
+    .criteria-met h4,.criteria-met li{color:#c00}
+    .criteria-none{background:#fff;border-color:#090}
+    .criteria-none h4,.criteria-none p{color:#090}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="../queimaduras.html" class="back-link" aria-label="Voltar ao menu principal">&larr; Voltar</a>
+  <h1>Avalia&ccedil;&atilde;o de Queimaduras</h1>
+  <p>Classifica&ccedil;&atilde;o + SCQ + Parkland + Manejo Inicial</p>
+</header>
+<div class="container" id="app" role="main"></div>
+<script>
+// =============================================
+// DATA
+// =============================================
+const STEP_LABELS=['Mecanismo','Profundidade','SCQ','Inala\u00E7\u00E3o','Paciente','Resultado'];
+const TOTAL_STEPS=STEP_LABELS.length;
+
+const MECHANISMS=[
+  {id:'thermal',icon:'\uD83D\uDD25',label:'T\u00E9rmica',desc:'Chama, l\u00EDquidos quentes, contato com superf\u00EDcie quente, vapor'},
+  {id:'scald',icon:'\u2615',label:'Escaldadura',desc:'L\u00EDquidos quentes (mais comum em crian\u00E7as). \u00C1gua, \u00F3leo, leite, caf\u00E9'},
+  {id:'chemical',icon:'\u2697\uFE0F',label:'Qu\u00EDmica',desc:'\u00C1cidos, \u00E1lcalis, agentes org\u00E2nicos'},
+  {id:'electrical',icon:'\u26A1',label:'El\u00E9trica',desc:'Baixa tens\u00E3o (<1000V), alta tens\u00E3o (\u22651000V), raio'},
+  {id:'inhalation',icon:'\uD83D\uDCA8',label:'Inala\u00E7\u00E3o',desc:'Les\u00E3o t\u00E9rmica de via a\u00E9rea, inala\u00E7\u00E3o de fuma\u00E7a/toxinas'},
+  {id:'radiation',icon:'\u2622\uFE0F',label:'Radia\u00E7\u00E3o',desc:'Solar, radioterapia, exposi\u00E7\u00E3o nuclear'},
+  {id:'friction',icon:'\uD83C\uDFCD\uFE0F',label:'Fric\u00E7\u00E3o',desc:'Abras\u00E3o + queimadura t\u00E9rmica por atrito (ex: asfalto, esteira)'},
+];
+
+const CHEMICAL_AGENTS=[
+  {id:'acid',label:'\u00C1cido',desc:'Necrose coagulativa \u2014 les\u00E3o mais delimitada'},
+  {id:'alkali',label:'\u00C1lcali',desc:'Necrose liquefativa \u2014 penetra\u00E7\u00E3o mais profunda, PIOR progn\u00F3stico'},
+  {id:'organic',label:'Org\u00E2nico/Outros',desc:'Fen\u00F3is, f\u00F3sforo, cimento, \u00E1cido fluor\u00EDdrico \u2014 manejo espec\u00EDfico'},
+];
+
+const DEPTHS=[
+  {id:'1st',label:'1\u00BA Grau (Superficial)',tag:'tag-1',tagText:'1\u00BA',
+   desc:'Epiderme apenas. Eritema, dor, sem bolhas. Ex: queimadura solar.',
+   clinical:'Cura em 5\u20137 dias sem cicatriz. N\u00E3o entra no c\u00E1lculo da SCQ.'},
+  {id:'2nd_s',label:'2\u00BA Grau Superficial',tag:'tag-2s',tagText:'2\u00BA Sup',
+   desc:'Epiderme + derme papilar. Bolhas \u00EDntegras, base rosada, muito dolorosa, branqueia \u00E0 press\u00E3o.',
+   clinical:'Cura em 10\u201314 dias. Pouca cicatriz se n\u00E3o infectar. Sensibilidade preservada.'},
+  {id:'2nd_d',label:'2\u00BA Grau Profundo',tag:'tag-2d',tagText:'2\u00BA Prof',
+   desc:'Epiderme + derme reticular. Bolhas rotas, base esbranqui\u00E7ada/vermelha, dor reduzida, n\u00E3o branqueia.',
+   clinical:'Cura >21 dias, cicatriz significativa. Pode necessitar de enxerto. Risco de convers\u00E3o para 3\u00BA grau.'},
+  {id:'3rd',label:'3\u00BA Grau (Espessura Total)',tag:'tag-3',tagText:'3\u00BA',
+   desc:'Toda derme destru\u00EDda. Aspecto c\u00E9reo, couro, marrom/preto. Indolor (nervos destru\u00EDdos).',
+   clinical:'Requer enxerto obrigatoriamente. N\u00E3o reepiteliza. Risco de retraturas cicatriciais.'},
+  {id:'4th',label:'4\u00BA Grau',tag:'tag-4',tagText:'4\u00BA',
+   desc:'Estende-se al\u00E9m da pele: f\u00E1scia, m\u00FAsculo, osso. Carboniza\u00E7\u00E3o.',
+   clinical:'Requer desbridamento extenso ou amputa\u00E7\u00E3o. Alta mortalidade. Risco de rabdomi\u00F3lise.'},
+];
+
+// Lund-Browder age-adjusted percentages
+const LUND_BROWDER={
+  head:    [{age:0,pct:19},{age:1,pct:17},{age:5,pct:13},{age:10,pct:11},{age:15,pct:9},{age:999,pct:7}],
+  leg_r:   [{age:0,pct:13},{age:1,pct:13},{age:5,pct:16},{age:10,pct:17},{age:15,pct:18},{age:999,pct:18}],
+  leg_l:   [{age:0,pct:13},{age:1,pct:13},{age:5,pct:16},{age:10,pct:17},{age:15,pct:18},{age:999,pct:18}],
+};
+
+const BODY_REGIONS=[
+  {id:'head',icon:'\uD83D\uDDE3\uFE0F',name:'Cabe\u00E7a e\npesco\u00E7o',pct:9,row:0,adultPct:9,childPct:18},
+  {id:'ant_trunk',icon:'\uD83D\uDC55',name:'Tronco\nanterior',pct:18,row:1,adultPct:18,childPct:18},
+  {id:'post_trunk',icon:'\uD83D\uDCE6',name:'Tronco\nposterior',pct:18,row:1,adultPct:18,childPct:18},
+  {id:'arm_r',icon:'\uD83E\uDDBE',name:'MSD\n(direito)',pct:9,row:2,adultPct:9,childPct:9},
+  {id:'arm_l',icon:'\uD83E\uDDBE',name:'MSE\n(esquerdo)',pct:9,row:2,adultPct:9,childPct:9},
+  {id:'leg_r',icon:'\uD83E\uDDB5',name:'MID\n(direito)',pct:18,row:3,adultPct:18,childPct:14},
+  {id:'leg_l',icon:'\uD83E\uDDB5',name:'MIE\n(esquerdo)',pct:18,row:3,adultPct:18,childPct:14},
+  {id:'perineum',icon:'\u26AB',name:'Per\u00EDneo/\ngenit\u00E1lia',pct:1,row:4,adultPct:1,childPct:1},
+];
+
+const INHALATION_SIGNS=[
+  {id:'singed',label:'Pelos nasais/faciais chamuscados'},
+  {id:'soot',label:'Fuligem em orofaringe ou narina'},
+  {id:'hoarse',label:'Rouquid\u00E3o / disfonia'},
+  {id:'stridor',label:'Estridor'},
+  {id:'carbonaceous',label:'Escarro carbon\u00E1ceo'},
+  {id:'face_burn',label:'Queimadura de face / cervical'},
+  {id:'dyspnea',label:'Dispneia / taquidispneia'},
+  {id:'enclosed',label:'Inc\u00EAndio em ambiente fechado'},
+  {id:'confusion',label:'Rebaixamento de consci\u00EAncia / confus\u00E3o'},
+  {id:'cyanosis',label:'Cianose ou SpO\u2082 < 92%'},
+];
+
+const CRITICAL_AREAS=[
+  {id:'hands',label:'M\u00E3os'},
+  {id:'feet',label:'P\u00E9s'},
+  {id:'joints',label:'Articula\u00E7\u00F5es maiores (cotovelo, joelho, ombro, tornozelo)'},
+];
+
+const COMORBIDITIES=[
+  {id:'diabetes',label:'Diabetes',abbr:'DM'},
+  {id:'cardiac',label:'Cardiopatia',abbr:'Cardio'},
+  {id:'renal',label:'Doen\u00E7a renal',abbr:'DRC'},
+  {id:'immuno',label:'Imunodepress\u00E3o',abbr:'Imuno'},
+  {id:'hepatic',label:'Hepatopatia',abbr:'Hep'},
+  {id:'pulm',label:'Pneumopatia',abbr:'Pulm'},
+  {id:'coag',label:'Coagulopatia / Anticoagulante',abbr:'Coag'},
+];
+
+// =============================================
+// STATE
+// =============================================
+let step=0;
+let mechanism=null;
+let elecVoltage=null;
+let chemAgent=null;
+let depth=null;
+let activeRegions=new Set();
+let regionPartial={};
+let circumferential=false;
+let criticalAreas=new Set();
+let inhalationSigns=new Set();
+let patWeight='';
+let patAge='';
+let patSex=null;
+let burnHour='';
+let burnMinute='';
+let usePediatric=false;
+let comorbidities=new Set();
+let sulfaAllergy=false;
+let sections={summary:true, tbsa:true, parkland:true, inhalation:false, transfer:true, management:true, note:true};
+const evalStartTime=new Date();
+
+const app=document.getElementById('app');
+
+// =============================================
+// HELPERS
+// =============================================
+function getLundBrowderPct(regionId, age) {
+  const table = LUND_BROWDER[regionId];
+  if (!table) return null;
+  if (isNaN(age) || age < 0) return null;
+  for (let i = 0; i < table.length; i++) {
+    if (age <= table[i].age) return table[i].pct;
+  }
+  return table[table.length - 1].pct;
+}
+
+function getRegionPct(r){
+  const age=parseInt(patAge);
+  if(usePediatric && !isNaN(age) && age<=14){
+    const lb = getLundBrowderPct(r.id, age);
+    if(lb !== null) return lb;
+    return r.childPct;
+  }
+  return r.adultPct;
+}
+
+function getTBSA(){
+  let total=0;
+  for(const r of BODY_REGIONS){
+    if(activeRegions.has(r.id)){
+      const frac=regionPartial[r.id]||1;
+      total+=getRegionPct(r)*frac;
+    }
+  }
+  return Math.round(total*100)/100;
+}
+
+function getTBSADisplay(){
+  const v=getTBSA();
+  return v%1===0?v+'%':v.toFixed(1)+'%';
+}
+
+function getParkland(){
+  const w=parseFloat(patWeight);
+  const tbsa=getTBSA();
+  if(isNaN(w)||w<=0||tbsa<=0) return null;
+  const total=4*w*tbsa;
+  return {total:Math.round(total), first8h:Math.round(total/2), next16h:Math.round(total/2), rateFirst:Math.round((total/2)/8), rateSecond:Math.round((total/2)/16)};
+}
+
+function getBurnTime(){
+  const h=parseInt(burnHour);
+  const m=parseInt(burnMinute);
+  if(isNaN(h)||isNaN(m)||h<0||h>23||m<0||m>59) return null;
+  const now=new Date();
+  const burnDate=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m);
+  if(burnDate>now) burnDate.setDate(burnDate.getDate()-1);
+  return burnDate;
+}
+
+function getElapsedHours(){
+  const bt=getBurnTime();
+  if(!bt) return null;
+  const elapsed=(new Date()-bt)/(1000*60*60);
+  return elapsed>0?elapsed:null;
+}
+
+function getDepthLabel(id){
+  const d=DEPTHS.find(x=>x.id===id);
+  return d?d.label:'';
+}
+
+function getMechanismLabel(id){
+  const m=MECHANISMS.find(x=>x.id===id);
+  return m?m.label:'';
+}
+
+function getBauxScore(){
+  const age=parseInt(patAge);
+  const tbsa=getTBSA();
+  const inhBonus=inhalationSigns.size>=2?17:0;
+  if(isNaN(age)) return null;
+  return age+tbsa+inhBonus;
+}
+
+function getSeverity(){
+  const tbsa=getTBSA();
+  const age=parseInt(patAge);
+  const hasInhalation=inhalationSigns.size>=2;
+  const isElectrical=mechanism==='electrical';
+  const isChemical=mechanism==='chemical';
+  const isDeep=depth==='3rd'||depth==='4th';
+  const is2dDeep=depth==='2nd_d';
+
+  // Grande queimado (criterios ABA)
+  if(depth==='4th') return 'major';
+  if(tbsa>20) return 'major';
+  if(isDeep && tbsa>5) return 'major';
+  if(is2dDeep && tbsa>10) return 'major';
+  if(isElectrical && elecVoltage==='high') return 'major';
+  if(hasInhalation) return 'major';
+  if(!isNaN(age) && (age<2||age>60) && tbsa>10) return 'major';
+  if(activeRegions.has('perineum') && (isDeep||is2dDeep)) return 'major';
+  if(circumferential && (isDeep||is2dDeep)) return 'major';
+  if(criticalAreas.has('hands') && isDeep && tbsa>2) return 'major';
+  if(criticalAreas.has('feet') && isDeep && tbsa>2) return 'major';
+  if(comorbidities.size>=2 && tbsa>10) return 'major';
+  // Friction with deep injury can be major
+  if(mechanism==='friction' && isDeep && tbsa>5) return 'major';
+
+  // Medio queimado
+  if(tbsa>10) return 'moderate';
+  if(isDeep && tbsa>=2) return 'moderate';
+  if(is2dDeep && tbsa>5) return 'moderate';
+  if(isElectrical) return 'moderate';
+  if(isChemical && tbsa>2) return 'moderate';
+  if(!isNaN(age) && (age<10||age>50) && tbsa>5) return 'moderate';
+  if(activeRegions.has('head') && tbsa>5) return 'moderate';
+  if(inhalationSigns.size===1) return 'moderate';
+  if(circumferential) return 'moderate';
+  if(criticalAreas.size>0 && (is2dDeep||isDeep)) return 'moderate';
+  if(comorbidities.size>=1 && tbsa>5) return 'moderate';
+
+  return 'minor';
+}
+
+function getSeverityLabel(s){
+  return s==='major'?'Grande Queimado':s==='moderate'?'M\u00E9dio Queimado':'Pequeno Queimado';
+}
+
+function getSeverityColor(s){
+  return s==='major'?'#fca5a5':s==='moderate'?'#fcd34d':'#86efac';
+}
+
+function getTransferCriteria(){
+  const criteria=[];
+  const tbsa=getTBSA();
+  const age=parseInt(patAge);
+
+  if(depth==='2nd_s' && tbsa>10) criteria.push('2\u00BA grau superficial >10% SCQ');
+  if(depth==='2nd_d' && tbsa>5) criteria.push('2\u00BA grau profundo >5% SCQ');
+  if(depth==='3rd'||depth==='4th') criteria.push('Queimadura de 3\u00BA/4\u00BA grau (qualquer extens\u00E3o)');
+  if(mechanism==='electrical') criteria.push('Queimadura el\u00E9trica (incluindo raio)');
+  if(mechanism==='chemical') criteria.push('Queimadura qu\u00EDmica significativa');
+  if(inhalationSigns.size>=2) criteria.push('Les\u00E3o inalat\u00F3ria associada');
+
+  if(activeRegions.has('head')) criteria.push('Queimadura de face/pesco\u00E7o (risco de via a\u00E9rea e est\u00E9tico)');
+  if(activeRegions.has('perineum')) criteria.push('Queimadura de per\u00EDneo/genit\u00E1lia');
+  if(criticalAreas.has('hands')) criteria.push('Queimadura de m\u00E3os (risco funcional)');
+  if(criticalAreas.has('feet')) criteria.push('Queimadura de p\u00E9s (risco funcional)');
+  if(criticalAreas.has('joints')) criteria.push('Queimadura sobre articula\u00E7\u00F5es maiores');
+
+  if(!isNaN(age) && age<2) criteria.push('Idade < 2 anos (alto risco)');
+  else if(!isNaN(age) && age<10 && tbsa>5) criteria.push('Crian\u00E7a < 10 anos com queimadura >5% SCQ');
+  else if(!isNaN(age) && age>60 && tbsa>5) criteria.push('Idoso > 60 anos com queimadura >5% SCQ');
+
+  const anyDeep=depth==='3rd'||depth==='4th'||depth==='2nd_d';
+  if(circumferential) criteria.push('Queimadura circunferencial \u2192 risco de s\u00EDndrome compartimental / restri\u00E7\u00E3o ventilat\u00F3ria');
+  else if(anyDeep && tbsa>=5) criteria.push('Avaliar queimadura circunferencial \u2192 escarotomia');
+
+  if(comorbidities.size>0) criteria.push('Comorbidade(s) significativa(s): '+COMORBIDITIES.filter(c=>comorbidities.has(c.id)).map(c=>c.label).join(', '));
+
+  return [...new Set(criteria)];
+}
+
+function needsIV(){
+  const tbsa=getTBSA();
+  const age=parseInt(patAge);
+  if(!isNaN(age) && age<=14) return tbsa>=10;
+  return tbsa>=15;
+}
+
+function hasComorbidity(id){ return comorbidities.has(id); }
+
+function clamp(val,min,max){return Math.min(Math.max(val,min),max)}
+
+function validateAge(v){
+  const n=parseInt(v);
+  if(v===''||isNaN(n)) return {valid:v==='',msg:''};
+  if(n<0) return {valid:false,msg:'Idade n\u00E3o pode ser negativa'};
+  if(n>120) return {valid:false,msg:'Idade m\u00E1xima: 120 anos'};
+  return {valid:true,msg:''};
+}
+
+function validateWeight(v){
+  const n=parseFloat(v);
+  if(v===''||isNaN(n)) return {valid:v==='',msg:''};
+  if(n<=0) return {valid:false,msg:'Peso deve ser maior que zero'};
+  if(n>350) return {valid:false,msg:'Verifique o peso informado (>350 kg)'};
+  return {valid:true,msg:''};
+}
+
+// =============================================
+// PROGRESS
+// =============================================
+function progHTML(idx,allDone){
+  const pct=allDone?100:Math.round((idx/TOTAL_STEPS)*100);
+  let h='<div class="progress-bar" role="progressbar" aria-valuenow="'+(allDone?TOTAL_STEPS:idx)+'" aria-valuemin="0" aria-valuemax="'+TOTAL_STEPS+'">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done':i===idx?'active':'';h+=`<div class="progress-step ${c}"></div>`}
+  h+='</div><div class="progress-labels">';
+  for(let i=0;i<TOTAL_STEPS;i++){const c=allDone||i<idx?'done-label':i===idx?'active-label':'';h+=`<span class="${c}">${STEP_LABELS[i]}</span>`}
+  h+='</div>';
+  if(!allDone) h+=`<div class="progress-pct">${pct}% completo</div>`;
+  h+='<div class="flow-connector"><div class="arrow"></div></div>';
+  return h;
+}
+
+function quickSummaryHTML(){
+  const items=[];
+  if(mechanism) items.push('<span class="qs-item"><span class="qs-value">'+getMechanismLabel(mechanism)+'</span></span>');
+  if(depth) items.push('<span class="qs-item"><span class="qs-value">'+getDepthLabel(depth).split('(')[0].trim()+'</span></span>');
+  if(activeRegions.size>0) items.push('<span class="qs-item">SCQ <span class="qs-value">'+getTBSADisplay()+'</span></span>');
+  if(circumferential) items.push('<span class="qs-item"><span class="qs-value" style="color:#fca5a5">CIRC</span></span>');
+  if(inhalationSigns.size>0) items.push('<span class="qs-item">Inala\u00E7\u00E3o <span class="qs-value">'+inhalationSigns.size+' sinal(is)</span></span>');
+  if(items.length===0) return '';
+  return '<div class="quick-summary" aria-label="Resumo dos dados coletados">'+items.join('<span class="qs-sep">\u00B7</span>')+'</div>';
+}
+
+// =============================================
+// RENDER ROUTER
+// =============================================
+function render(){
+  if(step===0) renderMechanism();
+  else if(step===1) renderDepth();
+  else if(step===2) renderTBSA();
+  else if(step===3) renderInhalation();
+  else if(step===4) renderPatient();
+  else renderResult();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// =============================================
+// STEP 0: MECHANISM
+// =============================================
+function renderMechanism(){
+  let h=progHTML(0,false);
+  h+='<div class="card">';
+  h+='<div class="step-badge">Etapa 1 de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Mecanismo da Queimadura</h2>';
+  h+='<p class="subtitle">Selecione o mecanismo principal da les\u00E3o</p>';
+  h+='<div class="options" role="radiogroup" aria-label="Mecanismo da queimadura">';
+  for(const m of MECHANISMS){
+    h+=`<button class="option-btn ${mechanism===m.id?'selected':''}" onclick="setMechanism('${m.id}')" role="radio" aria-checked="${mechanism===m.id}" aria-label="${m.label}: ${m.desc}">`;
+    h+=`<span class="icon">${m.icon}</span>`;
+    h+=`<span class="label"><strong>${m.label}</strong><br><span style="font-size:.75rem;color:#94a3b8">${m.desc}</span></span>`;
+    h+=`<span class="selected-check">\u2713</span>`;
+    h+='</button>';
+  }
+
+  // Electrical voltage sub-option
+  if(mechanism==='electrical'){
+    h+='<div class="option-group-label" style="margin-top:.75rem">Tens\u00E3o el\u00E9trica</div>';
+    h+='<div style="display:flex;gap:.5rem">';
+    h+=`<button class="score-opt ${elecVoltage==='low'?'picked':''}" onclick="setElecV('low')" style="flex:1" aria-label="Baixa tens\u00E3o, menor que 1000 volts">Baixa tens\u00E3o<br><span style="font-size:.6rem;color:#64748b">&lt; 1000V</span></button>`;
+    h+=`<button class="score-opt ${elecVoltage==='high'?'picked':''}" onclick="setElecV('high')" style="flex:1" aria-label="Alta tens\u00E3o, 1000 volts ou mais, ou raio">Alta tens\u00E3o<br><span style="font-size:.6rem;color:#64748b">&ge; 1000V / Raio</span></button>`;
+    h+='</div>';
+    if(elecVoltage==='high'){
+      h+='<div class="danger-callout"><span class="callout-icon">\u26A1</span><span>Queimadura el\u00E9trica de alta tens\u00E3o causa les\u00E3o profunda desproporcional \u00E0 superf\u00EDcie vis\u00EDvel. Les\u00E3o muscular, arritmias e rabdomi\u00F3lise s\u00E3o comuns. A SCQ subestima a gravidade real. <strong>Ponto de entrada e sa\u00EDda:</strong> examinar cuidadosamente.</span></div>';
+    }
+    if(elecVoltage==='low'){
+      h+='<div class="info-callout"><span class="callout-icon">\u2139\uFE0F</span><span>Baixa tens\u00E3o (<1000V): les\u00E3o geralmente localizada ao ponto de contato. Ainda requer ECG e monitoriza\u00E7\u00E3o card\u00EDaca por 24h se houver perda de consci\u00EAncia, ECG anormal ou passagem transtor\u00E1cica de corrente.</span></div>';
+    }
+  }
+
+  // Chemical agent sub-option
+  if(mechanism==='chemical'){
+    h+='<div class="option-group-label" style="margin-top:.75rem">Tipo de agente qu\u00EDmico</div>';
+    h+='<div class="options">';
+    for(const a of CHEMICAL_AGENTS){
+      h+=`<button class="option-btn ${chemAgent===a.id?'selected':''}" onclick="setChemAgent('${a.id}')" style="padding:.65rem .9rem" aria-label="${a.label}: ${a.desc}">`;
+      h+=`<span class="label"><strong>${a.label}</strong><br><span style="font-size:.7rem;color:#94a3b8">${a.desc}</span></span>`;
+      h+=`<span class="selected-check">\u2713</span>`;
+      h+='</button>';
+    }
+    h+='</div>';
+    if(chemAgent==='alkali'){
+      h+='<div class="danger-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>\u00C1lcalis penetram mais profundamente (necrose liquefativa). Irrigar por no m\u00EDnimo 30\u201360 minutos. N\u00C3O neutralizar. Manter irriga\u00E7\u00E3o at\u00E9 pH da pele normalizar (pH <8,0). Remover part\u00EDculas s\u00F3lidas antes de irrigar.</span></div>';
+    }
+    if(chemAgent==='acid'){
+      h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>\u00C1cidos causam necrose coagulativa. Irrigar copiosamente por no m\u00EDnimo 20\u201330 minutos. Verificar pH da pele. \u00C1cido fluor\u00EDdrico: tratar como agente org\u00E2nico/espec\u00EDfico.</span></div>';
+    }
+    if(chemAgent==='organic'){
+      h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Agentes org\u00E2nicos podem ter toxicidade sist\u00EAmica (fen\u00F3is, \u00E1cido fluor\u00EDdrico). Consultar protocolo espec\u00EDfico do agente. \u00C1cido fluor\u00EDdrico: gluconato de c\u00E1lcio t\u00F3pico/infiltrativo + monitorar c\u00E1lcio s\u00E9rico (risco de hipocalcemia fatal). F\u00F3sforo branco: remover part\u00EDculas com pir\u00F3scopo, manter \u00FAmido.</span></div>';
+    }
+  }
+
+  // Friction-specific note
+  if(mechanism==='friction'){
+    h+='<div class="info-callout"><span class="callout-icon">\uD83C\uDFCD\uFE0F</span><span>Queimadura por fric\u00E7\u00E3o combina les\u00E3o t\u00E9rmica + abras\u00E3o mec\u00E2nica. Avalie contamina\u00E7\u00E3o da ferida (asfalto, terra). Desbridamento cuidadoso e profilaxia tet\u00E2nica s\u00E3o fundamentais. Risco de tatuagem traum\u00E1tica se corpos estranhos n\u00E3o removidos.</span></div>';
+  }
+
+  h+='</div><div class="nav-row">';
+  const canNext=mechanism!==null
+    && (mechanism!=='electrical'||elecVoltage!==null)
+    && (mechanism!=='chemical'||chemAgent!==null);
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()" aria-label="Ir para pr\u00F3xima etapa">Pr\u00F3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 1: DEPTH
+// =============================================
+function renderDepth(){
+  let h=progHTML(1,false);
+  h+=quickSummaryHTML();
+  h+='<div class="card">';
+  h+='<div class="step-badge">Etapa 2 de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Profundidade da Queimadura</h2>';
+  h+='<p class="subtitle">Selecione a maior profundidade encontrada</p>';
+
+  h+='<div class="info-callout"><span class="callout-icon">\uD83D\uDCA1</span><span>A profundidade pode ser dif\u00EDcil de determinar nas primeiras 24\u201372h. Reavalie ap\u00F3s esse per\u00EDodo, pois queimaduras podem aprofundar (convers\u00E3o). Na d\u00FAvida, classifique como mais profunda.</span></div>';
+
+  // Scald + mechanism-specific depth hints
+  if(mechanism==='scald'){
+    h+='<div class="info-callout"><span class="callout-icon">\u2615</span><span>Escaldadura em crian\u00E7as frequentemente causa 2\u00BA grau superficial, mas \u00F3leos quentes podem causar les\u00F5es mais profundas. Avaliar tempo de contato e temperatura do l\u00EDquido.</span></div>';
+  }
+
+  h+='<div class="options" role="radiogroup" aria-label="Profundidade da queimadura">';
+  for(const d of DEPTHS){
+    h+=`<div class="depth-card ${depth===d.id?'selected':''}" onclick="setDepth('${d.id}')" role="radio" aria-checked="${depth===d.id}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setDepth('${d.id}')}">`;
+    h+=`<div class="depth-title"><span class="depth-tag ${d.tag}">${d.tagText}</span> ${d.label}</div>`;
+    h+=`<div class="depth-desc">${d.desc}</div>`;
+    h+=`<div class="depth-clinical">${d.clinical}</div>`;
+    h+='</div>';
+  }
+  h+='</div><div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar para etapa anterior">\u2190 Voltar</button>';
+  h+=`<button class="nav-btn primary" ${depth?'':'disabled'} onclick="next()" aria-label="Ir para pr\u00F3xima etapa">Pr\u00F3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 2: TBSA (RULE OF 9s / LUND-BROWDER)
+// =============================================
+function renderTBSA(){
+  const tbsa=getTBSA();
+  let h=progHTML(2,false);
+  h+=quickSummaryHTML();
+  h+='<div class="card">';
+  h+='<div class="step-badge">Etapa 3 de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Superf\u00EDcie Corporal Queimada (SCQ)</h2>';
+
+  const age=parseInt(patAge);
+  const isChild=usePediatric && !isNaN(age) && age<=14;
+  h+='<p class="subtitle">'+(isChild?'Lund-Browder simplificado (ajustado para idade)':'Regra dos 9 de Wallace')+' \u2014 Selecione as regi\u00F5es afetadas</p>';
+
+  if(depth==='1st'){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Queimaduras de 1\u00BA grau <strong>n\u00E3o entram</strong> no c\u00E1lculo da SCQ para ressuscita\u00E7\u00E3o vol\u00EAmica. Mesmo assim, registre a extens\u00E3o para documenta\u00E7\u00E3o.</span></div>';
+  } else {
+    h+='<div class="info-callout"><span class="callout-icon">\u2139\uFE0F</span><span>Toque uma regi\u00E3o para selecionar e use os bot\u00F5es de fra\u00E7\u00E3o para ajustar a \u00E1rea parcial. <strong>Dica:</strong> A palma da m\u00E3o do paciente (incluindo dedos) equivale a ~1% da SCQ \u2014 \u00FAtil para queimaduras irregulares/dispersas.</span></div>';
+  }
+
+  // Pediatric notice
+  if(isChild){
+    h+='<div class="warning-callout"><span class="callout-icon">\uD83D\uDC76</span><span>Paciente pedi\u00E1trico ('+patAge+' anos). Valores ajustados por Lund-Browder: Cabe\u00E7a e MMII variam com a idade.</span></div>';
+  }
+
+  // Body map header with reset link
+  h+='<div style="display:flex;align-items:center;margin-bottom:.25rem">';
+  h+='<span style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Mapa corporal</span>';
+  if(activeRegions.size>0){
+    h+='<span class="reset-link" onclick="resetAllRegions()" aria-label="Limpar todas as regi\u00F5es selecionadas">Limpar tudo</span>';
+  }
+  h+='</div>';
+
+  // Body map - organized by rows
+  const rows=[[],[],[],[],[]];
+  for(const r of BODY_REGIONS) rows[r.row].push(r);
+
+  h+='<div class="body-map">';
+  for(const row of rows){
+    if(row.length===0) continue;
+    h+='<div class="body-row">';
+    for(const r of row){
+      const isActive=activeRegions.has(r.id);
+      const frac=regionPartial[r.id]||1;
+      const pct=getRegionPct(r);
+      const displayPct=isActive?(pct*frac)%1===0?pct*frac:(pct*frac).toFixed(1):pct;
+      h+=`<div class="body-region ${isActive?'active':''}" onclick="toggleRegion('${r.id}')" role="checkbox" aria-checked="${isActive}" aria-label="${r.name.replace('\n',' ')} ${pct}%">`;
+      h+=`<span class="region-icon">${r.icon}</span>`;
+      h+=`<span class="region-name">${r.name}</span>`;
+      h+=`<span class="region-pct">${displayPct}%</span>`;
+      if(isActive){
+        h+='<div class="partial-pct" onclick="event.stopPropagation()">';
+        h+=`<button class="pct-btn ${frac===0.25?'active':''}" onclick="event.stopPropagation();setFrac('${r.id}',0.25)" aria-label="25% da regi\u00E3o">\u00BC</button>`;
+        h+=`<button class="pct-btn ${frac===0.5?'active':''}" onclick="event.stopPropagation();setFrac('${r.id}',0.5)" aria-label="50% da regi\u00E3o">\u00BD</button>`;
+        h+=`<button class="pct-btn ${frac===0.75?'active':''}" onclick="event.stopPropagation();setFrac('${r.id}',0.75)" aria-label="75% da regi\u00E3o">\u00BE</button>`;
+        h+=`<button class="pct-btn ${frac===1?'active':''}" onclick="event.stopPropagation();setFrac('${r.id}',1)" aria-label="100% da regi\u00E3o">1</button>`;
+        h+='</div>';
+      }
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // Total
+  const hasVal=tbsa>0;
+  h+=`<div class="tbsa-total ${hasVal?'has-value':''}">`;
+  h+=`<div class="number count-anim">${getTBSADisplay()}</div>`;
+  h+='<div class="label">Superf\u00EDcie corporal queimada total</div>';
+  if(hasVal){
+    const tempSev=getSeverityPreview();
+    h+=`<div class="severity-hint" style="color:${getSeverityColor(tempSev)}">${getSeverityLabel(tempSev)} (preliminar)</div>`;
+  }
+  h+='</div>';
+
+  // Critical areas (don't add to SCQ but affect transfer criteria)
+  if(depth!=='1st' && activeRegions.size>0){
+    h+='<div style="margin-top:.75rem">';
+    h+='<div class="option-group-label">\u00C1reas cr\u00EDticas envolvidas? (n\u00E3o alteram a SCQ)</div>';
+    h+='<div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem">';
+    for(const ca of CRITICAL_AREAS){
+      const ck=criticalAreas.has(ca.id);
+      h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleCritArea('${ca.id}')" style="padding:.6rem .85rem" aria-pressed="${ck}">`;
+      h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+      h+=`<span class="label" style="font-size:.85rem">${ca.label}</span>`;
+      h+='</button>';
+    }
+    h+='</div>';
+
+    // Circumferential burn - now shown for 2nd_s as well when relevant
+    const showCirc=depth==='3rd'||depth==='4th'||depth==='2nd_d'||depth==='2nd_s';
+    if(showCirc){
+      h+='<div style="margin-top:.75rem">';
+      h+=`<button class="check-btn ${circumferential?'checked':''}" onclick="toggleCirc()" style="padding:.6rem .85rem" aria-pressed="${circumferential}">`;
+      h+=`<span class="check-box">${circumferential?'\u2713':''}</span>`;
+      h+=`<span class="label" style="font-size:.85rem">Queimadura circunferencial (membro ou t\u00F3rax)</span>`;
+      h+='</button>';
+      if(circumferential){
+        const deepCirc=depth==='3rd'||depth==='4th'||depth==='2nd_d';
+        if(deepCirc){
+          h+='<div class="danger-callout"><span class="callout-icon">\uD83D\uDEA8</span><span><strong>Queimadura circunferencial profunda:</strong> ALTO risco de s\u00EDndrome compartimental em extremidades e/ou restri\u00E7\u00E3o ventilat\u00F3ria se t\u00F3rax. Avaliar escarotomia de emerg\u00EAncia. Monitorar pulsos distais com Doppler. <strong>Elevar extremidades acima do n\u00EDvel do cora\u00E7\u00E3o.</strong></span></div>';
+        } else {
+          h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Queimadura circunferencial superficial:</strong> Vigil\u00E2ncia neurovascular. Menor risco de s\u00EDndrome compartimental, mas monitorar evolu\u00E7\u00E3o (convers\u00E3o pode ocorrer em 24\u201372h). Elevar extremidades.</span></div>';
+        }
+      }
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar para etapa anterior">\u2190 Voltar</button>';
+  h+=`<button class="nav-btn primary" onclick="next()" aria-label="Ir para pr\u00F3xima etapa">Pr\u00F3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+function getSeverityPreview(){
+  const tbsa=getTBSA();
+  const isDeep=depth==='3rd'||depth==='4th';
+  const is2dDeep=depth==='2nd_d';
+  if(depth==='4th') return 'major';
+  if(tbsa>20) return 'major';
+  if(isDeep && tbsa>5) return 'major';
+  if(is2dDeep && tbsa>10) return 'major';
+  if(mechanism==='electrical' && elecVoltage==='high') return 'major';
+  if(circumferential && (isDeep||is2dDeep)) return 'major';
+  if(tbsa>10) return 'moderate';
+  if(isDeep && tbsa>=2) return 'moderate';
+  if(is2dDeep && tbsa>5) return 'moderate';
+  if(mechanism==='electrical') return 'moderate';
+  if(circumferential) return 'moderate';
+  return 'minor';
+}
+
+// =============================================
+// STEP 3: INHALATION
+// =============================================
+function renderInhalation(){
+  let h=progHTML(3,false);
+  h+=quickSummaryHTML();
+  h+='<div class="card">';
+  h+='<div class="step-badge">Etapa 4 de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Les\u00E3o Inalat\u00F3ria</h2>';
+  h+='<p class="subtitle">Marque os sinais presentes na avalia\u00E7\u00E3o</p>';
+
+  h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Les\u00E3o inalat\u00F3ria aumenta mortalidade em at\u00E9 20%. Considere intuba\u00E7\u00E3o precoce se \u22652 sinais presentes \u2014 edema progressivo pode impossibilitar IOT tardiamente. <strong>Sempre reavaliar via a\u00E9rea a cada 2h nas primeiras 12h.</strong></span></div>';
+
+  h+='<div class="options">';
+  for(const s of INHALATION_SIGNS){
+    const ck=inhalationSigns.has(s.id);
+    h+=`<button class="check-btn ${ck?'checked':''}" onclick="toggleInhSign('${s.id}')" aria-pressed="${ck}" aria-label="${s.label}">`;
+    h+=`<span class="check-box">${ck?'\u2713':''}</span>`;
+    h+=`<span class="label">${s.label}</span>`;
+    h+='</button>';
+  }
+  h+='</div>';
+
+  // Dynamic feedback based on selection count
+  if(inhalationSigns.size>=3){
+    h+='<div class="danger-callout"><span class="callout-icon">\uD83D\uDEA8</span><span><strong>ALTA SUSPEITA de les\u00E3o inalat\u00F3ria ('+inhalationSigns.size+' sinais).</strong><br>\u2022 IOT precoce OBRIGAT\u00D3RIA \u2014 usar tubo \u22657.5 se poss\u00EDvel<br>\u2022 O\u2082 umidificado a 100%<br>\u2022 Broncoscopia diagn\u00F3stica<br>\u2022 Aumentar Parkland em 30\u201350%<br>\u2022 Interna\u00E7\u00E3o em CTQ (Centro de Tratamento de Queimados)</span></div>';
+  } else if(inhalationSigns.size===2){
+    h+='<div class="danger-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Suspeita de les\u00E3o inalat\u00F3ria.</strong> Considerar IOT precoce, O\u2082 a 100%, broncoscopia e centro de queimados.</span></div>';
+  } else if(inhalationSigns.size===1){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>1 sinal presente \u2014 manter vigil\u00E2ncia rigorosa. Reavaliar em 2\u20134h. Baixo limiar para IOT.</span></div>';
+  }
+
+  // CO/cyanide hint if enclosed fire
+  if(inhalationSigns.has('enclosed') && inhalationSigns.size>=1){
+    h+='<div class="info-callout"><span class="callout-icon">\uD83E\uDDEA</span><span><strong>Inc\u00EAndio em ambiente fechado:</strong> Dosar carboxi-hemoglobina (COHb) e lactato. Se COHb >15% ou lactato >8: considerar O\u2082 hiperb\u00E1rico. Se materiais sint\u00E9ticos envolvidos (pl\u00E1sticos, espuma): suspeitar de intoxica\u00E7\u00E3o por cianeto.</span></div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar para etapa anterior">\u2190 Voltar</button>';
+  h+=`<button class="nav-btn primary" onclick="next()" aria-label="Ir para pr\u00F3xima etapa">Pr\u00F3ximo \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 4: PATIENT DATA
+// =============================================
+function renderPatient(){
+  let h=progHTML(4,false);
+  h+=quickSummaryHTML();
+  h+='<div class="card">';
+  h+='<div class="step-badge">Etapa 5 de '+TOTAL_STEPS+'</div>';
+  h+='<h2>Dados do Paciente</h2>';
+  h+='<p class="subtitle">Para c\u00E1lculo da f\u00F3rmula de Parkland e ajustes por faixa et\u00E1ria</p>';
+
+  h+='<div class="options">';
+
+  // Sex
+  h+='<div class="option-group-label">Sexo</div>';
+  h+='<div style="display:flex;gap:.5rem">';
+  h+=`<button class="score-opt ${patSex==='M'?'picked':''}" onclick="setPatSex('M')" style="flex:1" aria-label="Sexo masculino">Masculino</button>`;
+  h+=`<button class="score-opt ${patSex==='F'?'picked':''}" onclick="setPatSex('F')" style="flex:1" aria-label="Sexo feminino">Feminino</button>`;
+  h+='</div>';
+
+  // Age
+  const ageValid=validateAge(patAge);
+  h+='<div class="input-group" style="margin-top:1rem">';
+  h+='<div class="option-group-label">Idade (anos)</div>';
+  h+='<div class="input-row" style="margin-top:.4rem">';
+  h+=`<input type="number" class="input-field ${!ageValid.valid&&patAge!==''?'input-error':''}" id="ageInput" value="${patAge}" placeholder="Ex: 35" min="0" max="120" step="1" inputmode="numeric" oninput="setPatAge(this.value)">`;
+  h+='<span class="input-unit">anos</span>';
+  h+='</div>';
+  if(ageValid.msg) h+=`<div class="input-error-msg">${ageValid.msg}</div>`;
+  h+='</div>';
+
+  // Weight
+  const wValid=validateWeight(patWeight);
+  h+='<div class="input-group">';
+  h+='<div class="option-group-label">Peso (kg)</div>';
+  h+='<div class="input-row" style="margin-top:.4rem">';
+  h+=`<input type="number" class="input-field ${!wValid.valid&&patWeight!==''?'input-error':''}" id="weightInput" value="${patWeight}" placeholder="Ex: 70" min="1" max="350" step="0.1" inputmode="decimal" oninput="setPatWeight(this.value)">`;
+  h+='<span class="input-unit">kg</span>';
+  h+='</div>';
+  if(wValid.msg) h+=`<div class="input-error-msg">${wValid.msg}</div>`;
+  h+='</div>';
+
+  // Time of burn
+  h+='<div class="input-group">';
+  h+='<div class="option-group-label">Hora da queimadura (opcional)</div>';
+  h+='<p style="font-size:.7rem;color:#64748b;margin-top:.2rem;margin-bottom:.4rem">Para calcular o tempo j\u00E1 decorrido e ajustar o volume restante nas primeiras 8h</p>';
+  h+='<div class="time-input-group">';
+  h+=`<input type="number" class="time-input" id="burnHourInput" value="${burnHour}" placeholder="HH" min="0" max="23" inputmode="numeric" oninput="setBurnHour(this.value)">`;
+  h+='<span class="time-sep">:</span>';
+  h+=`<input type="number" class="time-input" id="burnMinInput" value="${burnMinute}" placeholder="MM" min="0" max="59" inputmode="numeric" oninput="setBurnMin(this.value)">`;
+  h+='</div>';
+
+  // Show elapsed time feedback if valid
+  const elapsed=getElapsedHours();
+  if(elapsed!==null){
+    if(elapsed>48){
+      h+='<div class="input-hint" style="color:#fca5a5">Tempo decorrido: '+elapsed.toFixed(1)+'h. Verifique se a hora est\u00E1 correta (>48h).</div>';
+    } else {
+      h+='<div class="input-hint" style="color:#86efac">Tempo decorrido: '+elapsed.toFixed(1)+'h</div>';
+    }
+  }
+  h+='</div>';
+
+  // Comorbidities
+  h+='<div class="input-group">';
+  h+='<div class="option-group-label">Comorbidades relevantes (opcional)</div>';
+  h+='<p style="font-size:.7rem;color:#64748b;margin-top:.2rem;margin-bottom:.4rem">Comorbidades que influenciam o manejo e progn\u00F3stico</p>';
+  h+='<div class="comorb-chips">';
+  for(const c of COMORBIDITIES){
+    h+=`<span class="comorb-chip ${comorbidities.has(c.id)?'active':''}" onclick="toggleComorb('${c.id}')" role="checkbox" aria-checked="${comorbidities.has(c.id)}" aria-label="${c.label}">${c.label}</span>`;
+  }
+  h+='</div>';
+  h+='</div>';
+
+  // Sulfa allergy (affects wound dressing choice)
+  h+='<div class="input-group">';
+  h+='<div class="option-group-label">Alergias relevantes</div>';
+  h+=`<span class="allergy-chip ${sulfaAllergy?'active':''}" onclick="toggleSulfaAllergy()" role="checkbox" aria-checked="${sulfaAllergy}" aria-label="Alergia a sulfonamidas">Alergia a Sulfonamidas ${sulfaAllergy?'\u2713':''}</span>`;
+  if(sulfaAllergy){
+    h+='<div class="warning-callout" style="margin-top:.5rem"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Alergia a sulfa:</strong> Sulfadiazina de prata \u00E9 <strong>CONTRAINDICADA</strong>. Usar alternativas: curativo de prata nanocristalina (Acticoat), curativo de alginato com prata, ou mupirocina t\u00F3pica.</span></div>';
+  }
+  h+='</div>';
+
+  h+='</div>';
+
+  // Age-specific warnings
+  const age=parseInt(patAge);
+  if(!isNaN(age) && age<2){
+    h+='<div class="danger-callout"><span class="callout-icon">\uD83D\uDC76</span><span><strong>Lactente/neonato (&lt;2 anos):</strong> Maior rela\u00E7\u00E3o superf\u00EDcie/volume, maior risco de hipotermia e desidrata\u00E7\u00E3o. Lund-Browder para SCQ mais preciso. Limiar de interna\u00E7\u00E3o mais baixo. Risco de hipoglicemia. Acesso intra\u00F3sseo se IV dif\u00EDcil.</span></div>';
+  } else if(!isNaN(age) && age<=14){
+    h+='<div class="info-callout"><span class="callout-icon">\uD83D\uDC76</span><span><strong>Paciente pedi\u00E1trico:</strong> Valores da SCQ ajustados (Lund-Browder). Ressuscita\u00E7\u00E3o IV indicada se SCQ \u226510%. Alvo de d\u00E9bito urin\u00E1rio: 1\u20132 mL/kg/h. Acrescentar soro de manuten\u00E7\u00E3o com glicose (Holliday-Segar). Monitorar glicemia capilar.</span></div>';
+  } else if(!isNaN(age) && age>60){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Idoso (&gt;60 anos):</strong> Maior mortalidade. Pele mais fina, queimaduras mais profundas. Cuidado com sobrecarga h\u00EDdrica (avaliar fun\u00E7\u00E3o card\u00EDaca). Comorbidades podem alterar a conduta. Investigar maus-tratos se padr\u00E3o suspeito.</span></div>';
+  }
+
+  // Comorbidity-specific warnings
+  if(comorbidities.has('diabetes')){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Diabetes:</strong> Risco aumentado de infec\u00E7\u00E3o e cicatriza\u00E7\u00E3o lenta. Monitorar glicemia capilar rigorosamente. Insulina conforme protocolo. Avaliar perfus\u00E3o distal com aten\u00E7\u00E3o redobrada.</span></div>';
+  }
+  if(comorbidities.has('cardiac')){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Cardiopatia:</strong> Cuidado com sobrecarga vol\u00EAmica na ressuscita\u00E7\u00E3o. Monitoriza\u00E7\u00E3o hemodin\u00E2mica invasiva pode ser necess\u00E1ria. Ajustar Parkland pelo d\u00E9bito urin\u00E1rio com aten\u00E7\u00E3o a sinais de congest\u00E3o.</span></div>';
+  }
+  if(comorbidities.has('renal')){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Doen\u00E7a renal:</strong> D\u00E9bito urin\u00E1rio pode n\u00E3o ser par\u00E2metro confi\u00E1vel. Monitorar eletr\u00F3litos com frequ\u00EAncia. Risco de hipervolemia e hipercalemia. Considerar monitoriza\u00E7\u00E3o hemodin\u00E2mica alternativa.</span></div>';
+  }
+  if(comorbidities.has('immuno')){
+    h+='<div class="danger-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Imunodepress\u00E3o:</strong> Risco significativamente aumentado de sepse e infec\u00E7\u00E3o da ferida queimada. Considerar antibioticoterapia precoce. Internar com menor limiar de SCQ. Avalia\u00E7\u00E3o por infectologista.</span></div>';
+  }
+  if(comorbidities.has('coag')){
+    h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Coagulopatia/Anticoagulante:</strong> Risco aumentado de sangramento. Se em uso de anticoagulante, considerar revers\u00E3o antes de procedimentos (escarotomia). Ajustar tromboprofilaxia. Monitorar coagulograma seriado.</span></div>';
+  }
+
+  // Weight validation warning
+  if(patWeight!=='' && patAge!==''){
+    const w=parseFloat(patWeight);
+    const a=parseInt(patAge);
+    if(!isNaN(w) && !isNaN(a)){
+      if(a<=2 && w>20) h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Peso de '+w+' kg parece elevado para idade de '+a+' anos. Verifique se o valor est\u00E1 correto.</span></div>';
+      else if(a<=14 && w>80) h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Peso de '+w+' kg parece elevado para idade de '+a+' anos. Verifique se o valor est\u00E1 correto.</span></div>';
+      if(a>14 && w<30) h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Peso de '+w+' kg parece baixo para adulto. Verifique se o valor est\u00E1 correto.</span></div>';
+    }
+  }
+
+  // Parkland preview (live)
+  const pk=getParkland();
+  if(pk && depth!=='1st'){
+    const tbsa=getTBSA();
+    h+='<div class="info-callout"><span class="callout-icon">\uD83D\uDCA7</span><span>F\u00F3rmula de Parkland: 4 mL \u00D7 '+patWeight+' kg \u00D7 '+tbsa+'% SCQ = <strong>'+pk.total.toLocaleString('pt-BR')+' mL</strong> em 24h (Ringer Lactato)';
+    if(elapsed!==null && elapsed<24){
+      const hoursLeft8=Math.max(0,8-elapsed);
+      if(hoursLeft8>0){
+        const adjRate=hoursLeft8>0?Math.round(pk.first8h/hoursLeft8):0;
+        h+=`<br><strong>\u23F1\uFE0F Tempo decorrido: ${elapsed.toFixed(1)}h</strong> \u2014 restam ${hoursLeft8.toFixed(1)}h para as primeiras 8h \u2192 <strong>${adjRate>0?adjRate.toLocaleString('pt-BR'):0} mL/h</strong> (se nenhum volume administrado)`;
+      } else {
+        const hoursLeft16=Math.max(0,24-elapsed);
+        h+=`<br><strong>\u23F1\uFE0F Tempo decorrido: ${elapsed.toFixed(1)}h</strong> \u2014 j\u00E1 passou das 8h iniciais. ${hoursLeft16.toFixed(1)}h restantes \u2192 <strong>${pk.rateSecond.toLocaleString('pt-BR')} mL/h</strong>`;
+      }
+    }
+    h+='</span></div>';
+
+    // Fluid creep warning
+    const w=parseFloat(patWeight);
+    if(!isNaN(w) && w>0 && tbsa>0){
+      const mlPerKgPctSCQ = pk.total / w / tbsa;
+      if(mlPerKgPctSCQ > 5){
+        h+='<div class="warning-callout"><span class="callout-icon">\u26A0\uFE0F</span><span>Volume calculado = '+mlPerKgPctSCQ.toFixed(1)+' mL/kg/%SCQ. Valores >6 mL/kg/%SCQ/24h est\u00E3o associados a fluid creep e complica\u00E7\u00F5es. Titular conforme d\u00E9bito urin\u00E1rio.</span></div>';
+      }
+    }
+
+    // Warning about glucose-containing fluids
+    h+='<div class="info-callout"><span class="callout-icon">\u2139\uFE0F</span><span><strong>Importante:</strong> N\u00C3O usar solu\u00E7\u00F5es glicosadas (SG 5%) para ressuscita\u00E7\u00E3o vol\u00EAmica \u2014 apenas Ringer Lactato ou SF 0,9%. Solu\u00E7\u00F5es glicosadas agravam edema e hiperglicemia.</span></div>';
+  }
+
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar para etapa anterior">\u2190 Voltar</button>';
+  const canNext=patSex!==null && patAge!=='' && patWeight!=='' && validateAge(patAge).valid && validateWeight(patWeight).valid;
+  h+=`<button class="nav-btn primary" ${canNext?'':'disabled'} onclick="next()" aria-label="Ver resultado final">Ver Resultado \u2192</button>`;
+  h+='</div></div>';
+  app.innerHTML=h;
+}
+
+// =============================================
+// STEP 5: RESULT
+// =============================================
+function renderResult(){
+  const tbsa=getTBSA();
+  const pk=getParkland();
+  const sev=getSeverity();
+  const criteria=getTransferCriteria();
+  const sevLabel=getSeverityLabel(sev);
+  const baux=getBauxScore();
+
+  // Auto-open inhalation section if signs were selected
+  if(inhalationSigns.size>0 && !sections._inhAutoOpened){
+    sections.inhalation=true;
+    sections._inhAutoOpened=true;
+  }
+
+  let h=progHTML(TOTAL_STEPS,true);
+  h+='<div class="card result-card">';
+
+  // Badge
+  const badgeCls=sev==='major'?'sev-major':sev==='moderate'?'sev-moderate':'sev-minor';
+  const badgeIcon=sev==='major'?'\uD83D\uDD25':sev==='moderate'?'\u26A0\uFE0F':'\u2705';
+  h+=`<div class="result-badge ${badgeCls}">${badgeIcon}</div>`;
+  h+=`<div class="result-title" style="color:${getSeverityColor(sev)}">${sevLabel}</div>`;
+  h+=`<div class="result-desc">${getMechanismLabel(mechanism)} | ${getDepthLabel(depth)} | SCQ ${getTBSADisplay()} | ${patSex==='M'?'Masc':'Fem'}, ${patAge}a, ${patWeight}kg</div>`;
+
+  // Severity indicator bar
+  h+=`<div class="severity-indicator ${sev}"><span class="sev-dot"></span><span class="sev-text">${sevLabel} \u2014 ${sev==='major'?'Interna\u00E7\u00E3o em CTQ/UTI + transfer\u00EAncia':sev==='moderate'?'Interna\u00E7\u00E3o hospitalar':'\u00C9 poss\u00EDvel manejo ambulatorial'}</span></div>`;
+
+  // Baux score (prognostic, adults only)
+  const ageNum=parseInt(patAge);
+  if(baux!==null && !isNaN(ageNum) && ageNum>=15 && tbsa>0){
+    const bauxPct=Math.min(baux,140);
+    const bauxColor=baux>=140?'#ef4444':baux>=100?'#f59e0b':baux>=75?'#eab308':'#22c55e';
+    const bauxPrognosis=baux>=140?'Progn\u00F3stico muito reservado (mortalidade >90%)':baux>=100?'Mortalidade muito elevada (~75-90%)':baux>=75?'Mortalidade significativa (~50%)':'Mortalidade relativamente baixa (<30%)';
+    h+='<div style="text-align:left;background:#0f172a;border-radius:.75rem;padding:.75rem 1rem;margin:.5rem 0;border:1px solid #334155">';
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem"><span style="font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em">\u00CDndice de Baux${inhalationSigns.size>=2?' Modificado':''}</span><span style="font-size:1rem;font-weight:800;font-family:'SF Mono',monospace;color:${bauxColor}">${baux}</span></div>`;
+    h+=`<div class="baux-bar"><div class="baux-fill" style="width:${Math.min(bauxPct/140*100,100)}%;background:${bauxColor}"></div></div>`;
+    h+=`<div style="font-size:.7rem;color:#94a3b8">${bauxPrognosis} (Idade ${patAge} + SCQ ${tbsa}%${inhalationSigns.size>=2?' + 17 (inala\u00E7\u00E3o)':''})</div>`;
+    h+='</div>';
+  }
+
+  // -- COLLAPSIBLE: Resumo --
+  h+=collapsible('summary','Resumo da Avalia\u00E7\u00E3o',()=>{
+    let s='';
+    s+=`<div class="summary-row"><span class="criteria">Mecanismo</span><span class="value">${getMechanismLabel(mechanism)}${mechanism==='electrical'?' ('+(elecVoltage==='high'?'Alta':'Baixa')+' tens\u00E3o)':''}${mechanism==='chemical'&&chemAgent?' ('+CHEMICAL_AGENTS.find(a=>a.id===chemAgent).label+')':''}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Profundidade</span><span class="value">${getDepthLabel(depth)}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">SCQ (${usePediatric?'Lund-Browder':'Regra dos 9'})</span><span class="value" style="color:#fbbf24">${getTBSADisplay()}</span></div>`;
+
+    const regNames=BODY_REGIONS.filter(r=>activeRegions.has(r.id)).map(r=>{
+      const frac=regionPartial[r.id]||1;
+      const pctVal=getRegionPct(r)*frac;
+      return r.name.replace('\n',' ')+(frac<1?' ('+(pctVal%1===0?pctVal:pctVal.toFixed(1))+'%)':' ('+getRegionPct(r)+'%)');
+    });
+    if(regNames.length>0) s+=`<div class="summary-row"><span class="criteria">Regi\u00F5es</span><span class="value" style="font-weight:400;font-size:.8rem;text-align:right;max-width:60%">${regNames.join(', ')}</span></div>`;
+
+    if(criticalAreas.size>0){
+      const caNames=CRITICAL_AREAS.filter(c=>criticalAreas.has(c.id)).map(c=>c.label);
+      s+=`<div class="summary-row"><span class="criteria">\u00C1reas cr\u00EDticas</span><span class="value" style="color:#fca5a5">${caNames.join(', ')}</span></div>`;
+    }
+    if(circumferential) s+=`<div class="summary-row"><span class="criteria">Circunferencial</span><span class="value" style="color:#fca5a5">Sim <span class="circ-tag">CIRC</span></span></div>`;
+
+    s+=`<div class="summary-row"><span class="criteria">Sinais de inala\u00E7\u00E3o</span><span class="value">${inhalationSigns.size} de ${INHALATION_SIGNS.length}${inhalationSigns.size>=2?' \u26A0\uFE0F':''}</span></div>`;
+    s+=`<div class="summary-row"><span class="criteria">Paciente</span><span class="value">${patSex==='M'?'Masc':'Fem'}, ${patAge} anos, ${patWeight} kg</span></div>`;
+
+    if(comorbidities.size>0){
+      const combNames=COMORBIDITIES.filter(c=>comorbidities.has(c.id)).map(c=>c.label);
+      s+=`<div class="summary-row"><span class="criteria">Comorbidades</span><span class="value" style="font-weight:400;font-size:.8rem;text-align:right;max-width:60%">${combNames.join(', ')}</span></div>`;
+    }
+    if(sulfaAllergy){
+      s+=`<div class="summary-row"><span class="criteria">Alergias</span><span class="value" style="color:#fca5a5">Sulfonamidas</span></div>`;
+    }
+
+    if(getBurnTime()){
+      const elapsed=getElapsedHours();
+      s+=`<div class="summary-row"><span class="criteria">Hora da queimadura</span><span class="value">${burnHour.padStart(2,'0')}:${burnMinute.padStart(2,'0')} (${elapsed!==null?elapsed.toFixed(1):'?'}h atr\u00E1s)</span></div>`;
+    }
+
+    s+=`<div class="summary-row"><span class="criteria">Gravidade</span><span class="value" style="color:${getSeverityColor(sev)};font-weight:700">${sevLabel}</span></div>`;
+    return s;
+  });
+
+  // -- COLLAPSIBLE: SCQ Detalhado --
+  h+=collapsible('tbsa','Superf\u00EDcie Corporal Queimada',()=>{
+    let s='<div style="text-align:center;margin-bottom:1rem"><span style="font-size:2rem;font-weight:800;font-family:\'SF Mono\',monospace;color:#fbbf24">'+getTBSADisplay()+'</span><div style="font-size:.7rem;color:#64748b;text-transform:uppercase">SCQ Total ('+(usePediatric?'Lund-Browder':'Regra dos 9')+')</div></div>';
+    for(const r of BODY_REGIONS){
+      const active=activeRegions.has(r.id);
+      const frac=regionPartial[r.id]||1;
+      const pct=getRegionPct(r);
+      const val=active?(pct*frac)%1===0?pct*frac:(pct*frac).toFixed(1):'\u2014';
+      s+=`<div class="summary-row"><span class="criteria">${r.icon} ${r.name.replace('\n',' ')}</span><span class="value" style="color:${active?'#fbbf24':'#475569'}">${active?val+'%'+(frac<1?' (\u00D7'+Math.round(frac*100)+'%)':''):'\u2014'}</span></div>`;
+    }
+    return s;
+  });
+
+  // -- COLLAPSIBLE: Parkland --
+  if(depth!=='1st'){
+    h+=collapsible('parkland','F\u00F3rmula de Parkland',()=>{
+      let s='';
+      if(!pk||tbsa===0){
+        s+='<p style="color:#64748b;text-align:center;padding:.5rem;font-size:.85rem">Sem indica\u00E7\u00E3o de ressuscita\u00E7\u00E3o vol\u00EAmica (SCQ = 0% ou peso n\u00E3o informado).</p>';
+        return s;
+      }
+
+      if(!needsIV()){
+        const threshold=parseInt(patAge)<=14?'10':'15';
+        s+='<div class="info-callout"><span class="callout-icon">\u2139\uFE0F</span><span>SCQ < '+threshold+'% \u2014 hidrata\u00E7\u00E3o oral pode ser suficiente. Ressuscita\u00E7\u00E3o IV de grandes volumes geralmente indicada para SCQ \u2265 '+threshold+'%. Considerar IV se v\u00F4mitos, recusa oral ou intoler\u00E2ncia.</span></div>';
+      }
+
+      s+='<div style="text-align:center;font-family:\'SF Mono\',monospace;font-size:.75rem;color:#64748b;margin-bottom:1rem">4 mL \u00D7 '+patWeight+' kg \u00D7 '+tbsa+'% = <strong style="color:#fbbf24">'+pk.total.toLocaleString('pt-BR')+' mL</strong></div>';
+      s+=`<div class="parkland-result active">`;
+      s+=`<div class="parkland-row"><span class="pk-label">Volume total em 24h (RL)</span><span class="pk-value highlight">${pk.total.toLocaleString('pt-BR')} mL</span></div>`;
+      s+=`<div class="parkland-row"><span class="pk-label">\uD83D\uDD52 Primeiras 8h (50%)</span><span class="pk-value">${pk.first8h.toLocaleString('pt-BR')} mL</span></div>`;
+      s+=`<div class="parkland-row"><span class="pk-label">\u2003\u2003Velocidade</span><span class="pk-value">${pk.rateFirst.toLocaleString('pt-BR')} mL/h</span></div>`;
+      s+=`<div class="parkland-row"><span class="pk-label">\uD83D\uDD52 Pr\u00F3ximas 16h (50%)</span><span class="pk-value">${pk.next16h.toLocaleString('pt-BR')} mL</span></div>`;
+      s+=`<div class="parkland-row"><span class="pk-label">\u2003\u2003Velocidade</span><span class="pk-value">${pk.rateSecond.toLocaleString('pt-BR')} mL/h</span></div>`;
+      s+='</div>';
+
+      // Time-adjusted volume
+      const elapsed=getElapsedHours();
+      if(elapsed!==null && elapsed<24){
+        s+='<div class="warning-callout" style="margin-top:.75rem"><span class="callout-icon">\u23F1\uFE0F</span><span>';
+        s+=`<strong>Ajuste por tempo decorrido (${elapsed.toFixed(1)}h desde a queimadura):</strong><br>`;
+        const hoursLeft8=Math.max(0,8-elapsed);
+        if(hoursLeft8>0){
+          const remaining=pk.first8h;
+          const adjRate=Math.round(remaining/hoursLeft8);
+          s+=`\u2022 Restam ${hoursLeft8.toFixed(1)}h das primeiras 8h \u2192 infundir ${remaining.toLocaleString('pt-BR')} mL a <strong>${adjRate.toLocaleString('pt-BR')} mL/h</strong> (se nenhum volume foi administrado)<br>`;
+          s+=`\u2022 Se j\u00E1 iniciou reposi\u00E7\u00E3o: subtrair volume j\u00E1 infundido e recalcular velocidade<br>`;
+          s+=`\u2022 Pr\u00F3ximas 16h: ${pk.rateSecond.toLocaleString('pt-BR')} mL/h (sem altera\u00E7\u00E3o)`;
+        } else {
+          const hoursLeft=Math.max(0,24-elapsed);
+          s+=`\u2022 J\u00E1 ultrapassou as 8h iniciais. Restam ${hoursLeft.toFixed(1)}h do per\u00EDodo de 24h.`;
+          s+=`<br>\u2022 Manter ${pk.rateSecond.toLocaleString('pt-BR')} mL/h`;
+        }
+        s+='</span></div>';
+      } else if(elapsed!==null && elapsed>=24){
+        s+='<div class="info-callout" style="margin-top:.75rem"><span class="callout-icon">\u2139\uFE0F</span><span>Mais de 24h desde a queimadura. Per\u00EDodo de Parkland j\u00E1 encerrado. Hidratar conforme balan\u00E7o h\u00EDdrico e d\u00E9bito urin\u00E1rio.</span></div>';
+      }
+
+      // Pediatric maintenance
+      const age=parseInt(patAge);
+      if(!isNaN(age) && age<=14){
+        const w=parseFloat(patWeight);
+        let maint=0;
+        if(w<=10) maint=w*100;
+        else if(w<=20) maint=1000+(w-10)*50;
+        else maint=1500+(w-20)*20;
+        s+=`<div class="info-callout" style="margin-top:.75rem"><span class="callout-icon">\uD83D\uDC76</span><span><strong>Crian\u00E7a:</strong> Acrescentar soro de manuten\u00E7\u00E3o (Holliday-Segar): ~${Math.round(maint)} mL/24h (~${Math.round(maint/24)} mL/h) com glicose (SG 5% + eletr\u00F3litos). Volume de Parkland \u00E9 ADICIONAL \u00E0 manuten\u00E7\u00E3o.</span></div>`;
+      }
+
+      s+='<div class="warning-callout" style="margin-top:.75rem"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>Importante:</strong> O tempo de 8h \u00E9 contado a partir do momento da queimadura, N\u00C3O da chegada ao hospital. Ajustar volume conforme d\u00E9bito urin\u00E1rio-alvo: adultos 0,5\u20131 mL/kg/h, crian\u00E7as 1\u20132 mL/kg/h. Usar <strong>Ringer Lactato</strong> preferencialmente (SF 0,9% como alternativa). Evitar volumes >6 mL/kg/%SCQ/24h (fluid creep). <strong>N\u00C3O usar solu\u00E7\u00F5es glicosadas para ressuscita\u00E7\u00E3o.</strong></span></div>';
+
+      // Cardiac comorbidity warning for fluids
+      if(comorbidities.has('cardiac')){
+        s+='<div class="danger-callout" style="margin-top:.75rem"><span class="callout-icon">\u2764\uFE0F</span><span><strong>Cardiopatia:</strong> Risco de sobrecarga vol\u00EAmica. Monitorar PVC, ecocardiograma \u00E0 beira-leito ou press\u00E3o de pulso. Considerar col\u00F3ides precocemente se sinais de congest\u00E3o com DU inadequado.</span></div>';
+      }
+      if(comorbidities.has('renal')){
+        s+='<div class="danger-callout" style="margin-top:.75rem"><span class="callout-icon">\u26A0\uFE0F</span><span><strong>DRC:</strong> D\u00E9bito urin\u00E1rio pode n\u00E3o ser guia confi\u00E1vel. Utilizar par\u00E2metros hemodin\u00E2micos alternativos. Monitorar eletr\u00F3litos s\u00E9ricos a cada 4\u20136h. Avaliar necessidade de di\u00E1lise precoce.</span></div>';
+      }
+
+      if(inhalationSigns.size>=2){
+        s+='<div class="danger-callout" style="margin-top:.75rem"><span class="callout-icon">\uD83D\uDEA8</span><span><strong>Les\u00E3o inalat\u00F3ria:</strong> Considerar aumento de 30\u201350% no volume total de Parkland. Volume ajustado: ~'+Math.round(pk.total*1.4).toLocaleString('pt-BR')+' mL (\u00D71.4).</span></div>';
+      }
+
+      return s;
+    });
+  }
+
+  // -- COLLAPSIBLE: Lesao Inalatoria --
+  h+=collapsible('inhalation','Les\u00E3o Inalat\u00F3ria',()=>{
+    let s='';
+    if(inhalationSigns.size===0){
+      s+='<p style="color:#64748b;text-align:center;padding:.5rem;font-size:.85rem">Sem sinais de les\u00E3o inalat\u00F3ria identificados.</p>';
+    } else {
+      for(const sign of INHALATION_SIGNS){
+        const present=inhalationSigns.has(sign.id);
+        if(present) s+=`<div class="summary-row"><span class="criteria">\u2713 ${sign.label}</span><span class="value" style="color:#fca5a5">Presente</span></div>`;
+      }
+      if(inhalationSigns.size>=2){
+        s+='<div class="danger-callout" style="margin-top:.75rem"><span class="callout-icon">\uD83D\uDEA8</span><span><strong>Alta suspeita de les\u00E3o inalat\u00F3ria ('+inhalationSigns.size+' sinais).</strong><br>\u2022 IOT precoce (tubo \u22657.5, antes do edema)<br>\u2022 O\u2082 umidificado a 100% por m\u00E1scara n\u00E3o-reinalante<br>\u2022 Broncoscopia para confirma\u00E7\u00E3o diagn\u00F3stica<br>\u2022 Aumentar volume de Parkland em 30\u201350%<br>\u2022 Dosar carboxi-hemoglobina (COHb)<br>\u2022 Se COHb >15%: considerar O\u2082 hiperb\u00E1rico (se dispon\u00EDvel)<br>\u2022 Se suspeita de cianeto (inc\u00EAndio em ambiente fechado com pl\u00E1sticos): hidroxocobalamina 5g IV<br>\u2022 Interna\u00E7\u00E3o em CTQ</span></div>';
+      } else {
+        s+='<div class="warning-callout" style="margin-top:.75rem"><span class="callout-icon">\u26A0\uFE0F</span><span>Manter vigil\u00E2ncia rigorosa. Reavaliar via a\u00E9rea a cada 2\u20134h. Baixo limiar para IOT se sinais progredirem. Dosar COHb.</span></div>';
+      }
+    }
+    return s;
+  });
+
+  // -- COLLAPSIBLE: Transfer Criteria --
+  h+=collapsible('transfer','Crit\u00E9rios de Transfer\u00EAncia (CTQ/ABA)',()=>{
+    let s='';
+    if(criteria.length>0){
+      s+='<div class="criteria-met">';
+      s+=`<h4>\uD83D\uDEA8 ${criteria.length} crit\u00E9rio${criteria.length>1?'s':''} para centro de queimados</h4>`;
+      s+='<ul>';
+      for(const c of criteria) s+=`<li>${c}</li>`;
+      s+='</ul></div>';
+      s+='<div style="font-size:.75rem;color:#94a3b8;margin-top:.5rem;padding:.5rem">Crit\u00E9rios da American Burn Association (ABA) / Sociedade Brasileira de Queimaduras (SBQ). Considerar transfer\u00EAncia para Centro de Tratamento de Queimados (CTQ) quando \u22651 crit\u00E9rio presente.<br><br><strong>Estabilizar antes de transferir:</strong> via a\u00E9rea, acesso venoso, ressuscita\u00E7\u00E3o vol\u00EAmica iniciada, analgesia, curativo provis\u00F3rio, sonda vesical (se grande queimado), documenta\u00E7\u00E3o fotogr\u00E1fica, contato pr\u00E9vio com o CTQ receptor.</div>';
+    } else {
+      s+='<div class="criteria-none">';
+      s+='<h4>\u2705 Sem crit\u00E9rios de transfer\u00EAncia</h4>';
+      s+='<p>Nenhum crit\u00E9rio de transfer\u00EAncia para CTQ identificado. Manejo pode ser ambulatorial ou em enfermaria geral, conforme avalia\u00E7\u00E3o cl\u00EDnica.</p>';
+      s+='</div>';
+    }
+    return s;
+  });
+
+  // -- COLLAPSIBLE: Manejo Inicial --
+  h+=collapsible('management','Manejo Inicial',()=>{
+    let s='';
+
+    // ABCDE reminder
+    s+='<div class="info-callout" style="margin-bottom:1rem"><span class="callout-icon">\uD83C\uDFE5</span><span><strong>Lembrete:</strong> Queimados s\u00E3o pacientes de trauma. Seguir ABCDE do ATLS. A avalia\u00E7\u00E3o prim\u00E1ria precede o manejo espec\u00EDfico da queimadura. Remover roupas e joias/an\u00E9is/pulseiras precocemente (edema progressivo).</span></div>';
+
+    // A - Airway
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83C\uDD70\uFE0F Via A\u00E9rea (A)</div>';
+    if(inhalationSigns.size>=2 || sev==='major'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDEA8</span><span>Avaliar via a\u00E9rea imediatamente \u2014 IOT precoce se sinais de inala\u00E7\u00E3o ou queimadura circunferencial de pesco\u00E7o</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDF2C\uFE0F</span><span>O\u2082 a 100% por m\u00E1scara n\u00E3o-reinalante (15L/min)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Se suspeita de intoxica\u00E7\u00E3o por CO: manter O\u2082 100% por no m\u00EDnimo 6h. Se COHb >25%: O\u2082 hiperb\u00E1rico</span></div>';
+      if(inhalationSigns.has('enclosed')){
+        s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Inc\u00EAndio em ambiente fechado com pl\u00E1sticos/sint\u00E9ticos: considerar intoxica\u00E7\u00E3o por cianeto \u2192 <strong>Hidroxocobalamina 5g IV</strong> (ant\u00EDdoto de primeira linha). Alternativa: tiossulfato de s\u00F3dio 12,5g IV.</span></div>';
+      }
+    } else {
+      s+='<div class="conduta-item"><span class="conduta-icon">\u2705</span><span>Via a\u00E9rea patente. Monitorar sinais de obstru\u00E7\u00E3o. O\u2082 suplementar se necess\u00E1rio.</span></div>';
+    }
+    s+='</div>';
+
+    // B - Breathing
+    if(sev==='major' || circumferential || (activeRegions.has('ant_trunk') && activeRegions.has('post_trunk') && (depth==='3rd'||depth==='4th'))){
+      s+='<div class="mgmt-section">';
+      s+='<div class="mgmt-section-title">\uD83C\uDD71\uFE0F Ventila\u00E7\u00E3o (B)</div>';
+      if(circumferential && (activeRegions.has('ant_trunk') || activeRegions.has('post_trunk'))){
+        s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDEA8</span><span><strong>Queimadura circunferencial de t\u00F3rax identificada</strong> \u2192 avaliar escarotomia tor\u00E1cica de emerg\u00EAncia se houver restri\u00E7\u00E3o ventilat\u00F3ria</span></div>';
+      } else {
+        s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Queimadura extensa de t\u00F3rax pode restringir ventila\u00E7\u00E3o \u2192 avaliar escarotomia tor\u00E1cica se necess\u00E1rio</span></div>';
+      }
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCCF</span><span>Monitorar SpO\u2082, FR, padr\u00E3o ventilat\u00F3rio. Gasometria arterial seriada.</span></div>';
+      s+='</div>';
+    }
+
+    // C - Fluid resuscitation
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83C\uDD72\uFE0F Ressuscita\u00E7\u00E3o Vol\u00EAmica (C)</div>';
+    if(pk && needsIV() && depth!=='1st'){
+      s+=`<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span><strong>Ringer Lactato: ${pk.rateFirst.toLocaleString('pt-BR')} mL/h</strong> nas primeiras 8h (desde a queimadura)</span></div>`;
+      s+=`<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span>Ringer Lactato: ${pk.rateSecond.toLocaleString('pt-BR')} mL/h nas pr\u00F3ximas 16h</span></div>`;
+
+      const elapsed=getElapsedHours();
+      if(elapsed!==null && elapsed<8){
+        const hoursLeft=Math.max(0,8-elapsed);
+        const adjRate=hoursLeft>0?Math.round(pk.first8h/hoursLeft):0;
+        s+=`<div class="conduta-item"><span class="conduta-icon">\u23F1\uFE0F</span><span><strong>AJUSTADO:</strong> ${elapsed.toFixed(1)}h desde a queimadura \u2192 infundir ${pk.first8h.toLocaleString('pt-BR')} mL em ${hoursLeft.toFixed(1)}h = <strong>${adjRate.toLocaleString('pt-BR')} mL/h AGORA</strong> (se nada foi administrado; subtrair volume j\u00E1 infundido)</span></div>`;
+      } else if(elapsed!==null && elapsed>=8 && elapsed<24){
+        s+=`<div class="conduta-item"><span class="conduta-icon">\u23F1\uFE0F</span><span><strong>AJUSTADO:</strong> J\u00E1 ultrapassou as 8h iniciais (${elapsed.toFixed(1)}h). Manter ${pk.rateSecond.toLocaleString('pt-BR')} mL/h.</span></div>`;
+      }
+
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCCF</span><span>Alvo de d\u00E9bito urin\u00E1rio: 0,5\u20131 mL/kg/h (adulto) ou 1\u20132 mL/kg/h (crian\u00E7a)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCCA</span><span>Sonda vesical de demora para monitoriza\u00E7\u00E3o cont\u00EDnua do d\u00E9bito urin\u00E1rio</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Se DU < 0,5 mL/kg/h: aumentar 20% do volume. Se DU > 1 mL/kg/h: reduzir 20%. Evitar fluid creep (&gt;6 mL/kg/%SCQ)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u274C</span><span>N\u00C3O usar solu\u00E7\u00F5es glicosadas (SG 5%) para ressuscita\u00E7\u00E3o vol\u00EAmica</span></div>';
+
+      // Pediatric
+      const age=parseInt(patAge);
+      if(!isNaN(age) && age<=14){
+        const w=parseFloat(patWeight);
+        let maint=0;
+        if(w<=10) maint=w*100;
+        else if(w<=20) maint=1000+(w-10)*50;
+        else maint=1500+(w-20)*20;
+        s+=`<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC76</span><span><strong>Manuten\u00E7\u00E3o pedi\u00E1trica (Holliday-Segar):</strong> ~${Math.round(maint/24)} mL/h (${Math.round(maint)} mL/24h) de SG 5% + NaCl 0,45%. ADICIONAL ao Parkland. Monitorar glicemia capilar a cada 2\u20134h.</span></div>`;
+      }
+    } else if(depth==='1st'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\u2705</span><span>Queimadura de 1\u00BA grau \u2014 hidrata\u00E7\u00E3o oral geralmente suficiente. Oferecer l\u00EDquidos fr\u00E9quentes.</span></div>';
+    } else {
+      const threshold=parseInt(patAge)<=14?'10':'15';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCA7</span><span>SCQ < '+threshold+'% \u2014 hidrata\u00E7\u00E3o oral pode ser suficiente. Manter acesso venoso perif\u00E9rico. Considerar IV se v\u00F4mitos ou recusa oral.</span></div>';
+    }
+
+    // Limb elevation for limb burns
+    if((activeRegions.has('arm_r')||activeRegions.has('arm_l')||activeRegions.has('leg_r')||activeRegions.has('leg_l')) && depth!=='1st'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\u2B06\uFE0F</span><span><strong>Elevar extremidades queimadas</strong> acima do n\u00EDvel do cora\u00E7\u00E3o para reduzir edema. Manter mobiliza\u00E7\u00E3o precoce quando poss\u00EDvel.</span></div>';
+    }
+    s+='</div>';
+
+    // D - Pain/disability
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83C\uDD73\uFE0F Analgesia (D)</div>';
+    if(sev==='major'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span><strong>Opioide IV:</strong> Morfina 0,05\u20130,1 mg/kg IV ou Fentanil 1\u20132 mcg/kg IV \u2014 titular conforme dor (escala EVA/NRS)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Dipirona 1g IV ou Cetoprofeno 100mg IV como adjuvante</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Evitar IM em grandes queimados (absor\u00E7\u00E3o err\u00E1tica por edema). Apenas IV.</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Cetamina 0,2\u20130,5 mg/kg IV pode ser \u00FAtil para procedimentos dolorosos (trocas de curativo, desbridamento)</span></div>';
+    } else if(sev==='moderate'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span>Opioide IV se dor intensa: Tramadol 50\u2013100mg IV ou Morfina dose baixa. Avaliar com escala de dor (EVA/NRS).</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Dipirona 1g IV + AINE se n\u00E3o contraindicado</span></div>';
+    } else {
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Dipirona 1g VO/IV ou Paracetamol 750mg VO + AINE</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Tramadol 50\u2013100mg VO se dor refrat\u00E1ria. Escala de dor EVA/NRS para avalia\u00E7\u00E3o.</span></div>';
+    }
+    // Pediatric analgesia note
+    const ageD=parseInt(patAge);
+    if(!isNaN(ageD) && ageD<=14){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC76</span><span><strong>Pedi\u00E1trico:</strong> Morfina 0,1 mg/kg IV (max 5mg/dose). Dipirona 15mg/kg IV. Evitar AINEs em menores de 6 meses. Escala de dor adaptada para idade (FLACC <3a, Wong-Baker 3\u20137a, EVA >7a).</span></div>';
+    }
+    s+='</div>';
+
+    // E - Exposure / Wound care
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83C\uDD74\uFE0F Exposi\u00E7\u00E3o / Cuidado com a Ferida (E)</div>';
+    s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDF21\uFE0F</span><span><strong>Prevenir hipotermia!</strong> Manter ambiente aquecido (>28\u00B0C). Cobrir \u00E1reas n\u00E3o examinadas. Aquecer fluidos IV.</span></div>';
+    s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCA7</span><span>Irriga\u00E7\u00E3o com \u00E1gua corrente limpa em temperatura ambiente por 20min (se <3h da queimadura). SF 0,9% para limpeza.</span></div>';
+    if(mechanism==='chemical'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDEBF</span><span><strong>Queimadura qu\u00EDmica:</strong> Irriga\u00E7\u00E3o copiosa e prolongada (30\u201360 min, m\u00EDnimo). Remover TODAS as roupas e acess\u00F3rios contaminados. N\u00C3O neutralizar o agente.</span></div>';
+      if(chemAgent==='alkali'){
+        s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>\u00C1lcali: irrigar at\u00E9 pH da pele < 8,0 (usar fita de pH). Pode necessitar irrigar por horas.</span></div>';
+      }
+      if(chemAgent==='organic'){
+        s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Agente org\u00E2nico/espec\u00EDfico: consultar protocolo do agente. \u00C1cido fluor\u00EDdrico \u2192 gluconato de c\u00E1lcio 2,5% gel t\u00F3pico e/ou infiltra\u00E7\u00E3o subcut\u00E2nea. Monitorar c\u00E1lcio s\u00E9rico a cada 2h (risco de hipocalcemia fatal).</span></div>';
+      }
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC41\uFE0F</span><span>Se houve contato ocular: irrigar olhos com SF 0,9% por 30min. Avalia\u00E7\u00E3o oftalmol\u00F3gica urgente.</span></div>';
+    }
+    if(mechanism==='friction'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDFCD\uFE0F</span><span><strong>Queimadura por fric\u00E7\u00E3o:</strong> Desbridar corpos estranhos cuidadosamente (asfalto, terra, fios). Risco de tatuagem traum\u00E1tica permanente se part\u00EDculas n\u00E3o removidas. Limpeza mec\u00E2nica com escova macia + SF 0,9%.</span></div>';
+    }
+    s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDF4</span><span>Limpeza com clorexidina aquosa dilu\u00EDda ou SF 0,9%</span></div>';
+    if(depth==='2nd_s' || depth==='2nd_d'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDE79</span><span>Bolhas \u00EDntegras <2cm: manter. Bolhas >2cm, tensas ou rotas: aspirar/desbridar pele desvitalizada.</span></div>';
+    }
+
+    // Wound dressing - adjusted for sulfa allergy
+    if(sulfaAllergy){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDE4</span><span>Curativo: <strong>ALERGIA A SULFA</strong> \u2014 N\u00C3O usar sulfadiazina de prata. Alternativas: prata nanocristalina (Acticoat), curativo de alginato com prata, hidrofibra com prata (Aquacel Ag), ou mupirocina 2% t\u00F3pica. Trocar conforme tipo de curativo.</span></div>';
+    } else {
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDE4</span><span>Curativo: sulfadiazina de prata 1% (padr\u00E3o) ou curativo biol\u00F3gico/sint\u00E9tico. Trocar a cada 12\u201324h. Contraindicada se alergia a sulfonamidas.</span></div>';
+    }
+    s+='<div class="conduta-item"><span class="conduta-icon">\u274C</span><span>N\u00C3O aplicar gelo, pasta de dente, manteiga, \u00F3leo de cozinha ou outros produtos caseiros</span></div>';
+    s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCF7</span><span>Fotografar as les\u00F5es (documentar para evolu\u00E7\u00E3o e m\u00E9dico de refer\u00EAncia)</span></div>';
+    s+='</div>';
+
+    // Tetanus
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83D\uDC89 Profilaxia Tet\u00E2nica</div>';
+    s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span>Verificar status vacinal. Refor\u00E7o de dT/dTpa se \u00FAltima dose > 5 anos ou esquema incompleto.</span></div>';
+    s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span>SAT (soro antitet\u00E2nico) ou IGHAT se esquema desconhecido ou < 3 doses. Queimaduras de 2\u00BA e 3\u00BA grau s\u00E3o feridas tet\u00E2nicas.</span></div>';
+    s+='</div>';
+
+    // Escharotomy
+    if(depth==='3rd'||depth==='4th'||circumferential||sev==='major'){
+      s+='<div class="mgmt-section">';
+      s+='<div class="mgmt-section-title">\uD83D\uDD2A Escarotomia</div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span><strong>Indica\u00E7\u00F5es:</strong> Queimadura circunferencial de t\u00F3rax (restri\u00E7\u00E3o ventilat\u00F3ria) ou extremidades (s\u00EDndrome compartimental)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCCF</span><span>Monitorar: pulsos distais (Doppler), oximetria de pulso, press\u00E3o compartimental, enchimento capilar, dor desproporcional, parestesias</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDFE5</span><span>Procedimento de emerg\u00EAncia \u2014 incis\u00E3o longitudinal medial e lateral pela escara, at\u00E9 gordura subcut\u00E2nea s\u00E3</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u23F0</span><span>Realizar nas primeiras 6h se sinais de comprometimento vascular/ventilat\u00F3rio</span></div>';
+      if(circumferential){
+        s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDEA8</span><span><strong>Queimadura circunferencial confirmada nesta avalia\u00E7\u00E3o.</strong> Avalia\u00E7\u00E3o neurovascular seriada obrigat\u00F3ria (a cada 1h nas primeiras 6h). Elevar extremidades.</span></div>';
+      }
+      if(comorbidities.has('coag')){
+        s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span><strong>Coagulopatia:</strong> Corrigir coagulograma antes de escarotomia, se poss\u00EDvel. Preparar hemoderivados.</span></div>';
+      }
+      s+='</div>';
+    }
+
+    // Electrical specific
+    if(mechanism==='electrical'){
+      s+='<div class="mgmt-section">';
+      s+='<div class="mgmt-section-title">\u26A1 Espec\u00EDfico \u2014 Queimadura El\u00E9trica</div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC93</span><span>ECG 12 deriva\u00E7\u00F5es + monitoriza\u00E7\u00E3o cont\u00EDnua por 24h (risco de arritmias ventriculares)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>CPK, mioglobina s\u00E9rica e urin\u00E1ria, troponina (rabdomi\u00F3lise e les\u00E3o mioc\u00E1rdica)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCA7</span><span>Aumentar volume de ressuscita\u00E7\u00E3o: manter DU > 1\u20132 mL/kg/h se mioglobin\u00FAria (urina escura/avermelhada)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Se mioglobin\u00FAria: NaHCO\u2083 para alcalinizar urina (pH urin\u00E1rio >6,5) + Manitol 12,5\u201325g IV</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDB4</span><span>Avaliar les\u00E3o musculoesquel\u00E9tica profunda, s\u00EDndrome compartimental e fraturas (contra\u00E7\u00E3o muscular violenta ou queda)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC41\uFE0F</span><span>Avalia\u00E7\u00E3o oftalmol\u00F3gica (risco de catarata) e neurologia (neuropatia perif\u00E9rica tardia)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>SCQ subestima gravidade real \u2014 les\u00E3o profunda desproporcional \u00E0 \u00E1rea de superf\u00EDcie vis\u00EDvel. Examinar pontos de entrada e sa\u00EDda da corrente.</span></div>';
+      s+='</div>';
+    }
+
+    // Labs
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83E\uDDEA Exames Complementares</div>';
+    if(sev==='major'||sev==='moderate'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Hemograma completo, eletr\u00F3litos (Na, K, Ca, Mg), ureia, creatinina, glicemia</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Gasometria arterial + lactato</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Tipagem sangu\u00EDnea + prova cruzada, coagulograma (TP, TTPa, fibrinog\u00EAnio)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Albumina s\u00E9rica (perda prot\u00E9ica \u00E9 significativa em grandes queimados)</span></div>';
+      if(inhalationSigns.size>0) s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Carboxi-hemoglobina (COHb) \u2014 alvo <10%. COHb >25% = O\u2082 hiperb\u00E1rico</span></div>';
+      if(mechanism==='electrical') s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>CPK total, mioglobina s\u00E9rica/urin\u00E1ria, troponina, ECG</span></div>';
+      if(comorbidities.has('diabetes')) s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>HbA1c, glicemia capilar a cada 2\u20134h. Insulina conforme protocolo.</span></div>';
+      if(comorbidities.has('hepatic')) s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Fun\u00E7\u00E3o hep\u00E1tica (TGO, TGP, bilirrubinas). Ajustar drogas metabolizadas pelo f\u00EDgado.</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCF7</span><span>Radiografia de t\u00F3rax (edema pulmonar, SDRA)</span></div>';
+    } else {
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Exames conforme necessidade cl\u00EDnica. Queimadura menor geralmente n\u00E3o exige laborat\u00F3rio extenso.</span></div>';
+      if(comorbidities.has('diabetes')) s+='<div class="conduta-item"><span class="conduta-icon">\uD83E\uDDEA</span><span>Glicemia capilar (paciente diab\u00E9tico).</span></div>';
+    }
+    s+='</div>';
+
+    // Profilaxias (DVT + Curling's ulcer)
+    if(sev==='major'||sev==='moderate'){
+      s+='<div class="mgmt-section">';
+      s+='<div class="mgmt-section-title">\uD83D\uDEE1\uFE0F Profilaxias (Internados)</div>';
+      if(comorbidities.has('coag')){
+        s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span><strong>Coagulopatia/anticoagulante:</strong> Avaliar risco-benef\u00EDcio da tromboprofilaxia. Se coagulograma permitir: mec\u00E2nica (meias compressivas / compress\u00E3o pneum\u00E1tica). Discutir com hematologia.</span></div>';
+      } else {
+        s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC89</span><span><strong>Tromboprofilaxia (TEV):</strong> Enoxaparina 40mg SC 1x/dia (iniciar ap\u00F3s estabiliza\u00E7\u00E3o hemost\u00E1tica, geralmente 24\u201348h). Ajustar para fun\u00E7\u00E3o renal. Meias compressivas se dispon\u00EDvel.</span></div>';
+      }
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span><strong>\u00DAlcera de Curling:</strong> Protetor g\u00E1strico \u2014 Omeprazol 40mg IV 1x/dia ou Ranitidina 50mg IV 8/8h. Grandes queimados t\u00EAm alto risco de \u00FAlcera de estresse.</span></div>';
+      if(sev==='major'){
+        s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDF5C</span><span><strong>Nutri\u00E7\u00E3o precoce:</strong> Iniciar dieta enteral nas primeiras 6\u201312h se poss\u00EDvel. Grandes queimados t\u00EAm necessidade cal\u00F3rica 1,5\u20132x o basal (Curreri: 25 kcal/kg + 40 kcal/%SCQ). Avalia\u00E7\u00E3o nutricional precoce.</span></div>';
+      }
+      s+='</div>';
+    }
+
+    // Disposition
+    s+='<div class="mgmt-section">';
+    s+='<div class="mgmt-section-title">\uD83C\uDFE5 Disposi\u00E7\u00E3o</div>';
+    if(sev==='major'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDEA8</span><span><strong>Interna\u00E7\u00E3o obrigat\u00F3ria</strong> \u2014 CTQ ou UTI. Contato com central de regula\u00E7\u00E3o para transfer\u00EAncia.</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCDE</span><span>Contatar CTQ de refer\u00EAncia. Estabilizar antes de transferir (ABCDE, Parkland iniciado, analgesia, curativo provis\u00F3rio).</span></div>';
+    } else if(sev==='moderate'){
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDFE5</span><span>Interna\u00E7\u00E3o hospitalar para observa\u00E7\u00E3o m\u00EDnima 24\u201348h. Avaliar necessidade de CTQ.</span></div>';
+    } else {
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83C\uDFE0</span><span>Manejo ambulatorial poss\u00EDvel. Revis\u00E3o em 24\u201348h obrigat\u00F3ria. Retorno subsequente a cada 2\u20133 dias at\u00E9 completa epiteliza\u00E7\u00E3o.</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDC8A</span><span>Receita: Analgesia VO + orienta\u00E7\u00F5es de curativo ('+(sulfaAllergy?'prata nanocristalina ou mupirocina 2%':'sulfadiazina de prata 1%')+', trocar 1\u20132x/dia, lavar com SF 0,9%)</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span><strong>Sinais de alarme (orientar paciente):</strong> febre, aumento progressivo da dor, secre\u00E7\u00E3o purulenta/f\u00E9tida, extens\u00E3o do eritema ao redor da ferida, linhas vermelhas (linfangite), mal-estar geral. Retornar imediatamente se presentes.</span></div>';
+    }
+    s+='</div>';
+
+    // Child abuse screening
+    const ageNum2=parseInt(patAge);
+    if(!isNaN(ageNum2) && ageNum2<10){
+      s+='<div class="mgmt-section">';
+      s+='<div class="mgmt-section-title">\uD83D\uDC76 Rastreio de Maus-Tratos</div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Em crian\u00E7as, avaliar padr\u00E3o da queimadura. Sinais sugestivos de maus-tratos: les\u00E3o em \u201Cluva/meia\u201D (imers\u00E3o), limites n\u00EDtidos, aus\u00EAncia de salpicos, hist\u00F3ria incompat\u00EDvel com les\u00E3o, atraso na busca de atendimento, les\u00F5es em diferentes est\u00E1gios de cicatriza\u00E7\u00E3o.</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCCB</span><span>Se suspeita: notifica\u00E7\u00E3o obrigat\u00F3ria ao Conselho Tutelar (ECA, Art. 13). Documentar detalhadamente. Solicitar avalia\u00E7\u00E3o do servi\u00E7o social.</span></div>';
+      s+='</div>';
+    }
+
+    // Elder abuse screening
+    if(!isNaN(ageNum) && ageNum>60){
+      s+='<div class="mgmt-section">';
+      s+='<div class="mgmt-section-title">\uD83D\uDC74 Rastreio de Maus-Tratos ao Idoso</div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\u26A0\uFE0F</span><span>Avaliar contexto social e padr\u00E3o de les\u00E3o. Sinais de alerta: hist\u00F3ria incompat\u00EDvel, atraso na busca de atendimento, les\u00F5es anteriores, cuidador hostil ou ausente.</span></div>';
+      s+='<div class="conduta-item"><span class="conduta-icon">\uD83D\uDCCB</span><span>Se suspeita: notifica\u00E7\u00E3o ao Minist\u00E9rio P\u00FAblico ou Delegacia do Idoso (Estatuto do Idoso, Art. 19).</span></div>';
+      s+='</div>';
+    }
+
+    return s;
+  });
+
+  // -- COLLAPSIBLE: Note --
+  h+=collapsible('note','Nota para Prontu\u00E1rio',()=>buildNoteContent());
+
+  // Nav
+  h+='<div class="nav-row">';
+  h+='<button class="nav-btn secondary" onclick="prev()" aria-label="Voltar para a etapa anterior">\u2190 Voltar</button>';
+  h+='<button class="nav-btn primary" onclick="restart()" aria-label="Recome\u00E7ar avalia\u00E7\u00E3o">\u21BB Recome\u00E7ar</button>';
+  h+='</div></div>';
+
+  // Disclaimer
+  h+='<div class="disclaimer">Esta ferramenta \u00E9 um auxiliar de decis\u00E3o cl\u00EDnica e n\u00E3o substitui o julgamento m\u00E9dico. Sempre considere o contexto cl\u00EDnico individual. Baseado em diretrizes ABA, SBQ e ATLS.</div>';
+
+  app.innerHTML=h;
+}
+
+// =============================================
+// COLLAPSIBLE
+// =============================================
+function collapsible(id,title,contentFn){
+  const open=sections[id];
+  let h='<div class="dark-box">';
+  h+=`<div class="collapse-header" onclick="toggleSection('${id}')" role="button" aria-expanded="${open}" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection('${id}')}">`;
+  h+=`<h3>${title}</h3><span class="collapse-arrow ${open?'open':''}">\u25BC</span></div>`;
+  h+=`<div class="collapse-body ${open?'visible':'hidden'}">`;
+  if(open) h+=contentFn();
+  h+='</div></div>';
+  return h;
+}
+
+// =============================================
+// NOTE
+// =============================================
+function buildNoteContent(){
+  const tbsa=getTBSA();
+  const pk=getParkland();
+  const sev=getSeverity();
+  const sevLabel=getSeverityLabel(sev);
+  const criteria=getTransferCriteria();
+  const baux=getBauxScore();
+
+  const now=evalStartTime;
+  const pad=n=>String(n).padStart(2,'0');
+  const ts=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  let n='';
+  n+=`QUEIMADURA - AVALIA\u00C7\u00C3O ESTRUTURADA\n`;
+  n+=`Data/hora da avalia\u00E7\u00E3o: ${ts}\n`;
+  if(getBurnTime()){
+    const elapsed=getElapsedHours();
+    n+=`Hora da queimadura: ${burnHour.padStart(2,'0')}:${burnMinute.padStart(2,'0')} (${elapsed!==null?elapsed.toFixed(1):'?'}h antes da avalia\u00E7\u00E3o)\n`;
+  }
+  n+=`========================================\n\n`;
+
+  n+=`PACIENTE: ${patSex==='M'?'Masculino':'Feminino'}, ${patAge} anos, ${patWeight} kg\n`;
+  if(comorbidities.size>0){
+    n+=`Comorbidades: ${COMORBIDITIES.filter(c=>comorbidities.has(c.id)).map(c=>c.label).join(', ')}\n`;
+  }
+  if(sulfaAllergy) n+=`Alergia: Sulfonamidas\n`;
+  n+='\n';
+
+  n+=`MECANISMO: ${getMechanismLabel(mechanism)}`;
+  if(mechanism==='electrical') n+=` (${elecVoltage==='high'?'Alta':'Baixa'} tens\u00E3o)`;
+  if(mechanism==='chemical' && chemAgent) n+=` (${CHEMICAL_AGENTS.find(a=>a.id===chemAgent).label})`;
+  n+='\n';
+
+  n+=`PROFUNDIDADE: ${getDepthLabel(depth)}\n`;
+  n+=`SCQ (${usePediatric?'Lund-Browder':'Regra dos 9'}): ${getTBSADisplay()}\n`;
+
+  const regNames=BODY_REGIONS.filter(r=>activeRegions.has(r.id)).map(r=>{
+    const frac=regionPartial[r.id]||1;
+    const pct=getRegionPct(r)*frac;
+    return r.name.replace('\n',' ')+' ('+(pct%1===0?pct:pct.toFixed(1))+'%)';
+  });
+  if(regNames.length>0) n+=`Regi\u00F5es: ${regNames.join(', ')}\n`;
+
+  if(criticalAreas.size>0){
+    const caNames=CRITICAL_AREAS.filter(c=>criticalAreas.has(c.id)).map(c=>c.label);
+    n+=`\u00C1reas cr\u00EDticas: ${caNames.join(', ')}\n`;
+  }
+  if(circumferential) n+=`Queimadura circunferencial: SIM\n`;
+
+  n+=`\nGRAVIDADE: ${sevLabel}\n`;
+
+  // Baux
+  const ageNum=parseInt(patAge);
+  if(baux!==null && !isNaN(ageNum) && ageNum>=15 && tbsa>0){
+    n+=`\u00CDndice de Baux${inhalationSigns.size>=2?' Modificado':''}: ${baux} (Idade ${patAge} + SCQ ${tbsa}%${inhalationSigns.size>=2?' + 17 inala\u00E7\u00E3o':''})\n`;
+  }
+
+  // Inhalation
+  const inhPresent=INHALATION_SIGNS.filter(s=>inhalationSigns.has(s.id));
+  if(inhPresent.length>0){
+    n+=`\nLES\u00C3O INALAT\u00D3RIA: ${inhPresent.length} sinal(is)\n`;
+    for(const s of inhPresent) n+=`  [+] ${s.label}\n`;
+    if(inhPresent.length>=2) n+=`  >> Alta suspeita - considerar IOT precoce\n`;
+  } else {
+    n+=`\nLES\u00C3O INALAT\u00D3RIA: Sem sinais identificados\n`;
+  }
+
+  // Parkland
+  if(pk && depth!=='1st' && tbsa>0){
+    n+=`\nRESSUSCITA\u00C7\u00C3O VOL\u00CAMICA (Parkland):\n`;
+    n+=`  4 mL x ${patWeight} kg x ${tbsa}% = ${pk.total.toLocaleString('pt-BR')} mL/24h (RL)\n`;
+    n+=`  Primeiras 8h: ${pk.first8h.toLocaleString('pt-BR')} mL (${pk.rateFirst.toLocaleString('pt-BR')} mL/h)\n`;
+    n+=`  Pr\u00F3ximas 16h: ${pk.next16h.toLocaleString('pt-BR')} mL (${pk.rateSecond.toLocaleString('pt-BR')} mL/h)\n`;
+    n+=`  Alvo DU: ${parseInt(patAge)<=14?'1-2':'0,5-1'} mL/kg/h\n`;
+
+    const elapsed=getElapsedHours();
+    if(elapsed!==null && elapsed<24){
+      const hoursLeft8=Math.max(0,8-elapsed);
+      if(hoursLeft8>0){
+        const adjRate=Math.round(pk.first8h/hoursLeft8);
+        n+=`  ** AJUSTE: ${elapsed.toFixed(1)}h decorridas -> max ${adjRate.toLocaleString('pt-BR')} mL/h (se nada infundido) **\n`;
+      }
+    }
+
+    if(inhalationSigns.size>=2){
+      n+=`  ** Les\u00E3o inalat\u00F3ria: considerar +30-50% volume (~${Math.round(pk.total*1.4).toLocaleString('pt-BR')} mL) **\n`;
+    }
+  }
+
+  // Transfer criteria
+  if(criteria.length>0){
+    n+=`\nCRIT\u00C9RIOS DE TRANSFER\u00CANCIA (CTQ/ABA): ${criteria.length} crit\u00E9rio(s)\n`;
+    for(const c of criteria) n+=`  [!] ${c}\n`;
+  } else {
+    n+=`\nCRIT\u00C9RIOS DE TRANSFER\u00CANCIA (CTQ/ABA): Nenhum\n`;
+  }
+
+  n+=`\nCONDUTA INICIAL:\n`;
+  // Airway
+  if(inhalationSigns.size>=2 || sev==='major'){
+    n+=`  Via a\u00E9rea: Avaliar IOT precoce. O2 100%.\n`;
+  } else {
+    n+=`  Via a\u00E9rea: Patente. Monitorar.\n`;
+  }
+  // Fluids
+  if(pk && needsIV() && depth!=='1st'){
+    n+=`  Ressuscita\u00E7\u00E3o: RL ${pk.rateFirst.toLocaleString('pt-BR')} mL/h (8h), ${pk.rateSecond.toLocaleString('pt-BR')} mL/h (16h)\n`;
+    const elapsed=getElapsedHours();
+    if(elapsed!==null && elapsed<8){
+      const hoursLeft=Math.max(0,8-elapsed);
+      const adjRate=hoursLeft>0?Math.round(pk.first8h/hoursLeft):0;
+      n+=`  ** Ajuste temporal: max ${adjRate.toLocaleString('pt-BR')} mL/h agora (${elapsed.toFixed(1)}h decorridas) **\n`;
+    }
+  } else {
+    n+=`  Hidrata\u00E7\u00E3o: Oral/IV conforme necessidade\n`;
+  }
+  // Pain
+  if(sev==='major') n+=`  Analgesia: Opioide IV (morfina/fentanil) + adjuvante IV\n`;
+  else if(sev==='moderate') n+=`  Analgesia: Tramadol/morfina IV + dipirona IV\n`;
+  else n+=`  Analgesia: Dipirona/paracetamol +/- tramadol VO\n`;
+
+  // Wound dressing in note
+  if(sulfaAllergy){
+    n+=`  Ferida: Limpeza + curativo com prata nanocristalina ou mupirocina 2% (ALERGIA A SULFA)\n`;
+  } else {
+    n+=`  Ferida: Limpeza + curativo com sulfadiazina de prata 1%\n`;
+  }
+  n+=`  Profilaxia tet\u00E2nica: Verificar status vacinal\n`;
+
+  if(mechanism==='electrical') n+=`  Espec\u00EDfico: ECG 12D, CPK, mioglobina, monitor cont\u00EDnuo 24h\n`;
+  if(mechanism==='chemical') n+=`  Espec\u00EDfico: Irriga\u00E7\u00E3o prolongada (${chemAgent==='alkali'?'at\u00E9 pH<8,0, ':''}m\u00EDnimo 30-60min)\n`;
+  if(mechanism==='friction') n+=`  Espec\u00EDfico: Desbridamento de corpos estranhos, profilaxia tet\u00E2nica\n`;
+  if(inhalationSigns.has('enclosed')) n+=`  Suspeita de cianeto: considerar hidroxocobalamina 5g IV\n`;
+  if(circumferential) n+=`  Circunferencial: Monitorar pulsos distais, avaliar escarotomia\n`;
+
+  // Prophylaxis for admitted
+  if(sev==='major'||sev==='moderate'){
+    if(comorbidities.has('coag')){
+      n+=`  Tromboprofilaxia: Mec\u00E2nica (coagulopatia). Avaliar com hematologia.\n`;
+    } else {
+      n+=`  Tromboprofilaxia: Enoxaparina 40mg SC 1x/dia (ap\u00F3s estabiliza\u00E7\u00E3o)\n`;
+    }
+    n+=`  Protetor g\u00E1strico: Omeprazol 40mg IV 1x/dia\n`;
+  }
+  if(sev==='major'){
+    n+=`  Nutri\u00E7\u00E3o: Dieta enteral precoce (6-12h)\n`;
+  }
+
+  n+=`\nDISPOSI\u00C7\u00C3O: ${sev==='major'?'Interna\u00E7\u00E3o CTQ/UTI + transfer\u00EAncia':sev==='moderate'?'Interna\u00E7\u00E3o hospitalar':'Manejo ambulatorial com revis\u00E3o 24-48h'}\n`;
+
+  // Follow-up for ambulatory
+  if(sev==='minor'){
+    n+=`\nORIENTA\u00C7\u00D5ES DE ALTA:\n`;
+    n+=`  - Retorno em 24-48h para reavalia\u00E7\u00E3o\n`;
+    n+=`  - Retornos subsequentes a cada 2-3 dias\n`;
+    n+=`  - Sinais de alarme: febre, aumento da dor, secre\u00E7\u00E3o purulenta, extens\u00E3o do eritema\n`;
+    n+=`  - Troca de curativo 1-2x/dia, lavar com SF 0,9%\n`;
+    n+=`  - Manter ferida elevada quando poss\u00EDvel\n`;
+  }
+
+  const escaped=n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="note-text" id="noteContent">${escaped}</div><button class="copy-btn" id="copyBtn" onclick="copyNote()" aria-label="Copiar nota para \u00E1rea de transfer\u00EAncia">\uD83D\uDCCB Copiar nota</button>`;
+}
+
+function copyNote(){
+  const el=document.getElementById('noteContent');
+  if(!el) return;
+  const text=el.textContent||el.innerText;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      showCopied();
+    }).catch(()=>{
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  ta.style.top='0';
+  ta.setAttribute('readonly','');
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0,ta.value.length);
+  try{document.execCommand('copy');showCopied();}catch(e){/* silently fail */}
+  document.body.removeChild(ta);
+}
+
+function showCopied(){
+  const btn=document.getElementById('copyBtn');
+  if(!btn) return;
+  btn.textContent='\u2713 Copiado!';btn.classList.add('copied');
+  setTimeout(()=>{if(document.getElementById('copyBtn')){btn.textContent='\uD83D\uDCCB Copiar nota';btn.classList.remove('copied')}},2000);
+}
+
+// =============================================
+// ACTIONS
+// =============================================
+function setMechanism(id){
+  mechanism=id;
+  if(id!=='electrical') elecVoltage=null;
+  if(id!=='chemical') chemAgent=null;
+  render();
+}
+function setElecV(v){elecVoltage=v;render()}
+function setChemAgent(id){chemAgent=id;render()}
+function setDepth(id){depth=id;render()}
+function toggleRegion(id){
+  if(activeRegions.has(id)){activeRegions.delete(id);delete regionPartial[id]}
+  else{activeRegions.add(id);regionPartial[id]=1}
+  render();
+}
+function setFrac(id,f){regionPartial[id]=f;render()}
+function toggleCirc(){circumferential=!circumferential;render()}
+function toggleCritArea(id){criticalAreas.has(id)?criticalAreas.delete(id):criticalAreas.add(id);render()}
+function toggleInhSign(id){inhalationSigns.has(id)?inhalationSigns.delete(id):inhalationSigns.add(id);render()}
+function setPatSex(v){patSex=v;render()}
+function toggleComorb(id){comorbidities.has(id)?comorbidities.delete(id):comorbidities.add(id);render()}
+function toggleSulfaAllergy(){sulfaAllergy=!sulfaAllergy;render()}
+function resetAllRegions(){activeRegions=new Set();regionPartial={};circumferential=false;criticalAreas=new Set();render()}
+function setPatAge(v){
+  patAge=v;
+  const age=parseInt(v);
+  if(!isNaN(age) && age<=14) usePediatric=true;
+  else usePediatric=false;
+  clearTimeout(setPatAge._timer);
+  setPatAge._timer=setTimeout(()=>render(),400);
+}
+function setPatWeight(v){
+  patWeight=v;
+  clearTimeout(setPatWeight._timer);
+  setPatWeight._timer=setTimeout(()=>render(),400);
+}
+function setBurnHour(v){
+  burnHour=v;
+  clearTimeout(setBurnHour._timer);
+  setBurnHour._timer=setTimeout(()=>render(),400);
+}
+function setBurnMin(v){
+  burnMinute=v;
+  clearTimeout(setBurnMin._timer);
+  setBurnMin._timer=setTimeout(()=>render(),400);
+}
+function toggleSection(id){sections[id]=!sections[id];render()}
+
+function next(){
+  if(step===0 && (!mechanism || (mechanism==='electrical' && !elecVoltage) || (mechanism==='chemical' && !chemAgent))) return;
+  if(step===1 && !depth) return;
+  if(step===4 && (!patSex || !patAge || !patWeight)) return;
+  if(step===4){
+    const w=parseFloat(patWeight);
+    const a=parseInt(patAge);
+    if(isNaN(w)||w<=0||isNaN(a)||a<0) return;
+    if(!validateAge(patAge).valid || !validateWeight(patWeight).valid) return;
+  }
+  step++;
+  render();
+}
+function prev(){if(step>0){step--;render()}}
+function restart(){
+  if(!confirm('Recome\u00E7ar avalia\u00E7\u00E3o? Todos os dados ser\u00E3o perdidos.')) return;
+  step=0;mechanism=null;elecVoltage=null;chemAgent=null;depth=null;
+  activeRegions=new Set();regionPartial={};circumferential=false;criticalAreas=new Set();
+  inhalationSigns=new Set();comorbidities=new Set();sulfaAllergy=false;
+  patWeight='';patAge='';patSex=null;burnHour='';burnMinute='';usePediatric=false;
+  sections={summary:true,tbsa:true,parkland:true,inhalation:false,transfer:true,management:true,note:true};
+  render();
+}
+
+// Focus management: keep input focus after render
+const _render=render;
+render=function(){
+  const ae=document.activeElement;
+  const aeid=ae?ae.id:null;
+  const aeVal=ae?ae.value:null;
+  const aeSel=ae?ae.selectionStart:null;
+  _render();
+  if(aeid){
+    const el=document.getElementById(aeid);
+    if(el){
+      el.focus();
+      if(typeof aeVal==='string' && typeof aeSel==='number'){
+        try{el.setSelectionRange(aeSel,aeSel)}catch(e){}
+      }
+    }
+  }
+};
+
+// Keyboard navigation: Enter/Space on option-btn
+document.addEventListener('keydown',function(e){
+  if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('option-btn')){
+    e.preventDefault();
+    e.target.click();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
