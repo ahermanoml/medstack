@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protocolo CAD - Cetoacidose Diabetica | Tratamento</title>
+  <style>
+    /* ===== Reset & Variables ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Pillar colors */
+      --hydration: #3B82F6;
+      --hydration-bg: #DBEAFE;
+      --hydration-border: #2563EB;
+      --insulin: #8B5CF6;
+      --insulin-bg: #EDE9FE;
+      --insulin-border: #7C3AED;
+      --potassium: #F59E0B;
+      --potassium-bg: #FEF3C7;
+      --potassium-border: #D97706;
+      --bicarbonate: #14B8A6;
+      --bicarbonate-bg: #CCFBF1;
+      --bicarbonate-border: #0D9488;
+
+      /* Urgency colors */
+      --critical-bg: #FEE2E2;
+      --critical-border: #DC2626;
+      --critical-text: #991B1B;
+      --warning-bg: #FEF3C7;
+      --warning-border: #D97706;
+      --warning-text: #92400E;
+      --normal-bg: #F0F9FF;
+      --normal-border: #0284C7;
+      --normal-text: #0C4A6E;
+      --success-bg: #D1FAE5;
+      --success-border: #059669;
+      --success-text: #065F46;
+      --inactive-bg: #F3F4F6;
+      --inactive-border: #D1D5DB;
+      --inactive-text: #9CA3AF;
+
+      /* General */
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #1E293B;
+      --text-secondary: #64748B;
+      --border: #E2E8F0;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+      color: white;
+      padding: 16px 24px;
+      text-align: center;
+    }
+    .header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.8; }
+
+    /* ===== Input Panel ===== */
+    .input-panel {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 12px 24px;
+      box-shadow: var(--shadow);
+    }
+    .input-panel h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .inputs-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 100px;
+    }
+    .input-group label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-secondary);
+    }
+    .input-group input {
+      width: 120px;
+      padding: 6px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+      font-weight: 600;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--hydration);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .input-group .unit {
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+    .calculated-bar {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .calc-item {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .calc-item strong {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    /* ===== Mobile Tabs ===== */
+    .mobile-tabs {
+      display: none;
+      overflow-x: auto;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      gap: 0;
+    }
+    .mobile-tab {
+      flex: none;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .mobile-tab.active {
+      border-bottom-color: var(--hydration);
+      color: var(--text);
+    }
+
+    /* ===== Main Flowchart ===== */
+    .flowchart-container {
+      position: relative;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+
+    /* ===== Pillar ===== */
+    .pillar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-header {
+      text-align: center;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pillar-header.hydration { background: var(--hydration); color: white; }
+    .pillar-header.insulin { background: var(--insulin); color: white; }
+    .pillar-header.potassium { background: var(--potassium); color: white; }
+    .pillar-header.bicarbonate { background: var(--bicarbonate); color: white; }
+
+    /* ===== Nodes ===== */
+    .node {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .node:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-1px);
+    }
+    .node.active {
+      border-width: 2.5px;
+      box-shadow: var(--shadow-lg);
+    }
+    .node.inactive {
+      opacity: 0.35;
+      filter: grayscale(0.3);
+    }
+    .node .node-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .node .node-content {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .node .node-content .calc-value {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      background: #F1F5F9;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Node types */
+    .node.action { border-left: 4px solid var(--normal-border); }
+    .node.decision {
+      border: 2px dashed var(--text-secondary);
+      background: #FAFAFA;
+      border-radius: 4px;
+    }
+    .node.decision .node-title::before {
+      content: '\25C7';
+      font-size: 14px;
+    }
+    .node.alert {
+      border: 2px solid var(--critical-border);
+      background: var(--critical-bg);
+    }
+    .node.alert .node-title { color: var(--critical-text); }
+    .node.alert .node-content { color: var(--critical-text); }
+
+    .node.warning-node {
+      border: 2px solid var(--warning-border);
+      background: var(--warning-bg);
+    }
+    .node.warning-node .node-title { color: var(--warning-text); }
+
+    .node.success-node {
+      border: 2px solid var(--success-border);
+      background: var(--success-bg);
+    }
+    .node.success-node .node-title { color: var(--success-text); }
+
+    /* Branch containers */
+    .branches {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .branch {
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      border-left: 3px solid var(--border);
+      background: #F8FAFC;
+      transition: all 0.25s;
+    }
+    .branch.branch-active {
+      border-left-color: var(--hydration);
+      background: var(--hydration-bg);
+      font-weight: 600;
+    }
+    .branch.branch-critical {
+      border-left-color: var(--critical-border);
+    }
+    .branch.branch-critical.branch-active {
+      background: var(--critical-bg);
+      border-left-color: var(--critical-border);
+    }
+    .branch.branch-warning {
+      border-left-color: var(--warning-border);
+    }
+    .branch.branch-warning.branch-active {
+      background: var(--warning-bg);
+      border-left-color: var(--warning-border);
+    }
+    .branch.branch-success {
+      border-left-color: var(--success-border);
+    }
+    .branch.branch-success.branch-active {
+      background: var(--success-bg);
+      border-left-color: var(--success-border);
+    }
+
+    .branch-label {
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 2px;
+    }
+
+    /* Arrows between nodes */
+    .arrow-down {
+      display: flex;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 0;
+    }
+    .arrow-down.active-arrow { color: var(--hydration); }
+
+    /* ===== Detail Panel ===== */
+    .detail-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 200;
+    }
+    .detail-overlay.open { display: block; }
+    .detail-panel {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 460px;
+      max-width: 90vw;
+      height: 100vh;
+      background: var(--surface);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      z-index: 201;
+      overflow-y: auto;
+      transition: right 0.3s ease;
+      padding: 24px;
+    }
+    .detail-panel.open { right: 0; }
+    .detail-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+    }
+    .detail-close:hover { background: #F1F5F9; }
+    .detail-panel h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      padding-right: 40px;
+    }
+    .detail-panel .detail-section {
+      margin-bottom: 16px;
+    }
+    .detail-panel .detail-section h4 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .detail-panel .detail-section p,
+    .detail-panel .detail-section li {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .detail-panel .detail-section ul {
+      list-style: disc;
+      padding-left: 20px;
+    }
+    .detail-panel .detail-calc {
+      background: #F1F5F9;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .detail-panel .detail-alert {
+      background: var(--critical-bg);
+      border: 1px solid var(--critical-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--critical-text);
+      margin-top: 8px;
+    }
+    .detail-panel .detail-tip {
+      background: var(--hydration-bg);
+      border: 1px solid var(--hydration-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #1E3A5A;
+      margin-top: 8px;
+    }
+
+    /* ===== Monitoring Section ===== */
+    .monitoring-section {
+      max-width: 1400px;
+      margin: 24px auto;
+      padding: 0 24px;
+    }
+    .monitoring-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .monitoring-card h2 {
+      background: #6B7280;
+      color: white;
+      padding: 10px 16px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .monitoring-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .monitoring-table th,
+    .monitoring-table td {
+      padding: 8px 16px;
+      text-align: left;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    .monitoring-table th {
+      background: #F8FAFC;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== Resolution Section ===== */
+    .resolution-section {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      padding: 0 24px;
+    }
+    .resolution-card {
+      background: var(--surface);
+      border: 2px solid var(--success-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 20px;
+    }
+    .resolution-card h2 {
+      color: var(--success-text);
+      font-size: 15px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .resolution-criteria {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .criterion {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      background: #F3F4F6;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    .criterion.met {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+      color: var(--success-text);
+    }
+    .criterion .check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.3s;
+    }
+    .criterion.met .check {
+      background: var(--success-border);
+      border-color: var(--success-border);
+      color: white;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      text-align: center;
+      padding: 16px 24px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .footer strong { color: var(--critical-text); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1023px) {
+      .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 767px) {
+      .mobile-tabs { display: flex; }
+      .pillars-grid {
+        grid-template-columns: 1fr;
+      }
+      .pillar { display: none; }
+      .pillar.pillar-visible { display: flex; }
+      .input-panel { padding: 10px 16px; }
+      .inputs-grid { gap: 8px; }
+      .input-group input { width: 90px; font-size: 14px; }
+      .flowchart-container { padding: 16px; }
+      .monitoring-section, .resolution-section { padding: 0 16px; }
+    }
+
+    /* ===== Print ===== */
+    @media print {
+      .input-panel { position: static; }
+      .node { break-inside: avoid; }
+      .mobile-tabs { display: none; }
+      .detail-overlay, .detail-panel { display: none !important; }
+      .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+      body { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>Protocolo de Tratamento &mdash; Cetoacidose Diabetica (CAD)</h1>
+    <p>Baseado nas Diretrizes SBD 2024/2025 &bull; Foco em tratamento &bull; Adultos</p>
+  </header>
+
+  <!-- Input Panel -->
+  <section class="input-panel">
+    <h2>Dados do Paciente</h2>
+    <div class="inputs-grid">
+      <div class="input-group">
+        <label>Peso <span class="unit">(kg)</span></label>
+        <input type="number" id="inp-peso" step="0.1" min="30" max="250" placeholder="70">
+      </div>
+      <div class="input-group">
+        <label>Glicemia <span class="unit">(mg/dL)</span></label>
+        <input type="number" id="inp-glicemia" step="1" min="0" max="2000" placeholder="450">
+      </div>
+      <div class="input-group">
+        <label>K+ <span class="unit">(mEq/L)</span></label>
+        <input type="number" id="inp-k" step="0.1" min="1" max="10" placeholder="4.0">
+      </div>
+      <div class="input-group">
+        <label>Na+ <span class="unit">(mEq/L)</span></label>
+        <input type="number" id="inp-na" step="0.1" min="100" max="180" placeholder="140">
+      </div>
+      <div class="input-group">
+        <label>pH arterial</label>
+        <input type="number" id="inp-ph" step="0.01" min="6.0" max="7.8" placeholder="7.10">
+      </div>
+      <div class="input-group">
+        <label>HCO3 <span class="unit">(mEq/L)</span></label>
+        <input type="number" id="inp-hco3" step="0.1" min="0" max="40" placeholder="10">
+      </div>
+      <div class="input-group">
+        <label>Cl- <span class="unit">(mEq/L)</span></label>
+        <input type="number" id="inp-cl" step="0.1" min="70" max="130" placeholder="100">
+      </div>
+    </div>
+    <div class="calculated-bar">
+      <div class="calc-item">Na+ corrigido: <strong id="calc-na-corr">--</strong> mEq/L</div>
+      <div class="calc-item">Anion Gap: <strong id="calc-ag">--</strong> mEq/L</div>
+      <div class="calc-item">Volume expansao (1h): <strong id="calc-vol-exp">--</strong> mL</div>
+      <div class="calc-item">Insulina infusao: <strong id="calc-ins-inf">--</strong> UI/h</div>
+    </div>
+  </section>
+
+  <!-- Mobile Tabs -->
+  <nav class="mobile-tabs">
+    <button class="mobile-tab active" data-pillar="hydration">Hidratacao</button>
+    <button class="mobile-tab" data-pillar="insulin">Insulina</button>
+    <button class="mobile-tab" data-pillar="potassium">Potassio</button>
+    <button class="mobile-tab" data-pillar="bicarbonate">Bicarbonato</button>
+  </nav>
+
+  <!-- Flowchart -->
+  <main class="flowchart-container">
+    <div class="pillars-grid">
+
+      <!-- ===== PILAR 1: HIDRATACAO ===== -->
+      <section class="pillar pillar-visible" id="pillar-hydration">
+        <div class="pillar-header hydration">Hidratacao</div>
+
+        <div class="node action" id="node-hydration-expansion" data-detail="hydration-expansion">
+          <div class="node-title" style="color: var(--hydration);">Fase 1 &mdash; Expansao Volumica</div>
+          <div class="node-content">
+            SF 0.9% &mdash; <span class="calc-value" data-calc="volExpMin">--</span> a <span class="calc-value" data-calc="volExpMax">--</span> mL<br>
+            EV em <strong>1 hora</strong>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node action" id="node-hydration-maintenance" data-detail="hydration-maintenance">
+          <div class="node-title" style="color: var(--hydration);">Fase 2 &mdash; Manutencao (apos 1&ordf; hora)</div>
+          <div class="node-content">
+            Deficit estimado: <span class="calc-value" data-calc="deficitMin">--</span> a <span class="calc-value" data-calc="deficitMax">--</span> mL (total)<br>
+            Taxa: <strong>4 a 14 mL/kg/h</strong> &rarr; <span class="calc-value" data-calc="manutMin">--</span> a <span class="calc-value" data-calc="manutMax">--</span> mL/h<br>
+            <span style="font-size:11px">Tipicamente <strong>250-500 mL/h</strong>. Repor ~50% do deficit nas primeiras 8h.</span>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node decision" id="node-na-decision" data-detail="na-decision">
+          <div class="node-title">Escolha do Fluido &mdash; Na+ Corrigido</div>
+          <div class="node-content">
+            Formula: Na+ + 1.6 &times; [(Glic - 100) / 100]<br>
+            Resultado: <span class="calc-value" data-calc="naCorr">--</span> mEq/L
+          </div>
+          <div class="branches">
+            <div class="branch" id="branch-na-low" data-range="na-low">
+              <div class="branch-label">Na+ corr &lt; 135</div>
+              <strong>SF 0.9%</strong>, 250-500 mL/h
+            </div>
+            <div class="branch" id="branch-na-normal" data-range="na-normal">
+              <div class="branch-label">Na+ corr 135-150</div>
+              <strong>SF 0.9%</strong>, 250-500 mL/h
+            </div>
+            <div class="branch branch-warning" id="branch-na-high" data-range="na-high">
+              <div class="branch-label">Na+ corr &ge; 150</div>
+              <strong>NaCl 0.45%</strong>, 250-500 mL/h
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node decision" id="node-glycemia-check" data-detail="glycemia-check">
+          <div class="node-title">Avaliar Glicemia &mdash; Troca de Soro</div>
+          <div class="node-content">Glicemia atual: <span class="calc-value" data-calc="glicemia">--</span> mg/dL</div>
+          <div class="branches">
+            <div class="branch" id="branch-glic-high" data-range="glic-high">
+              <div class="branch-label">Glicemia &gt; 250</div>
+              Manter SF conforme Na+ corrigido
+            </div>
+            <div class="branch branch-success" id="branch-glic-target" data-range="glic-target">
+              <div class="branch-label">Glicemia 200-250</div>
+              Associar <strong>SG 5%</strong> ao SF<br>
+              Reduzir insulina para 0.02-0.05 UI/kg/h
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node action" id="node-hydration-goal" data-detail="hydration-goal">
+          <div class="node-title" style="color: var(--hydration);">Meta &amp; Reavaliacao</div>
+          <div class="node-content">
+            Repor deficit total em <strong>24-48h</strong><br>
+            Reavaliar Na+ corrigido a cada <strong>2-4h</strong><br>
+            Ajustar tipo de soro e taxa conforme resposta<br>
+            <span style="font-size:11px">Reduzir taxa se: PVC elevada, crepitacoes, debito urinario &gt; 200 mL/h</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PILAR 2: INSULINOTERAPIA ===== -->
+      <section class="pillar" id="pillar-insulin">
+        <div class="pillar-header insulin">Insulinoterapia</div>
+
+        <div class="node decision" id="node-insulin-precheck" data-detail="insulin-precheck">
+          <div class="node-title">Pre-condicao: K+ &gt; 3.3?</div>
+          <div class="node-content">
+            K+ atual: <span class="calc-value" data-calc="kAtual">--</span> mEq/L
+          </div>
+          <div class="branches">
+            <div class="branch branch-critical" id="branch-k-block">
+              <div class="branch-label">K+ &le; 3.3 &mdash; ADIAR INSULINA</div>
+              Repor K+ primeiro. So iniciar insulina quando K+ &gt; 3.3
+            </div>
+            <div class="branch branch-success" id="branch-k-ok">
+              <div class="branch-label">K+ &gt; 3.3 &mdash; Iniciar insulina</div>
+              Prosseguir com preparo
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-down" id="arrow-ins-1">&darr;</div>
+
+        <div class="node action" id="node-insulin-prep" data-detail="insulin-prep">
+          <div class="node-title" style="color: var(--insulin);">Preparo da Solucao</div>
+          <div class="node-content">
+            Insulina Regular <strong>100 UI</strong> + SF 0.9% <strong>100 mL</strong><br>
+            Concentracao: <strong>1 UI/mL</strong><br>
+            <span style="font-size:11px; color: var(--text-secondary);">Lavar equipo com 50 mL antes de iniciar</span>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node action" id="node-insulin-start" data-detail="insulin-start">
+          <div class="node-title" style="color: var(--insulin);">Iniciar Infusao</div>
+          <div class="node-content">
+            <strong>Opcao A (com bolus):</strong><br>
+            Bolus: <span class="calc-value" data-calc="insBolus">--</span> UI EV +<br>
+            Infusao: <span class="calc-value" data-calc="insInfA">--</span> UI/h (<span class="calc-value" data-calc="insInfA">--</span> mL/h)
+            <br><br>
+            <strong>Opcao B (sem bolus):</strong><br>
+            Infusao: <span class="calc-value" data-calc="insInfB">--</span> UI/h (<span class="calc-value" data-calc="insInfB">--</span> mL/h)
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node decision" id="node-insulin-adjust" data-detail="insulin-adjust">
+          <div class="node-title">Queda glicemica adequada?</div>
+          <div class="node-content">Meta: queda de 50-75 mg/dL/h</div>
+          <div class="branches">
+            <div class="branch branch-warning">
+              <div class="branch-label">Queda &lt; 50 mg/dL/h</div>
+              Dobrar taxa de infusao
+            </div>
+            <div class="branch branch-success">
+              <div class="branch-label">Queda 50-75 mg/dL/h</div>
+              Manter taxa atual
+            </div>
+            <div class="branch">
+              <div class="branch-label">Glicemia atingiu 200-250</div>
+              Reduzir para <span class="calc-value" data-calc="insRedMin">--</span> a <span class="calc-value" data-calc="insRedMax">--</span> UI/h<br>
+              Iniciar SG 5%
+            </div>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node success-node" id="node-insulin-transition" data-detail="insulin-transition">
+          <div class="node-title">Transicao para SC</div>
+          <div class="node-content">
+            Criterios de resolucao atingidos?<br>
+            Aplicar insulina SC <strong>2h ANTES</strong> de suspender EV.<br>
+            Paciente deve tolerar dieta oral.
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PILAR 3: POTASSIO ===== -->
+      <section class="pillar" id="pillar-potassium">
+        <div class="pillar-header potassium">Reposicao de Potassio</div>
+
+        <div class="node decision" id="node-k-decision" data-detail="k-decision">
+          <div class="node-title">Avaliar K+ Serico</div>
+          <div class="node-content">
+            K+ atual: <span class="calc-value" data-calc="kAtual">--</span> mEq/L<br>
+            <span style="font-size:11px;">Pre-requisito: debito urinario presente</span>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node alert" id="node-k-low" data-detail="k-low">
+          <div class="node-title">K+ &lt; 3.3 mEq/L</div>
+          <div class="node-content">
+            <strong>ADIAR INSULINA</strong><br>
+            Repor KCl: 20-40 mEq/h EV<br>
+            KCl 19.1%: <span class="calc-value" data-calc="kclVolLow">8 a 16</span> mL/h<br>
+            Reavaliar K+ a cada 1-2h<br>
+            <em>So iniciar insulina quando K+ &gt; 3.3</em>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node action" id="node-k-normal" data-detail="k-normal" style="border-left: 4px solid var(--potassium);">
+          <div class="node-title" style="color: var(--potassium);">K+ 3.3 &ndash; 5.2 mEq/L</div>
+          <div class="node-content">
+            Adicionar 20-30 mEq KCl por litro de soro<br>
+            KCl 19.1%: <strong>8 a 12 mL/L</strong> de soro<br>
+            Manter insulina EV<br>
+            Meta: K+ entre 4-5 mEq/L
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node warning-node" id="node-k-high" data-detail="k-high">
+          <div class="node-title">K+ &ge; 5.3 mEq/L</div>
+          <div class="node-content">
+            <strong>NAO repor potassio</strong><br>
+            Iniciar/manter insulina EV<br>
+            Reavaliar K+ em <strong>2 horas</strong><br>
+            <em>K+ tende a cair com insulina e hidratacao</em>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node action" id="node-k-monitor" data-detail="k-monitor" style="border-left: 4px solid var(--potassium);">
+          <div class="node-title" style="color: var(--potassium);">Monitorizacao Continua</div>
+          <div class="node-content">
+            Reavaliar K+ a cada <strong>2-4h</strong><br>
+            Ajustar reposicao conforme resultado<br>
+            Atencao: risco de hipocalemia com insulina
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PILAR 4: BICARBONATO ===== -->
+      <section class="pillar" id="pillar-bicarbonate">
+        <div class="pillar-header bicarbonate">Bicarbonato</div>
+
+        <div class="node decision" id="node-bicarb-decision" data-detail="bicarb-decision">
+          <div class="node-title">Avaliar pH Arterial</div>
+          <div class="node-content">
+            pH atual: <span class="calc-value" data-calc="phAtual">--</span><br>
+            <span style="font-size:11px;">Uso rotineiro NAO e recomendado</span>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node success-node" id="node-bicarb-no" data-detail="bicarb-no">
+          <div class="node-title">pH &ge; 7.0</div>
+          <div class="node-content">
+            <strong>NAO administrar bicarbonato</strong><br>
+            Correcao da acidose ocorre com<br>
+            insulina + hidratacao
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node warning-node" id="node-bicarb-consider" data-detail="bicarb-consider">
+          <div class="node-title">pH 6.9 &ndash; 7.0</div>
+          <div class="node-content">
+            NaHCO3 <strong>50 mEq</strong> + 200 mL AD<br>
+            EV em <strong>1 hora</strong><br>
+            Adicionar 10 mEq KCl a solucao<br>
+            <em>Reavaliar pH em 1h; repetir se pH &lt; 7.0</em>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node alert" id="node-bicarb-urgent" data-detail="bicarb-urgent">
+          <div class="node-title">pH &lt; 6.9</div>
+          <div class="node-content">
+            NaHCO3 <strong>100 mEq</strong> + 400 mL AD<br>
+            EV em <strong>2 horas</strong><br>
+            Adicionar 20 mEq KCl a solucao<br>
+            <em>Reavaliar pH apos infusao; repetir se necessario</em>
+          </div>
+        </div>
+
+        <div class="arrow-down">&darr;</div>
+
+        <div class="node action" id="node-bicarb-recheck" data-detail="bicarb-recheck" style="border-left: 4px solid var(--bicarbonate);">
+          <div class="node-title" style="color: var(--bicarbonate);">Reavaliacao</div>
+          <div class="node-content">
+            Gasometria apos cada infusao<br>
+            Repetir bicarbonato apenas se pH &lt; 7.0<br>
+            Suspender quando pH &ge; 7.0
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Monitoring -->
+  <section class="monitoring-section">
+    <div class="monitoring-card">
+      <h2>Monitorizacao</h2>
+      <table class="monitoring-table">
+        <thead>
+          <tr>
+            <th>Parametro</th>
+            <th>Intervalo</th>
+            <th>Observacao</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Glicemia capilar</strong></td>
+            <td>1/1 hora</td>
+            <td>Meta: queda de 50-75 mg/dL por hora</td>
+          </tr>
+          <tr>
+            <td><strong>Gasometria arterial</strong></td>
+            <td>2/2 horas</td>
+            <td>Ate pH &gt; 7.3 e HCO3 &ge; 18</td>
+          </tr>
+          <tr>
+            <td><strong>Eletrolitos (Na+, K+, Cl-)</strong></td>
+            <td>2-4 horas</td>
+            <td>Atencao especial ao K+</td>
+          </tr>
+          <tr>
+            <td><strong>Funcao renal (Ur, Cr)</strong></td>
+            <td>12 horas</td>
+            <td>Avaliar hidratacao</td>
+          </tr>
+          <tr>
+            <td><strong>Balanco hidrico</strong></td>
+            <td>Continuo</td>
+            <td>Atentar para debito urinario</td>
+          </tr>
+          <tr>
+            <td><strong>Sinais vitais</strong></td>
+            <td>1/1 hora</td>
+            <td>PA, FC, FR, SatO2, nivel de consciencia</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Resolution Criteria -->
+  <section class="resolution-section">
+    <div class="resolution-card">
+      <h2>Criterios de Resolucao da CAD</h2>
+      <p style="font-size:13px; color: var(--text-secondary); margin-bottom: 10px;">
+        Glicemia &lt; 200 mg/dL <strong>+</strong> pelo menos 2 dos 3 criterios abaixo:
+      </p>
+      <div class="resolution-criteria">
+        <div class="criterion" id="crit-glic">
+          <span class="check"></span>
+          Glicemia &lt; 200 mg/dL
+        </div>
+        <div class="criterion" id="crit-ph">
+          <span class="check"></span>
+          pH &gt; 7.3
+        </div>
+        <div class="criterion" id="crit-hco3">
+          <span class="check"></span>
+          HCO3 &ge; 18 mEq/L
+        </div>
+        <div class="criterion" id="crit-ag">
+          <span class="check"></span>
+          Anion Gap &le; 12
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p><strong>Ferramenta educacional. Nao substitui avaliacao clinica individualizada.</strong></p>
+    <p>Referencia: Diretrizes da Sociedade Brasileira de Diabetes (SBD) 2024/2025 &bull; ADA Standards of Care 2024</p>
+  </footer>
+
+  <!-- Detail Panel -->
+  <div class="detail-overlay" id="detail-overlay"></div>
+  <aside class="detail-panel" id="detail-panel">
+    <button class="detail-close" id="detail-close">&times;</button>
+    <div id="detail-content"></div>
+  </aside>
+
+  <script>
+    // ===== Clinical Detail Content =====
+    const detailData = {
+      'hydration-expansion': {
+        title: 'Fase de Expansao Volumica',
+        sections: [
+          { type: 'text', title: 'Conduta', content: 'Soro Fisiologico 0.9% (SF 0.9%), 15 a 20 mL/kg, endovenoso, correr em 1 hora.' },
+          { type: 'calc', content: 'Volume = Peso x 15 a Peso x 20 mL' },
+          { type: 'text', title: 'Objetivo', content: 'Restabelecer perfusao periferica, corrigir hipotensao e garantir debito urinario adequado.' },
+          { type: 'tip', content: 'Na presenca de choque hipovolemico, pode-se repetir a expansao (mais 1000-1500 mL em 1h) antes de iniciar a fase de manutencao.' },
+          { type: 'alert', content: 'Em pacientes com insuficiencia cardiaca ou renal, ajustar volume conforme avaliacao hemodinamica. Considerar monitorizacao invasiva.' },
+          { type: 'text', title: 'Dica pratica', content: 'Um frasco de SF 0.9% 1000 mL para um paciente de 70kg (1050-1400 mL) em 1 hora e o padrao. Use bomba de infusao quando disponivel.' }
+        ]
+      },
+      'na-decision': {
+        title: 'Avaliacao do Sodio Corrigido',
+        sections: [
+          { type: 'calc', content: 'Na+ corrigido = Na+ aferido + 1.6 x [(Glicemia - 100) / 100]\n\nExemplo: Na+ 140, Glic 500 → 140 + 1.6 x 4 = 146.4 mEq/L' },
+          { type: 'text', title: 'Por que corrigir?', content: 'A hiperglicemia causa translocacao de agua do intracelular para o extracelular, diluindo o sodio. O Na+ corrigido reflete o verdadeiro estado de hidratacao.' },
+          { type: 'text', title: 'Condutas por faixa', content: '<strong>Na+ corr < 135:</strong> Paciente hiponatremico real → usar SF 0.9%<br><br><strong>Na+ corr 135-150:</strong> Normal → usar SF 0.9%<br><br><strong>Na+ corr >= 150:</strong> Hipernatremico → trocar para NaCl 0.45% (solucao hipotonica) para evitar agravamento' },
+          { type: 'text', title: 'Taxa de infusao', content: '250 a 500 mL/h, ajustando conforme estado de hidratacao, debito urinario e hemodinamica.' }
+        ]
+      },
+      'glycemia-check': {
+        title: 'Avaliacao da Glicemia para Troca de Soro',
+        sections: [
+          { type: 'text', title: 'Racional', content: 'Quando a glicemia atinge 200-250 mg/dL, deve-se iniciar soro glicosado (SG 5%) para evitar hipoglicemia, mantendo a insulina EV para corrigir a cetoacidose.' },
+          { type: 'text', title: 'Conduta', content: '<strong>Glicemia > 250:</strong> Manter SF conforme Na+ corrigido.<br><br><strong>Glicemia 200-250:</strong> Iniciar SG 5% (pode fazer SG 5% 1:1 com SF 0.9%). Reduzir insulina para 0.02-0.05 UI/kg/h.' },
+          { type: 'alert', content: 'A insulina NAO deve ser suspensa ate a resolucao da CAD. Apenas reduz-se a taxa e associa-se glicose EV.' }
+        ]
+      },
+      'hydration-maintenance': {
+        title: 'Fase 2 — Manutencao da Hidratacao',
+        sections: [
+          { type: 'text', title: 'Deficit hidrico na CAD', content: 'O deficit hidrico tipico na CAD e de <strong>50 a 100 mL/kg</strong> (3.5 a 7 litros em adulto de 70 kg). O objetivo e repor este deficit de forma gradual e segura.' },
+          { type: 'calc', content: 'Deficit estimado = Peso x 50 a Peso x 100 mL\n\nExemplo (70 kg):\n  Minimo: 70 x 50 = 3.500 mL\n  Maximo: 70 x 100 = 7.000 mL' },
+          { type: 'text', title: 'Taxa de infusao', content: '<strong>4 a 14 mL/kg/h</strong>, tipicamente 250-500 mL/h.\n\nComo escolher a taxa:\n<strong>250 mL/h (~4 mL/kg/h):</strong> paciente estavel, idoso, cardiopata, IRA\n<strong>500 mL/h (~7 mL/kg/h):</strong> paciente jovem, desidratacao grave, hipotensao persistente, debito urinario baixo' },
+          { type: 'text', title: 'Estrategia de reposicao', content: '<strong>Primeiras 8h:</strong> repor ~50% do deficit estimado (inclui o volume da expansao)\n<strong>Proximas 16h:</strong> repor os ~50% restantes\n\nNa pratica para 70 kg:\n• 1as 8h: ~2.500-3.500 mL (incluindo expansao)\n• Proximas 16h: ~2.500-3.500 mL (~150-220 mL/h)' },
+          { type: 'alert', content: 'Reduzir taxa se: crepitacoes pulmonares, PVC elevada, debito urinario > 200 mL/h, ou queda rapida do Na+ (> 10 mEq/L em 24h).\n\nCuidado em idosos, cardiopatas e nefropatas — risco de sobrecarga hidrica.' },
+          { type: 'tip', content: 'Na pratica, a maioria dos protocolos usa 250-500 mL/h como taxa padrao de manutencao, com ajuste clinico horario. Nao existe valor unico — o importante e reavaliar frequentemente.' }
+        ]
+      },
+      'hydration-goal': {
+        title: 'Meta e Reavaliacao da Hidratacao',
+        sections: [
+          { type: 'text', title: 'Meta', content: 'Repor o deficit hidrico total estimado em 24 a 48 horas, com balanco hidrico positivo.' },
+          { type: 'text', title: 'Reavaliacao', content: 'A cada 2-4 horas:\n• Dosar Na+ e recalcular Na+ corrigido\n• Avaliar debito urinario (meta: > 0.5 mL/kg/h)\n• Checar sinais vitais e perfusao periferica\n• Ajustar tipo de soro (SF 0.9% vs NaCl 0.45%) conforme Na+ corrigido\n• Ajustar taxa conforme resposta clinica' },
+          { type: 'text', title: 'Sinais de alarme', content: '• Debito urinario < 0.5 mL/kg/h → aumentar taxa\n• Debito urinario > 200 mL/h → reduzir taxa\n• Hipotensao persistente → considerar nova expansao\n• Crepitacoes / dispneia → reduzir taxa, avaliar sobrecarga' },
+          { type: 'text', title: 'Quando suspender', content: 'Transicao para via oral quando:\n• CAD resolvida (criterios de resolucao)\n• Paciente tolerando dieta via oral\n• Sem nauseas/vomitos' }
+        ]
+      },
+      'insulin-precheck': {
+        title: 'Pre-condicao para Insulinoterapia',
+        sections: [
+          { type: 'alert', content: 'NUNCA iniciar insulina com K+ <= 3.3 mEq/L. A insulina desloca potassio para o meio intracelular, podendo causar hipocalemia grave com arritmias fatais.' },
+          { type: 'text', title: 'Conduta', content: 'Se K+ <= 3.3: repor potassio agressivamente (20-40 mEq/h) e reavaliar em 1-2h. So iniciar insulina quando K+ > 3.3 mEq/L.' }
+        ]
+      },
+      'insulin-prep': {
+        title: 'Preparo da Solucao de Insulina',
+        sections: [
+          { type: 'text', title: 'Receita', content: 'Insulina Regular 100 UI (1 frasco) + SF 0.9% 100 mL = solucao com concentracao de 1 UI/mL.' },
+          { type: 'tip', content: 'A insulina adsorve no plastico do equipo. Lavar o equipo com 50 mL da solucao (descartar) antes de conectar ao paciente. Isso garante que a dose infundida seja precisa.' },
+          { type: 'text', title: 'Via', content: 'Acesso venoso exclusivo (nao misturar com KCl ou outros medicamentos). Usar bomba de infusao continua (BIC).' },
+          { type: 'text', title: 'Estabilidade', content: 'Solucao estavel por 24 horas em temperatura ambiente. Trocar apos este periodo.' }
+        ]
+      },
+      'insulin-start': {
+        title: 'Inicio da Infusao de Insulina',
+        sections: [
+          { type: 'text', title: 'Opcao A (com bolus)', content: 'Bolus EV de 0.1 UI/kg seguido de infusao continua de 0.1 UI/kg/h.' },
+          { type: 'text', title: 'Opcao B (sem bolus)', content: 'Infusao continua de 0.14 UI/kg/h, sem bolus inicial.' },
+          { type: 'calc', content: 'Opcao A: Bolus = Peso x 0.1 UI | Infusao = Peso x 0.1 UI/h\nOpcao B: Infusao = Peso x 0.14 UI/h\n\nComo concentracao = 1 UI/mL, a taxa em mL/h = taxa em UI/h' },
+          { type: 'tip', content: 'Ambas as opcoes possuem eficacia semelhante. A opcao sem bolus e cada vez mais utilizada por ser mais simples e com menor risco de hipoglicemia.' }
+        ]
+      },
+      'insulin-adjust': {
+        title: 'Ajuste da Infusao de Insulina',
+        sections: [
+          { type: 'text', title: 'Meta', content: 'Queda da glicemia entre 50 a 75 mg/dL por hora. Verificar glicemia capilar a cada 1 hora.' },
+          { type: 'text', title: 'Queda insuficiente (< 50 mg/dL/h)', content: 'Verificar acesso venoso, bomba de infusao e validade da solucao. Se tudo adequado, dobrar a taxa de infusao.' },
+          { type: 'text', title: 'Queda adequada (50-75 mg/dL/h)', content: 'Manter taxa atual.' },
+          { type: 'text', title: 'Glicemia atingiu 200-250 mg/dL', content: 'Reduzir infusao para 0.02 a 0.05 UI/kg/h. Iniciar SG 5% concomitantemente. Manter glicemia entre 150-200 mg/dL ate resolucao.' },
+          { type: 'alert', content: 'NAO suspender insulina EV ate resolucao da CAD, mesmo com glicemia normal. A insulina corrige a cetoacidose, nao apenas a hiperglicemia.' }
+        ]
+      },
+      'insulin-transition': {
+        title: 'Transicao para Insulina Subcutanea',
+        sections: [
+          { type: 'text', title: 'Pre-requisitos', content: '1. Criterios de resolucao da CAD atingidos\n2. Paciente consciente e tolerando dieta via oral\n3. Sem nauseas ou vomitos' },
+          { type: 'alert', content: 'Aplicar a primeira dose de insulina SC pelo menos 2 HORAS ANTES de desligar a bomba de insulina EV. Isso evita o rebote de cetoacidose pelo gap entre as vias.' },
+          { type: 'text', title: 'Esquema SC', content: 'Usar o esquema de insulina previo do paciente, ou iniciar esquema basal-bolus. Calcular dose diaria total baseada na taxa de infusao das ultimas horas.' }
+        ]
+      },
+      'k-decision': {
+        title: 'Avaliacao do Potassio Serico',
+        sections: [
+          { type: 'text', title: 'Importancia', content: 'O potassio e o eletrolito mais critico no manejo da CAD. A acidose causa shift de K+ para fora da celula, mascarando um deficit corporal total. Com a correcao da acidose e inicio da insulina, o K+ cai rapidamente.' },
+          { type: 'text', title: 'Pre-requisito', content: 'Confirmar debito urinario antes de repor K+ (funcao renal).' },
+          { type: 'text', title: 'Faixas de decisao', content: '<strong>K+ < 3.3:</strong> Emergencia. Adiar insulina. Repor 20-40 mEq/h.<br><strong>K+ 3.3-5.2:</strong> Repor 20-30 mEq por litro de soro.<br><strong>K+ >= 5.3:</strong> Nao repor. Checar em 2h.' }
+        ]
+      },
+      'k-low': {
+        title: 'Hipocalemia Grave (K+ < 3.3)',
+        sections: [
+          { type: 'alert', content: 'EMERGENCIA: Risco de arritmia cardiaca. ADIAR INSULINA ate K+ > 3.3 mEq/L.' },
+          { type: 'text', title: 'Reposicao', content: 'KCl 20 a 40 mEq/h por via endovenosa.\nPreferencialmente por acesso venoso central.\nSe periferico, concentracao maxima de 40 mEq/L para evitar flebite.' },
+          { type: 'calc', content: 'KCl 19.1% → 1 mL = 2.5 mEq\n\n20 mEq/h = 8 mL/h de KCl 19.1%\n40 mEq/h = 16 mL/h de KCl 19.1%' },
+          { type: 'text', title: 'Monitorizacao', content: 'ECG continuo. Reavaliar K+ a cada 1-2 horas. So iniciar insulina quando K+ > 3.3 mEq/L.' }
+        ]
+      },
+      'k-normal': {
+        title: 'Potassio Normal-Baixo (K+ 3.3-5.2)',
+        sections: [
+          { type: 'text', title: 'Conduta', content: 'Adicionar 20 a 30 mEq de KCl por litro de soro EV.\nMeta: manter K+ entre 4 e 5 mEq/L.' },
+          { type: 'calc', content: 'KCl 19.1% → 1 mL = 2.5 mEq\n\n20 mEq/L = 8 mL de KCl 19.1% por litro de soro\n30 mEq/L = 12 mL de KCl 19.1% por litro de soro' },
+          { type: 'text', title: 'Insulina', content: 'Pode iniciar/manter insulina EV normalmente.' }
+        ]
+      },
+      'k-high': {
+        title: 'Hipercalemia (K+ >= 5.3)',
+        sections: [
+          { type: 'text', title: 'Conduta', content: 'NAO repor potassio. Iniciar/manter insulina EV (a propria insulina ajuda a corrigir a hipercalemia por shift intracelular).' },
+          { type: 'text', title: 'Reavaliacao', content: 'Dosar K+ em 2 horas. O K+ tende a cair rapidamente com a insulina e hidratacao.' },
+          { type: 'tip', content: 'Se K+ > 6.0 ou alteracoes no ECG (onda T apiculada, alargamento QRS), considerar medidas adicionais de protecao miocardica (gluconato de calcio).' }
+        ]
+      },
+      'k-monitor': {
+        title: 'Monitorizacao Continua do Potassio',
+        sections: [
+          { type: 'text', title: 'Frequencia', content: 'Dosar K+ a cada 2-4 horas durante o manejo da CAD.' },
+          { type: 'alert', content: 'Atencao: o K+ cai com insulina, hidratacao e correcao da acidose. A hipocalemia e a complicacao eletrolitica mais comum do tratamento da CAD.' }
+        ]
+      },
+      'bicarb-decision': {
+        title: 'Avaliacao para Uso de Bicarbonato',
+        sections: [
+          { type: 'text', title: 'Principio', content: 'O uso rotineiro de bicarbonato NAO e recomendado na CAD. A acidose metabolica e corrigida pela insulina (que interrompe a cetogenese) e pela hidratacao.' },
+          { type: 'text', title: 'Indicacao', content: 'Reservado para acidose grave (pH < 7.0), onde a acidemia profunda pode comprometer a funcao cardiaca e a resposta as catecolaminas.' }
+        ]
+      },
+      'bicarb-no': {
+        title: 'pH >= 7.0 — Sem Indicacao',
+        sections: [
+          { type: 'text', title: 'Conduta', content: 'NAO administrar bicarbonato.' },
+          { type: 'text', title: 'Justificativa', content: 'Estudos nao demonstraram beneficio do bicarbonato quando pH >= 7.0. A correcao ocorre com o tratamento padrao (insulina + hidratacao). O bicarbonato pode causar hipocalemia paradoxal, acidose SNC paradoxal e atraso na resolucao da cetose.' }
+        ]
+      },
+      'bicarb-consider': {
+        title: 'pH 6.9 a 7.0 — Considerar Bicarbonato',
+        sections: [
+          { type: 'text', title: 'Conduta', content: 'NaHCO3 50 mEq diluido em 200 mL de agua destilada (AD), EV em 1 hora.\nAdicionar 10 mEq de KCl a solucao.' },
+          { type: 'text', title: 'Reavaliacao', content: 'Gasometria arterial 1 hora apos o termino. Repetir APENAS se pH ainda < 7.0.' },
+          { type: 'calc', content: 'NaHCO3 8.4% → 1 mL = 1 mEq\n50 mEq = 50 mL de NaHCO3 8.4%\n\nKCl 19.1% → 10 mEq = 4 mL' }
+        ]
+      },
+      'bicarb-urgent': {
+        title: 'pH < 6.9 — Bicarbonato Indicado',
+        sections: [
+          { type: 'alert', content: 'Acidose grave. Risco de disfuncao miocardica e vasodilatacao refrataria.' },
+          { type: 'text', title: 'Conduta', content: 'NaHCO3 100 mEq diluido em 400 mL de agua destilada (AD), EV em 2 horas.\nAdicionar 20 mEq de KCl a solucao.' },
+          { type: 'calc', content: 'NaHCO3 8.4% → 1 mL = 1 mEq\n100 mEq = 100 mL de NaHCO3 8.4%\n\nKCl 19.1% → 20 mEq = 8 mL' },
+          { type: 'text', title: 'Reavaliacao', content: 'Gasometria apos termino da infusao. Repetir se pH permanece < 7.0.' }
+        ]
+      },
+      'bicarb-recheck': {
+        title: 'Reavaliacao do Bicarbonato',
+        sections: [
+          { type: 'text', title: 'Conduta', content: 'Repetir gasometria apos cada infusao de bicarbonato.\nRepetir dose apenas se pH < 7.0.\nSuspender quando pH >= 7.0.' }
+        ]
+      }
+    };
+
+    // ===== Calculator Functions =====
+    function getInputs() {
+      return {
+        peso: parseFloat(document.getElementById('inp-peso').value) || 0,
+        glicemia: parseFloat(document.getElementById('inp-glicemia').value) || 0,
+        k: parseFloat(document.getElementById('inp-k').value) || 0,
+        na: parseFloat(document.getElementById('inp-na').value) || 0,
+        ph: parseFloat(document.getElementById('inp-ph').value) || 0,
+        hco3: parseFloat(document.getElementById('inp-hco3').value) || 0,
+        cl: parseFloat(document.getElementById('inp-cl').value) || 0
+      };
+    }
+
+    function calcNaCorr(na, glic) {
+      if (!na || !glic) return null;
+      return na + 1.6 * ((glic - 100) / 100);
+    }
+
+    function calcAnionGap(na, cl, hco3) {
+      if (!na || !cl || !hco3) return null;
+      return na - (cl + hco3);
+    }
+
+    function fmt(val, decimals) {
+      if (val === null || val === undefined || isNaN(val)) return '--';
+      return val.toFixed(decimals || 0);
+    }
+
+    // ===== Update All Calculations =====
+    function updateCalculations() {
+      const d = getInputs();
+
+      const naCorr = calcNaCorr(d.na, d.glicemia);
+      const ag = calcAnionGap(d.na, d.cl, d.hco3);
+      const volExpMin = d.peso ? d.peso * 15 : null;
+      const volExpMax = d.peso ? d.peso * 20 : null;
+      const deficitMin = d.peso ? d.peso * 50 : null;
+      const deficitMax = d.peso ? d.peso * 100 : null;
+      const manutMin = d.peso ? Math.round(d.peso * 4) : null;
+      const manutMax = d.peso ? Math.round(d.peso * 14) : null;
+      const insBolus = d.peso ? d.peso * 0.1 : null;
+      const insInfA = d.peso ? d.peso * 0.1 : null;
+      const insInfB = d.peso ? d.peso * 0.14 : null;
+      const insRedMin = d.peso ? d.peso * 0.02 : null;
+      const insRedMax = d.peso ? d.peso * 0.05 : null;
+
+      // Update calc spans
+      const updates = {
+        volExpMin: fmt(volExpMin),
+        volExpMax: fmt(volExpMax),
+        deficitMin: deficitMin ? new Intl.NumberFormat('pt-BR').format(deficitMin) : '--',
+        deficitMax: deficitMax ? new Intl.NumberFormat('pt-BR').format(deficitMax) : '--',
+        manutMin: fmt(manutMin),
+        manutMax: fmt(manutMax),
+        naCorr: fmt(naCorr, 1),
+        glicemia: d.glicemia ? fmt(d.glicemia) : '--',
+        kAtual: d.k ? fmt(d.k, 1) : '--',
+        phAtual: d.ph ? fmt(d.ph, 2) : '--',
+        insBolus: fmt(insBolus, 1),
+        insInfA: fmt(insInfA, 1),
+        insInfB: fmt(insInfB, 1),
+        insRedMin: fmt(insRedMin, 1),
+        insRedMax: fmt(insRedMax, 1),
+        kclVolLow: '8 a 16'
+      };
+
+      document.querySelectorAll('[data-calc]').forEach(el => {
+        const key = el.dataset.calc;
+        if (updates[key] !== undefined) {
+          el.textContent = updates[key];
+        }
+      });
+
+      // Update calculated bar
+      document.getElementById('calc-na-corr').textContent = fmt(naCorr, 1);
+      document.getElementById('calc-ag').textContent = fmt(ag, 1);
+      document.getElementById('calc-vol-exp').textContent = volExpMin && volExpMax ? `${fmt(volExpMin)} - ${fmt(volExpMax)}` : '--';
+      document.getElementById('calc-ins-inf').textContent = fmt(insInfA, 1);
+
+      // Highlight active branches
+      highlightBranches(d, naCorr, ag);
+
+      // Update resolution criteria
+      updateResolution(d, ag);
+    }
+
+    // ===== Highlight Active Branches =====
+    function highlightBranches(d, naCorr, ag) {
+      // Reset all branches
+      document.querySelectorAll('.branch').forEach(b => b.classList.remove('branch-active'));
+      document.querySelectorAll('.node').forEach(n => {
+        n.classList.remove('active', 'inactive');
+      });
+
+      // Na+ corrigido branches
+      if (naCorr !== null) {
+        if (naCorr < 135) {
+          activate('branch-na-low');
+          deactivate('branch-na-normal');
+          deactivate('branch-na-high');
+        } else if (naCorr >= 150) {
+          deactivate('branch-na-low');
+          deactivate('branch-na-normal');
+          activate('branch-na-high');
+        } else {
+          deactivate('branch-na-low');
+          activate('branch-na-normal');
+          deactivate('branch-na-high');
+        }
+      }
+
+      // Glycemia branches
+      if (d.glicemia) {
+        if (d.glicemia > 250) {
+          activate('branch-glic-high');
+          deactivate('branch-glic-target');
+        } else {
+          deactivate('branch-glic-high');
+          activate('branch-glic-target');
+        }
+      }
+
+      // K+ branches (insulin precheck)
+      if (d.k) {
+        if (d.k <= 3.3) {
+          activate('branch-k-block');
+          deactivate('branch-k-ok');
+          // Insulin nodes should be inactive
+          setNodeState('node-insulin-prep', 'inactive');
+          setNodeState('node-insulin-start', 'inactive');
+          setNodeState('node-insulin-adjust', 'inactive');
+          setNodeState('node-insulin-transition', 'inactive');
+        } else {
+          deactivate('branch-k-block');
+          activate('branch-k-ok');
+          setNodeState('node-insulin-prep', 'active');
+          setNodeState('node-insulin-start', 'active');
+        }
+
+        // K+ pillar nodes
+        if (d.k < 3.3) {
+          setNodeState('node-k-low', 'active');
+          setNodeState('node-k-normal', 'inactive');
+          setNodeState('node-k-high', 'inactive');
+        } else if (d.k <= 5.2) {
+          setNodeState('node-k-low', 'inactive');
+          setNodeState('node-k-normal', 'active');
+          setNodeState('node-k-high', 'inactive');
+        } else {
+          setNodeState('node-k-low', 'inactive');
+          setNodeState('node-k-normal', 'inactive');
+          setNodeState('node-k-high', 'active');
+        }
+      }
+
+      // pH branches (bicarbonate)
+      if (d.ph) {
+        if (d.ph >= 7.0) {
+          setNodeState('node-bicarb-no', 'active');
+          setNodeState('node-bicarb-consider', 'inactive');
+          setNodeState('node-bicarb-urgent', 'inactive');
+          setNodeState('node-bicarb-recheck', 'inactive');
+        } else if (d.ph >= 6.9) {
+          setNodeState('node-bicarb-no', 'inactive');
+          setNodeState('node-bicarb-consider', 'active');
+          setNodeState('node-bicarb-urgent', 'inactive');
+          setNodeState('node-bicarb-recheck', 'active');
+        } else {
+          setNodeState('node-bicarb-no', 'inactive');
+          setNodeState('node-bicarb-consider', 'inactive');
+          setNodeState('node-bicarb-urgent', 'active');
+          setNodeState('node-bicarb-recheck', 'active');
+        }
+      }
+    }
+
+    function activate(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('branch-active');
+    }
+
+    function deactivate(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('branch-active');
+    }
+
+    function setNodeState(id, state) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('active', 'inactive');
+      if (state) el.classList.add(state);
+    }
+
+    // ===== Resolution Criteria =====
+    function updateResolution(d, ag) {
+      const critGlic = document.getElementById('crit-glic');
+      const critPh = document.getElementById('crit-ph');
+      const critHco3 = document.getElementById('crit-hco3');
+      const critAg = document.getElementById('crit-ag');
+
+      setCriterion(critGlic, d.glicemia && d.glicemia < 200);
+      setCriterion(critPh, d.ph && d.ph > 7.3);
+      setCriterion(critHco3, d.hco3 && d.hco3 >= 18);
+      setCriterion(critAg, ag !== null && ag <= 12);
+    }
+
+    function setCriterion(el, met) {
+      if (!el) return;
+      el.classList.toggle('met', !!met);
+      el.querySelector('.check').textContent = met ? '\u2713' : '';
+    }
+
+    // ===== Detail Panel =====
+    const overlay = document.getElementById('detail-overlay');
+    const panel = document.getElementById('detail-panel');
+    const detailContent = document.getElementById('detail-content');
+
+    function openDetail(key) {
+      const data = detailData[key];
+      if (!data) return;
+
+      let html = `<h3>${data.title}</h3>`;
+      data.sections.forEach(s => {
+        if (s.type === 'text') {
+          html += `<div class="detail-section">`;
+          if (s.title) html += `<h4>${s.title}</h4>`;
+          html += `<p>${s.content.replace(/\n/g, '<br>')}</p></div>`;
+        } else if (s.type === 'calc') {
+          html += `<div class="detail-calc">${s.content.replace(/\n/g, '<br>')}</div>`;
+        } else if (s.type === 'alert') {
+          html += `<div class="detail-alert">${s.content.replace(/\n/g, '<br>')}</div>`;
+        } else if (s.type === 'tip') {
+          html += `<div class="detail-tip">${s.content.replace(/\n/g, '<br>')}</div>`;
+        }
+      });
+
+      detailContent.innerHTML = html;
+      overlay.classList.add('open');
+      panel.classList.add('open');
+    }
+
+    function closeDetail() {
+      overlay.classList.remove('open');
+      panel.classList.remove('open');
+    }
+
+    document.getElementById('detail-close').addEventListener('click', closeDetail);
+    overlay.addEventListener('click', closeDetail);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeDetail();
+    });
+
+    // Node click handlers
+    document.querySelectorAll('.node[data-detail]').forEach(node => {
+      node.addEventListener('click', () => {
+        openDetail(node.dataset.detail);
+      });
+    });
+
+    // ===== Mobile Tabs =====
+    document.querySelectorAll('.mobile-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const pillar = tab.dataset.pillar;
+        document.querySelectorAll('.pillar').forEach(p => p.classList.remove('pillar-visible'));
+        document.getElementById('pillar-' + pillar).classList.add('pillar-visible');
+
+        // Update tab accent color
+        const colors = {
+          hydration: 'var(--hydration)',
+          insulin: 'var(--insulin)',
+          potassium: 'var(--potassium)',
+          bicarbonate: 'var(--bicarbonate)'
+        };
+        document.querySelectorAll('.mobile-tab').forEach(t => t.style.borderBottomColor = 'transparent');
+        tab.style.borderBottomColor = colors[pillar] || 'var(--hydration)';
+      });
+    });
+
+    // ===== Input Listeners =====
+    let debounceTimer;
+    document.querySelectorAll('.input-panel input').forEach(input => {
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(updateCalculations, 150);
+      });
+    });
+
+    // Initial calc
+    updateCalculations();
+  </script>
+</body>
+</html>
