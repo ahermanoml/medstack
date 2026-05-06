@@ -20,11 +20,13 @@ const EXAMS = [
     name: "Perfil lipídico (colesterol)",
     category: "Cardiovascular",
     icon: "♥",
-    appliesTo: ({ age, sex, risks }) =>
-      age >= 35 || (age >= 20 && (risks.has("family-heart") || risks.has("diabetes") || risks.has("smoker") || risks.has("obesity"))),
-    frequency: () => "A cada 5 anos (mais frequente se houver alteração)",
+    appliesTo: ({ age }) => age >= 20,
+    frequency: ({ risks }) =>
+      risks.has("family-heart") || risks.has("diabetes") || risks.has("smoker") || risks.has("obesity")
+        ? "A cada 3 anos (perfil de maior risco)"
+        : "A cada 5 anos (mais frequente se houver alteração)",
     description:
-      "Avalia colesterol total, LDL, HDL e triglicerídeos. Essencial para estimar risco cardiovascular ao longo da vida.",
+      "Avalia colesterol total, LDL, HDL e triglicerídeos. SBC recomenda primeira avaliação a partir dos 20 anos para estimar risco cardiovascular ao longo da vida.",
   },
   {
     id: "glucose",
@@ -66,7 +68,7 @@ const EXAMS = [
     category: "Câncer",
     icon: "✱",
     appliesTo: ({ age, sex, risks }) =>
-      sex === "female" && (age >= 50 || (age >= 40 && risks.has("family-cancer"))),
+      sex === "female" && ((age >= 50 && age <= 69) || (age >= 40 && risks.has("family-cancer"))),
     frequency: ({ age, risks }) =>
       risks.has("family-cancer") && age < 50 ? "Anualmente (risco aumentado)" : "A cada 2 anos",
     description:
@@ -77,10 +79,10 @@ const EXAMS = [
     name: "Rastreamento de câncer colorretal",
     category: "Câncer",
     icon: "✱",
-    appliesTo: ({ age }) => age >= 45 && age <= 75,
+    appliesTo: ({ age }) => age >= 50 && age <= 75,
     frequency: () => "Pesquisa de sangue oculto anual ou colonoscopia a cada 10 anos",
     description:
-      "Pode ser feito por pesquisa de sangue oculto nas fezes (anual) ou colonoscopia (a cada 10 anos). Detecta lesões antes de virarem câncer.",
+      "INCA recomenda rastreio entre 50 e 75 anos por sangue oculto nas fezes (anual) ou colonoscopia (a cada 10 anos). Detecta lesões antes de virarem câncer.",
   },
   {
     id: "lung",
@@ -98,10 +100,10 @@ const EXAMS = [
     category: "Câncer",
     icon: "✱",
     appliesTo: ({ age, sex, risks }) =>
-      sex === "male" && (age >= 50 || (age >= 45 && risks.has("family-cancer"))),
+      sex === "male" && age <= 69 && (age >= 50 || (age >= 45 && risks.has("family-cancer"))),
     frequency: () => "Decisão compartilhada com o médico",
     description:
-      "PSA e exame clínico podem ser oferecidos a homens entre 50–69 anos (ou 45+ com histórico familiar). É uma decisão individualizada — converse com seu médico.",
+      "INCA não recomenda PSA de rotina, mas a SBU sugere oferecer a homens de 50–69 anos (ou 45+ com histórico familiar) após decisão compartilhada. Converse com seu médico.",
   },
 
   // ----- Infecções e ISTs -----
@@ -110,7 +112,7 @@ const EXAMS = [
     name: "Testes de HIV, sífilis e hepatites B/C",
     category: "Infecciosas",
     icon: "⊕",
-    appliesTo: ({ age, risks }) => age >= 18 && (risks.has("sexually-active") || age >= 18),
+    appliesTo: ({ age }) => age >= 18,
     frequency: ({ risks }) =>
       risks.has("sexually-active") ? "Anualmente" : "Pelo menos 1x na vida adulta",
     description:
