@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VacinaCerta — Descubra quais vacinas você precisa tomar</title>
+  <meta name="description" content="Descubra rapidamente quais vacinas são recomendadas para você de acordo com a sua idade, seguindo o calendário do PNI (Programa Nacional de Imunizações)." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo">
+        <span class="logo-mark" aria-hidden="true">+</span>
+        <span class="logo-text">VacinaCerta</span>
+      </a>
+      <nav class="nav">
+        <a href="#calculadora">Calculadora</a>
+        <a href="#calendario">Calendário</a>
+        <a href="#sobre">Sobre</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <span class="eyebrow">Saúde preventiva ao seu alcance</span>
+          <h1>Descubra quais vacinas <span class="accent">você precisa tomar</span> agora.</h1>
+          <p class="lead">
+            Informe sua idade e veja em segundos as vacinas recomendadas pelo
+            Programa Nacional de Imunizações (PNI) do Ministério da Saúde.
+            Simples, gratuito e atualizado.
+          </p>
+          <div class="hero-actions">
+            <a href="#calculadora" class="btn btn-primary">Verificar minhas vacinas</a>
+            <a href="#calendario" class="btn btn-ghost">Ver calendário completo</a>
+          </div>
+          <ul class="hero-stats">
+            <li><strong>20+</strong><span>vacinas no calendário</span></li>
+            <li><strong>0–99</strong><span>todas as idades</span></li>
+            <li><strong>100%</strong><span>gratuito no SUS</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-card" aria-hidden="true">
+          <div class="card-row">
+            <div class="dot dot-blue"></div>
+            <div>
+              <p class="card-title">Tríplice Viral</p>
+              <p class="card-sub">Sarampo, Caxumba, Rubéola</p>
+            </div>
+            <span class="badge badge-ok">Em dia</span>
+          </div>
+          <div class="card-row">
+            <div class="dot dot-green"></div>
+            <div>
+              <p class="card-title">Hepatite B</p>
+              <p class="card-sub">3 doses</p>
+            </div>
+            <span class="badge badge-ok">Em dia</span>
+          </div>
+          <div class="card-row">
+            <div class="dot dot-amber"></div>
+            <div>
+              <p class="card-title">dT (Dupla adulto)</p>
+              <p class="card-sub">Reforço a cada 10 anos</p>
+            </div>
+            <span class="badge badge-warn">Reforço</span>
+          </div>
+          <div class="card-row">
+            <div class="dot dot-pink"></div>
+            <div>
+              <p class="card-title">Influenza</p>
+              <p class="card-sub">Anual</p>
+            </div>
+            <span class="badge badge-warn">Anual</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calculadora" class="calc">
+      <div class="container">
+        <div class="section-head">
+          <h2>Calculadora de vacinas</h2>
+          <p>Informe sua idade e descubra quais vacinas são recomendadas para você.</p>
+        </div>
+
+        <form id="vaccine-form" class="calc-form" autocomplete="off">
+          <div class="field">
+            <label for="age">Sua idade</label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              min="0"
+              max="120"
+              placeholder="Ex.: 28"
+              required
+            />
+            <select id="age-unit" name="age-unit" aria-label="Unidade de idade">
+              <option value="years">anos</option>
+              <option value="months">meses</option>
+            </select>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>Condições especiais (opcional)</legend>
+            <label class="check">
+              <input type="checkbox" name="condition" value="pregnant" />
+              <span>Estou gestante</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" name="condition" value="elderly-risk" />
+              <span>Possuo doença crônica</span>
+            </label>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            Ver vacinas recomendadas
+          </button>
+        </form>
+
+        <div id="results" class="results" hidden>
+          <div class="results-head">
+            <h3 id="results-title">Vacinas recomendadas</h3>
+            <button type="button" id="reset-btn" class="link-btn">Refazer</button>
+          </div>
+          <div id="results-list" class="results-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calendario" class="calendar">
+      <div class="container">
+        <div class="section-head">
+          <h2>Calendário completo de vacinação</h2>
+          <p>Visão geral por faixa etária — baseado no PNI / Ministério da Saúde.</p>
+        </div>
+
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+    </section>
+
+    <section id="sobre" class="about">
+      <div class="container about-inner">
+        <div>
+          <h2>Por que isso importa?</h2>
+          <p>
+            A vacinação é uma das ferramentas mais eficazes da medicina preventiva.
+            Ela protege não só quem se vacina, mas toda a comunidade ao redor —
+            o que chamamos de <em>imunidade coletiva</em>.
+          </p>
+          <p>
+            O <strong>VacinaCerta</strong> nasceu para tornar simples e acessível
+            uma informação que muita gente desconhece: quais vacinas são
+            recomendadas para a sua idade. Tudo gratuito, sem cadastro e
+            sem armadilhas.
+          </p>
+        </div>
+        <div class="about-cards">
+          <div class="about-card">
+            <h3>Baseado no PNI</h3>
+            <p>Calendário oficial do Programa Nacional de Imunizações.</p>
+          </div>
+          <div class="about-card">
+            <h3>Sem cadastro</h3>
+            <p>Não pedimos nome, e-mail nem dados pessoais.</p>
+          </div>
+          <div class="about-card">
+            <h3>Para todas as idades</h3>
+            <p>De recém-nascidos a idosos — todo mundo importa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>
+        © <span id="year"></span> VacinaCerta · Informação educativa.
+        Sempre consulte um profissional de saúde.
+      </p>
+      <p class="footer-note">
+        Fonte: Programa Nacional de Imunizações — Ministério da Saúde do Brasil.
+      </p>
+    </div>
+  </footer>
+
+  <script src="vaccines.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

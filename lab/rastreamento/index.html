@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastrei.me — Quais exames de rotina você precisa fazer?</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">+</span>
+      <span class="logo-text">Rastrei<span class="logo-accent">.me</span></span>
+    </a>
+    <nav class="nav">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#descobrir">Descobrir exames</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">Saúde preventiva, sem mistério</span>
+        <h1>Descubra quais <em>exames de rotina</em> você precisa fazer.</h1>
+        <p class="lead">
+          Responda algumas perguntas sobre sua idade e histórico médico e receba uma lista
+          personalizada dos exames de rastreamento recomendados, baseada em diretrizes
+          brasileiras e internacionais.
+        </p>
+        <div class="hero-actions">
+          <a href="#descobrir" class="btn btn-primary">Começar agora</a>
+          <a href="#como-funciona" class="btn btn-ghost">Entender como funciona</a>
+        </div>
+        <ul class="hero-stats">
+          <li><strong>15+</strong><span>exames avaliados</span></li>
+          <li><strong>2 min</strong><span>para receber o plano</span></li>
+          <li><strong>100%</strong><span>gratuito e anônimo</span></li>
+        </ul>
+      </div>
+      <aside class="hero-card" aria-hidden="true">
+        <div class="card-row">
+          <div class="check">✓</div>
+          <div>
+            <strong>Aferição de pressão arterial</strong>
+            <span>Anualmente, a partir dos 18 anos</span>
+          </div>
+        </div>
+        <div class="card-row">
+          <div class="check">✓</div>
+          <div>
+            <strong>Glicemia de jejum</strong>
+            <span>A cada 3 anos, a partir dos 35</span>
+          </div>
+        </div>
+        <div class="card-row">
+          <div class="check">✓</div>
+          <div>
+            <strong>Mamografia bilateral</strong>
+            <span>Bienal, dos 50 aos 69 anos</span>
+          </div>
+        </div>
+        <div class="card-row dim">
+          <div class="check">+</div>
+          <div>
+            <strong>+12 outras recomendações</strong>
+            <span>Personalizadas para você</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="how">
+    <div class="container">
+      <h2>Como funciona</h2>
+      <div class="how-grid">
+        <article>
+          <span class="step">01</span>
+          <h3>Conte sobre você</h3>
+          <p>Informe sua idade, sexo biológico e condições relevantes do seu histórico médico e familiar.</p>
+        </article>
+        <article>
+          <span class="step">02</span>
+          <h3>Receba o plano</h3>
+          <p>Geramos uma lista personalizada de exames de rastreamento, agrupados por área da saúde.</p>
+        </article>
+        <article>
+          <span class="step">03</span>
+          <h3>Leve ao seu médico</h3>
+          <p>Use o resultado como ponto de partida para uma conversa informada com seu médico de confiança.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="descobrir" class="form-section">
+    <div class="container">
+      <div class="form-header">
+        <h2>Descubra seus exames</h2>
+        <p>Suas respostas ficam apenas no seu navegador. Nada é enviado para servidores.</p>
+      </div>
+
+      <form id="screening-form" class="form-card" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="age">Idade</label>
+            <input type="number" id="age" name="age" min="0" max="120" placeholder="Ex: 42" required>
+          </div>
+          <div class="field">
+            <label for="sex">Sexo biológico</label>
+            <select id="sex" name="sex" required>
+              <option value="">Selecione</option>
+              <option value="female">Feminino</option>
+              <option value="male">Masculino</option>
+            </select>
+          </div>
+        </div>
+
+        <fieldset class="checkbox-group">
+          <legend>Histórico e fatores de risco</legend>
+          <p class="hint">Marque tudo que se aplica a você. Deixe em branco se nada se aplicar.</p>
+          <div class="checkbox-grid">
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="smoker">
+              <span>Fumante atual ou ex-fumante (mais de 20 maços/ano)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="hypertension">
+              <span>Hipertensão (pressão alta)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="diabetes">
+              <span>Diabetes ou pré-diabetes</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="obesity">
+              <span>Sobrepeso ou obesidade (IMC ≥ 25)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="family-cancer">
+              <span>Histórico familiar de câncer (1º grau)</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="family-heart">
+              <span>Histórico familiar de doença cardiovascular precoce</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="sexually-active">
+              <span>Vida sexual ativa</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="alcohol">
+              <span>Consumo elevado de álcool</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" name="risk" value="sedentary">
+              <span>Sedentarismo</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Ver meus exames recomendados</button>
+          <button type="reset" class="btn btn-ghost">Limpar</button>
+        </div>
+      </form>
+
+      <section id="results" class="results" hidden>
+        <div class="results-header">
+          <h3>Seu plano de rastreamento</h3>
+          <p id="results-summary"></p>
+        </div>
+        <div id="results-list" class="results-grid"></div>
+        <div class="disclaimer">
+          <strong>Importante:</strong> Esta ferramenta tem caráter <em>educativo</em> e não substitui
+          a avaliação médica individualizada. Sempre converse com seu médico antes de realizar
+          ou deixar de realizar qualquer exame.
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="sobre" class="about">
+    <div class="container about-grid">
+      <div>
+        <h2>Por que rastreamento importa?</h2>
+        <p>
+          Exames de rastreamento detectam doenças <strong>antes</strong> dos sintomas aparecerem,
+          quando o tratamento é mais simples e mais eficaz. Mas fazer exames demais — ou os errados —
+          pode trazer ansiedade, custos e até procedimentos desnecessários.
+        </p>
+        <p>
+          O Rastrei.me organiza recomendações de fontes como o <strong>Ministério da Saúde</strong>,
+          o <strong>INCA</strong>, a <strong>USPSTF</strong> e sociedades médicas brasileiras
+          para te ajudar a fazer <em>os exames certos, na hora certa</em>.
+        </p>
+      </div>
+      <ul class="sources">
+        <li>
+          <strong>INCA</strong>
+          <span>Instituto Nacional de Câncer — diretrizes de rastreamento oncológico</span>
+        </li>
+        <li>
+          <strong>Ministério da Saúde</strong>
+          <span>Cadernos de Atenção Básica e protocolos do SUS</span>
+        </li>
+        <li>
+          <strong>USPSTF</strong>
+          <span>U.S. Preventive Services Task Force — referência internacional</span>
+        </li>
+        <li>
+          <strong>SBC, SBD, SBU</strong>
+          <span>Sociedades brasileiras de Cardiologia, Diabetes e Urologia</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© 2026 Rastrei.me — Ferramenta educativa de saúde preventiva</span>
+    <span>Não substitui avaliação médica.</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
