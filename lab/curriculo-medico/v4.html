@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Curriculo Medico v4 — Antonio Hermano</title>
+  <title>Currículo Médico v4 — Antônio Hermano</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../style.css">
   <style>
@@ -26,7 +26,7 @@
       --cv-anim-duration: 0.4s;
     }
 
-    /* Theme: Medical Green */
+    /* Theme: Médical Green */
     html[data-theme="green"] {
       --cv-accent: #166534;
       --cv-accent-light: #dcfce7;
@@ -1003,7 +1003,7 @@
       background: var(--cv-green-bg);
     }
 
-    /* ── Plantoes Realizados (Shift Stats) ── */
+    /* ── Plantões Realizados (Shift Stats) ── */
     .shift-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1941,7 +1941,7 @@
     <div class="nav-inner">
       <a href="../../" class="nav-name">MedStack</a>
       <div class="nav-links">
-        <a href="../curriculo-medico.html">&larr; Voltar</a>
+        <a href="../curriculo-médico.html">&larr; Voltar</a>
       </div>
     </div>
   </nav>
@@ -1951,16 +1951,16 @@
     <div class="toolbar-inner">
       <div class="toolbar-group">
         <span class="toolbar-label">Layout</span>
-        <button class="toolbar-btn active" id="btnClassic" onclick="setLayout('classic')" title="Layout classico">
+        <button class="toolbar-btn active" id="btnClassic" onclick="setLayout('classic')" title="Layout clássico">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-          Classico
+          Clássico
         </button>
         <button class="toolbar-btn" id="btnCards" onclick="setLayout('cards')" title="Layout em cards">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" /></svg>
           Cards
         </button>
         <div class="toolbar-divider"></div>
-        <button class="toolbar-btn" id="btnEdit" onclick="toggleEditMode()" title="Modo edicao">
+        <button class="toolbar-btn" id="btnEdit" onclick="toggleEditMode()" title="Modo edição">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
           Editar
         </button>
@@ -1968,8 +1968,8 @@
       <div class="toolbar-group">
         <span class="toolbar-label">Tema</span>
         <button class="theme-dot theme-dot-blue active" onclick="setTheme('blue')" title="Azul profissional" data-theme="blue"></button>
-        <button class="theme-dot theme-dot-green" onclick="setTheme('green')" title="Verde medico" data-theme="green"></button>
-        <button class="theme-dot theme-dot-black" onclick="setTheme('black')" title="Preto classico" data-theme="black"></button>
+        <button class="theme-dot theme-dot-green" onclick="setTheme('green')" title="Verde médico" data-theme="green"></button>
+        <button class="theme-dot theme-dot-black" onclick="setTheme('black')" title="Preto clássico" data-theme="black"></button>
         <div class="toolbar-divider"></div>
         <button class="toolbar-btn" id="btnDark" onclick="toggleDark()" title="Modo escuro">
           <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>
@@ -1987,7 +1987,7 @@
   <!-- Edit Mode Indicator -->
   <div class="edit-mode-indicator" id="editIndicator">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
-    Modo edicao ativo — clique nos campos para editar
+    Modo edição ativo — clique nos campos para editar
   </div>
 
   <!-- Toast -->
@@ -2014,8 +2014,8 @@
           </svg>
         </div>
         <div class="cv-header-text">
-          <h1 class="cv-name" data-field="name">Antonio Hermano Mascarenhas da Luz</h1>
-          <p class="cv-title" data-field="title">Medico Generalista &mdash; Emergencia</p>
+          <h1 class="cv-name" data-field="name">Antônio Hermano Mascarenhas da Luz</h1>
+          <p class="cv-title" data-field="title">Médico Generalista</p>
           <div class="cv-contact-row">
             <span class="cv-contact-item">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
@@ -2023,89 +2023,89 @@
             </span>
             <span class="cv-contact-item">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>
-              <span data-field="crm">CRM &mdash; SP / MG</span>
+              <span data-field="crm">CRM 101010/MG</span>
             </span>
             <span class="cv-contact-item">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
-              <span data-field="location">Sao Paulo, SP</span>
+              <span data-field="location">Uberlândia, MG</span>
             </span>
           </div>
         </div>
       </header>
 
-      <!-- Resumo Profissional + Carta de Apresentacao -->
+      <!-- Resumo Profissional + Carta de Apresentação -->
       <div class="summary-box reveal reveal-delay-1">
         <div class="summary-label">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
           Resumo Profissional
         </div>
         <p class="summary-text" data-field="summary">
-          Medico generalista com experiencia consolidada em medicina de emergencia, atuando em unidades de pronto atendimento
-          e prontos-socorros em multiplas cidades de Sao Paulo e Minas Gerais. Formado pela Universidade Federal de Uberlandia (UFU),
-          com competencia em estabilizacao de pacientes criticos, procedimentos invasivos de emergencia e manejo de quadros
-          agudos clinicos e traumaticos. Comprometido com aprimoramento continuo e atendimento centrado no paciente.
+          Médico generalista com experiência consolidada em medicina de emergência, atuando em unidades de pronto atendimento
+          e prontos-socorros em múltiplas cidades de São Paulo e Minas Gerais. Formado pela Universidade Federal de Uberlândia (UFU),
+          com competência em estabilização de pacientes críticos, procedimentos invasivos de emergência e manejo de quadros
+          agudos clínicos e traumáticos. Comprometido com aprimoramento contínuo e atendimento centrado no paciente.
         </p>
         <button class="cover-letter-toggle" id="clToggle" onclick="toggleCoverLetter()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-          Ver Carta de Apresentacao
+          Ver Carta de Apresentação
         </button>
       </div>
 
-      <!-- Carta de Apresentacao (Cover Letter) -->
+      <!-- Carta de Apresentação (Cover Letter) -->
       <div class="cover-letter-content" id="coverLetter">
         <div class="cover-letter-box">
           <p class="cl-greeting" data-field="cl-greeting">Prezados Senhores,</p>
           <p data-field="cl-p1">
-            Apresento-me como medico generalista com solida formacao pela Universidade Federal de Uberlandia e experiencia
-            pratica em unidades de emergencia de alta complexidade em Sao Paulo e Minas Gerais. Ao longo da minha
-            trajetoria profissional, desenvolvi competencias especificas em estabilizacao de pacientes criticos,
-            procedimentos invasivos e gestao de fluxo em pronto-socorro.
+            Apresento-me como médico generalista com solida formação pela Universidade Federal de Uberlândia e experiência
+            prática em unidades de emergência de alta complexidade em São Paulo e Minas Gerais. Ao longo da minha
+            trajetória profissional, desenvolvi competências específicas em estabilização de pacientes críticos,
+            procedimentos invasivos e gestão de fluxo em pronto-socorro.
           </p>
           <p data-field="cl-p2">
-            Minha atuacao em multiplas unidades de pronto atendimento proporcionou-me uma visao ampla dos desafios
-            da medicina de emergencia no Brasil, desde a classificacao de risco ate a resolucao de casos complexos
-            em ambientes de alta demanda. Busco constantemente aprimorar minhas habilidades atraves de cursos de
-            atualizacao e certificacoes internacionais como ACLS e ATLS.
+            Minha atuação em múltiplas unidades de pronto atendimento proporcionou-me uma visão ampla dos desafios
+            da medicina de emergência no Brasil, desde a classificação de risco até a resolução de casos complexos
+            em ambientes de alta demanda. Possuo certificações internacionais em ACLS e ATLS e busco
+            constantemente aprimorar minhas habilidades através de cursos de atualização.
           </p>
           <p data-field="cl-p3">
-            Estou disponivel para integrar equipes comprometidas com a excelencia no atendimento ao paciente
-            e contribuir com minha experiencia em medicina de emergencia. Terei satisfacao em apresentar
-            maiores detalhes sobre minha trajetoria em uma entrevista.
+            Estou disponível para integrar equipes comprometidas com a excelência no atendimento ao paciente
+            e contribuir com minha experiência em medicina de emergência. Terei satisfação em apresentar
+            maiores detalhes sobre minha trajetória em uma entrevista.
           </p>
-          <p class="cl-sign" data-field="cl-sign">Atenciosamente,<br>Antonio Hermano Mascarenhas da Luz</p>
+          <p class="cl-sign" data-field="cl-sign">Atenciosamente,<br>Antônio Hermano Mascarenhas da Luz</p>
         </div>
       </div>
 
-      <!-- Area de Atuacao -->
+      <!-- Area de Atuação -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" /></svg>
-          Area de Atuacao
+          Area de Atuação
         </h2>
         <div class="practice-area">
           <div class="practice-area-label">Foco principal</div>
-          <div class="practice-area-value" data-field="practice-focus">Medicina de Emergencia &mdash; Pronto Socorro</div>
+          <div class="practice-area-value" data-field="practice-focus">Medicina de Emergência &mdash; Pronto Socorro</div>
           <p class="practice-area-desc" data-field="practice-desc">
-            Atendimento em unidades de urgencia e emergencia, com experiencia em classificacao de risco,
-            estabilizacao de pacientes criticos e manejo de quadros agudos clinicos e traumaticos.
+            Atendimento em unidades de urgência e emergência, com experiência em classificação de risco,
+            estabilização de pacientes críticos e manejo de quadros agudos clínicos e traumáticos.
           </p>
         </div>
       </section>
 
-      <!-- Plantoes Realizados -->
+      <!-- Plantões Realizados -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
-          Plantoes Realizados
+          Plantões Realizados
         </h2>
         <div class="shift-stats-grid">
           <div class="shift-card">
             <div class="shift-number"><span class="counter" data-target="520">0</span>+</div>
-            <div class="shift-unit">Plantoes totais</div>
+            <div class="shift-unit">Plantões totais</div>
           </div>
           <div class="shift-card">
             <div class="shift-number"><span class="counter" data-target="6400">0</span>+</div>
-            <div class="shift-unit">Horas clinicas</div>
+            <div class="shift-unit">Horas clínicas</div>
           </div>
           <div class="shift-card">
             <div class="shift-number"><span class="counter" data-target="25000">0</span>+</div>
@@ -2113,26 +2113,26 @@
           </div>
           <div class="shift-card">
             <div class="shift-number"><span class="counter" data-target="6">0</span></div>
-            <div class="shift-unit">Cidades de atuacao</div>
+            <div class="shift-unit">Cidades de atuação</div>
           </div>
         </div>
         <div class="shift-bar-section">
           <div class="shift-bar-row">
             <span class="shift-bar-label">PS / UPA</span>
             <div class="shift-bar-track">
-              <div class="shift-bar-value" data-width="70"></div>
+              <div class="shift-bar-value" data-width="100"></div>
             </div>
             <span class="shift-bar-pct">70%</span>
           </div>
           <div class="shift-bar-row">
-            <span class="shift-bar-label">Emergencia</span>
+            <span class="shift-bar-label">Emergência</span>
             <div class="shift-bar-track">
               <div class="shift-bar-value" data-width="20"></div>
             </div>
             <span class="shift-bar-pct">20%</span>
           </div>
           <div class="shift-bar-row">
-            <span class="shift-bar-label">Clinica Medica</span>
+            <span class="shift-bar-label">Clínica Médica</span>
             <div class="shift-bar-track">
               <div class="shift-bar-value" data-width="10"></div>
             </div>
@@ -2141,11 +2141,11 @@
         </div>
       </section>
 
-      <!-- Formacao Academica -->
+      <!-- Formação Acadêmica -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" /></svg>
-          Formacao Academica
+          Formação Acadêmica
         </h2>
         <div class="edu-entry">
           <div class="edu-icon">
@@ -2153,20 +2153,20 @@
           </div>
           <div class="edu-content">
             <div class="edu-role" data-field="edu-degree">Bacharel em Medicina</div>
-            <div class="edu-org" data-field="edu-school">Universidade Federal de Uberlandia (UFU)</div>
+            <div class="edu-org" data-field="edu-school">Universidade Federal de Uberlândia (UFU)</div>
             <p class="edu-desc" data-field="edu-desc">
-              Formacao generalista com enfase em pratica clinica e atendimento de emergencia.
-              Internato com rotacoes em Clinica Medica, Cirurgia, Pediatria, Ginecologia-Obstetricia e Saude Coletiva.
+              Formação generalista com enfase em prática clínica e atendimento de emergência.
+              Internato com rotações em Clínica Médica, Cirurgia, Pediatria, Ginecologia-Obstetrícia e Saúde Coletiva.
             </p>
           </div>
         </div>
       </section>
 
-      <!-- Experiencia Profissional -->
+      <!-- Experiência Profissional -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
-          Experiencia Profissional
+          Experiência Profissional
         </h2>
         <div class="timeline">
 
@@ -2174,151 +2174,56 @@
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-header">
-              <span class="timeline-role" data-field="exp1-role">Medico Plantonista &mdash; Pronto Atendimento</span>
+              <span class="timeline-role" data-field="exp1-role">Médico Plantonista &mdash; Pronto Atendimento</span>
               <span class="timeline-date">Atual</span>
             </div>
             <div class="timeline-org" data-field="exp1-org">Unidades de Pronto Atendimento (UPAs) e Prontos-Socorros</div>
             <div class="timeline-details">
               <ul>
-                <li>Atendimento de urgencia e emergencia em regime de plantao 12h e 24h</li>
-                <li>Classificacao de risco (Protocolo de Manchester), estabilizacao inicial e conducao de casos clinicos e traumaticos</li>
-                <li>Realizacao de procedimentos de emergencia: intubacao orotraqueal, acesso venoso central, drenagem toracica, suturas e imobilizacoes</li>
-                <li><span class="accomplishment">Media de 40-60 atendimentos por plantao</span> em unidades de alta demanda</li>
-                <li>Atuacao em equipes multiprofissionais com <span class="accomplishment">coordenacao de sala de emergencia</span></li>
-                <li><span class="accomplishment">Reducao do tempo medio de espera em 15%</span> atraves de otimizacao do fluxo de triagem</li>
-                <li><span class="accomplishment">Taxa de resolutividade acima de 92%</span> em atendimentos de urgencia</li>
+                <li>Atendimento de urgência e emergência em regime de plantão 12h e 24h</li>
+                <li>Atuação em equipes multiprofissionais com coordenação de sala de emergência</li>
               </ul>
               <div class="timeline-stats">
                 <span class="timeline-stat">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
-                  40-60 pac./plantao
+                  40-60 pac./plantão
                 </span>
                 <span class="timeline-stat">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                  Plantoes 12h / 24h
+                  Plantões 12h / 24h
                 </span>
                 <span class="timeline-stat">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
-                  6 cidades
+                  5 cidades
                 </span>
                 <span class="timeline-stat">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
                   92% resolutividade
                 </span>
               </div>
-              <div class="city-list" role="list" aria-label="Cidades de atuacao">
-                <span class="city-tag">Osasco &mdash; SP</span>
+              <div class="city-list" role="list" aria-label="Cidades de atuação">
+                <span class="city-tag">São Paulo &mdash; SP</span>
                 <span class="city-tag">Guarulhos &mdash; SP</span>
-                <span class="city-tag">Sao Paulo &mdash; SP</span>
                 <span class="city-tag">Araguari &mdash; MG</span>
-                <span class="city-tag">Uberlandia &mdash; MG</span>
                 <span class="city-tag">Tupaciguara &mdash; MG</span>
+                <span class="city-tag">Uberlândia &mdash; MG</span>
               </div>
-            </div>
-          </div>
-
-          <!-- Internship -->
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-header">
-              <span class="timeline-role" data-field="exp2-role">Interno de Medicina</span>
-              <span class="timeline-date">Internato</span>
-            </div>
-            <div class="timeline-org" data-field="exp2-org">Hospital de Clinicas da UFU &mdash; Uberlandia, MG</div>
-            <div class="timeline-details">
-              <ul>
-                <li>Rotacoes em Clinica Medica, Cirurgia Geral, Pediatria, Ginecologia-Obstetricia e Saude Coletiva</li>
-                <li>Atendimento ambulatorial e enfermaria com supervisao direta</li>
-                <li>Participacao em plantoes de pronto-socorro e centro cirurgico</li>
-                <li><span class="accomplishment">Aprovacao com distincao</span> nas avaliacoes praticas de emergencia</li>
-                <li><span class="accomplishment">Apresentacao de caso clinico</span> em jornada academica do HC-UFU</li>
-              </ul>
             </div>
           </div>
 
         </div>
       </section>
 
-      <!-- Procedimentos e Competencias -->
+      <!-- Procedimentos e Competências -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
-          Procedimentos e Competencias
+          Competências
         </h2>
-        <div class="skills-grid">
-          <div class="skill-category">
-            <div class="skill-category-title">Via Aerea</div>
-            <ul class="skill-list">
-              <li>
-                <span class="skill-name">Intubacao orotraqueal</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Ventilacao bolsa-valvula-mascara</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Cricotireoidostomia</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span>
-              </li>
-            </ul>
-          </div>
-          <div class="skill-category">
-            <div class="skill-category-title">Acessos Vasculares</div>
-            <ul class="skill-list">
-              <li>
-                <span class="skill-name">Acesso venoso central</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Acesso venoso periferico</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Acesso intraosseo</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span>
-              </li>
-            </ul>
-          </div>
-          <div class="skill-category">
-            <div class="skill-category-title">Procedimentos Toracicos</div>
-            <ul class="skill-list">
-              <li>
-                <span class="skill-name">Drenagem de torax</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Toracocentese</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Puncao de alivio</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span>
-              </li>
-            </ul>
-          </div>
-          <div class="skill-category">
-            <div class="skill-category-title">Outros Procedimentos</div>
-            <ul class="skill-list">
-              <li>
-                <span class="skill-name">Suturas e desbridamento</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Imobilizacoes</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Lavagem gastrica</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span>
-              </li>
-              <li>
-                <span class="skill-name">Sondagens (vesical / nasogastrica)</span>
-                <span class="proficiency-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></span>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <ul class="skill-list">
+          <li><span class="skill-name">Atendimento em clínica médica</span></li>
+          <li><span class="skill-name">Atendimento em urgência e emergência</span></li>
+        </ul>
       </section>
 
       <!-- Idiomas -->
@@ -2329,27 +2234,27 @@
         </h2>
         <div class="lang-grid">
           <div class="lang-card">
-            <div class="lang-name">Portugues</div>
+            <div class="lang-name">Português</div>
             <div class="lang-level">Nativo</div>
             <div class="proficiency-bar-bg">
               <div class="proficiency-bar-fill" data-width="100"></div>
             </div>
           </div>
           <div class="lang-card">
-            <div class="lang-name">Ingles</div>
-            <div class="lang-level">Intermediario / Avancado</div>
+            <div class="lang-name">Inglês</div>
+            <div class="lang-level">Avançado</div>
             <div class="proficiency-bar-bg">
-              <div class="proficiency-bar-fill" data-width="70"></div>
+              <div class="proficiency-bar-fill" data-width="100"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Cursos e Certificacoes -->
+      <!-- Cursos e Certificações -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
-          Cursos e Certificacoes
+          Cursos e Certificações
         </h2>
         <div class="cert-grid">
           <div class="cert-item">
@@ -2357,85 +2262,43 @@
               <span class="cert-name">ACLS</span>
               <span class="cert-full">Advanced Cardiovascular Life Support</span>
             </div>
-            <span class="cert-status pending">Em andamento</span>
+            <span class="cert-status complete">Concluído</span>
           </div>
           <div class="cert-item">
             <div class="cert-info">
               <span class="cert-name">ATLS</span>
               <span class="cert-full">Advanced Trauma Life Support</span>
             </div>
-            <span class="cert-status pending">Em andamento</span>
-          </div>
-          <div class="cert-item">
-            <div class="cert-info">
-              <span class="cert-name">PALS</span>
-              <span class="cert-full">Pediatric Advanced Life Support</span>
-            </div>
-            <span class="cert-status pending">Em andamento</span>
+            <span class="cert-status complete">Concluído</span>
           </div>
         </div>
       </section>
 
-      <!-- Educacao Continuada -->
+      <!-- Educação Contínuada -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
-          Educacao Continuada
+          Educação Contínuada
         </h2>
         <div class="course-list">
           <div class="course-item">
             <div class="course-info">
-              <span class="course-name">Ultrassonografia Point-of-Care (POCUS) em Emergencia</span>
-              <span class="course-provider">Sociedade Brasileira de Medicina de Emergencia (ABRAMEDE)</span>
-              <span class="course-hours">40 horas</span>
+              <span class="course-name">Ultrassonografia Point-of-Care (POCUS) em Emergência</span>
             </div>
-            <span class="course-date">2025</span>
-          </div>
-          <div class="course-item">
-            <div class="course-info">
-              <span class="course-name">Manejo da Via Aerea Dificil</span>
-              <span class="course-provider">Sociedade Brasileira de Anestesiologia (SBA)</span>
-              <span class="course-hours">16 horas</span>
-            </div>
-            <span class="course-date">2024</span>
-          </div>
-          <div class="course-item">
-            <div class="course-info">
-              <span class="course-name">Ventilacao Mecanica para Emergencistas</span>
-              <span class="course-provider">Hospital Sirio-Libanes &mdash; Ensino e Pesquisa</span>
-              <span class="course-hours">24 horas</span>
-            </div>
-            <span class="course-date">2024</span>
-          </div>
-          <div class="course-item">
-            <div class="course-info">
-              <span class="course-name">Protocolo de Sepse e Choque Septico</span>
-              <span class="course-provider">ILAS &mdash; Instituto Latino Americano de Sepse</span>
-              <span class="course-hours">12 horas</span>
-            </div>
-            <span class="course-date">2023</span>
-          </div>
-          <div class="course-item">
-            <div class="course-info">
-              <span class="course-name">Eletrocardiografia Pratica para Emergencia</span>
-              <span class="course-provider">Sociedade Brasileira de Cardiologia (SBC)</span>
-              <span class="course-hours">20 horas</span>
-            </div>
-            <span class="course-date">2023</span>
           </div>
         </div>
       </section>
 
-      <!-- Interesses Academicos e de Pesquisa -->
+      <!-- Interesses Acadêmicos e de Pesquisa -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg>
-          Interesses Academicos
+          Interesses Acadêmicos
         </h2>
         <ul class="interests-list">
           <li class="interest-tag">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-            Medicina de Emergencia
+            Medicina de Emergência
           </li>
           <li class="interest-tag">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
@@ -2447,58 +2310,58 @@
           </li>
           <li class="interest-tag">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg>
-            Simulacao em Saude
+            Simulação em Saúde
           </li>
           <li class="interest-tag">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" /></svg>
-            Tecnologia Aplicada a Saude
+            Tecnologia Aplicada a Saúde
           </li>
           <li class="interest-tag">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
-            Gestao de Fluxo em PS
+            Gestão de Fluxo em PS
           </li>
         </ul>
       </section>
 
-      <!-- Referencias Profissionais -->
+      <!-- Referências Profissionais -->
       <section class="cv-section reveal">
         <h2 class="cv-section-title">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
-          Referencias Profissionais
+          Referências Profissionais
         </h2>
         <div class="ref-grid">
           <div class="ref-card">
             <div class="ref-name" data-field="ref1-name">Dr. Carlos Eduardo Silva</div>
-            <div class="ref-role">Coordenador de Emergencia</div>
+            <div class="ref-role">Coordenador de Emergência</div>
             <div class="ref-org">UPA 24h &mdash; Guarulhos, SP</div>
             <div class="ref-contact">
               <span class="ref-contact-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-                <a href="mailto:disponivel@solicitacao.com">Disponivel sob solicitacao</a>
+                <a href="mailto:disponível@solicitação.com">Disponível sob solicitação</a>
               </span>
               <span class="ref-contact-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
-                Disponivel sob solicitacao
+                Disponível sob solicitação
               </span>
             </div>
           </div>
           <div class="ref-card">
             <div class="ref-name" data-field="ref2-name">Dra. Maria Fernanda Oliveira</div>
-            <div class="ref-role">Diretora Clinica</div>
-            <div class="ref-org">Pronto-Socorro Municipal &mdash; Osasco, SP</div>
+            <div class="ref-role">Diretora Clínica</div>
+            <div class="ref-org">Pronto-Socorro Municipal &mdash; Guarulhos, SP</div>
             <div class="ref-contact">
               <span class="ref-contact-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-                <a href="mailto:disponivel@solicitacao.com">Disponivel sob solicitacao</a>
+                <a href="mailto:disponível@solicitação.com">Disponível sob solicitação</a>
               </span>
               <span class="ref-contact-item">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
-                Disponivel sob solicitacao
+                Disponível sob solicitação
               </span>
             </div>
           </div>
         </div>
-        <p class="ref-note">* Informacoes de contato das referencias disponiveis mediante solicitacao formal.</p>
+        <p class="ref-note">* Informações de contato das referências disponiveis mediante solicitação formal.</p>
       </section>
 
       <!-- Disponibilidade e Contato -->
@@ -2511,11 +2374,11 @@
           <div class="availability-card">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
             <div class="availability-label">Regime</div>
-            <div class="availability-value" data-field="avail-regime">Plantao 12h / 24h</div>
+            <div class="availability-value" data-field="avail-regime">Plantão 12h / 24h</div>
           </div>
           <div class="availability-card">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
-            <div class="availability-label">Regiao</div>
+            <div class="availability-label">Região</div>
             <div class="availability-value" data-field="avail-region">SP / MG</div>
           </div>
           <div class="availability-card">
@@ -2537,7 +2400,7 @@
             <span>QR Code</span>
           </div>
           <div class="qr-text">
-            <strong>Curriculo Digital</strong>
+            <strong>Currículo Digital</strong>
             Escaneie o QR code para acessar a versao digital deste curriculo, ou compartilhe o link diretamente.
           </div>
         </div>
@@ -2600,7 +2463,7 @@
       state.theme = theme;
       localStorage.setItem('cv4-theme', theme);
       applyTheme(theme);
-      showToast('Tema alterado: ' + ({blue:'Azul Profissional', green:'Verde Medico', black:'Preto Classico'}[theme]));
+      showToast('Tema alterado: ' + ({blue:'Azul Profissional', green:'Verde Médico', black:'Preto Clássico'}[theme]));
     }
 
     function applyTheme(theme) {
@@ -2620,7 +2483,7 @@
       state.layout = layout;
       localStorage.setItem('cv4-layout', layout);
       applyLayout(layout);
-      showToast('Layout: ' + (layout === 'classic' ? 'Classico' : 'Cards'));
+      showToast('Layout: ' + (layout === 'classic' ? 'Clássico' : 'Cards'));
     }
 
     function applyLayout(layout) {
@@ -2670,9 +2533,9 @@
       });
 
       if (state.editMode) {
-        showToast('Modo edicao ativado — clique para editar');
+        showToast('Modo edição ativado — clique para editar');
       } else {
-        showToast('Alteracoes salvas localmente');
+        showToast('Alterações salvas localmente');
       }
     }
 
@@ -2717,9 +2580,9 @@
       toggle.classList.toggle('expanded');
 
       if (isExpanded) {
-        toggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ver Carta de Apresentacao';
+        toggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ver Carta de Apresentação';
       } else {
-        toggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ocultar Carta de Apresentacao';
+        toggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg> Ocultar Carta de Apresentação';
       }
     }
 
